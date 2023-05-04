@@ -1,0 +1,38 @@
+#ifndef _ONVIF_USER_TOKEN_H_
+#define _ONVIF_USER_TOKEN_H_
+#include <stdbool.h>
+#include <stdlib.h>
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能:获取随机数及base64decode 的随机数
+*****************************************************************/
+size_t onvif_random_create(char *random, char *random_base64_decode, int string_len);
+/****************************************************************
+**@日期: 2022-09-17
+**@作者: leo.liu
+**@功能:获取格林标准时间
+*****************************************************************/
+size_t onvif_time_create(char *created, int len);
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能:获取密码令牌
+*****************************************************************/
+bool onvif_usertoken_crate(const unsigned char *base64dec_romdom, size_t base64dec_romdom_len,
+                           const unsigned char *time, size_t time_len,
+                           const unsigned char *password, size_t pssword_len,
+                           char *token, size_t *token_len);
+/****************************************************************
+ **@日期: 2022-09-20
+ **@作者: leo.liu
+ **@功能:格式化rtspxml
+ *****************************************************************/
+size_t onvif_stream_url_xml_format(char *xml, const char *ip, const char *user, const char *password, const char *profile_token);
+/****************************************************************
+**@日期: 2022-09-21
+ **@作者: leo.liu
+**@功能:profile token 
+*****************************************************************/
+size_t onvif_user_token_xml_format(char *file, const char *ip, const char *user, const char *password);
+#endif
