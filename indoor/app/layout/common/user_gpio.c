@@ -1,8 +1,8 @@
 #include "user_gpio.h"
 #include "common/gpio_ctrl.h"
 #include "common/sat_user_common.h"
-#include "drive/ssd20x_sarad.h"
-#include "drive/cd4051.h"
+#include "ssd20x_sarad.h"
+#include "cd4051.h"
 #include "common/sat_main_event.h"
 /***********************************************
 ** 作者: leo.liu
@@ -81,6 +81,15 @@ static float sarad_read_func(void)
 ** 日期: 2022-11-9 10:15:48
 ** 说明: gpio任务检测
 ***********************************************/
+static float cd4051_value_group[8] = {0};
+float user_sensor_value_get(int ch)
+{
+        if ((ch < 0) || (ch > 7))
+        {
+                return 0xFFFFF;
+        }
+        return cd4051_value_group[ch];
+}
 static void *user_gpio_detect_task(void *arg)
 {
         if (sarad_open() == false)
@@ -90,10 +99,9 @@ static void *user_gpio_detect_task(void *arg)
         cd4051_drive_init(sarad_enable_func, sarad_read_func, ad_ctrl_a_gpio_val_set, ad_ctrl_b_gpio_val_set, ad_ctrl_c_gpio_val_set);
         cd4051_drive_enable_set(true);
 
-        float value_group[8] = {0};
         for (int i = 0; i < 8; i++)
         {
-                value_group[i] = cd4051_drive_read(i);
+                cd4051_value_group[i] = cd4051_drive_read(i);
         }
         int channel_to_sensor[8] = {5, 6, 7, 4, 0, 3, 1, 2};
         while (1)
@@ -101,9 +109,9 @@ static void *user_gpio_detect_task(void *arg)
                 for (int i = 0; i < 8; i++)
                 {
                         float value = cd4051_drive_read(i);
-                        if (abs(value - value_group[i]) > 1.0)
+                        if (abs(value - cd4051_value_group[i]) > 1.0)
                         {
-                                value_group[i] = value;
+                                cd4051_value_group[i] = value;
                                 SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
                                 sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
                         }
