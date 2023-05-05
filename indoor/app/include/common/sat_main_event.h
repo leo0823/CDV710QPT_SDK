@@ -153,6 +153,7 @@ bool _sat_layout_goto(sat_layout_info *layout, lv_scr_load_anim_t anim);
 ***/
 const sat_layout_info *sat_cur_layout_get(void);
 const sat_layout_info *sat_pre_layout_get(void);
+const sat_layout_info *sat_next_layout_get(void);
 /***
 **	 日期:2022-05-23 13:41:22
 **	 作者: leo.liu

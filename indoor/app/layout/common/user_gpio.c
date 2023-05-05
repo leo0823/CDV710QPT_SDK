@@ -76,19 +76,21 @@ static float sarad_read_func(void)
 {
         return sarad_read(1);
 }
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
 ** 说明: gpio任务检测
 ***********************************************/
 static float cd4051_value_group[8] = {0};
+const int channel_to_sensor[8] = {5, 6, 7, 4, 0, 3, 1, 2};
 float user_sensor_value_get(int ch)
 {
         if ((ch < 0) || (ch > 7))
         {
                 return 0xFFFFF;
         }
-        return cd4051_value_group[ch];
+        return cd4051_value_group[channel_to_sensor[ch]];
 }
 static void *user_gpio_detect_task(void *arg)
 {
@@ -103,7 +105,7 @@ static void *user_gpio_detect_task(void *arg)
         {
                 cd4051_value_group[i] = cd4051_drive_read(i);
         }
-        int channel_to_sensor[8] = {5, 6, 7, 4, 0, 3, 1, 2};
+
         while (1)
         {
                 for (int i = 0; i < 8; i++)
