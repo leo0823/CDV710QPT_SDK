@@ -1,3 +1,7 @@
+# 2023/05/08
+## 发行说明:
+1.增加monitor_open（bool refresh）参数，是否显示到lcd。主要用于后台视频流录制和抓拍功能。   
+
 # 2023/05/05
 ## 发行说明：
 1.增加接口在layout_quit函数知道跳转的目标页面: const sat_layout_info *sat_next_layout_get(void); \

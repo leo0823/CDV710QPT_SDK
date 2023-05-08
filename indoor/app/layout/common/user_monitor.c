@@ -177,7 +177,7 @@ static void monitor_reset(void)
         sat_linphone_ipcamera_stop();
         sat_linphone_handup(0xFF);
 }
-void monitor_open(void)
+void monitor_open(bool refresh)
 {
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
@@ -197,7 +197,7 @@ void monitor_open(void)
         //   char url[128] = {0};
         //  sprintf(url, "sip:%s", "172.16.0.131@172.16.0.131")       ;
         //  sat_linphone_call(url, true, true, NULL);
-        lv_common_video_mode_enable(true);
+        lv_common_video_mode_enable(refresh);
 }
 /***********************************************
 ** 作者: leo.liu

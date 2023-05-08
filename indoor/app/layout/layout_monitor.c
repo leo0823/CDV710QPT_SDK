@@ -279,7 +279,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                 {
                         monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
-                        monitor_open();
+                        monitor_open(true);
                         monitor_timeout_sec_reset(0);
                         monitior_obj_channel_info_obj_display();
                 }
@@ -291,7 +291,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                 {
                         monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
-                        monitor_open();
+                        monitor_open(true);
                         monitor_timeout_sec_reset(0);
                         monitior_obj_channel_info_obj_display();
                 }
@@ -987,7 +987,7 @@ static void sat_layout_enter(monitor)
                 }
         }
 
-        monitor_open();
+        monitor_open(true);
 
         /*門口機内部呼叫*/
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_inside_func);
