@@ -74,8 +74,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         }
 
         tuya_event_cmd_register(tuya_event_defalut_handle);
-
-        if (user_data_get()->is_device_init == false)
+        if (0) //(user_data_get()->is_device_init == false)
         {
                 sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -93,6 +92,7 @@ static void sat_layout_enter(logo)
         if (tuya_key_and_uuid_init() == false)
         {
                 // goto enter input
+                tuya_key_and_key_xls_register(1);
         }
         else
         {

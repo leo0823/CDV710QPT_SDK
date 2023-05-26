@@ -265,9 +265,10 @@ void user_data_reset(void)
 *******************************											                                                                                              *******************************
 *************************************************************************************************************************************************/
 static user_network_info network_data = {0};
+
 static const user_network_info network_data_default = {
     .sip_user = {"010129001011"},
-    .ip = {"10.129.0.11"},
+    .ip = {0},
     .mask = {"255.0.0.0"},
     .door_device_count = 0,
     .cctv_device_count = 0,
@@ -296,27 +297,45 @@ bool network_data_save(void)
         system("sync");
         return true;
 }
-bool network_device_sort(void)
+
+static void printf_register_device(void)
 {
-        for (int i = 0; i < network_data.door_device_count - 1; i++)
+        SAT_DEBUG("register cont:%d", network_data.door_device_count);
+        printf("\n\n#############################################\n");
+        for (int i = 0; i < network_data.door_device_count; i++)
         {
-                int reslut = strncmp(network_data.door_device[i].user, network_data.door_device[i + 1].user, 12);
-                if (reslut > 0)
+                printf("door camera :%d\n", i);
+                printf("accout:%s\n", network_data.door_device[i].username);
+                printf("password:%s\n", network_data.door_device[i].password);
+                printf("ipaddr:%s\n", network_data.door_device[i].ipaddr);
+                printf("port:%d\n", network_data.door_device[i].port);
+                printf("sip_url:%s\n", network_data.door_device[i].sip_url);
+                printf("name:%s\n", network_data.door_device[i].door_name);
+                printf("door camera rtsp profile token num%d\n", network_data.door_device[i].profile_token_num);
+                for (int j = 0; j < network_data.door_device[i].profile_token_num; j++)
                 {
-                        SAT_DEBUG("%s <---> %s", network_data.door_device[i].user, network_data.door_device[i + 1].user);
-                        network_device_info device_info;
-                        memcpy(&device_info, &network_data.door_device[i], sizeof(network_device_info));
-                        memcpy(&network_data.door_device[i], &network_data.door_device[i + 1], sizeof(network_device_info));
-                        memcpy(&network_data.door_device[i + 1], &device_info, sizeof(network_device_info));
-                        SAT_DEBUG("%s <---> %s", network_data.door_device[i].user, network_data.door_device[i + 1].user);
-                }
-                else if (reslut == 0)
-                {
-                        SAT_DEBUG("Duplicate room number:%s", network_data.door_device[i].user);
+                        printf("---profile token:%s\n", network_data.door_device[i].rtsp[j].profile_token);
+                        printf("---rtsp url:%s\n", network_data.door_device[i].rtsp[j].rtsp_url);
                 }
         }
-
-        return true;
+        printf("\n");
+        for (int i = 0; i < network_data.cctv_device_count; i++)
+        {
+                printf("CCTV  :%d\n", i);
+                printf("accout:%s\n", network_data.cctv_device[i].username);
+                printf("password:%s\n", network_data.cctv_device[i].password);
+                printf("ipaddr:%s\n", network_data.cctv_device[i].ipaddr);
+                printf("port:%d\n", network_data.cctv_device[i].port);
+                printf("sip_url:%s\n", network_data.cctv_device[i].sip_url);
+                printf("name:%s\n", network_data.cctv_device[i].door_name);
+                printf("door camera rtsp profile token num%d\n", network_data.cctv_device[i].profile_token_num);
+                for (int j = 0; j < network_data.cctv_device[i].profile_token_num; j++)
+                {
+                        printf("---profile token:%s\n", network_data.cctv_device[i].rtsp[j].profile_token);
+                        printf("---rtsp url:%s\n", network_data.cctv_device[i].rtsp[j].rtsp_url);
+                }
+        }
+        printf("#############################################\n\n");
 }
 /***
 ** 日期: 2022-05-05 08:47
@@ -363,23 +382,9 @@ static void network_data_check_valid(void)
         ** 说明:	 检测分机IP组
         ***********************************************/
         network_data_check_range_out(door_device_count, 0, DEVICE_MAX);
-        for (int i = 0; i < network_data.door_device_count; i++)
-        {
-                for (int j = 0; j < strlen(network_data.door_device[i].user); j++)
-                {
-                        if (j == 12)
-                        {
-                                network_data_check_range_out(door_device[i].user[j], '@', '@');
-                                break;
-                        }
-                        else
-                        {
-                                network_data_check_range_out(door_device[i].user[j], '0', '9');
-                        }
-                }
-                SAT_DEBUG("%d.%s-%s-%s", i, network_data.door_device[i].name, network_data.door_device[i].user, network_data.door_device[i].password);
-        }
+
         network_data_check_range_out(cctv_device_count, 0, DEVICE_MAX);
+        printf_register_device();
 }
 
 bool network_data_init(void)
@@ -397,7 +402,6 @@ bool network_data_init(void)
 
         close(fd);
         network_data_check_valid();
-        network_device_sort();
         network_data_save();
         return true;
 }

@@ -33,11 +33,11 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 char *name = NULL;
                 if (is_channel_ipc_camera(ch) == true)
                 {
-                        name = network_data_get()->cctv_device[ch - 8].name;
+                        name = network_data_get()->cctv_device[ch - 8].door_name;
                 }
                 else
                 {
-                        name = network_data_get()->door_device[ch].name;
+                        name = network_data_get()->door_device[ch].door_name;
                 }
 
                 media_file_create(type, name, mode & 0x1F, file_path);
@@ -91,11 +91,11 @@ static bool record_video_callback(const char *path, int ch, int mode)
         char *name = NULL;
         if (is_channel_ipc_camera(ch) == true)
         {
-                name = network_data_get()->cctv_device[ch - 8].name;
+                name = network_data_get()->cctv_device[ch - 8].door_name;
         }
         else
         {
-                name = network_data_get()->door_device[ch].name;
+                name = network_data_get()->door_device[ch].door_name;
         }
         media_file_create(FILE_TYPE_VIDEO, name, mode, file_path);
 

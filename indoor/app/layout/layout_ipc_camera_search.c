@@ -1,0 +1,143 @@
+#include "layout_define.h"
+#include "layout_ipc_camera.h"
+#include "layout_home.h"
+enum
+{
+        ipc_camera_search_obj_id_title,
+        ipc_camera_search_obj_id_cancel,
+
+        ipc_camera_search_obj_id_searched_door_camera_title,
+        ipc_camera_search_obj_id_door_camera_list,
+};
+static void ipc_camera_search_cancel_click(lv_event_t *ev)
+{
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+static void ipc_camera_serarch_list_click(lv_event_t *ev)
+{
+        lv_obj_t *parent = lv_event_get_current_target(ev);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        layout_ipc_camera_edit_index_set(parent->id);
+        if (layout_ipc_cmeara_is_doorcamera_get() == true)
+        {
+                layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
+        }
+        else
+        {
+                layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_USER);
+        }
+        sat_layout_goto(ipc_camera_input, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+}
+static lv_obj_t *ipc_camera_search_list_create(void)
+{
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_door_camera_list);
+        if (list != NULL)
+        {
+                return list;
+        }
+        list = lv_list_create(sat_cur_layout_screen_get());
+        lv_common_style_set_common(list, ipc_camera_search_obj_id_door_camera_list, 48, 136, 928, (600 - 200), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        return list;
+}
+
+static void cctv_search_list_display(void)
+{
+        lv_obj_t *list = ipc_camera_search_list_create();
+        lv_obj_clean(list);
+
+        int item_y = 0;
+
+        int user_count = sat_ipcamera_online_num_get();
+
+        for (int i = 0; (i < user_count); i++)
+        {
+                lv_common_setting_btn_title_sub_info_img_create(list, i, 48, item_y, 928, 88,
+                                                                ipc_camera_serarch_list_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                58, 8, 618, 43, 0,
+                                                                (char *)sat_ipcamera_door_name_get(i), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                58, 51, 618, 29, 1,
+                                                                (char *)sat_ipcamera_ipaddr_get(i), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 20, 48, 48, 3,
+                                                                resource_ui_src_get("ic_list_new.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                item_y += 88;
+        }
+}
+static lv_timer_t *p_ipc_camera_search_timer = NULL;
+static void ipc_camera_emty_timer(lv_timer_t *ptimer)
+{
+        printf("search loading...\n");
+        sat_ipcamera_device_discover_search(layout_ipc_cmeara_is_doorcamera_get());
+}
+static void ipc_camera_state_func(unsigned int type, unsigned int num)
+{
+        if ((type == 1) && (num > 0))
+        {
+                cctv_search_list_display();
+                //    if (p_ipc_camera_search_timer != NULL)
+                //    {
+                //             lv_timer_del(p_ipc_camera_search_timer);
+                //             p_ipc_camera_search_timer = NULL;
+                //     }
+        }
+}
+static void sat_layout_enter(ipc_camera_search)
+{
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 13:46:56
+        ** 说明: 标题显示
+        ***********************************************/
+        {
+                lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_title, 0, 20, 1024, 40,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      layout_ipc_cmeara_is_doorcamera_get() == true ? layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA)
+                                                                                    : layout_home_language_get(HOME_LANG_ID_CCTV),
+                                      0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+        }
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: 上一步下一步
+         ***********************************************/
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_cancel, 35, 15, 48, 48,
+                                         ipc_camera_search_cancel_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:50
+         ** 说明: 显示搜索的设备
+         ***********************************************/
+        {
+                lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_searched_door_camera_title, 16, 88, 584, 48,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      layout_ipc_camera_search_language_get(layout_ipc_cmeara_is_doorcamera_get() == true ? DOOR_CAMERA_SEARCH_ID_SEARCHED_DOOR_CAMERA : DOOR_CAMERA_SEARCH_ID_SEARCHED_CCTV),
+                                      0X00A8ff, 0X00A8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
+        }
+        p_ipc_camera_search_timer = lv_sat_timer_create(ipc_camera_emty_timer, 3000, NULL);
+        lv_timer_reset(p_ipc_camera_search_timer);
+
+        ipcamera_state_callback_register(ipc_camera_state_func);
+}
+static void sat_layout_quit(ipc_camera_search)
+{
+        ipcamera_state_callback_register(NULL);
+}
+
+sat_layout_create(ipc_camera_search);

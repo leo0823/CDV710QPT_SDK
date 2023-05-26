@@ -1,8 +1,8 @@
 #include "user_gpio.h"
 #include "common/gpio_ctrl.h"
 #include "common/sat_user_common.h"
-#include "ssd20x_sarad.h"
-#include "cd4051.h"
+#include "ssd20x_sarad/ssd20x_sarad.h"
+#include "cd4051/cd4051.h"
 #include "common/sat_main_event.h"
 /***********************************************
 ** 作者: leo.liu

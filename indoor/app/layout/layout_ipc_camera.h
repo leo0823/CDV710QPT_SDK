@@ -1,36 +1,44 @@
 #ifndef _LAYOUT_DOOR_CAMERA_SEARCH_H_
 #define _LAYOUT_DOOR_CAMERA_SEARCH_H_
+#include <stdbool.h>
+#define IPC_CAMERA_FLAG_PWD_ERROR 0X01
+#define IPC_CAMERA_FLAG_REGISTER 0X02
+#define IPC_CAMERA_FLAG_INPUT_USER 0X04
+#define IPC_CAMERA_FLAG_INPUT_PWD 0X08
+#define IPC_CAMERA_FLAG_CHANGE_NAME 0X10
+#define IPC_CAMERA_FLAG_CHANGE_PWD 0X20
+#define IPC_CAMERA_FLAG_SEARCH 0X40
 
 typedef enum
 {
 
-        DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA,
-        DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA_SEARCH,
-        DOOR_CAMERA_SEARCH_ID_IF_YOUT_PRESS,
-        DOOR_CAMERA_SEARCH_ID_SEARCHED_DOOR_CAMERA,
-        DOOR_CAMERA_SEARCH_ID_SEARCHED_CCTV,
-        DOOR_CAMERA_SEARCH_ID_IF_YOUT_CANNOT_SEE,
-        DOOR_CAMERA_SEARCH_ID_REGISTRATION,
-        DOOR_CAMERA_SEARCH_ID_OPERATION_SERVER,
-        DOOR_CAMERA_SEARCH_ID_DHCP,
-        DOOR_CAMERA_SEARCH_ID_STATIC,
-        DOOR_CAMERA_SEARCH_ID_REGISTERED_DOOR_CAMERA,
-        DOOR_CAMERA_SEARCH_ID_PASSWORD,
-        DOOR_CAMERA_SEARCH_ID_DEFAULT_PASSWORD_IS_SET,
-        DOOR_CAMERA_SEARCH_ID_INPUT_PASSWORD_IS_SET,
-        DOOR_CAMERA_SEARCH_ID_CHANGE_PASSWORD,
-        DOOR_CAMERA_SEARCH_ID_CONFIRM_CHANGE_PASSWORD,
-        DOOR_CAMERA_SEARCH_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER,
-        DOOR_CAMERA_SEARCH_ID_SET_THE_PASSWORD_TO_A_MIXTURE,
-        DOOR_CAMERA_SEARCH_ID_CHANGE_DOOR_CAMERA_INFOMATION,
-        DOOR_CAMERA_SEARCH_ID_CHANGE_NAME,
-        DOOR_CAMERA_SEARCH_ID_CHANGE_TH_CONNETION_PASSWORD,
-        DOOR_CAMERA_SEARCH_ID_DO_YOU_WANT_DELETE_DOOR_CAMERA,
-        DOOR_CAMERA_SEARCH_ID_DO_YOU_WANT_DELETE_CCTV,
-        DOOR_CAMERA_SEARCH_ID_PASSWORD_MODIY_SUCCESS,
-        DOOR_CAMERA_SEARCH_ID_NAME_MODIY_SUCCESS,
-        DOOR_CAMERA_SEARCH_ID_NAME_MODIY_FAIL,
-        DOOR_CAMERA_SEARCH_ID_TOTAL,
+    DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA,
+    DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA_SEARCH,
+    DOOR_CAMERA_SEARCH_ID_IF_YOUT_PRESS,
+    DOOR_CAMERA_SEARCH_ID_SEARCHED_DOOR_CAMERA,
+    DOOR_CAMERA_SEARCH_ID_SEARCHED_CCTV,
+    DOOR_CAMERA_SEARCH_ID_IF_YOUT_CANNOT_SEE,
+    DOOR_CAMERA_SEARCH_ID_REGISTRATION,
+    DOOR_CAMERA_SEARCH_ID_OPERATION_SERVER,
+    DOOR_CAMERA_SEARCH_ID_DHCP,
+    DOOR_CAMERA_SEARCH_ID_STATIC,
+    DOOR_CAMERA_SEARCH_ID_REGISTERED_DOOR_CAMERA,
+    DOOR_CAMERA_SEARCH_ID_PASSWORD,
+    DOOR_CAMERA_SEARCH_ID_DEFAULT_PASSWORD_IS_SET,
+    DOOR_CAMERA_SEARCH_ID_INPUT_PASSWORD_IS_SET,
+    DOOR_CAMERA_SEARCH_ID_CHANGE_PASSWORD,
+    DOOR_CAMERA_SEARCH_ID_CONFIRM_CHANGE_PASSWORD,
+    DOOR_CAMERA_SEARCH_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER,
+    DOOR_CAMERA_SEARCH_ID_SET_THE_PASSWORD_TO_A_MIXTURE,
+    DOOR_CAMERA_SEARCH_ID_CHANGE_DOOR_CAMERA_INFOMATION,
+    DOOR_CAMERA_SEARCH_ID_CHANGE_NAME,
+    DOOR_CAMERA_SEARCH_ID_CHANGE_TH_CONNETION_PASSWORD,
+    DOOR_CAMERA_SEARCH_ID_DO_YOU_WANT_DELETE_DOOR_CAMERA,
+    DOOR_CAMERA_SEARCH_ID_DO_YOU_WANT_DELETE_CCTV,
+    DOOR_CAMERA_SEARCH_ID_PASSWORD_MODIY_SUCCESS,
+    DOOR_CAMERA_SEARCH_ID_NAME_MODIY_SUCCESS,
+    DOOR_CAMERA_SEARCH_ID_NAME_MODIY_FAIL,
+    DOOR_CAMERA_SEARCH_ID_TOTAL,
 } LAYOUT_DOOR_CAMERA_SEARCH_LANG_ID;
 
 static const char *layout_door_camera_search_language[DOOR_CAMERA_SEARCH_ID_TOTAL][LANGUAGE_ID_TOTAL] =
@@ -174,41 +182,18 @@ static const char *layout_door_camera_search_language[DOOR_CAMERA_SEARCH_ID_TOTA
 ** 函数作用：获取home页面的字符串资源
 ** 返回参数说明：年/년 !@
 ***/
-static inline const char *layout_door_camera_search_language_get(int id)
+static inline const char *layout_ipc_camera_search_language_get(int id)
 {
-        return layout_door_camera_search_language[id][language_id_get()];
+    return layout_door_camera_search_language[id][language_id_get()];
 }
 
-/***
-** 日期: 2022-04-26 09:16
-** 作者: leo.liu
-** 函数作用：获取home页面的字符串资源
-** 返回参数说明：设置预览账号
-***/
-void camera_search_display_pview_sip_user_setting(const network_device_info *device_info);
-/*
- * 进入模式选择。0：从注册的页面进入，1：从搜索页面进入
- */
-void camera_search_display_enter_mode_setting(int mode);
+void layout_ipc_camera_input_flag_set(int flg);
+int layout_ipc_camera_input_flag_get(void);
+/*进入模式设置:door camera /ipc*/
+bool layout_ipc_cmeara_is_doorcamera_get(void);
+void layout_ipc_cmeara_is_doorcamera_set(bool yeno);
 
-/***
-** 日期: 2022-04-26 09:16
-** 作者: leo.liu
-** 函数作用：获取home页面的字符串资源
-** 返回参数说明：获取当前预览的信息
-***/
-const network_device_info *camera_search_display_pview_sip_user_get(void);
-/*
- * door_camera_password_input_enter_mode = 0: 已经注册，从注册页面进入修改密码
- * door_camera_password_input_enter_mode = 0x01:修改设备名
- * door_camera_password_input_enter_mode = 0x02:输入密码，进入预览。
- *  door_camera_password_input_enter_mode = 0x03:修改cctv的名称
- */
-void device_password_input_enter_mode_setting(char mode);
-/*
- * 编辑注册的设备索引号
- */
-void device_edit_index_setting(int index);
-void cctv_register_edit_index_setting(int index);
-int device_edit_index_get(void);
+/*当前编辑的索引号*/
+void layout_ipc_camera_edit_index_set(int index);
+int layout_ipc_camera_edit_index_get(void);
 #endif

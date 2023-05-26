@@ -19,16 +19,8 @@ typedef struct
 
 static bool linphone_call_online_query_func_defalut(char *args)
 {
-	char *ps = strstr(args, "<sip:") + 5;
-	char *pe = strchr(args, '>');
-	if ((ps == NULL) || (pe == NULL))
-	{
-		return false;
-	}
-	*pe = 0;
-
 	const char *user = monitor_channel_get_url(monitor_channel_get(), false);
-	if (strncmp(user, ps, 12) == 0)
+	if (strstr(args, user) != NULL)
 	{
 		char cmd[128] = {0};
 		sprintf(cmd, "SAT_CMD %s", LinphoneCallOnlineQueryStr);

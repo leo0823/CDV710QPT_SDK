@@ -67,16 +67,18 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
                         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
                         strcpy(network_data_get()->sip_user, number);
 
-                        automatic_number_setting_deault_ip_and_netmask();
-                        
+                        //    automatic_number_setting_deault_ip_and_netmask();
+
+                        char local_uri[128] = {0};
+                        sat_sip_local_user_get(local_uri);
                         for (int i = 0; i < network_data_get()->door_device_count; i++)
                         {
-                                if (user_network_device_delete(&(network_data_get()->door_device[i]), 1000) == false)
+                                if (sat_ipcamera_device_delete(local_uri, i, 1000) == false)
                                 {
-                                        SAT_DEBUG("delete outdoor failed:%s", network_data_get()->door_device[i].user);
+                                        SAT_DEBUG("delete outdoor failed:%s", network_data_get()->door_device[i].door_name);
                                 }
                         }
-                        memset(network_data_get()->door_device, 0, sizeof(network_device_info) * DEVICE_MAX);
+                        memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         network_data_get()->door_device_count = 0;
                         network_data_save();
 

@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_setting_time.h"
+#include "layout_ipc_camera.h"
 enum
 {
         setting_time_obj_id_title,
@@ -46,7 +47,8 @@ static void setting_time_cancel_click(lv_event_t *ev)
 }
 static void setting_time_next_click(lv_event_t *ev)
 {
-        sat_layout_goto(door_camera_registed, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        layout_ipc_cmeara_is_doorcamera_set(true);
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_time_set_date_automatically_enable_display(lv_obj_t *obj)
 {

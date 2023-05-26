@@ -32,7 +32,7 @@ int linphone_queue_handle_get(void);
  * @功能: 呼叫用户
  * @return:
  */
-bool sat_linphone_call(char * url, bool video, bool early_media,char* multicase_ip);
+bool sat_linphone_call(const char * url, bool video, bool early_media,char* multicase_ip);
 
 /*
  * @日期: 2022-09-06

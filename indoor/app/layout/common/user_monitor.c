@@ -7,6 +7,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "unistd.h"
+#include "common/sat_ipcamera.h"
 static int monitor_channel = -1;
 static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 
@@ -16,33 +17,52 @@ static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 ** 函数作用：获取监控通道的地址
 ** 返回参数说明：index < 8门口机，>= 8 CCTV
 ***/
+static const char *monitor_channel_door_sip_uri_get(int index, bool update)
+{
+        if (index >= network_data_get()->door_device_count)
+        {
+                return NULL;
+        }
+
+        sat_ipcamera_initialization_parameters(network_data_get()->door_device, network_data_get()->door_device_count);
+
+        if (update == true)
+        {
+                if (sat_ipcamera_device_name_get(index, 100) == true)
+                {
+                        if (strcmp(network_data_get()->door_device[index].door_name, sat_ipcamera_door_name_get(index)))
+                        {
+                                memset(network_data_get()->door_device[index].door_name, 0, sizeof(network_data_get()->door_device[index].door_name));
+                                strcpy(network_data_get()->door_device[index].door_name, sat_ipcamera_door_name_get(index));
+                                network_data_save();
+                        }
+                        return sat_ipcamera_sip_addr_get(index);
+                }
+                return NULL;
+        }
+        return sat_ipcamera_sip_addr_get(index);
+}
+static const char *monitor_channel_cctv_rtsp_uri_get(int index)
+{
+        static char rtsp_uri[128] = {0};
+        sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, network_data_get()->cctv_device_count);
+        memset(rtsp_uri, 0, sizeof(rtsp_uri));
+        sprintf(rtsp_uri, "%s %s %s", sat_ipcamera_rtsp_addr_get(index, 0), sat_ipcamera_username_get(index), sat_ipcamera_password_get(index));
+        SAT_DEBUG("CCTV:%s", rtsp_uri);
+        return rtsp_uri;
+}
+
 const char *monitor_channel_get_url(int index, bool update)
 {
         if (index < 8)
         {
-                if (index >= network_data_get()->door_device_count)
-                {
-                        return NULL;
-                }
-
-                static char url[128] = {0};
-                memset(url, 0, sizeof(url));
-                if (update == true)
-                {
-                        int reslut = user_network_user_update((unsigned char *)network_data_get()->sip_user, &(network_data_get()->door_device[index]), 300);
-                        if (reslut == 1)
-                        {
-                                network_data_save();
-                        }
-                }
-                sprintf(url, "%s/%s", network_data_get()->door_device[index].user, network_data_get()->door_device[index].password);
-                return url;
+                return monitor_channel_door_sip_uri_get(index, update);
         }
 
         index -= 8;
         if (index < network_data_get()->cctv_device_count)
         {
-                return network_data_get()->cctv_device[index].user;
+                return monitor_channel_cctv_rtsp_uri_get(index);
         }
 
         return NULL;
@@ -58,17 +78,8 @@ int monitor_index_get_by_user(const char *user)
         for (int i = 0; i < network_data_get()->door_device_count; i++)
         {
                 //<sip:010193001011@172.16.0.110>
-                if (strncmp(network_data_get()->door_device[i].user, user, 12) == 0)
+                if (strstr(user, network_data_get()->door_device[i].sip_url) != NULL)
                 {
-                        if (strcmp(network_data_get()->door_device[i].user, user))
-                        {
-                                int reslut = user_network_user_update((unsigned char *)network_data_get()->sip_user, &(network_data_get()->door_device[i]), 300);
-                                if (reslut == 1)
-                                {
-                                        network_data_save();
-                                }
-                        }
-                        //   SAT_DEBUG("user:%s====%s ====index:%d  ====>>channel:%d",user,user_data_get()->door_device[i].user,i,door_channel_group[i]);
                         return i;
                 }
         }
@@ -189,9 +200,7 @@ void monitor_open(bool refresh)
                 }
                 else
                 {
-                        char url[128] = {0};
-                        sprintf(url, "sip:%s", monitor_channel_get_url(monitor_channel, true));
-                        sat_linphone_call(url, true, true, user_linphone_local_multicast_get());
+                        sat_linphone_call(monitor_channel_get_url(monitor_channel, true), true, true, user_linphone_local_multicast_get());
                 }
         }
         //   char url[128] = {0};

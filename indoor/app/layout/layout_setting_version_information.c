@@ -73,6 +73,7 @@ static void setting_version_information_update_click(lv_event_t *e)
                 return;
         }
 
+#if 0
         char user[128] = {0};
         char ip[32] = {0};
 
@@ -83,9 +84,13 @@ static void setting_version_information_update_click(lv_event_t *e)
                 sprintf(msg, "%s %s", lv_label_get_text(label), layout_setting_version_information_language_get(SETTING_VERSION_INFORMATION_LANG_ID_UPDATE_ING));
                 setting_version_infomration_msgbox_create(msg);
 
-                outdoor_network_upgrade(ip);
+           //     outdoor_network_upgrade(ip);
                 lv_sat_timer_create(setting_version_information_timer, 1000, NULL);
         }
+#endif
+
+        setting_version_infomration_msgbox_create("modiy this");
+        lv_sat_timer_create(setting_version_information_timer, 1000, NULL);
 }
 
 static void setting_version_information_sd_status_callback(void)
@@ -106,10 +111,10 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
                         memset(user, 0, sizeof(user));
                         memset(ip, 0, sizeof(ip));
                         memset(version_buf, 0, sizeof(version_buf));
-                        if (sip_user_get_number_and_ip(network_data_get()->door_device[i].user, ip, user) == true)
-                        {
-                                user_network_device_version_get(user, ip, version_buf, sizeof(version_buf), 200);
-                        }
+                    //    if (sip_user_get_number_and_ip(network_data_get()->door_device[i].user, ip, user) == true)
+                  //      {
+                  //              user_network_device_version_get(user, ip, version_buf, sizeof(version_buf), 200);
+                  //      }
 
                         if (version_buf[0] == 0)
                         {
@@ -201,10 +206,10 @@ static void sat_layout_enter(setting_version_information)
                         memset(user, 0, sizeof(user));
                         memset(ip, 0, sizeof(ip));
                         memset(version_buf, 0, sizeof(version_buf));
-                        if (sip_user_get_number_and_ip(network_data_get()->door_device[i].user, ip, user) == true)
-                        {
-                                user_network_device_version_get(user, ip, version_buf, sizeof(version_buf), 200);
-                        }
+                  //      if (sip_user_get_number_and_ip(network_data_get()->door_device[i].sip_url, ip, user) == true)
+                  //      {
+                  //              user_network_device_version_get(user, ip, version_buf, sizeof(version_buf), 200);
+                 //       }
 
                         if (version_buf[0] == 0)
                         {
@@ -215,7 +220,7 @@ static void sat_layout_enter(setting_version_information)
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                            0, 17, 576, 43, 0,
-                                                                                           network_data_get()->door_device[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                           network_data_get()->door_device[i].door_name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                            0, 42, 576, 29, 1,
                                                                                            version_buf, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                            0, 0, 0, 0, -1,

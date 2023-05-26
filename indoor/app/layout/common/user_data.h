@@ -3,7 +3,7 @@
 #include "stdbool.h"
 #include <time.h>
 #define DEVICE_MAX 8
-// #include "common/user_network.h"
+#include "common/sat_ipcamera.h"
 typedef struct
 {
         bool enable;
@@ -132,12 +132,6 @@ void user_data_reset(void);
 *******************************					                                                        楚河汉界					                             *******************************
 *******************************											                                                                                              *******************************
 *************************************************************************************************************************************************/
-typedef struct
-{
-        char user[128];
-        char name[64];
-        char password[10];
-} network_device_info;
 
 typedef struct
 {
@@ -146,10 +140,10 @@ typedef struct
         char mask[32];
 
         int door_device_count;
-        network_device_info door_device[DEVICE_MAX];
+        struct ipcamera_info door_device[DEVICE_MAX];
 
         int cctv_device_count;
-        network_device_info cctv_device[DEVICE_MAX];
+        struct ipcamera_info cctv_device[DEVICE_MAX];
 
 } user_network_info;
 

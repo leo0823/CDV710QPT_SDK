@@ -10,7 +10,7 @@ enum
 };
 static void setting_complete_cancel_click(lv_event_t *ev)
 {
-        sat_layout_goto(door_camera_registed, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 static void setting_complete_confirm_click(lv_event_t *ev)
 {

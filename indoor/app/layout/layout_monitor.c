@@ -108,12 +108,12 @@ static void monitior_obj_channel_info_obj_display(void)
         {
                 lv_obj_set_x(obj, 96);
                 channel -= 8;
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
                 lv_obj_set_x(obj, 37);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 /***********************************************
@@ -1017,30 +1017,17 @@ sat_layout_create(monitor);
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
 //<sip:010193001011@172.16.0.110>
-static int monitor_incoming_user_get_channel(char *arg)
-{
-        char *ps = strstr(arg, "<sip:") + 5;
-        char *pe = strchr(arg, '>');
-        if ((ps == NULL) || (pe == NULL))
-        {
-                return -1;
-        }
-        *pe = 0;
-        // SAT_DEBUG("ncoming number:%s", ps);
-        return monitor_index_get_by_user(ps);
-}
-
 bool monitor_doorcamera_call_extern_func(char *arg)
 {
-        SAT_DEBUG("-------->>%s", arg);
+        SAT_DEBUG("%s", arg);
         int from_channel = 0;
-        if ((from_channel = monitor_incoming_user_get_channel(arg)) >= 0)
+        if ((from_channel = monitor_index_get_by_user(arg)) >= 0)
         {
                 if (from_channel == 0)
                 {
                         ring_door1_call_play();
                 }
-                else if (from_channel == 1)
+                else
                 {
                         ring_door2_call_play();
                 }
@@ -1067,13 +1054,13 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         SAT_DEBUG("-------->>%s", arg);
         int from_channel = 0;
         int cur_channel = monitor_channel_get();
-        if ((from_channel = monitor_incoming_user_get_channel(arg)) >= 0)
+        if ((from_channel = monitor_index_get_by_user(arg)) >= 0)
         {
                 if (from_channel == 0)
                 {
                         ring_door1_call_play();
                 }
-                else if (from_channel == 1)
+                else
                 {
                         ring_door2_call_play();
                 }

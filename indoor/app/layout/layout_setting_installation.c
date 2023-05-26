@@ -2,6 +2,7 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
 #include "layout_single_operation_network.h"
+#include "layout_ipc_camera.h"
 enum
 {
         setting_installation_obj_id_title,
@@ -72,11 +73,13 @@ static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
 }
 static void setting_installation_front_door_camera_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(door_camera_registed, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        layout_ipc_cmeara_is_doorcamera_set(true);
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_installation_front_cctv_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(cctv_registered, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        layout_ipc_cmeara_is_doorcamera_set(false);
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
@@ -292,8 +295,8 @@ static void sat_layout_enter(setting_installation)
             (sat_pre_layout_get() == sat_playout_get(setting_common_entrance_ip)) ||
             (sat_pre_layout_get() == sat_playout_get(setting_guard_station_number)) ||
             (sat_pre_layout_get() == sat_playout_get(setting_sensor_settings)) ||
-            (sat_pre_layout_get() == sat_playout_get(door_camera_registed)) ||
-            (sat_pre_layout_get() == sat_playout_get(cctv_registered)))
+            (sat_pre_layout_get() == sat_playout_get(ipc_camera_register)) ||
+            (sat_pre_layout_get() == sat_playout_get(ipc_camera_register)))
         {
                 setting_installation_confirm_obj_click(NULL);
         }

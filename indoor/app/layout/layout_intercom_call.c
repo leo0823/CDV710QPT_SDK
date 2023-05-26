@@ -56,16 +56,18 @@ static void intercom_extension_obj_click(lv_event_t *e)
 static void intercom_id_obj_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_target(e);
-        uint32_t id = lv_btnmatrix_get_selected_btn(obj) + 1;
+        uint32_t index = lv_btnmatrix_get_selected_btn(obj) + 1;
 
-        network_device_info device_info;
-        memset(&device_info, 0, sizeof(network_device_info));
-        if (sat_sip_local_indoor_number_get(id, device_info.user) == true)
+        //  network_device_info device_info;
+        //  memset(&device_info, 0, sizeof(network_device_info));
+        // if (sat_sip_local_indoor_number_get(id, device_info.user) == true)
         {
-                if (user_network_user_update((unsigned char *)network_data_get()->sip_user, &device_info, 300) >= 0)
+                if (sat_ipcamera_device_name_get(index, 300) == true)
+                // if (user_network_user_update((unsigned char *)network_data_get()->sip_user, &device_info, 300) >= 0)
                 {
                         intercom_call_status_setting(1);
-                        intercom_call_username_setting(device_info.user);
+                        // intercom_call_username_setting(device_info.user);
+                        intercom_call_username_setting(sat_ipcamera_node_data_get(index)->sip_url);
                         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }

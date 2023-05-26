@@ -363,7 +363,7 @@ static void home_monitor_obj_click(lv_event_t *ev)
 
 static void home_call_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(intercom_call,LV_SCR_LOAD_ANIM_NONE,SAT_VOID);
+        sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 static void home_cctv_obj_click(lv_event_t *ev)
 {
@@ -379,7 +379,7 @@ static void home_away_obj_click(lv_event_t *ev)
 }
 static void home_burglar_obj_click(lv_event_t *ev)
 {
-	exit(1);
+        exit(1);
 }
 
 /***********************************************
@@ -807,10 +807,8 @@ static void sat_layout_enter(home)
                                               3, 0, 77, 77, home_obj_id_emergency_img,
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-	
+
         home_media_thumb_display();
-
-
 }
 
 static void sat_layout_quit(home)
