@@ -24,9 +24,10 @@ make_app()
 
 copy_to_rootfs()
 {
-        rm -rf ./rootfs/rootfs/resource/app
-        cp ./build/SAT_ANYKA3918.BIN ./rootfs/rootfs/resource/app
-        cp -r layout/resource/rings rootfs/rootfs/resource/app/rings
+        rm -rf ./rootfs/rootfs/resource/app/
+	  mkdir ./rootfs/rootfs/resource/app
+        cp ./build/SAT_ANYKA3918.BIN ./rootfs/rootfs/resource/app/
+        cp -r layout/resource/rings rootfs/rootfs/resource/app/rings/
 }
 
 make_rootfs()

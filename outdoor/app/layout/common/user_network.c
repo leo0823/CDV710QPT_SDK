@@ -23,353 +23,172 @@
 #include "common/user_data.h"
 #include "common/user_key.h"
 #include "common/user_linphone.h"
-static void automatic_number_setting_ip(void);
+#include "mxml-3.3.1/mxml.h"
+#include "onvif/onvif.h"
+#include "base64/include/libbase64.h"
+#include "sha1/sha1.h"
+
+#define DISCONVER_DEVICE_FILE_PATH ONVIF_XML_PATH "device_discovery_feedback.xml"
+#define BAD_REQUEST_PATH ONVIF_XML_PATH "bad_requset.html"
+#define S200_OK_REQUEST_PATH ONVIF_XML_PATH "200_ok_requeset.html"
+#define GET_ONVIF_MEDIA_PROFILE_PATH ONVIF_XML_PATH "onvif_media_get_profile.html"
+#define DEVICE_SERVICE_GET_INFORMATION_PATH ONVIF_XML_PATH "device_service_get_information.html"
+#define DEVICE_SERVICE_GET_CAPABILITIES_PATH ONVIF_XML_PATH "device_serverce_get_capabilities.html"
+#define DEVICE_SERVICE_GET_SCOPES_PATH ONVIF_XML_PATH "device_serverce_get_scopes.html"
+#define GET_ONVIF_STREAM_URI_PATH ONVIF_XML_PATH "get_streamuri.html"
+#define GET_ONVIF_VIDEO_SOURCE_PATH ONVIF_XML_PATH "onvif_media_get_videosources.html"
+
+#define DOOR_CAMERA_RECEIVE_BUFFER_MAX (100 * 1024)
+
+static int user_linphone_multicast_fd = -1;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 16:55:3
 ** 说明: 所有设备的组播IP
 ***********************************************/
-#define USER_NETWORK_MULTICAST_IP "225.0.0.0"
-#define USER_NETWORK_MULTICAST_PORT 50023
-#define USER_NETWORK_TCP_SYNC_SERVER_PORT 50030
-#define USER_NETWORK_TCP_SYNC_SLAVE_PORT 50031
-#define USER_NETWORK_TCP_ASYNC_PORT 50032
+#define USER_NETWORK_MULTICAST_IP "239.255.255.250"
+#define USER_NETWORK_MULTICAST_PORT 3702
+#define USER_NETWORK_TCP_SYNC_SERVER_PORT 80
 
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 17:35:22
-** 说明: 所有网络命令
-***********************************************/
-#define NETWORK_CMD_DEVICE_INFO "device_info"
-#define NETWORK_CMD_DEVICE_BY_NUMBER "device_by_number"
-typedef bool (*user_network_func)(char *args, struct sockaddr_in *client_addr);
-
-typedef struct
+/*j解析设备*/
+static bool discover_devices_data_parsing(const char *buf, const char *type, char *data, int size)
 {
-
-        char *cmd;
-        user_network_func func;
-        char *help;
-} user_network_func_s;
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 16:53:57
-** 说明: 组播套接字
-***********************************************/
-static int user_linphone_multicast_fd = -1;
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 17:48:30
-** 说明: 设备信息查询
-***********************************************/
-static void string_space_cur_and_next_ptr_get(char *sting, char **first_string, char **second_string)
-{
-        *first_string = NULL;
-        *second_string = NULL;
-
-        char *ptr = (char *)sting;
-        while (*ptr && isspace(*ptr))
+        bool reslut = false;
+        char *pxml = strstr(buf, "<?xml version=\"1.0\"");
+        if (pxml == NULL)
         {
-                ++ptr;
-        }
-        if (*ptr)
-        {
-                *first_string = ptr;
-                while (*ptr && !isspace(*ptr))
-                {
-                        ++ptr;
-                }
-                if (*ptr)
-                {
-                        *ptr = '\0';
-
-                        *second_string = ptr + 1;
-                }
-        }
-}
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 17:48:30
-** 说明: 设备信息查询
-***********************************************/
-static bool network_cmd_device_info_func(char *info, struct sockaddr_in *client_addr)
-{
-        // ex info:010001001011
-        char *str_user = NULL;
-        char *str_port = NULL;
-        char *str_device_type = NULL;
-        char *str_force = NULL;
-        SAT_DEBUG(" %s ", info);
-        string_space_cur_and_next_ptr_get(info, &str_user, &str_device_type);
-        string_space_cur_and_next_ptr_get(str_device_type, &str_device_type, &str_port);
-        string_space_cur_and_next_ptr_get(str_port, &str_port, &str_force);
-
-        if ((str_device_type == NULL) || (str_user == NULL) || (str_port == NULL) || (str_force == NULL))
-        {
-                SAT_DEBUG(" %s %s", NETWORK_CMD_DEVICE_INFO, info);
-        }
-
-        int device = atoi(str_device_type);
-        if ((device & 0x02) == 0)
-        {
-                SAT_DEBUG(" %s %s error", NETWORK_CMD_DEVICE_INFO, info);
-                return true;
-        }
-
-        if (strlen(info) != 12)
-        {
-
-                SAT_DEBUG(" %s %s error", NETWORK_CMD_DEVICE_INFO, info);
+                printf("%s\n", buf);
                 return false;
         }
 
-        // SAT_DEBUG("receive:[%s %s]", NETWORK_CMD_DEVICE_INFO, info);
-
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-1-9 15:23:52
-        ** 说明: 判断是否与本机相关
-        ***********************************************/
-        if (str_force[0] == '0')
+        mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
+        if (root != NULL)
         {
-                const char *username = getenv("SIP");
-                int loacal_number[4] = {
-                    0};
-                int client_number[4] = {
-                    0};
-                loacal_number[0] = (username[0] - 48) * 100 + (username[1] - 48) * 10 + (username[2] - 48);
-                loacal_number[1] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-                loacal_number[2] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
-                loacal_number[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10;
-
-                client_number[0] = (info[0] - 48) * 100 + (info[1] - 48) * 10 + (info[2] - 48);
-                client_number[1] = ((info[3] - 48) * 100 + (info[4] - 48) * 10 + (info[5] - 48)) & 0x1F;
-                client_number[2] = (info[6] - 48) * 100 + (info[7] - 48) * 10 + (info[8] - 48);
-                client_number[3] = (info[9] - 48) * 100 + (info[10] - 48) * 10;
-
-                if (memcmp(loacal_number, client_number, sizeof(loacal_number)))
+                mxml_node_t *probe = mxmlFindElementSub(root, root, type, NULL, NULL, MXML_DESCEND);
+                if (probe != NULL)
                 {
-                        return false;
-                }
-        }
-        else if (user_key_state_get() != KEY_STATE_LONG_DOWN)
-        {
-                /***********************************************
-                 ** 作者: leo.liu
-                 ** 日期: 2023-1-9 15:37:38
-                 ** 说明:如果是强制的话，需要门铃按下为长
-                 按状态
-                 ***********************************************/
-                SAT_DEBUG("The key is not in a long press state ");
-                return false;
-        }
-
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-1-9 15:37:38
-        ** 说明: 建立连接
-        ***********************************************/
-        {
-                int socket_fd = -1;
-                int port = 0;
-
-                sscanf(str_port, "%d", &port);
-
-                if (sat_socket_tcp_open(&socket_fd, port, 0) == false)
-                {
-
-                        SAT_DEBUG(" tcp open failed ");
-                        return false;
-                }
-
-                char server_ip[32] = {
-                    0};
-                memset(server_ip, 0, sizeof(server_ip));
-                strcpy(server_ip, inet_ntoa(client_addr->sin_addr));
-
-                if (sat_socket_tcp_connect(socket_fd, server_ip, port, 1000) == false)
-                {
-
-                        sat_socket_close(socket_fd);
-                        SAT_DEBUG(" connect timeout ");
-                        return false;
-                }
-
-                network_device_info device_info;
-                memset(device_info.number, 0, sizeof(device_info.number));
-                strcpy(device_info.name, user_data_get()->device.name);
-                // strcpy(device.password, user_data_get()->device_password);
-                if (sat_sip_local_user_get(device_info.number) == false)
-                {
-                        sat_socket_close(socket_fd);
-                        SAT_DEBUG(" sip user get failed ");
-                        return false;
-                }
-
-                SAT_DEBUG(" send(%s)	", device_info.name);
-                if (sat_socket_tcp_send(socket_fd, (unsigned char *)&device_info, sizeof(network_device_info), 500) == false)
-                {
-
-                        sat_socket_close(socket_fd);
-                        SAT_DEBUG(" send(%s) failed ", device_info.name);
-                        return false;
-                }
-
-                sat_socket_close(socket_fd);
-        }
-        return true;
-}
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 10:13:8
-** 说明: 依据房号查询设备的账号信息ip port number
-***********************************************/
-static bool network_cmd_device_by_number_func(char *info, struct sockaddr_in *client_addr)
-{
-        char *str_ip = NULL;
-        char *str_port = NULL;
-        char *str_number = NULL;
-        string_space_cur_and_next_ptr_get(info, &str_ip, &str_port);
-        string_space_cur_and_next_ptr_get(str_port, &str_port, &str_number);
-        if ((str_number == NULL) || (str_port == NULL) || (str_number == NULL))
-        {
-                SAT_DEBUG("%s %s error", NETWORK_CMD_DEVICE_INFO, info);
-                return false;
-        }
-
-        if (user_data_get()->register_device_count < 1)
-        {
-                SAT_DEBUG("register device is 0");
-                return false;
-        }
-
-        char username[128] = {0};
-        if (sat_sip_local_user_get(username) == false)
-        {
-                return false;
-        }
-
-        if (strncmp(str_number, username, 12))
-        {
-                return true;
-        }
-
-        int socket_fd = -1;
-        int port = 0;
-
-        sscanf(str_port, "%d", &port);
-        if (sat_socket_tcp_open(&socket_fd, port, 0) == false)
-        {
-                SAT_DEBUG("tcp open failed ");
-                return false;
-        }
-
-        if (sat_socket_tcp_connect(socket_fd, str_ip, port, 1000) == false)
-        {
-                sat_socket_close(socket_fd);
-                SAT_DEBUG("connect timeout ");
-                return false;
-        }
-
-        network_device_info device_info;
-        memset(device_info.number, 0, sizeof(device_info.number));
-        strcpy(device_info.number, username);
-        memset(device_info.name, 0, sizeof(device_info.name));
-        strcpy(device_info.name, user_data_get()->device.name);
-        if (sat_socket_tcp_send(socket_fd, (unsigned char *)&device_info, sizeof(network_device_info), 500) == false)
-        {
-
-                sat_socket_close(socket_fd);
-                SAT_DEBUG("send(%s) failed ", device_info.number);
-                return false;
-        }
-
-        sat_socket_close(socket_fd);
-        return true;
-}
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 10:13:8
-** 说明: 用户呼入处理
-***********************************************/
-static user_network_func_s user_network_multicast_func_array[] =
-    {
-        {NETWORK_CMD_DEVICE_INFO,
-         network_cmd_device_info_func,
-         "device_info user port force"},
-
-        {NETWORK_CMD_DEVICE_BY_NUMBER,
-         network_cmd_device_by_number_func,
-         "device_by_number server_ip port number"},
-
-};
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 17:37:3
-** 说明：网络事件处理
-***********************************************/
-static void user_network_multicast_event_func(char *info, struct sockaddr_in *client_addr)
-{
-        char *ptr = NULL;
-        char *args = NULL;
-
-        string_space_cur_and_next_ptr_get(info, &ptr, &args);
-        if ((ptr == NULL) || (args == NULL))
-        {
-                return;
-        }
-
-        int n_func = sizeof(user_network_multicast_func_array) / sizeof(user_network_func_s);
-
-        for (int i = 0; i < n_func; i++)
-        {
-
-                if (strcmp(user_network_multicast_func_array[i].cmd, (char *)ptr) == 0)
-                {
-
-                        if (user_network_multicast_func_array[i].func != NULL)
+                        const char *text = mxmlGetText(probe, NULL);
+                        if (text != NULL)
                         {
-
-                                user_network_multicast_func_array[i].func(args, client_addr);
+                                strncpy(data, text, size);
+                                reslut = true;
                         }
-
-                        break;
                 }
         }
-}
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-10 8:16:51
-** 说明: 判断是否属于同一帧
-***********************************************/
-static bool user_network_frame_check(char *buffer, int len, struct sockaddr_in *sock_addr)
-{
-
-        static char receive_buffer_addr[256] = {
-            0};
-        static int receive_buffer_len = 0;
-
-        static struct sockaddr_in server_addr;
-        static unsigned long long receive_buffer_timestamp = 0;
-
-        unsigned long long timestamp = user_timestamp_get();
-
-        if (((timestamp - receive_buffer_timestamp) > 100) || (len != receive_buffer_len) || (strcmp(buffer, receive_buffer_addr)) || (memcmp(sock_addr, &server_addr, sizeof(struct sockaddr_in))))
+        else
         {
-
-                receive_buffer_len = len;
-                memset(receive_buffer_addr, 0, sizeof(receive_buffer_addr));
-                strcpy(receive_buffer_addr, buffer);
-                server_addr = *sock_addr;
-                receive_buffer_timestamp = timestamp;
-                return true;
+                SAT_DEBUG("mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);")
+        }
+        mxmlDelete(root);
+        return reslut;
+}
+static bool discover_devices_data_uuid_get(const char *buf, int size, char *uuid, int uuid_size)
+{
+        bool reslut = false;
+        char *pxml = strstr(buf, "<?xml version=\"1.0\"");
+        if (pxml == NULL)
+        {
+                printf("%s\n", buf);
+                return false;
         }
 
-        return false;
+        mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
+        if (root != NULL)
+        {
+                mxml_node_t *probe = mxmlFindElementSub(root, root, "MessageID", NULL, NULL, MXML_DESCEND);
+                if (probe != NULL)
+                {
+                        const char *text = mxmlGetText(probe, NULL);
+                        if (text != NULL)
+                        {
+                                strncpy(uuid, text, uuid_size);
+                                reslut = true;
+                        }
+                }
+        }
+        else
+        {
+                SAT_DEBUG("mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);")
+        }
+        mxmlDelete(root);
+        return reslut;
+}
+/*向对端发送设备信息*/
+static bool doorcamera_device_discover_processing(struct sockaddr_in *client_addr, const char *relatesto_uuid)
+{
+        bool reslut = true;
+        char *xml_buffer = malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        char *xml_buffer_fmt = malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        size_t xml_len = sat_file_read(DISCONVER_DEVICE_FILE_PATH, xml_buffer, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_len <= 0)
+        {
+                SAT_DEBUG("read %s failed ", DISCONVER_DEVICE_FILE_PATH);
+                reslut = false;
+                goto finish;
+        }
+        static long msg_count = 10000;
+        char ip[32] = {0};
+        char local_uuid[128] = {0};
+        const char *username = getenv("SIP");
+        char regist_id[9] = {0};
+        for (int i = 6, j = 0; i < 12; i += 2, j += 3)
+        {
+                strncat(&regist_id[j], &username[i], 2);
+                if ((j + 2) < (sizeof(regist_id) - 3))
+                {
+                        regist_id[j + 2] = '-';
+                }
+        }
+
+        sprintf(local_uuid, "00010010-0001-1020-8000-%s", username);
+        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sprintf(xml_buffer_fmt, xml_buffer, msg_count++, local_uuid, relatesto_uuid, local_uuid, regist_id, username, user_data_get()->device.name, ip);
+        //    SAT_DEBUG("%s", xml_buffer_fmt);
+        /****************************************************************
+        2022-09-20 author:leo.liu 说明:发送探测消息
+        *****************************************************************/
+        xml_len = sendto(user_linphone_multicast_fd, xml_buffer_fmt, strlen(xml_buffer_fmt), 0, (const struct sockaddr *)client_addr, sizeof(struct sockaddr_in));
+        if (xml_len < 0)
+        {
+                SAT_DEBUG(" xml_len = sendto(user_linphone_multicast_fd, xml_buffer, xml_len, 0, (const struct sockaddr *)client_addr, sizeof(struct sockaddr_in));");
+        }
+
+finish:
+        if (xml_buffer != NULL)
+        {
+                free(xml_buffer);
+        }
+        if (xml_buffer_fmt != NULL)
+        {
+                free(xml_buffer_fmt);
+        }
+        return reslut;
+}
+
+/*接受数据解析处理*/
+static bool discover_receive_data_parsing_processing(struct sockaddr_in *client_addr, const char *buf, int size)
+{
+        char data[128] = {0};
+        if (discover_devices_data_parsing(buf, "Types", data, sizeof(data)) == true)
+        {
+                // SAT_DEBUG("discover :%s", type);
+                /* 设备搜索*/
+                if ((strstr(data, "Device") != NULL) || (strstr(data, "NetworkVideoTransmitter") != NULL))
+                {
+                        char relatesto_uuid[128] = {0};
+                        if (discover_devices_data_uuid_get(buf, size, relatesto_uuid, sizeof(relatesto_uuid)) == true)
+                        {
+                                if ((strstr(relatesto_uuid, "18fafa95-0721-0823-0108-a98aa2dda8f7")) && (user_key_state_get() != KEY_STATE_LONG_DOWN))
+                                {
+                                        SAT_DEBUG("CIP70QPT is searching for a device, please hold down the call button");
+                                        return false;
+                                }
+                                doorcamera_device_discover_processing(client_addr, relatesto_uuid);
+                        }
+                }
+        }
+        return true;
 }
 
 /***********************************************
@@ -380,28 +199,21 @@ static bool user_network_frame_check(char *buffer, int len, struct sockaddr_in *
 static void *user_network_task(void *arg)
 {
         int recv_len = 0;
-        char buffer[256] = {
-            0};
+        /*存在缺陷，如果两帧都是buffer_size大小的包，并且间隔小于500ms，会被丢失之前的包*/
+        char *buffer = malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         struct sockaddr_in client_addr;
-        sat_socket_udp_open(&user_linphone_multicast_fd, USER_NETWORK_MULTICAST_PORT, false);
 
+        sat_socket_udp_open(&user_linphone_multicast_fd, USER_NETWORK_MULTICAST_PORT, true);
         sat_socket_multicast_join(user_linphone_multicast_fd, USER_NETWORK_MULTICAST_IP);
-
         while (1)
         {
 
-                memset(buffer, 0, sizeof(buffer));
+                memset(buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
                 memset(&client_addr, 0, sizeof(struct sockaddr_in));
-                recv_len = sat_socket_udp_receive(user_linphone_multicast_fd, buffer, sizeof(buffer), &client_addr, 1000);
-
+                recv_len = sat_socket_udp_receive(user_linphone_multicast_fd, buffer, DOOR_CAMERA_RECEIVE_BUFFER_MAX, &client_addr, 1000);
                 if (recv_len > 0)
                 {
-
-                        if (user_network_frame_check(buffer, recv_len, &client_addr) == true)
-                        {
-
-                                user_network_multicast_event_func(buffer, &client_addr);
-                        }
+                        discover_receive_data_parsing_processing(&client_addr, buffer, recv_len);
                 }
         }
 
@@ -409,449 +221,811 @@ static void *user_network_task(void *arg)
 }
 /*********************************************** 		tcp   		***********************************************/
 
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 10:13:8
-** 说明: 用户呼入处理
-***********************************************/
+#define POST_ONVIF_DEVICE_HTML_TEXT "POST /onvif/device_service"
+#define POST_ONVIF_MEDIA_TEXT "POST /onvif/media"
 
-typedef bool (*user_network_tcp_func)(int client_fd, char *args, struct sockaddr_in *client_addr);
-typedef struct
+static bool tcp_device_serverce_xml_parsing(const char *xml,
+                                            char *username, int username_size,
+                                            char *password_digest, int passowrd_digest_size,
+                                            char *nonce, int nonce_size,
+                                            char *created, int created_size)
 {
-
-        char *cmd;
-        user_network_tcp_func func;
-        char *help;
-} user_network_tcp_func_s;
-
-#define NETWORK_CMD_DEVICE_ONLINE "device_online"
-#define NETWORK_CMD_DOOR_CAMERA_DEVICE_REGISTER "door_camera_device_register"
-#define NETWORK_CMD_DEVICE_VERSION "device_version"
-#define NETWORK_CMD_DEVICE_PASSWORD "device_password"
-#define NETWORK_CMD_DEVICE_NAME "device_name"
-#define NETWORK_CMD_DEVICE_DELETE "device_delete"
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-10 8:16:51
-** 说明:查询ip是否在线
-***********************************************/
-static bool network_cmd_device_online_func(int client_fd, char *info, struct sockaddr_in *client_addr)
-{
-        char *str_number = NULL;
-        char *str_ip = NULL;
-        string_space_cur_and_next_ptr_get(info, &str_number, &str_ip);
-        if ((str_number == NULL) /*|| (str_ip == NULL)*/)
+        bool reslut = false;
+        char *pxml = strstr(xml, "<?xml version=\"1.0\"");
+        if (pxml == NULL)
         {
-                SAT_DEBUG("str_number failed:%s", info);
+                printf("%s\n", xml);
                 return false;
         }
 
-        for (int i = 0; i < user_data_get()->register_device_count; i++)
+        mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
+        if (root != NULL)
         {
-                if (strncmp(str_number, user_data_get()->register_device[i], 12) == 0)
+                mxml_node_t *node = mxmlFindElementSub(root, root, "Username", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
                 {
-                        network_device_info device_info;
-                        memset(device_info.number, 0, sizeof(device_info.number));
-                        strcpy(device_info.name, user_data_get()->device.name);
-                        // strcpy(device.password, user_data_get()->device_password);
-                        if (sat_sip_local_user_get(device_info.number) == false)
+                        const char *text = mxmlGetText(node, NULL);
+                        if (text != NULL)
                         {
-                                SAT_DEBUG(" sip user get failed ");
-                                return false;
-                        }
-
-                        if (sat_socket_tcp_send(client_fd, (unsigned char *)&device_info, sizeof(device_info), 500) == false)
-                        {
-                                SAT_DEBUG(" send(%s) failed ", info);
-                                return false;
-                        }
-                        SAT_DEBUG("online %s", info);
-                        return true;
-                }
-        }
-        SAT_DEBUG("offline %s", info);
-        return false;
-}
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-10 8:16:51
-** 说明:修改账号与IP
-***********************************************/
-static bool network_cmd_door_camera_device_register_func(int client_fd, char *info, struct sockaddr_in *client_addr)
-{
-        char *str_number = NULL;
-        char *str_register_number = NULL;
-        char *str_force = NULL;
-        SAT_DEBUG(" info = %s", info);
-        string_space_cur_and_next_ptr_get(info, &str_register_number, &str_number);
-        string_space_cur_and_next_ptr_get(str_number, &str_number, &str_force);
-        SAT_DEBUG(" str_number =%s register:%s force:%s", str_number, str_register_number, str_force);
-
-        if ((str_number == NULL) || (str_register_number == NULL) || (str_force == NULL))
-        {
-                SAT_DEBUG(" number or ip is null");
-                sat_socket_tcp_send(client_fd, (unsigned char *)"password error", strlen("password error") + 1, 500);
-                return false;
-        }
-
-        if ((strlen(str_number) != 12) /*|| (strlen(str_register_number) != 12)*/)
-        {
-                SAT_DEBUG(" str_number(%d) != 12 ", strlen(str_number));
-                sat_socket_tcp_send(client_fd, (unsigned char *)"password error", strlen("password error") + 1, 500);
-                return false;
-        }
-        int value = (str_number[3] - 48) * 100 + (str_number[4] - 48) * 10 + (str_number[5] - 48);
-        if ((value & 0xE0) != 0xC0)
-        {
-                SAT_DEBUG(" value(%02X) & 0xE0) != 0xC0 ", value & 0xE0);
-                sat_socket_tcp_send(client_fd, (unsigned char *)"password error", strlen("password error") + 1, 500);
-                return false;
-        }
-
-        if (sat_socket_tcp_send(client_fd, (unsigned char *)"input password", strlen("input password") + 1, 500) == false)
-        {
-                SAT_DEBUG(" send(%s) failed ", info);
-                return false;
-        }
-
-        unsigned char buffer[16] = {0};
-        if (sat_socket_tcp_receive(client_fd, buffer, sizeof(buffer) - 1, 500) == false)
-        {
-                SAT_DEBUG(" recv(%s) failed ", info);
-                return false;
-        }
-        if (strcmp(user_data_get()->device.password, (char *)buffer))
-        {
-                SAT_DEBUG(" password error %s###########%s ", user_data_get()->device.password, buffer);
-                sat_socket_tcp_send(client_fd, (unsigned char *)"password error", strlen("password error") + 1, 500);
-                return false;
-        }
-
-        if (user_data_get()->register_device_count >= DEVICE_MAX)
-        {
-                int j = 0;
-                for (j = 1; j < (user_data_get()->register_device_count - 1); j++)
-                {
-                        memcpy(user_data_get()->register_device[j], user_data_get()->register_device[j + 1], sizeof(user_data_get()->register_device[j]));
-                }
-                memset(&(user_data_get()->register_device[j]), 0, sizeof(user_data_get()->register_device[j]));
-                user_data_get()->register_device_count--;
-                user_data_save();
-                //    sat_socket_tcp_send(client_fd, (unsigned char *)"register device max", strlen("register device max") + 1, 500);
-                // return false;
-        }
-
-        if (sat_socket_tcp_send(client_fd, (unsigned char *)"register success", strlen("register success") + 1, 500) == false)
-        {
-                SAT_DEBUG(" send(%s) failed ", info);
-                return false;
-        }
-
-        // 010129001011
-        char loc_ip[64] = {0};
-        char send_number[128] = {0};
-        sat_ip_mac_addres_get("eth0", loc_ip, NULL);
-        if ((str_force[0] == '0') && (strncmp(str_number, user_data_get()->device.number, 11) == 0))
-        {
-                sprintf(send_number, "%s@%s", user_data_get()->device.number, loc_ip);
-                if (sat_socket_tcp_send(client_fd, (unsigned char *)send_number, strlen(send_number) + 1, 500) == false)
-                {
-                        SAT_DEBUG(" send(%s) failed ", info);
-                        return false;
-                }
-                for (int i = 0; i < user_data_get()->register_device_count; i++)
-                {
-                        if (strncmp(user_data_get()->register_device[i], str_register_number, 12) == 0)
-                        {
-                                SAT_DEBUG(" multiple registration(%s:%s)", str_register_number, send_number);
-                                return true;
+                                //  SAT_DEBUG("Username:%s\n\n%s\n\n", text,pxml);
+                                strncpy(username, text, username_size);
+                                reslut = true;
                         }
                 }
-                strncpy(user_data_get()->register_device[user_data_get()->register_device_count++], str_register_number, sizeof(user_data_get()->register_device[0]));
-                user_data_save();
-                SAT_DEBUG(" modiy :register:indoor %s outdoor:%s", str_register_number, send_number);
+
+                node = mxmlFindElementSub(root, root, "Password", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        const char *text = mxmlGetText(node, NULL);
+                        if (text != NULL)
+                        {
+                                //  SAT_DEBUG("Password:%s", text);
+                                strncpy(password_digest, text, passowrd_digest_size);
+                                reslut = true;
+                        }
+                }
+
+                node = mxmlFindElementSub(root, root, "Nonce", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        const char *text = mxmlGetText(node, NULL);
+                        if (text != NULL)
+                        {
+                                //   SAT_DEBUG("Nonce:%s", text);
+                                strncpy(nonce, text, nonce_size);
+                                reslut = true;
+                        }
+                }
+
+                node = mxmlFindElementSub(root, root, "Created", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        const char *text = mxmlGetText(node, NULL);
+                        if (text != NULL)
+                        {
+                                //  SAT_DEBUG("created:%s", text);
+                                strncpy(created, text, created_size);
+                                reslut = true;
+                        }
+                }
         }
         else
         {
-                sprintf(send_number, "%s@%s", str_number, loc_ip);
-                if (sat_socket_tcp_send(client_fd, (unsigned char *)send_number, strlen(send_number) + 1, 500) == false)
+                SAT_DEBUG("mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);")
+        }
+        mxmlDelete(root);
+
+        return reslut;
+}
+
+static bool onvif_username_token_check(const char *admin, const char *from_token, const char *nonce, const char *created)
+{
+        // base64decode(nonce);
+        char nonce_decode[128] = {0};
+        size_t nonce_decode_len = 0;
+        base64_decode(nonce, strlen(nonce), (char *)nonce_decode, &nonce_decode_len, 0);
+
+        // sha1(base64decode(nonce) + date +password);
+        SHA1_CTX ctx;
+        SHA1Init(&ctx);
+        SHA1Update(&ctx, (unsigned char *)nonce_decode, nonce_decode_len);
+        SHA1Update(&ctx, (unsigned char *)created, strlen(created));
+        SHA1Update(&ctx, (unsigned char *)user_data_get()->device.password, strlen(user_data_get()->device.password));
+
+        // 输出sha1后的数据
+        char hash2[20];
+        SHA1Final((unsigned char *)hash2, &ctx);
+
+        // base64编码
+        char src_token[128] = {0};
+        struct base64_state state;
+        base64_stream_encode_init(&state, 0);
+        size_t encode_len = 0;
+        base64_stream_encode(&state, hash2, 20, src_token, &encode_len);
+        size_t final_len = 0;
+        base64_stream_encode_final(&state, &src_token[encode_len], &final_len);
+
+        if (strcmp(from_token, src_token))
+        {
+                SAT_DEBUG("password error");
+                return false;
+        }
+        SAT_DEBUG("password check success");
+        return true;
+}
+
+static bool tcp_device_serverce_xml_bad_request(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(BAD_REQUEST_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(BAD_REQUEST_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(html_size);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(html_size);");
+                return false;
+        }
+
+        memset(html_fmt, 0, html_size);
+        int read_len = sat_file_read(BAD_REQUEST_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(BAD_REQUEST_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        {
+                SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
+        }
+
+        free(html_fmt);
+        return true;
+}
+
+static bool trcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
+{
+        int html_size = sat_file_size_get(S200_OK_REQUEST_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(S200_OK_REQUEST_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                return false;
+        }
+
+        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = sat_file_read(S200_OK_REQUEST_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(S200_OK_REQUEST_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_buffer == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_fmt = strstr(html_fmt, "<?xml version=\"1.0\"");
+        if (xml_fmt == NULL)
+        {
+                SAT_DEBUG("char *xml_fmt = strstr(html_fmt, \"<?xml version=1.0\n%s\n", html_fmt);
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_buffer == NULL)
+        {
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        sprintf(xml_buffer, xml_fmt, string);
+        int xml_size = strlen(xml_buffer);
+
+        memset(xml_fmt, 0, strlen(xml_fmt) + 1);
+        strcpy(xml_fmt, xml_buffer);
+
+        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(html_buffer, html_fmt, xml_size);
+        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+
+        free(html_buffer);
+        free(html_fmt);
+        free(xml_buffer);
+        return true;
+}
+
+static bool tcp_device_serverce_xml_get_information(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(DEVICE_SERVICE_GET_INFORMATION_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(DEVICE_SERVICE_GET_INFORMATION_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(html_size);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(html_size);");
+                return false;
+        }
+
+        memset(html_fmt, 0, html_size);
+        int read_len = sat_file_read(DEVICE_SERVICE_GET_INFORMATION_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(DEVICE_SERVICE_GET_INFORMATION_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        {
+                SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
+        }
+
+        free(html_fmt);
+        return true;
+}
+
+static bool tcp_device_servrce_xml_get_capabilities(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(DEVICE_SERVICE_GET_CAPABILITIES_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(DEVICE_SERVICE_GET_CAPABILITIES_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                return false;
+        }
+
+        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = sat_file_read(DEVICE_SERVICE_GET_CAPABILITIES_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_MAP_PORTS_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_buffer == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_fmt = strstr(html_fmt, "<?xml version=\"1.0\"");
+        if (xml_fmt == NULL)
+        {
+                SAT_DEBUG("char *xml_fmt = strstr(html_fmt, \"<?xml version=1.0\n%s\n", html_fmt);
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_buffer == NULL)
+        {
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+        char ip[32] = {0};
+        sat_ip_mac_addres_get("eth0", ip, NULL);
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(xml_buffer, xml_fmt, ip, ip, ip, ip, ip, ip, ip, ip, ip, ip, ip);
+        int xml_size = strlen(xml_buffer);
+
+        memset(xml_fmt, 0, strlen(xml_fmt) + 1);
+        strcpy(xml_fmt, xml_buffer);
+
+        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(html_buffer, html_fmt, xml_size);
+        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+
+        free(html_buffer);
+        free(html_fmt);
+        free(xml_buffer);
+        return true;
+}
+
+static bool tcp_device_servrce_xml_get_scopes(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(DEVICE_SERVICE_GET_SCOPES_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(DEVICE_SERVICE_GET_SCOPES_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                return false;
+        }
+
+        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = sat_file_read(DEVICE_SERVICE_GET_SCOPES_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_MAP_PORTS_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_buffer == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_fmt = strstr(html_fmt, "<?xml version=\"1.0\"");
+        if (xml_fmt == NULL)
+        {
+                SAT_DEBUG("char *xml_fmt = strstr(html_fmt, \"<?xml version=1.0\n%s\n", html_fmt);
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_buffer == NULL)
+        {
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+        const char *username = getenv("SIP");
+        char regist_id[9] = {0};
+        for (int i = 6, j = 0; i < 12; i += 2, j += 3)
+        {
+                strncat(&regist_id[j], &username[i], 2);
+                if ((j + 2) < (sizeof(regist_id) - 3))
                 {
-                        SAT_DEBUG(" send(%s) failed ", info);
+                        regist_id[j + 2] = '-';
+                }
+        }
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(xml_buffer, xml_fmt, regist_id, username, user_data_get()->device.name);
+        int xml_size = strlen(xml_buffer);
+
+        memset(xml_fmt, 0, strlen(xml_fmt) + 1);
+        strcpy(xml_fmt, xml_buffer);
+
+        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(html_buffer, html_fmt, xml_size);
+        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+
+        free(html_buffer);
+        free(html_fmt);
+        free(xml_buffer);
+        return true;
+}
+
+static bool tcp_device_servrce_xml_get_register(int tcp_socket_fd, const char *xml)
+{
+        char sip_uri[128] = {0};
+        if (discover_devices_data_parsing(xml, "Device", sip_uri, sizeof(sip_uri)) == false)
+        {
+                return false;
+        }
+        char *p = strstr(sip_uri, "sip:");
+        if (p == NULL)
+        {
+                SAT_DEBUG(" p = %s", sip_uri);
+                return false;
+        }
+
+        if (detemine_existence_of_the_sip_uri(sip_uri) == false)
+        {
+                if (register_a_sip_uri(sip_uri) == false)
+                {
+                        SAT_DEBUG("if(register_a_sip_uri(sip_uri) == false)");
                         return false;
                 }
-
-                user_data_get()->register_device_count = 0;
-                memset(user_data_get()->register_device, 0, sizeof(user_data_get()->register_device));
-                strcpy(user_data_get()->device.number, str_number);
-                strcpy(user_data_get()->register_device[user_data_get()->register_device_count++], str_register_number);
-
-                /*修改默认IP和mask*/
-                automatic_number_setting_ip();
-
                 user_data_save();
-
-                sat_socket_close(client_fd);
-
-                SAT_DEBUG(" channge:register:indoor %s outdoor:%s", str_register_number, send_number);
-                usleep(1000 * 1000);
-                system("reboot");
         }
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "register");
+        return true;
+}
+
+static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml)
+{
+        char sip_uri[128] = {0};
+        if (discover_devices_data_parsing(xml, "Device", sip_uri, sizeof(sip_uri)) == false)
+        {
+                return false;
+        }
+        char *p = strstr(sip_uri, "sip:");
+        if (p == NULL)
+        {
+                SAT_DEBUG(" p = %s", sip_uri);
+                return false;
+        }
+
+        if (detemine_existence_of_the_sip_uri(sip_uri) == false)
+        {
+                SAT_DEBUG("Account already exists :%s", sip_uri);
+                return false;
+        }
+
+        if (delete_a_sip_uri(sip_uri) == false)
+        {
+                SAT_DEBUG("if(register_a_sip_uri(sip_uri) == false)");
+                return false;
+        }
+        user_data_save();
+
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "delete");
+        return true;
+}
+
+static bool tcp_device_servrce_xml_get_device_name(int tcp_socket_fd, const char *xml)
+{
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
+        return true;
+}
+
+static bool tcp_device_servrce_xml_set_device_name(int tcp_socket_fd, const char *xml)
+{
+        char sip_uri[128] = {0};
+        if (discover_devices_data_parsing(xml, "Device", sip_uri, sizeof(sip_uri)) == false)
+        {
+                return false;
+        }
+        strncpy(user_data_get()->device.name, sip_uri, sizeof(user_data_get()->device.name));
+        user_data_save();
+        SAT_DEBUG("change name:%s", sip_uri);
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        return true;
+}
+static bool tcp_device_servrce_xml_channge_device_password(int tcp_socket_fd, const char *xml)
+{
+        char sip_uri[128] = {0};
+        if (discover_devices_data_parsing(xml, "Device", sip_uri, sizeof(sip_uri)) == false)
+        {
+                return false;
+        }
+        strncpy(user_data_get()->device.password, sip_uri, sizeof(user_data_get()->device.password));
+        user_data_save();
+        SAT_DEBUG("change password:%s", sip_uri);
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        return true;
+}
+
+static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+{
+        char username[128] = {0};
+        char password[128] = {0};
+        char nonce[128] = {0};
+        char created[128] = {0};
+        if (tcp_device_serverce_xml_parsing((const char *)recv_data, username, sizeof(username),
+                                            password, sizeof(password),
+                                            nonce, sizeof(nonce),
+                                            created, sizeof(created)) == false)
+        {
+                SAT_DEBUG("tcp_device_serverce_xml_parsing() == false");
+                return false;
+        }
+        if (onvif_username_token_check(username, password, nonce, created) == false)
+        {
+                return tcp_device_serverce_xml_bad_request(tcp_socket_fd);
+        }
+
+        char *soap_action_start_ptr = strstr((const char *)recv_data, "SOAPAction");
+        if (soap_action_start_ptr == NULL)
+        {
+                SAT_DEBUG("char* soap_action_start_ptr = strstr(recv_data,\" SOAPAction \")");
+                return false;
+        }
+        char *soap_action_end_str = strstr((const char *)recv_data, "<?xml version=\"1.0\"");
+        if (soap_action_end_str == NULL)
+        {
+                SAT_DEBUG(" char *soap_action_end_str = strstr(recv_data, \"<?xml version=\"1.0\");");
+                return false;
+        }
+        soap_action_end_str[0] = '\0';
+        if (strstr(soap_action_start_ptr, "GetDeviceInformation"))
+        {
+                return tcp_device_serverce_xml_get_information(tcp_socket_fd);
+        }
+        if (strstr(soap_action_start_ptr, "GetCapabilities"))
+        {
+                return tcp_device_servrce_xml_get_capabilities(tcp_socket_fd);
+        }
+        if (strstr(soap_action_start_ptr, "GetScopes"))
+        {
+                return tcp_device_servrce_xml_get_scopes(tcp_socket_fd);
+        }
+        if (strstr(soap_action_start_ptr, "Register"))
+        {
+                soap_action_end_str[0] = '<';
+                return tcp_device_servrce_xml_get_register(tcp_socket_fd, soap_action_end_str);
+        }
+        if (strstr(soap_action_start_ptr, "Delete"))
+        {
+                soap_action_end_str[0] = '<';
+                return tcp_device_servrce_xml_get_delete(tcp_socket_fd, soap_action_end_str);
+        }
+        if (strstr(soap_action_start_ptr, "Get name"))
+        {
+                soap_action_end_str[0] = '<';
+                return tcp_device_servrce_xml_get_device_name(tcp_socket_fd, soap_action_end_str);
+        }
+        if (strstr(soap_action_start_ptr, "Set name"))
+        {
+                soap_action_end_str[0] = '<';
+                return tcp_device_servrce_xml_set_device_name(tcp_socket_fd, soap_action_end_str);
+        }
+        if (strstr(soap_action_start_ptr, "Change password"))
+        {
+                soap_action_end_str[0] = '<';
+                return tcp_device_servrce_xml_channge_device_password(tcp_socket_fd, soap_action_end_str);
+        }
+        //     SAT_DEBUG("%s", soap_action_start_ptr);
+        return false;
+}
+
+static bool tcp_receive_onvif_media_get_profiles_processing(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_MEDIA_PROFILE_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_MEDIA_PROFILE_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                return false;
+        }
+
+        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = sat_file_read(GET_ONVIF_MEDIA_PROFILE_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_MAP_PORTS_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_buffer == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_fmt = strstr(html_fmt, "<?xml version=\"1.0\"");
+        if (xml_fmt == NULL)
+        {
+                SAT_DEBUG("char *xml_fmt = strstr(html_fmt, \"<?xml version=1.0\n%s\n", html_fmt);
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_buffer == NULL)
+        {
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+        const char *username = getenv("SIP");
+        char regist_id[9] = {0};
+        for (int i = 6, j = 0; i < 12; i += 2, j += 3)
+        {
+                strncat(&regist_id[j], &username[i], 2);
+                if ((j + 2) < (sizeof(regist_id) - 3))
+                {
+                        regist_id[j + 2] = '-';
+                }
+        }
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(xml_buffer, xml_fmt, regist_id, username);
+        int xml_size = strlen(xml_buffer);
+
+        memset(xml_fmt, 0, strlen(xml_fmt) + 1);
+        strcpy(xml_fmt, xml_buffer);
+
+        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(html_buffer, html_fmt, xml_size);
+        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+
+        free(html_buffer);
+        free(html_fmt);
+        free(xml_buffer);
+        return true;
+}
+
+static bool tcp_receive_onvif_media_get_streamuri_processing(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_STREAM_URI_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_STREAM_URI_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                return false;
+        }
+
+        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = sat_file_read(GET_ONVIF_STREAM_URI_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(DOOR_CAMERA_RECEIVE_BUFFER_MAX, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_buffer == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_fmt = strstr(html_fmt, "<?xml version=\"1.0\"");
+        if (xml_fmt == NULL)
+        {
+                SAT_DEBUG("char *xml_fmt = strstr(html_fmt, \"<?xml version=1.0\n%s\n", html_fmt);
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_buffer == NULL)
+        {
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+        char ip[32] = {0};
+        const char *username = getenv("SIP");
+        sat_ip_mac_addres_get("eth0", ip, NULL);
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(xml_buffer, xml_fmt, ip, username, ip);
+        int xml_size = strlen(xml_buffer);
+
+        memset(xml_fmt, 0, strlen(xml_fmt) + 1);
+        strcpy(xml_fmt, xml_buffer);
+
+        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(html_buffer, html_fmt, xml_size);
+        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+
+        free(html_buffer);
+        free(html_fmt);
+        free(xml_buffer);
+        return true;
+}
+
+static bool tcp_receive_onvif_media_get_video_sources_processing(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_VIDEO_SOURCE_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_VIDEO_SOURCE_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(html_size);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(html_size);");
+                return false;
+        }
+
+        memset(html_fmt, 0, html_size);
+        int read_len = sat_file_read(GET_ONVIF_VIDEO_SOURCE_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_ONVIF_VIDEO_SOURCE_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        {
+                SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
+        }
+
+        free(html_fmt);
 
         return true;
 }
-static bool network_cmd_device_version_func(int client_fd, char *info, struct sockaddr_in *client_addr)
+static bool tcp_receive_onvif_media_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
-        char *str_number = NULL;
-        char *str_ip = NULL;
-        string_space_cur_and_next_ptr_get(info, &str_number, &str_ip);
-        if ((str_number == NULL) /* || (str_ip == NULL) */)
+        char username[128] = {0};
+        char password[128] = {0};
+        char nonce[128] = {0};
+        char created[128] = {0};
+        if (tcp_device_serverce_xml_parsing((const char *)recv_data, username, sizeof(username),
+                                            password, sizeof(password),
+                                            nonce, sizeof(nonce),
+                                            created, sizeof(created)) == false)
         {
-                SAT_DEBUG(" number or ip is null");
+                SAT_DEBUG("tcp_device_serverce_xml_parsing() == false");
                 return false;
         }
-        if (user_data_get()->register_device_count < 1)
+        if (onvif_username_token_check(username, password, nonce, created) == false)
         {
-                SAT_DEBUG("register device is 0");
+                return tcp_device_serverce_xml_bad_request(tcp_socket_fd);
+        }
+
+        char *soap_action_start_ptr = strstr((const char *)recv_data, "SOAPAction");
+        char *soap_action_end_str = strstr((const char *)recv_data, "<?xml version=\"1.0\"");
+        if (soap_action_end_str == NULL)
+        {
+                SAT_DEBUG(" char *soap_action_end_str = strstr(recv_data, \"<?xml version=\"1.0\");");
                 return false;
         }
 
-        if (strlen(str_number) != 12)
+        if (soap_action_start_ptr == NULL)
         {
-                SAT_DEBUG(" str_number(%d) != 12 ", strlen(str_number));
-                return false;
+                soap_action_start_ptr = soap_action_end_str;
         }
-        int value = (str_number[3] - 48) * 100 + (str_number[4] - 48) * 10 + (str_number[5] - 48);
-        if ((value & 0xE0) != 0xC0)
+        else
         {
-                SAT_DEBUG(" value(%02X) & 0xE0) != 0xC0 ", value & 0xE0);
-                return false;
+                soap_action_end_str[0] = '\0';
         }
-
-        struct tm tm;
-        if (platform_build_date_get(&tm) == true)
+        if (strstr(soap_action_start_ptr, "GetProfiles"))
         {
-                char buffer[128] = {0};
-                sprintf(buffer, "build time:%04d-%02d-%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-                if (sat_socket_tcp_send(client_fd, (unsigned char *)buffer, strlen(buffer) + 1, 500) == false)
-                {
-                        SAT_DEBUG(" send(%s) failed ", info);
-                        return false;
-                }
-                SAT_DEBUG("%s", buffer);
-                return true;
+                return tcp_receive_onvif_media_get_profiles_processing(tcp_socket_fd);
+        }
+        if (strstr(soap_action_start_ptr, "GetStreamUri"))
+        {
+                return tcp_receive_onvif_media_get_streamuri_processing(tcp_socket_fd);
+        }
+        if (strstr(soap_action_start_ptr, "wsdlGetVideoSources"))
+        {
+                return tcp_receive_onvif_media_get_video_sources_processing(tcp_socket_fd);
         }
         return false;
 }
-// 旧密码验证成功，返回新密码，
-// 旧密码验证失败，返回旧密码
-static bool network_cmd_device_password_func(int client_fd, char *info, struct sockaddr_in *client_addr)
-{ //"device_password A(p1)AAAAAAAAoldA(p2)AAAAAAAAnewA(p3)AAAAAAAA"
 
-        if (user_data_get()->register_device_count < 1)
-        {
-                SAT_DEBUG("register device is 0");
-                return false;
-        }
-
-        bool check_password = true;
-        char *p1 = strstr(info, "AAAAAAAAA");
-        char *p2 = strstr(p1 + 9, "AAAAAAAAA");
-        char *p3 = strstr(p2 + 9, "AAAAAAAAA");
-        if ((((p2 - p1) != 18) || (strncmp(user_data_get()->device.password, p1 + 9, 9) != 0)) || ((p3 - p2) != 18))
-        {
-                check_password = false;
-        }
-
-        if (check_password == true)
-        {
-                memset(user_data_get()->device.password, 0, sizeof(user_data_get()->device.password));
-                memcpy(user_data_get()->device.password, p2 + 9, 9);
-                user_data_save();
-
-                if (sat_socket_tcp_send(client_fd, (unsigned char *)(p2 + 9), 9, 500) == false)
-                {
-                        SAT_DEBUG(" send(%s) failed ", info);
-                        return false;
-                }
-                return true;
-        }
-        if (strncmp(user_data_get()->device.password, p1 + 9, 9) == 0)
-        {
-                if (sat_socket_tcp_send(client_fd, (unsigned char *)(p1 + 9), 9, 500) == false)
-                {
-                        SAT_DEBUG(" send(%s) failed ", info);
-                        return false;
-                }
-        }
-        SAT_DEBUG("%s", info);
-        return true;
-}
-
-static bool network_cmd_device_name_func(int client_fd, char *info, struct sockaddr_in *client_addr)
-{ //"device_password A(p1)AAAAAAAApwdA(p2)AAAAAAAAregister(p3)AAAAAAAA"
-
-        SAT_DEBUG("%s", info);
-        if (user_data_get()->register_device_count < 1)
-        {
-                SAT_DEBUG("register device is 0");
-                return false;
-        }
-        char *p1 = strstr(info, "AAAAAAAAA");
-        char *p2 = strstr(p1 + 9, "AAAAAAAAA");
-        char *p3 = strstr(p2 + 9, "AAAAAAAAA");
-        if (((p2 - p1) != 18) || (strncmp(user_data_get()->device.password, p1 + 9, 9) != 0) || ((p3 - p2) != 21))
-        {
-                SAT_DEBUG("password faield:%s-%d", p1 + 9, p3 - p2);
-                return false;
-        }
-
-        for (int i = 0; i < user_data_get()->register_device_count; i++)
-        {
-                SAT_DEBUG("%s->%s", user_data_get()->register_device[i], p2 + 9);
-                if (strncmp(user_data_get()->register_device[i], p2 + 9, 12) == 0)
-                {
-                        memset(user_data_get()->device.name, 0, sizeof(user_data_get()->device.name));
-                        strcpy(user_data_get()->device.name, p3 + 9);
-                        user_data_save();
-
-                        if (sat_socket_tcp_send(client_fd, (unsigned char *)(user_data_get()->device.name), strlen(user_data_get()->device.name) + 1, 500) == false)
-                        {
-                                SAT_DEBUG(" send(%s) failed ", info);
-                                return false;
-                        }
-                        SAT_DEBUG("username modiy success");
-                        return true;
-                }
-        }
-        SAT_DEBUG("username modiy failed");
-        return false;
-}
-
-static bool network_cmd_device_delete_func(int client_fd, char *info, struct sockaddr_in *client_addr)
-{ //"device_password A(p1)AAAAAAAApassowrdA(p2)AAAAAAAAoutdoor_userAAAAAAAAAindoor user"
-
-        char *p1 = strstr(info, "AAAAAAAAA");
-        char *p2 = strstr(p1 + 9, "AAAAAAAAA");
-        char *p3 = strstr(p2 + 9, "AAAAAAAAA");
-        if ((((p2 - p1) == 18) && (strncmp(user_data_get()->device.password, p1 + 9, 9) != 0)))
-        {
-                SAT_DEBUG("password error:%s->%s", p1, user_data_get()->device.password);
-                return false;
-        }
-
-        if (strncmp(user_data_get()->device.number, p2 + 9, 12) != 0)
-        {
-                SAT_DEBUG("device number error:%s->%s", p2, user_data_get()->device.number);
-                return false;
-        }
-
-        if (user_data_get()->register_device_count < 1)
-        {
-                SAT_DEBUG("register device is 0");
-                return false;
-        }
-        for (int i = 0; i < user_data_get()->register_device_count; i++)
-        {
-                //  SAT_DEBUG("register:%s,del:%s",user_data_get()->register_device[i],p3+9);
-                if (strncmp(user_data_get()->register_device[i], p3 + 9, 12) == 0)
-                {
-                        int j = 0;
-                        for (j = i; j < (user_data_get()->register_device_count - 1); j++)
-                        {
-                                memcpy(user_data_get()->register_device[j], user_data_get()->register_device[j + 1], sizeof(user_data_get()->register_device[j]));
-                        }
-
-                        memset(&(user_data_get()->register_device[j]), 0, sizeof(user_data_get()->register_device[j]));
-
-                        user_data_get()->register_device_count--;
-                        user_data_save();
-
-                        /*发送对应的号码*/
-                        char username[128] = {0};
-                        sat_sip_local_user_get(username);
-                        if (sat_socket_tcp_send(client_fd, (unsigned char *)username, sizeof(username), 500) == false)
-                        {
-                                SAT_DEBUG(" send(%s) failed ", info);
-                                return false;
-                        }
-                        break;
-                }
-        }
-
-        for (int i = 0; i < user_data_get()->register_device_count; i++)
-        {
-                SAT_DEBUG("%d:%s", i, user_data_get()->register_device[i]);
-        }
-        return true;
-}
-static user_network_tcp_func_s user_network_tcp_func_array[] =
-    {
-        {NETWORK_CMD_DEVICE_ONLINE,
-         network_cmd_device_online_func,
-         "device_online number ip"},
-
-        {NETWORK_CMD_DOOR_CAMERA_DEVICE_REGISTER,
-         network_cmd_door_camera_device_register_func,
-         "device_regigter register_number modiy_outdoor_number force"},
-
-        {NETWORK_CMD_DEVICE_VERSION,
-         network_cmd_device_version_func,
-         "device_version number ip"},
-
-        {NETWORK_CMD_DEVICE_PASSWORD,
-         network_cmd_device_password_func,
-         "device_password AAAAAAAAAoldAAAAAAAAAnewAAAAAAAAA"},
-
-        {NETWORK_CMD_DEVICE_NAME,
-         network_cmd_device_name_func,
-         "device_name AAAAAAAAApwdAAAAAAAAAregisternameAAAAAAAAAnewname"},
-
-        {NETWORK_CMD_DEVICE_DELETE,
-         network_cmd_device_delete_func,
-         "device_delete AAAAAAAAApasswordAAAAAAAAAuser"},
-};
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 17:37:3
-** 说明：网络事件处理
-***********************************************/
-static void user_network_tcp_event_func(int socket_fd, char *info, struct sockaddr_in *client_addr)
+static bool tcp_receive_data_parsing_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
-        char *ptr = NULL;
-        char *args = NULL;
-
-        string_space_cur_and_next_ptr_get(info, &ptr, &args);
-        if ((ptr == NULL) || (args == NULL))
+        if (strncasecmp((const char *)recv_data, POST_ONVIF_DEVICE_HTML_TEXT, strlen(POST_ONVIF_DEVICE_HTML_TEXT)) == 0)
         {
-                return;
+                return tcp_receive_device_service_html_processing(tcp_socket_fd, recv_data, recv_size);
         }
-
-        int n_func = sizeof(user_network_tcp_func_array) / sizeof(user_network_func_s);
-
-        for (int i = 0; i < n_func; i++)
+        if (strncasecmp((const char *)recv_data, POST_ONVIF_MEDIA_TEXT, strlen(POST_ONVIF_MEDIA_TEXT)) == 0)
         {
-
-                if (strcmp(user_network_tcp_func_array[i].cmd, (char *)ptr) == 0)
-                {
-
-                        if (user_network_tcp_func_array[i].func != NULL)
-                        {
-
-                                user_network_tcp_func_array[i].func(socket_fd, args, client_addr);
-                        }
-
-                        break;
-                }
+                return tcp_receive_onvif_media_processing(tcp_socket_fd, recv_data, recv_size);
         }
+        return true;
 }
+
 static void *user_network_tcp_task(void *arg)
 {
-#define TCP_RECEIVE_PACKET_MAX (1024)
         int server_fd = -1;
+        int recv_len = 0;
         struct sockaddr_in client_addr;
-        unsigned char *receive_data = (unsigned char *)malloc(TCP_RECEIVE_PACKET_MAX);
+        unsigned char *receive_data = (unsigned char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
 
         sat_socket_tcp_open(&server_fd, USER_NETWORK_TCP_SYNC_SERVER_PORT, DEVICE_MAX);
         while (1)
@@ -860,10 +1034,10 @@ static void *user_network_tcp_task(void *arg)
                 int client_fd = sat_socket_tcp_accept(server_fd, &client_addr, 500);
                 if (client_fd >= 0)
                 {
-                        int recv_len = 0;
-                        while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, TCP_RECEIVE_PACKET_MAX, 100)) > 0)
+                        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+                        while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 100)) > 0)
                         {
-                                user_network_tcp_event_func(client_fd, (char *)receive_data, &client_addr);
+                                tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);
                         }
                         sat_socket_close(client_fd);
                 }
@@ -871,82 +1045,111 @@ static void *user_network_tcp_task(void *arg)
         return NULL;
 }
 
-/***********************************************
- ** 作者: leo.liu
-** 日期: 2022-12-9 13:53:54
-** 说明: 先开启udhcpc获取IP,失败后通过保存的设置IP，
-如果没有IP，通过设置的房号默认分配IP
-***********************************************/
-static void automatic_number_setting_ip(void)
-{
-        // 010193001012
-        int buffer[4] = {0};
-        char ip[32] = {0};
-        memset(buffer, 0, sizeof(buffer));
-        char *username = user_data_get()->device.number;
-
-        buffer[0] = (username[0] - 48) * 100 + (username[1] - 48) * 10 + (username[2] - 48);
-        buffer[1] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48));
-        buffer[2] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
-        buffer[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10 + (username[11] - 48);
-
-        sprintf(ip, "%d.%d.%d.%d", buffer[0], buffer[1], buffer[2], buffer[3]);
-
-        memset(user_data_get()->network.ip, 0, sizeof(user_data_get()->network.ip));
-        strcpy(user_data_get()->network.ip, ip);
-
-        memset(user_data_get()->network.mask, 0, sizeof(user_data_get()->network.mask));
-        strcpy(user_data_get()->network.mask, "255.0.0.0");
-
-        SAT_DEBUG("defalut ip:%s,mask:%s", user_data_get()->network.ip, user_data_get()->network.mask);
-}
-
 #define UDHCPC_TIMEOUT_MAX (300)
-static bool automatic_ip_setting(void)
+static bool ipaddr_udhcp_server_get_wait(void)
 {
-        /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
-
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2022-12-9 13:53:54
-         ** 说明: 步骤一
-         ***********************************************/
+        int count = 0;
+        char ip[32] = {0};
+        char mac[128] = {0};
+        while (sat_ip_mac_addres_get("eth0", ip, mac) == false)
         {
-                int count = 0;
-                char ip[32] = {0};
-                char mac[128] = {0};
-                while (sat_ip_mac_addres_get("eth0", ip, mac) == false)
+                usleep(10 * 1000);
+                count++;
+                if (count > UDHCPC_TIMEOUT_MAX)
                 {
-                        usleep(10 * 1000);
-                        count++;
-                        if (count > UDHCPC_TIMEOUT_MAX)
-                        {
-                                SAT_DEBUG("udhcpc get ip timeout");
-                                break;
-                        }
-                }
-                if (count < UDHCPC_TIMEOUT_MAX)
-                {
-                        if (strcmp(ip, "10.0.0.2"))
-                        {
-                                SAT_DEBUG("udhcp ip get successs ! ");
-                                return true;
-                        }
+                        SAT_DEBUG("udhcpc get ip timeout");
+                        break;
                 }
         }
-
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2022-12-9 13:53:54
-         ** 说明: 步骤二
-         ***********************************************/
-        system("killall udhcpc");
-
+        if (count < UDHCPC_TIMEOUT_MAX)
+        {
+                if (strcmp(ip, "10.0.0.2"))
+                {
+                        SAT_DEBUG("udhcp ip get successs ! ");
+                        return true;
+                }
+        }
+        return false;
+}
+static bool obtain_aipddress_based_on_manual(void)
+{
         char cmd[128] = {0};
         sprintf(cmd, "ifconfig eth0 %s netmask %s", user_data_get()->network.ip, user_data_get()->network.mask[0] != 0 ? user_data_get()->network.mask : "255.0.0.0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
-        memset(cmd, 0, sizeof(cmd));
+        return true;
+}
+
+static int convert_a_string_to_an_integer_number(const char *str, int len)
+{
+        int val = 0;
+        for (int i = 0; i < len; i++)
+        {
+                if ((str[i] >= '0') && (str[i] <= '9'))
+                {
+                        val = val * 16 + (str[i] - '0');
+                }
+                else if ((str[i] >= 'A') && (str[i] <= 'F'))
+                {
+                        val = val * 16 + ((str[i] - 'A') + 10);
+                }
+                else if ((str[i] >= 'a') && (str[i] <= 'f'))
+                {
+                        val = val * 16 + ((str[i] - 'a') + 10);
+                }
+        }
+        return val;
+}
+
+static bool obtain_ipaddress_based_on_mac(void)
+{
+        char mac[64] = {0};
+        if (sat_ip_mac_addres_get("eth0", NULL, mac) == false)
+        {
+                SAT_DEBUG("if(sat_ip_mac_addres_get(\"eth0\",NULL,mac) == false)");
+                return false;
+        }
+
+        /*获取mac的xx:xx:xx:xx:xx:xx 低字节*/
+        char *str = mac;
+        for (int i = 0; i < 3; i++)
+        {
+                str = strchr(str, ':');
+                if (str == NULL)
+                {
+                        SAT_DEBUG("char *str = strchar(mac, ':');%d", i);
+                        return false;
+                }
+                str++;
+        }
+        if (strlen(str) != 8)
+        {
+                SAT_DEBUG("char *str = %s", str);
+                return false;
+        }
+
+        int ip_part[3] = {0};
+        ip_part[0] = convert_a_string_to_an_integer_number(str, 2);
+        ip_part[1] = convert_a_string_to_an_integer_number(str + 3, 2);
+        ip_part[2] = convert_a_string_to_an_integer_number(str + 6, 2);
+
+        char ip[32] = {0};
+        sprintf(ip, "%d.%d.%d.%d", 10, ip_part[0], ip_part[1], ip_part[2]);
+
+        char cmd[128] = {0};
+        sprintf(cmd, "ifconfig eth0 %s netmask %s", ip, "255.0.0.0");
+        system(cmd);
+        SAT_DEBUG("%s ", cmd);
+        return true;
+}
+
+static bool add_multicase_routing_addres(void)
+{
+        char cmd[128] = {0};
+        sprintf(cmd, "route add -net %s netmask %s eth0", "239.0.0.0", "255.0.0.0");
+        system(cmd);
+        SAT_DEBUG("%s ", cmd);
+
         sprintf(cmd, "route add -net %s netmask %s eth0", "225.0.0.0", "255.0.0.0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
@@ -957,13 +1160,24 @@ static bool automatic_ip_setting(void)
         system(cmd);
         SAT_DEBUG("%s ", cmd);
         return true;
-
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2022-12-9 13:53:54
-         ** 说明: 步骤三
-         ***********************************************/
-        //    automatic_number_setting_ip();
+}
+static bool automatic_ip_setting(void)
+{
+        /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
+        if (ipaddr_udhcp_server_get_wait() == false)
+        {
+                system("killall udhcpc");
+                /*手动设置的IP信息*/
+                if (0) //(user_data_get()->network.ip[0] != '\0')
+                {
+                        obtain_aipddress_based_on_manual();
+                }
+                else
+                {
+                        obtain_ipaddress_based_on_mac();
+                }
+                add_multicase_routing_addres();
+        }
         return true;
 }
 
@@ -992,22 +1206,21 @@ char *user_linphone_local_multicast_get(void)
 {
         // ex:户外机:"010129001011" -->>> 225.1.1.10
         // ex:室内机:"010001001011" -->>> 225.1.1.10
-        int value[4] = {
+        int value[4] = {0};
+        static char multicase_ip[32] = {0};
 
-            0};
-        static char multicase_ip[32] = {
-            0};
-        const char *username = getenv("SIP");
-
-        if ((username == NULL) || (strlen(username) < 12))
+        if (user_data_get()->register_device_count < 0)
         {
-
-                SAT_DEBUG("getenv sip failed ");
+                return "224.0.0.0";
+        }
+        char *p = strstr(user_data_get()->register_device[0], "sip:");
+        if ((p == NULL) || ((p + 1) == NULL))
+        {
                 return NULL;
         }
+        const char *username = p + 4;
 
         memset(multicase_ip, 0, sizeof(multicase_ip));
-
         value[0] = 225;
         value[1] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
         value[2] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
@@ -1018,268 +1231,20 @@ char *user_linphone_local_multicast_get(void)
         return multicase_ip;
 }
 
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-5 17:52:32
-** 说明: 查询设备信息
-***********************************************/
-static bool user_network_multicast_cmd_send(unsigned char *cmd, size_t len, network_device_info *device_info, int device_max, int *receive_count, bool force)
+/***********************************TCP 发送************************************************/
+
+/****************************************************************
+**@日期: 2022-09-21
+**@作者: leo.liu
+**@功能:向doorcamera 查询是否在线
+*****************************************************************/
+bool sat_ipcamera_device_name_get(const char *sip_uri, int timeout)
 {
-        bool reslut = false;
-        int server_fd = -1;
-        int client_fd = -1;
-
-        struct sockaddr_in client_addr;
-
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-1-7 10:14:26
-        ** 说明: 建立tcp服务端
-        ***********************************************/
-        if (sat_socket_tcp_open(&server_fd, USER_NETWORK_TCP_ASYNC_PORT, DEVICE_MAX) == false)
+        char name[64] = {0};
+        char *ip = strchr(sip_uri, '@');
+        if ((ip == NULL) || ((ip + 1) == NULL))
         {
-                SAT_DEBUG(" tcp open failed ");
                 return false;
         }
-
-        if (force == false)
-        {
-                sat_socket_udp_send(user_linphone_multicast_fd, (const char *)cmd, strlen((const char *)cmd), USER_NETWORK_MULTICAST_IP, USER_NETWORK_MULTICAST_PORT, 50);
-                sat_socket_udp_send(user_linphone_multicast_fd, (const char *)cmd, strlen((const char *)cmd), USER_NETWORK_MULTICAST_IP, USER_NETWORK_MULTICAST_PORT, 50);
-                sat_socket_udp_send(user_linphone_multicast_fd, (const char *)cmd, strlen((const char *)cmd), USER_NETWORK_MULTICAST_IP, USER_NETWORK_MULTICAST_PORT, 50);
-        }
-        if (sat_socket_udp_send(user_linphone_multicast_fd, (const char *)cmd, strlen((const char *)cmd), USER_NETWORK_MULTICAST_IP, USER_NETWORK_MULTICAST_PORT, 50) == true)
-        {
-
-                memset(&client_addr, 0, sizeof(struct sockaddr_in));
-
-                for (int i = 0; i < device_max; i++)
-                {
-
-                        client_fd = sat_socket_tcp_accept(server_fd, &client_addr, 100);
-
-                        if (client_fd < 0)
-                        {
-
-                                goto finish;
-                        }
-
-                        if (sat_socket_tcp_receive(client_fd, (unsigned char *)&device_info[i], sizeof(network_device_info), 100) > 0)
-                        {
-
-                                reslut = true;
-                                (*receive_count)++;
-                        }
-
-                        sat_socket_close(client_fd);
-                        client_fd = -1;
-                }
-        }
-
-finish:
-
-        if (client_fd > 0)
-        {
-
-                close(client_fd);
-        }
-
-        if (server_fd > 0)
-        {
-
-                close(server_fd);
-        }
-
-        return reslut;
-}
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** device_type:1 indoor,2 :outdoor
-***********************************************/
-bool user_network_device_query(unsigned char *user, int device_type, network_device_info *device_info, int max_device, int *device_count, bool force)
-{
-        char cmd[128] = {0};
-        sprintf(cmd, NETWORK_CMD_DEVICE_INFO " %s %d %d %d", user, device_type, USER_NETWORK_TCP_ASYNC_PORT, force);
-        if (user_network_multicast_cmd_send((unsigned char *)cmd, strlen(cmd), device_info, max_device, device_count, force) == false)
-        {
-                SAT_DEBUG("cmd send failed ");
-                return false;
-        }
-        int total = (*device_count);
-        for (int i = 0; i < total; i++)
-        {
-                for (int j = i + 1; j < total; j++)
-                {
-                        if (memcmp(&device_info[i], &device_info[j], sizeof(network_device_info)) == 0)
-                        {
-                                if (j + 1 != total)
-                                {
-                                        memmove(&device_info[j], &device_info[j + 1], sizeof(network_device_info) * (total - j - 1));
-                                }
-                                (*device_count)--;
-                        }
-                }
-        }
-        return true;
-}
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** 说明: tcp发送数据
-***********************************************/
-static int user_network_tcp_cmd_send(const char *string, unsigned char *client_ip, int timeout)
-{
-        int socket_fd = -1;
-        if (sat_socket_tcp_open(&socket_fd, USER_NETWORK_TCP_SYNC_SLAVE_PORT, 0) == false)
-        {
-                SAT_DEBUG(" tcp open failed ");
-                return -1;
-        }
-        if (sat_socket_tcp_connect(socket_fd, (char *)client_ip, USER_NETWORK_TCP_SYNC_SERVER_PORT, timeout) == false)
-        {
-
-                sat_socket_close(socket_fd);
-                SAT_DEBUG(" connect timeout ");
-                return -1;
-        }
-        if (sat_socket_tcp_send(socket_fd, (unsigned char *)string, strlen(string) + 1, timeout) == false)
-        {
-                sat_socket_close(socket_fd);
-                SAT_DEBUG(" send(%s) failed ", client_ip);
-                return -1;
-        }
-        return socket_fd;
-}
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** 说明: 接收当前数据
-***********************************************/
-static int user_network_tcp_cmd_recv(int socket_fd, unsigned char *buffer, int size, int timeout)
-{
-        int len = 0;
-        if ((len = sat_socket_tcp_receive(socket_fd, buffer, size, timeout)) > 0)
-        {
-                return len;
-        }
-        return -1;
-}
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** 说明: 查询当前IP下的房号是否在线
-***********************************************/
-int user_network_device_online(const unsigned char *loc_number, network_device_info *device_info, int timeout)
-{
-        char number[32] = {0};
-        char ip[32] = {0};
-        network_device_info device_info_temp;
-        /*获取用户对应的房号和IP*/
-        sip_user_get_number_and_ip(device_info->number, ip, number);
-
-        int socket_fd = -1;
-        unsigned char buffer[128] = {0};
-        sprintf((char *)buffer, NETWORK_CMD_DEVICE_ONLINE " %s", loc_number);
-        if ((socket_fd = user_network_tcp_cmd_send((char *)buffer, (unsigned char *)ip, timeout)) < 0)
-        {
-                SAT_DEBUG("online send(%s)to (%s:%d) failed ", buffer, ip, USER_NETWORK_TCP_SYNC_SERVER_PORT);
-                return -1;
-        }
-        if (user_network_tcp_cmd_recv(socket_fd, (unsigned char *)&device_info_temp, sizeof(network_device_info), timeout) <= 0)
-        {
-                SAT_DEBUG("online recv(%s)to (%s:%d) failed ", buffer, ip, USER_NETWORK_TCP_SYNC_SERVER_PORT);
-                sat_socket_close(socket_fd);
-                return -1;
-        }
-        sat_socket_close(socket_fd);
-
-        // (p1)AAAAAAAAApwdAAAAAAAAsip_user
-        char *p1 = strstr(device_info_temp.number, "AAAAAAAAA");
-        char *p2 = strstr(p1 + 9, "AAAAAAAAA");
-        if (strncmp(user_data_get()->device.password, p1 + 9, 9) == 0)
-        {
-                if ((strcmp(p2 + 9, device_info->number) != 0) /*  || (strcmp(device_info_temp.name, device_info->name) != 0) */)
-                {
-                        SAT_DEBUG("RECV IP USER:%s", p2 + 9);
-                        memset(device_info->number, 0, sizeof(device_info->number));
-                        strcpy(device_info->number, p2 + 9);
-                        /* memset(device_info->name, 0, sizeof(device_info->name));
-                        strcpy(device_info->name, device_info_temp.name); */
-                        return 1;
-                }
-                return 0;
-        }
-        return -1;
-}
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** 说明: 更新房号的IP 返回0:无需更新，1,更新成功，-1,更新失败
-***********************************************/
-int user_network_user_update(const unsigned char *loc_number, network_device_info *device_info, int timeout)
-{
-        char number[64] = {0};
-        char ip[32] = {0};
-        network_device_info device_info_temp;
-        int device_count = 0;
-        /*获取用户对应的房号和IP*/
-        sip_user_get_number_and_ip(device_info->number, ip, number);
-
-        memset(&device_info_temp, 0, sizeof(network_device_info));
-        memcpy(device_info_temp.number, device_info->number, sizeof(device_info->number));
-        if (user_network_device_online(loc_number, &device_info_temp, timeout) >= 0)
-        {
-                /*该账号是存在的*/
-                if ((strcmp(device_info_temp.number, device_info->number) == 0) /* && (strcmp(device_info_temp.name, device_info->name) == 0) */)
-                {
-                        return 0;
-                }
-                //       SAT_DEBUG("RECV IP USER:%s", device_info->number);
-                memset(device_info->number, 0, sizeof(device_info->number));
-                strcpy(device_info->number, device_info_temp.number);
-                /*  memset(device_info->name, 0, sizeof(device_info->name));
-                 strcpy(device_info->name, device_info_temp.name); */
-                return 1;
-        }
-
-        /*该IP已经超时，需要重新组播获取IP信息,组播IP获取如果失败，则不更新用户信息*/
-        memset(ip, 0, sizeof(ip));
-        if (sat_ip_mac_addres_get(NETWORK_ETH_NAME, ip, NULL) == false)
-        {
-                SAT_DEBUG("sat_ip_mac_addres_get(NETWORK_ETH_NAME, ip, NULL) == false");
-                return -1;
-        }
-
-        char cmd[128] = {0};
-        sprintf(cmd, NETWORK_CMD_DEVICE_BY_NUMBER " %s %d %s %s", ip, USER_NETWORK_TCP_ASYNC_PORT, number, loc_number);
-        SAT_DEBUG("update cmd:%s", cmd);
-        if (user_network_multicast_cmd_send((unsigned char *)cmd, strlen(cmd), &device_info_temp, 1, &device_count, false) == false)
-        {
-                SAT_DEBUG("cmd send failed \n");
-                return -1;
-        }
-        // (p1)AAAAAAAAApwdAAAAAAAAsip_user
-        char *p1 = strstr(device_info_temp.number, "AAAAAAAAA");
-        char *p2 = strstr(p1 + 9, "AAAAAAAAA");
-        if (strncmp(user_data_get()->device.password, p1 + 9, 9) == 0)
-        {
-                if ((device_count == 1) && (strncmp(p2 + 9, device_info->number, 12) == 0))
-                {
-                        if ((strcmp(p2 + 9, device_info->number) == 0) /* && (strcmp(device_info_temp.name, device_info->name) == 0) */)
-                        {
-                                return 0;
-                        }
-                        SAT_DEBUG("RECV IP USER:%s", device_info->number);
-                        memset(device_info->number, 0, sizeof(device_info->number));
-                        strcpy(device_info->number, p2 + 9);
-                        /* memset(device_info->name, 0, sizeof(device_info->name));
-                        strcpy(device_info->name, device_info_temp.name); */
-                        return 1;
-                }
-        }
-        return -1;
+        return ipc_camera_device_name_get(name, ip + 1, 80, "CIP-710QPT", "12345678", timeout);
 }

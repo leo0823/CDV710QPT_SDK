@@ -19,22 +19,10 @@ void user_network_init(void);
 ** 说明: 获取组播IP地址
 ***********************************************/
 char *user_linphone_local_multicast_get(void);
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** 说明: 查询当前IP下的房号是否在线
-***********************************************/
-int user_network_device_online(const unsigned char *loc_number, network_device_info *device_info, int timeout);
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** device_type:1 indoor,2 :outdoor
-***********************************************/
-bool user_network_device_query(unsigned char *user, int device_type, network_device_info *device_info, int max_device, int *device_count, bool force);
-/***********************************************
-** 作者: leo.liu
-** 日期: 2023-1-7 14:46:50
-** 说明: 更新房号的IP 返回0:无需更新，1,更新成功，-1,更新失败
-***********************************************/
-int user_network_user_update(const unsigned char *loc_number, network_device_info *device_info, int timeout);
+/****************************************************************
+**@日期: 2022-09-21
+**@作者: leo.liu
+**@功能:向doorcamera 查询是否在线
+*****************************************************************/
+bool sat_ipcamera_device_name_get(const char *sip_uri, int timeout);
 #endif

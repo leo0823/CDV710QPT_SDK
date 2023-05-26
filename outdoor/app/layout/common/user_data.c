@@ -23,8 +23,8 @@ static user_data_info user_data =
 
 static const user_data_info user_data_default =
     {
-        .network = {.ip = "10.193.1.12", .mask = "255.0.0.0"},
-        .device = {.name = "Door2", .number = "010193001012", .password = "123456789"},
+        .network = {.ip = {'\0'}, .mask = "255.0.0.0"},
+        .device = {.name = "CIP-D20YS", .number = "010193001012", .password = "123456789"},
         .register_device_count = 0,
 };
 
@@ -58,12 +58,119 @@ bool user_data_save(void)
 /***
 ** 日期: 2022-05-05 08:47
 ** 作者: leo.liu
+** 函数作用：检验数据是否已经存在
+** 返回参数说明：
+***/
+bool detemine_existence_of_the_sip_uri(const char *uri)
+{
+        for (int i = 0; i < user_data.register_device_count; i++)
+        {
+                if (strcmp(user_data.register_device[i], uri) == 0)
+                {
+                        return true;
+                }
+        }
+        return false;
+}
+
+static void printf_register_device(void)
+{
+        SAT_DEBUG("register cont:%d", user_data.register_device_count);
+        for (int i = 0; i < user_data.register_device_count; i++)
+        {
+                SAT_DEBUG("%s", user_data.register_device[i]);
+        }
+}
+
+static bool detemine_sip_uri_in_same_room(const char *uri)
+{
+        for (int i = 0; i < user_data.register_device_count; i++)
+        {
+                if (strncmp(uri + 4, user_data_get()->register_device[i] + 4, 11))
+                {
+                        printf_register_device();
+                        return false;
+                }
+        }
+        return true;
+}
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：注册一个账号
+** 返回参数说明：
+***/
+bool register_a_sip_uri(const char *uri)
+{
+        SAT_DEBUG("reigster sip uir:%s", uri);
+        /*先判断此账号是否属于同一个户号下面的*/
+        if (detemine_sip_uri_in_same_room(uri) == false)
+        {
+                /*不属于同一个房号，则删除该账号下所有注册的账号*/
+                for (int i = 0; i < user_data.register_device_count; i++)
+                {
+                        memset(&user_data.register_device[i], 0, sizeof(user_data.register_device[i]));
+                }
+                user_data.register_device_count = 0;
+        }
+
+        /*属于同一个房间，判断注册的大于最大个数*/
+        if (user_data.register_device_count > 7)
+        {
+                /*删除最前面的一个账号*/
+                for (int i = 0; i < user_data.register_device_count - 1; i++)
+                {
+                        memcpy(&user_data.register_device[i], &user_data.register_device[i + 1], sizeof(user_data.register_device[i]));
+                }
+                user_data.register_device_count--;
+        }
+
+        memset(user_data.register_device[user_data.register_device_count], 0, sizeof(user_data.register_device[user_data.register_device_count]));
+        strncpy(user_data.register_device[user_data.register_device_count++], uri, sizeof(user_data.register_device[user_data.register_device_count]));
+
+        printf_register_device();
+        return true;
+}
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：删除一个sip用户
+** 返回参数说明：
+***/
+bool delete_a_sip_uri(const char *uri)
+{
+        SAT_DEBUG("delete sip uir:%s", uri);
+        printf_register_device();
+        int delete_index = 0;
+        /*删除最前面的一个账号*/
+        for (delete_index = 0; delete_index < user_data.register_device_count; delete_index++)
+        {
+                if (strcmp(user_data.register_device[delete_index], uri) == 0)
+                {
+                        break;
+                }
+        }
+        if (delete_index == user_data.register_device_count)
+        {
+                return false;
+        }
+
+        for (int i = delete_index; i < user_data.register_device_count; i++)
+        {
+                memcpy(&user_data.register_device[i], &user_data.register_device[i + 1], sizeof(user_data.register_device[i]));
+        }
+        user_data.register_device_count--;
+        printf_register_device();
+        return true;
+}
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
 ** 函数作用：检验数据是否合法
 ** 返回参数说明：
 ***/
 static void user_data_check_valid(void)
 {
-        bool resave = false;
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 14:33:3
@@ -96,41 +203,11 @@ static void user_data_check_valid(void)
         SAT_DEBUG("number:%s", user_data.device.number);
 
         user_data_check_range_out(register_device_count, 0, 9);
-        SAT_DEBUG("register cont:%d", user_data.register_device_count);
-
-        for (int i = 0; i < user_data.register_device_count; i++)
-        {
-                for (int j = 0; j < 12; j++)
-                {
-                        user_data_check_range_out(register_device[i][j], '0', '9');
-                }
-                SAT_DEBUG("register device :%s", user_data.register_device[i]);
-        }
-
-        for (int i = 0; i < user_data.register_device_count; i++)
-        {
-                for (int j = i + 1; j < user_data.register_device_count; j++)
-                {
-                        if (strncmp(user_data.register_device[i], user_data.register_device[j], 12) == 0)
-                        {
-                                if (j < (user_data.register_device_count - 1))
-                                {
-                                        memmove(&(user_data.register_device[j]), &(user_data.register_device[j + 1]), sizeof(user_data.register_device[j])*(user_data.register_device_count - j - 1));
-                                }
-                                user_data.register_device_count--;
-                                resave = true;
-                        }
-                }
-        }
 
         SAT_DEBUG(" device name:%s", user_data.device.name);
         SAT_DEBUG(" device number:%s", user_data.device.number);
         SAT_DEBUG(" device password:%s", user_data.device.password);
-
-        if (resave == true)
-        {
-                user_data_save();
-        }
+        printf_register_device();
 }
 
 bool user_data_init(void)

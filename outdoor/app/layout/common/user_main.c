@@ -48,6 +48,31 @@ static bool sip_call_status = false;
 ** 日期: 2023-1-5 10:7:35
 ** 说明: 初始化内核
 ***********************************************/
+#define MAC_TXT_PATH "/etc/config/mac.txt"
+static bool network_mac_get(char *buf)
+{
+        int i = 0, j = 0;
+        char temp[128] = {0};
+        if (access(MAC_TXT_PATH, F_OK))
+        {
+                return false;
+        }
+        if (sat_file_read(MAC_TXT_PATH, temp, sizeof(temp)) < 1)
+        {
+                return false;
+        }
+
+        for (i = j = 0; temp[i] != '\0'; i++)
+        {
+                if (isalnum(temp[i]))
+                {
+                        buf[j++] = temp[i];
+                }
+        }
+        buf[j] = '\0';
+        SAT_DEBUG("%s->%s\n", temp, buf);
+        return true;
+}
 static void linux_kerner_init(void)
 {
 
@@ -56,8 +81,8 @@ static void linux_kerner_init(void)
         ** 日期: 2022-12-9 13:53:54
         ** 说明: 暂时处理上电打开功放
         ***********************************************/
-        system("ifconfig eth0 txqueuelen 52428800");
-		system("echo 5242880 > /proc/sys/net/core/wmem_defalut");
+        // system("ifconfig eth0 txqueuelen 10000");
+        system("echo 10485760 > /proc/sys/net/core/wmem_default");
         system("echo 10485760 > /proc/sys/net/core/wmem_max");
         system("echo 10485760 > /proc/sys/net/core/rmem_max");
 
@@ -86,7 +111,18 @@ static void linux_kerner_init(void)
                                    -BYTE2 bit[7]=1
                                                 个位分机ID号
         ***********************************************/
-        setenv("SIP", user_data_get()->device.number, 1);
+        /*读取mac地址*/
+        char mac[128] = {0};
+        if (network_mac_get(mac) == true)
+        {
+                setenv("SIP", mac, 1);
+        }
+        else
+        {
+                SAT_DEBUG("not find mac addres,will restart in 3 seconds\n");
+                sleep(3);
+                system("reboot");
+        }
 }
 
 /***********************************************
@@ -96,28 +132,12 @@ static void linux_kerner_init(void)
 ***********************************************/
 static void key_call_process(unsigned int code, unsigned int state)
 {
-        char username[128] = {0};
-        sat_sip_local_user_get(username);
-        network_device_info device_info;
-
         char cmd[256] = {0};
         for (int i = 0; i < user_data_get()->register_device_count; i++)
         {
-                memset(&device_info, 0, sizeof(network_device_info));
-                strcpy(device_info.number, user_data_get()->register_device[i]);
-                 SAT_DEBUG("local username:%s   device:%s", username, device_info.number);
-                int reslut = user_network_user_update((const unsigned char *)username, &device_info, 300);
-                if (reslut >= 0)
+                if (sat_ipcamera_device_name_get(user_data_get()->register_device[i], 500) == true)
                 {
-                        if (reslut == 1)
-                        {
-                                memset(user_data_get()->register_device[i], 0, sizeof(user_data_get()->register_device[i]));
-                                strcpy(user_data_get()->register_device[i], device_info.number);
-                                SAT_DEBUG("update register device:%s", device_info.number);
-                        }
-                        strcat(cmd, "sip:");
-                        strcat(cmd, (char *)device_info.number);
-                        strcat(cmd, "/mynameleo");
+                        strcat(cmd, user_data_get()->register_device[i]);
                         strcat(cmd, " ");
                 }
         }
@@ -143,9 +163,9 @@ static void sys_timer_callback(void)
         /*如果5秒内 sip_call_timestamp还是没有更新，则判断sip无连接， 需要主动挂断设备了*/
         if ((sip_call_status == true) && ((timestamp - sip_call_timestamp) > SIP_CALL_QURY_TIMER * 10))
         {
-                SAT_DEBUG("query online timeout");
-            //    sip_call_status = false;
-            //    sat_linphone_handup(0xFF);
+                //   SAT_DEBUG("query online timeout");
+                sip_call_status = false;
+                sat_linphone_handup(0xFF);
                 return;
         }
 
@@ -173,12 +193,25 @@ static void sip_call_status_query_callback(bool state)
         }
         sip_call_status = state;
 }
+
+static void *media_server_task(void *arg)
+{
+
+        while (1)
+        {
+                extern int live555_media_server_start(const char *username, const char *password);
+                live555_media_server_start("admin", user_data_get()->device.password);
+                usleep(1000 * 1000);
+        }
+        return NULL;
+}
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
  * @功能: 主函数入口
  * @return:
  */
+//#include "anyka/ak_its.h"
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
@@ -191,6 +224,7 @@ int main(int argc, char *argv[])
         sdk_run_config config = {0};
         ak_sdk_init(&config);
 
+      //  ak_its_start(8765);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 11:38:19
@@ -220,6 +254,9 @@ int main(int argc, char *argv[])
         system_timer_callback_register(sys_timer_callback);
         sip_call_online_func_register(sip_call_online_callback);
         sip_call_status_qury_register(sip_call_status_query_callback);
+
+        pthread_t thread_id;
+        pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu
