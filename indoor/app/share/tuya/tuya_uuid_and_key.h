@@ -2,7 +2,9 @@
 #define TUYA_UUID_AND_KEY_H_
 #include <stdbool.h>
 /*****  文件名格式为:xxxx-xx-xx.conf *****/
-#define TUYA_UUID_AND_KEY_CONF_PATH "/appconfigs/run/tuya_key/"
+#define TUYA_UUID_AND_KEY_CONF_PATH "/app/tuya/tuya_key/"
+
+#define TUYA_CACHE_PATH "/app/tuya/tuya_cache/"
 /***
 **   日期:2022-05-27 08:11:56
 **   作者: leo.liu
