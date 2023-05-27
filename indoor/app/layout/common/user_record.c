@@ -20,40 +20,51 @@
 ***/
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 {
-	printf("=====>>>write size:%d %d\n", size, mode);
-	if ((mode & 0x0F))
-	{
-		file_type type = FILE_TYPE_FLASH_PHOTO;
-		if (media_sdcard_insert_check() == true)
-		{
-			type = FILE_TYPE_PHOTO;
-		}
-		char file_path[128] = {0};
-		media_file_create(type, ch, mode & 0x0F, file_path);
-		int fd = open(file_path, O_CREAT | O_WRONLY);
-		if (fd >= 0)
-		{
-			printf("\n\n snap jpg:%s %dkb \n\n", file_path, size / 1024);
-			write(fd, data, size);
-			close(fd);
-		}
-		else
-		{
-			printf("\n\n snap jpg: %s open failed \n\n", file_path);
-		}
-		media_file_bad_check(file_path);
-	}
-	if (mode & REC_MODE_TUYA_CALL)
-	{
-	}
-	if (mode & REC_MODE_TUYA_ALARM)
-	{
-	}
-	if (mode & REC_MODE_TUYA_MOTION)
-	{
-	}
-	system("sync");
-	return true;
+        // printf("=====>>>write size:%d %d\n", size, mode);
+        if ((mode & 0x1F))
+        {
+                file_type type = FILE_TYPE_FLASH_PHOTO;
+                if (media_sdcard_insert_check() == true)
+                {
+                        type = FILE_TYPE_PHOTO;
+                }
+                char file_path[128] = {0};
+
+                char *name = NULL;
+                if (is_channel_ipc_camera(ch) == true)
+                {
+                        name = network_data_get()->cctv_device[ch - 8].door_name;
+                }
+                else
+                {
+                        name = network_data_get()->door_device[ch].door_name;
+                }
+
+                media_file_create(type, name, mode & 0x1F, file_path);
+                int fd = open(file_path, O_CREAT | O_WRONLY);
+                if (fd >= 0)
+                {
+                        printf("\n\n snap jpg:%s %dkb \n\n", file_path, size / 1024);
+                        write(fd, data, size);
+                        close(fd);
+                }
+                else
+                {
+                        printf("\n\n snap jpg: %s open failed \n\n", file_path);
+                }
+                media_file_bad_check(file_path);
+        }
+        if (mode & REC_MODE_TUYA_CALL)
+        {
+        }
+        if (mode & REC_MODE_TUYA_ALARM)
+        {
+        }
+        if (mode & REC_MODE_TUYA_MOTION)
+        {
+        }
+        system("sync");
+        return true;
 }
 /***
 ** 日期: 2022-05-19 10:37
@@ -63,37 +74,46 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 ***/
 bool record_jpeg_start(REC_MODE mode)
 {
-	return sat_linphone_snap(monitor_channel_get(), mode, jpeg_write_callback);
+        return sat_linphone_snap(monitor_channel_get(), mode, jpeg_write_callback);
 }
 /*
  * @日期: 2022-09-15
  * @作者: leo.liu
  * @注释: 视频录制完成的回调函数
  */
-static bool record_video_callback(const char *path,int ch,int mode)
+static bool record_video_callback(const char *path, int ch, int mode)
 {
-	if (media_sdcard_insert_check() == false)
-	{
-		return false;
-	}
-	char file_path[64] = {0};
-	media_file_create(FILE_TYPE_VIDEO, ch, mode, file_path);
+        if (media_sdcard_insert_check() == false)
+        {
+                return false;
+        }
+        char file_path[64] = {0};
+        char *name = NULL;
+        if (is_channel_ipc_camera(ch) == true)
+        {
+                name = network_data_get()->cctv_device[ch - 8].door_name;
+        }
+        else
+        {
+                name = network_data_get()->door_device[ch].door_name;
+        }
+        media_file_create(FILE_TYPE_VIDEO, name, mode, file_path);
 
-	char cmd[128] = {0};
-	sprintf(cmd, "mv %s %s", path, file_path);
-	system(cmd);
-	media_file_bad_check(file_path);
-	printf("record video:%s \n", file_path);
-	return true;
+        char cmd[128] = {0};
+        sprintf(cmd, "mv %s %s", path, file_path);
+        system(cmd);
+        media_file_bad_check(file_path);
+        printf("record video:%s \n", file_path);
+        return true;
 }
 /*
  * @日期: 2022-09-15
  * @作者: leo.liu
  * @注释: 视频录制
  */
-bool record_video_start(int has_audio,REC_MODE mode)
+bool record_video_start(int has_audio, REC_MODE mode)
 {
-	return sat_linphone_start_record_video(has_audio,monitor_channel_get(), mode, record_video_callback);
+        return sat_linphone_start_record_video(has_audio, monitor_channel_get(), mode, record_video_callback);
 }
 /*
  * @日期: 2022-09-15
@@ -102,5 +122,5 @@ bool record_video_start(int has_audio,REC_MODE mode)
  */
 bool record_video_stop(void)
 {
-	return sat_linphone_stop_record_video();
+        return sat_linphone_stop_record_video();
 }

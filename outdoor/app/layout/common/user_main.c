@@ -135,7 +135,7 @@ static void key_call_process(unsigned int code, unsigned int state)
         char cmd[256] = {0};
         for (int i = 0; i < user_data_get()->register_device_count; i++)
         {
-                if (sat_ipcamera_device_name_get(user_data_get()->register_device[i], 500) == true)
+                if (sat_ipcamera_device_name_get(user_data_get()->register_device[i], 100) == true)
                 {
                         strcat(cmd, user_data_get()->register_device[i]);
                         strcat(cmd, " ");

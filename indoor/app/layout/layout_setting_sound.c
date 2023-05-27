@@ -1,0 +1,231 @@
+#include "layout_define.h"
+#include "layout_setting_sound.h"
+#include "layout_setting_general.h"
+enum
+{
+        setting_sound_obj_id_title,
+        setting_sound_obj_id_cancel,
+        setting_sound_obj_id_main_list,
+
+        setting_sound_obj_id_sub_list,
+
+        setting_sound_obj_id_volume_cont,
+        setting_sound_obj_id_volume_title,
+        setting_sound_obj_id_volume_sub,
+
+        setting_sound_obj_id_buzzer_cont,
+        setting_sound_obj_id_buzzer_title,
+        setting_sound_obj_id_buzzer_sub,
+
+        setting_sound_obj_id_front_door_cont,
+        setting_sound_obj_id_front_door_title,
+        setting_sound_obj_id_front_door_sub,
+
+        setting_sound_obj_id_common_entrance_cont,
+        setting_sound_obj_id_common_entrance_title,
+        setting_sound_obj_id_common_entrance_sub,
+
+        setting_sound_obj_id_security_office_cont,
+        setting_sound_obj_id_security_office_title,
+        setting_sound_obj_id_security_office_sub,
+
+        setting_sound_obj_id_extension_cont,
+        setting_sound_obj_id_extension_title,
+        setting_sound_obj_id_extension_sub,
+
+        setting_sound_obj_id_msgbox_parent,
+        setting_sound_obj_id_msgbox_cont,
+        setting_sound_obj_id_msgbox_titile,
+
+        setting_sound_obj_id_msgbox_list,
+
+        setting_sound_obj_id_msgbox_cancel,
+        setting_sound_obj_id_msgbox_confirm,
+
+};
+static void setting_sound_volume_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(setting_volume, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
+{
+        lv_obj_t *item = lv_event_get_current_target(ev);
+        if (item == NULL)
+        {
+                return;
+        }
+        lv_obj_t *parent = lv_obj_get_parent(item);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        lv_obj_t *item_img_obj = lv_obj_get_child_form_id(item, 1);
+        if (item_img_obj == NULL)
+        {
+                return;
+        }
+        if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+        {
+                lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+
+                int item_n = lv_obj_get_child_cnt(parent);
+                for (int i = 0; i < item_n; i++)
+                {
+                        lv_obj_t *n_item = lv_obj_get_child_form_id(parent, i);
+                        if ((n_item == NULL) || (n_item == item))
+                        {
+                                continue;
+                        }
+                        item_img_obj = lv_obj_get_child_form_id(n_item, 1);
+                        if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+                        {
+                                lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                        }
+                }
+        }
+}
+static void setting_sound_ring_msgbox_cancel_click(lv_event_t *ev)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_sound_obj_id_msgbox_parent);
+        if (obj == NULL)
+        {
+                return;
+        }
+        lv_obj_del(obj);
+}
+static void setting_sound_ring_msgbox_confirm_click(lv_event_t *ev)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_sound_obj_id_msgbox_parent);
+        if (obj == NULL)
+        {
+                return;
+        }
+        lv_obj_del(obj);
+}
+static void setting_sound_ring_msg_box_create(const char *title_sting)
+{
+        lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_sound_obj_id_msgbox_parent, 0, 0, 1024, 600,
+                                                    NULL, true, LV_OPA_80, 0, LV_OPA_80, 0,
+                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                    NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+        lv_obj_t *msgbox = lv_common_img_btn_create(parent, setting_sound_obj_id_msgbox_cont, 282, 131, 460, 343,
+                                                    NULL, false, LV_OPA_COVER, 0x242526, LV_OPA_TRANSP, 0,
+                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                    NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+        lv_common_text_create(msgbox, setting_sound_obj_id_msgbox_titile, 32, 10, 396, 47,
+                              NULL, LV_OPA_TRANSP, 0x323237, LV_OPA_TRANSP, 0,
+                              0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                              0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                              title_sting, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_small);
+
+        lv_obj_t *list = setting_list_create(msgbox, setting_sound_obj_id_msgbox_list);
+        lv_common_style_set_common(list, setting_sound_obj_id_msgbox_list, 47, 73, 366, 200, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+
+        for (int i = 0; i < 6; i++)
+        {
+                lv_common_img_text_btn_create(list, i, 0, 0, 366, 55,
+                                              setting_sound_ring_msgbox_list_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              46, 8, 366 - 16, 32, 0,
+                                              layout_setting_sound_language_get(SOUND_LANG_ID_RINGTONE1 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              0, 8, 32, 32, 1,
+                                              (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+
+        lv_common_img_btn_create(msgbox, setting_sound_obj_id_msgbox_cancel, 0, 281, 230, 62,
+                                 setting_sound_ring_msgbox_cancel_click, true, LV_OPA_COVER, 0x47494A, LV_OPA_COVER, 0x47494A,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 resource_ui_src_get("btn_title_cancel.png"), LV_OPA_TRANSP, 0x0096FF, LV_ALIGN_CENTER);
+
+        lv_common_img_btn_create(msgbox, setting_sound_obj_id_msgbox_confirm, 230, 281, 230, 62,
+                                 setting_sound_ring_msgbox_confirm_click, true, LV_OPA_COVER, 0x0096FF, LV_OPA_COVER, 0x0096FF,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 resource_ui_src_get("btn_title_confirm.png"), LV_OPA_TRANSP, 0x0096FF, LV_ALIGN_CENTER);
+}
+
+static void setting_sound_buzzer_obj_click(lv_event_t *ev)
+{
+        setting_sound_ring_msg_box_create(layout_setting_sound_language_get(SOUND_LANG_ID_BUZZER));
+}
+static void setting_sound_front_door_obj_click(lv_event_t *ev)
+{
+        setting_sound_ring_msg_box_create(layout_setting_sound_language_get(SOUND_LANG_ID_FRONT_DOOR));
+}
+static void setting_sound_common_entrance_obj_click(lv_event_t *ev)
+{
+        setting_sound_ring_msg_box_create(layout_setting_sound_language_get(SOUND_LANG_ID_COMMON_ENTRANCE));
+}
+static void setting_sound_security_office_obj_click(lv_event_t *ev)
+{
+        setting_sound_ring_msg_box_create(layout_setting_sound_language_get(SOUND_LANG_ID_SECURITY_OFFICE));
+}
+static void setting_sound_extension_obj_click(lv_event_t *ev)
+{
+        setting_sound_ring_msg_box_create(layout_setting_sound_language_get(SOUND_LANG_ID_EXTENSION));
+}
+
+/***********************************************
+ ** 作者: leo.liu
+ ** 日期: 2023-2-2 13:42:25
+ ** 说明: 右边副列表
+ ***********************************************/
+static lv_obj_t *setting_sound_sub_list_create(void)
+{
+        setting_list_info_t main_list_group[] = {
+
+            {0, 0, 622, 72, setting_sound_obj_id_volume_cont, setting_sound_obj_id_volume_title, setting_sound_obj_id_volume_sub, SOUND_LANG_ID_VOLUME, layout_setting_sound_language_get, SOUND_LANG_ID_THE_VOLUME_OF_THE_CALLING, layout_setting_sound_language_get, setting_sound_volume_obj_click},
+            {0, 72, 622, 72, setting_sound_obj_id_buzzer_cont, setting_sound_obj_id_buzzer_title, setting_sound_obj_id_buzzer_sub, SOUND_LANG_ID_BUZZER, layout_setting_sound_language_get, SOUND_LANG_ID_RINGTONE2, layout_setting_sound_language_get, setting_sound_buzzer_obj_click},
+            {0, 72 * 2, 622, 72, setting_sound_obj_id_front_door_cont, setting_sound_obj_id_front_door_title, setting_sound_obj_id_front_door_sub, SOUND_LANG_ID_FRONT_DOOR, layout_setting_sound_language_get, SOUND_LANG_ID_RINGTONE1, layout_setting_sound_language_get, setting_sound_front_door_obj_click},
+            {0, 72 * 3, 622, 72, setting_sound_obj_id_common_entrance_cont, setting_sound_obj_id_common_entrance_title, setting_sound_obj_id_common_entrance_sub, SOUND_LANG_ID_COMMON_ENTRANCE, layout_setting_sound_language_get, SOUND_LANG_ID_RINGTONE2, layout_setting_sound_language_get, setting_sound_common_entrance_obj_click},
+            {0, 72 * 4, 622, 72, setting_sound_obj_id_security_office_cont, setting_sound_obj_id_security_office_title, setting_sound_obj_id_security_office_sub, SOUND_LANG_ID_SECURITY_OFFICE, layout_setting_sound_language_get, SOUND_LANG_ID_RINGTONE3, layout_setting_sound_language_get, setting_sound_security_office_obj_click},
+            {0, 72 * 5, 622, 72, setting_sound_obj_id_extension_cont, setting_sound_obj_id_extension_title, setting_sound_obj_id_extension_sub, SOUND_LANG_ID_EXTENSION, layout_setting_sound_language_get, SOUND_LANG_ID_RINGTONE4, layout_setting_sound_language_get, setting_sound_extension_obj_click},
+        };
+
+        lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_sound_obj_id_sub_list);
+        lv_common_style_set_common(list, setting_sound_obj_id_sub_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+
+        for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
+        {
+                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                                                                main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                0, 17, 576, 43, main_list_group[i].title_id,
+                                                                main_list_group[i].title_language_id == -1 ? NULL : main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 42, 576, 29, main_list_group[i].sub_id,
+                                                                main_list_group[i].sub_language_id == -1 ? NULL : main_list_group[i].sub_language_cb(main_list_group[i].sub_language_id), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        return list;
+}
+static void sat_layout_enter(setting_sound)
+{
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: 左边主列表
+         ***********************************************/
+        setting_main_list_create(2);
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 13:42:25
+        ** 说明: 右边副列表
+        ***********************************************/
+        setting_sound_sub_list_create();
+}
+static void sat_layout_quit(setting_sound)
+{
+}
+sat_layout_create(setting_sound);

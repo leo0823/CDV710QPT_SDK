@@ -690,6 +690,23 @@ static bool tcp_device_servrce_xml_set_device_name(int tcp_socket_fd, const char
         trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
         return true;
 }
+
+static bool tcp_device_servrce_xml_get_version_name(int tcp_socket_fd, const char *xml)
+{
+        char version[128] = {0};
+        struct tm tm;
+        if (platform_build_date_get(&tm) == true)
+        {
+                sprintf(version, "%04d-%02d-%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, version);
+        }
+        else
+        {
+                tcp_device_serverce_xml_bad_request(tcp_socket_fd);
+        }
+
+        return true;
+}
 static bool tcp_device_servrce_xml_channge_device_password(int tcp_socket_fd, const char *xml)
 {
         char sip_uri[128] = {0};
@@ -736,6 +753,7 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 return false;
         }
         soap_action_end_str[0] = '\0';
+     //   SAT_DEBUG("%s", soap_action_start_ptr);
         if (strstr(soap_action_start_ptr, "GetDeviceInformation"))
         {
                 return tcp_device_serverce_xml_get_information(tcp_socket_fd);
@@ -767,6 +785,11 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
         {
                 soap_action_end_str[0] = '<';
                 return tcp_device_servrce_xml_set_device_name(tcp_socket_fd, soap_action_end_str);
+        }
+        if (strstr(soap_action_start_ptr, "Get version"))
+        {
+                soap_action_end_str[0] = '<';
+                return tcp_device_servrce_xml_get_version_name(tcp_socket_fd, soap_action_end_str);
         }
         if (strstr(soap_action_start_ptr, "Change password"))
         {
