@@ -27,13 +27,13 @@ bool ipc_camera_rtsp_get(const char *ip, int port, const char *user, const char 
 **@作者: leo.liu
 **@功能:获取设备的rtsp
 *****************************************************************/
-bool ipc_camera_device_register(const char *loc_sip_uri, const char *ipaddr, int port, const char *username, const char *password, int timeout);
+bool ipc_camera_device_register(char *loc_sip_uri, const char *ipaddr, int port, const char *username, const char *password, int timeout);
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
 **@功能: 删除
 *****************************************************************/
-bool ipc_camera_device_delete(const char *loc_sip_uri, const char *ip, int port, const char *user, const char *password, int timeout);
+bool ipc_camera_device_delete( char *loc_sip_uri, const char *ip, int port, const char *user, const char *password, int timeout);
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
@@ -45,11 +45,17 @@ bool ipc_camera_device_name_get(char *name, const char *ip, int port, const char
 **@作者: leo.liu
 **@功能: 设置用户名
 *****************************************************************/
-bool ipc_camera_device_name_set(const char *name, const char *ip, int port, const char *user, const char *password, int timeout);
+bool ipc_camera_device_name_set( char *name, const char *ip, int port, const char *user, const char *password, int timeout);
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能: 查询版本号
+*****************************************************************/
+bool ipc_camera_device_version_get(char *version, const char *ip, int port, const char *user, const char *password, int timeout);
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
 **@功能: 密码修改
 *****************************************************************/
-bool ipc_camera_device_password_change(const char *pwd, const char *ip, int port, const char *user, const char *password, int timeout);
+bool ipc_camera_device_password_change( char *pwd, const char *ip, int port, const char *user, const char *password, int timeout);
 #endif

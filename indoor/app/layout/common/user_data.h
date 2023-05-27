@@ -3,154 +3,73 @@
 #include "stdbool.h"
 #include <time.h>
 #define DEVICE_MAX 8
-#include "common/sat_ipcamera.h"
 typedef struct
 {
-        bool enable;
-        /***** 0:door1 ,1:door2 --- 3:cctv2 *****/
-        char select_camera;
-        /***** 0:photo 1:video *****/
-        char saving_fmt;
-        /***** 灵敏度 2：low,1:middle,0:height *****/
-        char sensivity;
-        /***** 定时器 *****/
-        bool timer_en;
-        /***** lcd *****/
-        bool lcd_en;
-
-        struct tm start;
-        struct tm end;
-} user_motion_info;
-
-typedef struct
-{
-        bool key_sound;
-        bool ring_mute;
-        /***** 1-6 rings *****/
-        int door1_tone;
-        int door2_tone;
-        int inter_tone;
-
-        int door_ring_volume;
-        int door_talk_volume;
-        int inter_ring_volume;
-        int inter_talk_volume;
-} user_audio_info;
-
-typedef struct
-{
-        int bright;
-        int cont;
-        int color;
-} isp_info;
-
-typedef struct
-{
-        /***** 0:lcd off 1:open frame *****/
-        char standby_mode;
-        /***** lcd的亮度 *****/
-        int lcd_brigtness;
-
-        /***** open frame time:0:always 1:时间段*****/
-        char frame_time_en;
-        /***** 转换为分钟 （hh：mm）*****/
-        int frame_time_start;
-        int frame_time_end;
-
-        /***** 夜间模式 *****/
-        bool night_mode;
-        int night_time_start;
-        int night_time_end;
-        /***** 显示列表 0b 11111 低五位表示显示位*****/
-        int frame_list;
-        /***** 帧背景显示 *****/
-        bool frame_background;
-
-        isp_info door1;
-        isp_info door2;
-        isp_info cctv1;
-        isp_info cctv2;
-} user_display_info;
-
-typedef struct
-{
-        /***** 0:english *****/
-        char language;
-        /***** 0：id1  1：id2 *****/
-        char deive_id;
-        /***** 0:标准模式，1快速模式 *****/
-        char open_the_door;
-
-        /***** door1开锁模式 0:camera locak ,1：digital door lock*****/
-        char door1_open_door_mode;
-        /***** 1:1lock 2:2lock *****/
-        char door2_lock_num;
-        /*****  password *****/
-        char password[4];
-
-} user_etc_info;
-
-typedef struct
-{
-        bool auto_record;
-
-        bool alarm_1_enable;
-        bool alarm_1_trigger;
-
-        bool alarm_2_enable;
-        bool alarm_2_trigger;
-
-} user_alarm_info;
-
-typedef struct
-{
-        char is_device_init;
-        char time_automatically;
-
-        char auto_record_mode; // 0:off,1:video,2:photo;
-        bool wifi_enable;
-        user_motion_info motion;
-
-        user_audio_info audio;
-
-        user_display_info display;
-
-        user_etc_info etc;
-
-        user_alarm_info alarm;
-
-        char system_mode; // 0:单户型 1:服务器型
-} user_data_info;
-
-bool user_data_save(void);
-bool user_data_init(void);
-user_data_info *user_data_get(void);
-void user_data_reset(void);
-
-/*************************************************************************************************************************************************
-*******************************											                                                                                              *******************************
-*******************************					                                                        楚河汉界					                             *******************************
-*******************************											                                                                                              *******************************
-*************************************************************************************************************************************************/
-
-typedef struct
-{
-        char sip_user[32];
         char ip[32];
         char mask[32];
-
-        int door_device_count;
-        struct ipcamera_info door_device[DEVICE_MAX];
-
-        int cctv_device_count;
-        struct ipcamera_info cctv_device[DEVICE_MAX];
-
 } user_network_info;
+typedef struct
+{
+        char number[128];
+        char name[64];
+        char password[10];
+} network_device_info;
 
-bool network_data_save(void);
-bool network_data_init(void);
-user_network_info *network_data_get(void);
-void network_data_reset(void);
-bool network_device_sort(void);
+typedef struct
+{
+        user_network_info network;
+        network_device_info device;
 
+        int register_device_count;
+        char register_device[DEVICE_MAX][64];
+} user_data_info;
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：保存用户数据到flash
+** 返回参数说明：
+***/
+bool user_data_save(void);
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：获取用户数据
+** 返回参数说明：
+***/
+bool user_data_init(void);
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：获取用户数据
+** 返回参数说明：
+***/
+user_data_info *user_data_get(void);
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：恢复默认数据
+** 返回参数说明：
+***/
+void user_data_reset(void);
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：检验数据是否已经存在
+** 返回参数说明：
+***/
+bool detemine_existence_of_the_sip_uri(const char *uri);
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：删除一个sip用户
+** 返回参数说明：
+***/
+bool delete_a_sip_uri(const char *uri);
+/***
+** 日期: 2022-05-05 08:47
+** 作者: leo.liu
+** 函数作用：注册一个账号
+** 返回参数说明：
+***/
+bool register_a_sip_uri(const char *uri);
 #endif

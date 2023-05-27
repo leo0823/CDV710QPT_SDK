@@ -103,13 +103,13 @@ int sat_ipcamera_profile_token_num_get(int index);
 **@作者: leo.liu
 **@功能:向doorcamera 注册一个设备
 *****************************************************************/
-bool sat_ipcamera_device_register(const char *loc_sip_uri, int index, int timeout);
+bool sat_ipcamera_device_register(char *loc_sip_uri, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
 **@功能:向doorcamera 注册一个设备
 *****************************************************************/
-bool sat_ipcamera_device_delete(const char *loc_sip_uri, int index, int timeout);
+bool sat_ipcamera_device_delete( char *loc_sip_uri, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -127,13 +127,19 @@ bool sat_ipcamera_device_name_get(int index, int timeout);
 **@作者: leo.liu
 **@功能:向doorcamera 用户名设置
 *****************************************************************/
-bool sat_ipcamera_device_name_set(const char *name, int index, int timeout);
+bool sat_ipcamera_device_name_set( char *name, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
 **@功能:向doorcamera 修改密码
 *****************************************************************/
-bool sat_ipcamera_device_password_set(const char *new_pwd, int index, int timeout);
+bool sat_ipcamera_device_password_set( char *new_pwd, int index, int timeout);
+/****************************************************************
+**@日期: 2022-09-21
+**@作者: leo.liu
+**@功能:向doorcamera 修改密码
+*****************************************************************/
+bool sat_ipcamera_device_version_get(char *version, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
