@@ -4,22 +4,237 @@
 #include "layout_wifi_input.h"
 #include "layout_setting_time.h"
 // 临时用默认代替
-static wifi_info wifi_connected = {0};
+
+static int wifi_scanf_cont = 20;
+static wifi_info wifi_scanf_temp[20] = {
+
+    {
+        .name = "SAT_RD_11_1",
+        .db = 10,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_2",
+        .db = 30,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+
+    {
+        .name = "SAT_RD_11_3",
+        .db = 55,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_4",
+        .db = 60,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_5",
+        .db = 70,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_6",
+        .db = 66,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_7",
+        .db = 88,
+        .psk_flags = "FREE",
+        .free = true,
+    },
+    {
+        .name = "SAT_RD_11_8",
+        .db = 90,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_9",
+        .db = 100,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_10",
+        .db = true,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_11",
+        .db = 120,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_12",
+        .db = 128,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_13",
+        .db = 130,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_14",
+        .db = 14,
+        .psk_flags = "FREE",
+        .free = true,
+    },
+    {
+        .name = "SAT_RD_11_15",
+        .db = 45,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_16",
+        .db = 65,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_17",
+        .db = 87,
+        .psk_flags = "FREE",
+        .free = true,
+    },
+    {
+        .name = "SAT_RD_11_18",
+        .db = 60,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_19",
+        .db = 40,
+        .psk_flags = "FREE",
+        .free = false,
+    },
+    {
+        .name = "SAT_RD_11_20",
+        .db = 30,
+        .psk_flags = "FREE",
+        .free = true,
+    },
+
+};
+static wifi_info *p_wifi_connected = &wifi_scanf_temp[5];
 enum
 {
         setting_wifi_obj_id_wifi_wireless_title,
         setting_wifi_obj_id_cancel,
         setting_wifi_obj_id_next,
-
         setting_wifi_obj_id_wifi_cont,
+        setting_wifi_obj_id_wifi_title,
+        setting_wifi_obj_id_wifi_sub,
+        setting_wifi_obj_id_wifi_img,
 
         setting_wifi_obj_id_wifi_add_cont,
+        setting_wifi_obj_id_wifi_add_title,
+        setting_wifi_obj_id_wifi_add_img,
 
         setting_wifi_obj_id_wifi_connected_user_cont,
+        setting_wifi_obj_id_wifi_connected_user_title,
+        setting_wifi_obj_id_wifi_connected_user_img,
 
         setting_wifi_obj_id_wifi_discovered_user_cont,
+        setting_wifi_obj_id_wifi_discovered_user_title,
+        setting_wifi_obj_id_wifi_discovered_user_img,
 
         setting_wifi_obj_id_list,
+
+        setting_wifi_obj_id_wifi_discovered_1_cont,
+        setting_wifi_obj_id_wifi_discovered_1_title,
+        setting_wifi_obj_id_wifi_discovered_1_img,
+
+        setting_wifi_obj_id_wifi_discovered_2_cont,
+        setting_wifi_obj_id_wifi_discovered_2_title,
+        setting_wifi_obj_id_wifi_discovered_2_img,
+
+        setting_wifi_obj_id_wifi_discovered_3_cont,
+        setting_wifi_obj_id_wifi_discovered_3_title,
+        setting_wifi_obj_id_wifi_discovered_3_img,
+
+        setting_wifi_obj_id_wifi_discovered_4_cont,
+        setting_wifi_obj_id_wifi_discovered_4_title,
+        setting_wifi_obj_id_wifi_discovered_4_img,
+
+        setting_wifi_obj_id_wifi_discovered_5_cont,
+        setting_wifi_obj_id_wifi_discovered_5_title,
+        setting_wifi_obj_id_wifi_discovered_5_img,
+
+        setting_wifi_obj_id_wifi_discovered_6_cont,
+        setting_wifi_obj_id_wifi_discovered_6_title,
+        setting_wifi_obj_id_wifi_discovered_6_img,
+
+        setting_wifi_obj_id_wifi_discovered_7_cont,
+        setting_wifi_obj_id_wifi_discovered_7_title,
+        setting_wifi_obj_id_wifi_discovered_7_img,
+
+        setting_wifi_obj_id_wifi_discovered_8_cont,
+        setting_wifi_obj_id_wifi_discovered_8_title,
+        setting_wifi_obj_id_wifi_discovered_8_img,
+
+        setting_wifi_obj_id_wifi_discovered_9_cont,
+        setting_wifi_obj_id_wifi_discovered_9_title,
+        setting_wifi_obj_id_wifi_discovered_9_img,
+
+        setting_wifi_obj_id_wifi_discovered_10_cont,
+        setting_wifi_obj_id_wifi_discovered_10_title,
+        setting_wifi_obj_id_wifi_discovered_10_img,
+
+        setting_wifi_obj_id_wifi_discovered_11_cont,
+        setting_wifi_obj_id_wifi_discovered_11_title,
+        setting_wifi_obj_id_wifi_discovered_11_img,
+
+        setting_wifi_obj_id_wifi_discovered_12_cont,
+        setting_wifi_obj_id_wifi_discovered_12_title,
+        setting_wifi_obj_id_wifi_discovered_12_img,
+
+        setting_wifi_obj_id_wifi_discovered_13_cont,
+        setting_wifi_obj_id_wifi_discovered_13_title,
+        setting_wifi_obj_id_wifi_discovered_13_img,
+
+        setting_wifi_obj_id_wifi_discovered_14_cont,
+        setting_wifi_obj_id_wifi_discovered_14_title,
+        setting_wifi_obj_id_wifi_discovered_14_img,
+
+        setting_wifi_obj_id_wifi_discovered_15_cont,
+        setting_wifi_obj_id_wifi_discovered_15_title,
+        setting_wifi_obj_id_wifi_discovered_15_img,
+
+        setting_wifi_obj_id_wifi_discovered_16_cont,
+        setting_wifi_obj_id_wifi_discovered_16_title,
+        setting_wifi_obj_id_wifi_discovered_16_img,
+
+        setting_wifi_obj_id_wifi_discovered_17_cont,
+        setting_wifi_obj_id_wifi_discovered_17_title,
+        setting_wifi_obj_id_wifi_discovered_17_img,
+
+        setting_wifi_obj_id_wifi_discovered_18_cont,
+        setting_wifi_obj_id_wifi_discovered_18_title,
+        setting_wifi_obj_id_wifi_discovered_18_img,
+
+        setting_wifi_obj_id_wifi_discovered_19_cont,
+        setting_wifi_obj_id_wifi_discovered_19_title,
+        setting_wifi_obj_id_wifi_discovered_19_img,
+
+        setting_wifi_obj_id_wifi_discovered_20_cont,
+        setting_wifi_obj_id_wifi_discovered_20_title,
+        setting_wifi_obj_id_wifi_discovered_20_img,
 };
 
 static void setting_wifi_cancel_click(lv_event_t *e)
@@ -36,7 +251,7 @@ static void setting_wifi_cancel_click(lv_event_t *e)
 static void setting_wifi_next_click(lv_event_t *e)
 {
         setting_time_first_enter_set_flag(0x00);
-        sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+          sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
 static void wifi_setting_wifi_enable_display(lv_obj_t *obj)
@@ -64,7 +279,7 @@ static void setting_wifi_disable_obj_hidden(void)
 static void setting_wifi_setting_click(lv_event_t *e)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_cont);
-        lv_obj_t *img = lv_obj_get_child_form_id(parent, 2);
+        lv_obj_t *img = lv_obj_get_child_form_id(parent, setting_wifi_obj_id_wifi_img);
 
         user_data_get()->wifi_enable = user_data_get()->wifi_enable ? false : true;
         user_data_save();
@@ -79,17 +294,63 @@ static void setting_wifi_setting_click(lv_event_t *e)
                 sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 }
+static int setting_wifi_discover_obj_id_get(int i, int j)
+{
+        int obj_id[20][3] = {
+            {setting_wifi_obj_id_wifi_discovered_1_cont, setting_wifi_obj_id_wifi_discovered_1_title, setting_wifi_obj_id_wifi_discovered_1_img},
+
+            {setting_wifi_obj_id_wifi_discovered_2_cont, setting_wifi_obj_id_wifi_discovered_2_title, setting_wifi_obj_id_wifi_discovered_2_img},
+
+            {setting_wifi_obj_id_wifi_discovered_3_cont, setting_wifi_obj_id_wifi_discovered_3_title, setting_wifi_obj_id_wifi_discovered_3_img},
+
+            {setting_wifi_obj_id_wifi_discovered_4_cont, setting_wifi_obj_id_wifi_discovered_4_title, setting_wifi_obj_id_wifi_discovered_4_img},
+
+            {setting_wifi_obj_id_wifi_discovered_5_cont, setting_wifi_obj_id_wifi_discovered_5_title, setting_wifi_obj_id_wifi_discovered_5_img},
+
+            {setting_wifi_obj_id_wifi_discovered_6_cont, setting_wifi_obj_id_wifi_discovered_6_title, setting_wifi_obj_id_wifi_discovered_6_img},
+
+            {setting_wifi_obj_id_wifi_discovered_7_cont, setting_wifi_obj_id_wifi_discovered_7_title, setting_wifi_obj_id_wifi_discovered_7_img},
+
+            {setting_wifi_obj_id_wifi_discovered_8_cont, setting_wifi_obj_id_wifi_discovered_8_title, setting_wifi_obj_id_wifi_discovered_8_img},
+
+            {setting_wifi_obj_id_wifi_discovered_9_cont, setting_wifi_obj_id_wifi_discovered_9_title, setting_wifi_obj_id_wifi_discovered_9_img},
+
+            {setting_wifi_obj_id_wifi_discovered_10_cont, setting_wifi_obj_id_wifi_discovered_10_title, setting_wifi_obj_id_wifi_discovered_10_img},
+
+            {setting_wifi_obj_id_wifi_discovered_11_cont, setting_wifi_obj_id_wifi_discovered_11_title, setting_wifi_obj_id_wifi_discovered_11_img},
+
+            {setting_wifi_obj_id_wifi_discovered_12_cont, setting_wifi_obj_id_wifi_discovered_12_title, setting_wifi_obj_id_wifi_discovered_12_img},
+
+            {setting_wifi_obj_id_wifi_discovered_13_cont, setting_wifi_obj_id_wifi_discovered_13_title, setting_wifi_obj_id_wifi_discovered_13_img},
+
+            {setting_wifi_obj_id_wifi_discovered_14_cont, setting_wifi_obj_id_wifi_discovered_14_title, setting_wifi_obj_id_wifi_discovered_14_img},
+
+            {setting_wifi_obj_id_wifi_discovered_15_cont, setting_wifi_obj_id_wifi_discovered_15_title, setting_wifi_obj_id_wifi_discovered_15_img},
+
+            {setting_wifi_obj_id_wifi_discovered_16_cont, setting_wifi_obj_id_wifi_discovered_16_title, setting_wifi_obj_id_wifi_discovered_16_img},
+
+            {setting_wifi_obj_id_wifi_discovered_17_cont, setting_wifi_obj_id_wifi_discovered_17_title, setting_wifi_obj_id_wifi_discovered_17_img},
+
+            {setting_wifi_obj_id_wifi_discovered_18_cont, setting_wifi_obj_id_wifi_discovered_18_title, setting_wifi_obj_id_wifi_discovered_18_img},
+
+            {setting_wifi_obj_id_wifi_discovered_19_cont, setting_wifi_obj_id_wifi_discovered_19_title, setting_wifi_obj_id_wifi_discovered_19_img},
+
+            {setting_wifi_obj_id_wifi_discovered_20_cont, setting_wifi_obj_id_wifi_discovered_20_title, setting_wifi_obj_id_wifi_discovered_20_img},
+        };
+        return obj_id[i][j];
+}
 static void setting_wifi_discover_click(lv_event_t *e)
 {
-        lv_obj_t *parent = lv_event_get_current_target(e);
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
-        if (obj == NULL)
+        lv_obj_t *obj = lv_event_get_current_target(e);
+        for (int i = 0; i < wifi_scanf_cont; i++)
         {
-                SAT_DEBUG("  lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
-                return;
+                if (obj->id == setting_wifi_discover_obj_id_get(i, 0))
+                {
+                        lv_obj_t *label = lv_obj_get_child_form_id(obj, setting_wifi_discover_obj_id_get(i, 1));
+                        wifi_input_user_setting(lv_label_get_text(label));
+                        sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
+                }
         }
-        wifi_input_user_setting(lv_label_get_text(obj));
-        sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
 static const char *wifi_setting_wifi_free_icon_get(const wifi_info *info)
 {
@@ -142,7 +403,7 @@ static const char *wifi_setting_wifi_icon_get(const wifi_info *info)
 }
 static void settign_wifi_connected_click(lv_event_t *e)
 {
-        connected_wifi_info_setting((void *)&wifi_connected);
+        connected_wifi_info_setting((void *)p_wifi_connected);
         sat_layout_goto(wifi_info, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static lv_obj_t *setting_wifi_discovered_network_list_create(void)
@@ -163,31 +424,16 @@ static void setting_wifi_discovered_network_display(void)
         ** 日期: 2023-2-2 13:46:56
         ** 说明: 加载连接的设备
         ***********************************************/
-        unsigned char ip[32] = {0};
-        bool connected = false;
-        wifi_device_connection_stauts((unsigned char *)(wifi_connected.name), &wifi_connected.free, ip, &connected, NULL);
-        wifi_info *p_wifi_info_group;
-        int total = 0;
-        if (wifi_device_scanf_info_get(&p_wifi_info_group, &total) == true)
-        {
-                for (int i = 0; i < total; i++)
-                {
-                        if (strcmp(p_wifi_info_group[i].name, wifi_connected.name) == 0)
-                        {
-                                wifi_connected.db = p_wifi_info_group[i].db;
-                        }
-                }
-        }
-        if (connected == true)
+        if (p_wifi_connected != NULL)
         {
                 lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_connected_user_cont, 48, 216, 928, 64,
                                               settign_wifi_connected_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                               0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                              58, 20, 838, 64, 0,
-                                              wifi_connected.name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 48, 48, 2,
-                                              wifi_setting_wifi_icon_get(&wifi_connected), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                              58, 20, 838, 64, setting_wifi_obj_id_wifi_connected_user_title,
+                                              p_wifi_connected->name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              0, 8, 48, 48, setting_wifi_obj_id_wifi_connected_user_img,
+                                              wifi_setting_wifi_icon_get(p_wifi_connected), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
                 list_item_y += 64;
         }
@@ -213,16 +459,16 @@ static void setting_wifi_discovered_network_display(void)
         {
                 lv_obj_t *list = setting_wifi_discovered_network_list_create();
                 lv_common_style_set_common(list, setting_wifi_obj_id_list, 48, list_item_y, 928, (600 - list_item_y), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-                for (int i = 0; i < total; i++)
+                for (int i = 0; i < wifi_scanf_cont; i++)
                 {
-                        lv_common_img_text_btn_create(list, i, 0, list_item_y, 928, 64,
+                        lv_common_img_text_btn_create(list, setting_wifi_discover_obj_id_get(i, 0), 0, list_item_y, 928, 64,
                                                       setting_wifi_discover_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                      58, 20, 838, 64, 0,
-                                                      p_wifi_info_group[i].name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                      0, 8, 48, 48, 2,
-                                                      (const char *)wifi_setting_wifi_icon_get(&p_wifi_info_group[i]), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                                      58, 20, 838, 64, setting_wifi_discover_obj_id_get(i, 1),
+                                                      wifi_scanf_temp[i].name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                      0, 8, 48, 48, setting_wifi_discover_obj_id_get(i, 2),
+                                                      (const char *)wifi_setting_wifi_icon_get(&wifi_scanf_temp[i]), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
                         list_item_y += 64;
                 }
@@ -233,22 +479,8 @@ static void settign_wifi_add_click(lv_event_t *ev)
         wifi_input_user_setting(NULL);
         sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
-
-static void wifi_display_status_timer(lv_timer_t *pt)
-{
-        char wifi_name[128] = {0};
-        wifi_device_connection_stauts((unsigned char *)wifi_name, NULL, NULL, NULL, NULL);
-        if (strcmp(wifi_name, wifi_connected.name))
-        {
-                sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-        }
-}
 static void sat_layout_enter(setting_wifi)
 {
-        if (user_data_get()->wifi_enable == true)
-        {
-                wifi_device_scanf();
-        }
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -291,16 +523,16 @@ static void sat_layout_enter(setting_wifi)
                                                                                    setting_wifi_setting_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                   0, 8, 838, 50, 0,
+                                                                                   0, 8, 838, 50, setting_wifi_obj_id_wifi_title,
                                                                                    layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_WIFI), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                   0, 45, 838, 50, 1,
+                                                                                   0, 45, 838, 50, setting_wifi_obj_id_wifi_sub,
                                                                                    "Wi-FI MAC: AA:00:00:BB:FF:88", 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                    0, 0, 0, 0, -1,
                                                                                    NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                   840, 20, 80, 48, 2,
+                                                                                   840, 20, 80, 48, setting_wifi_obj_id_wifi_img,
                                                                                    resource_ui_src_get("btn_switch_on.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 2);
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_wifi_obj_id_wifi_img);
                 wifi_setting_wifi_enable_display(obj);
         }
         /***********************************************
@@ -313,9 +545,9 @@ static void sat_layout_enter(setting_wifi)
                                               settign_wifi_add_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              16, 13, 300, 27, 0,
+                                              16, 13, 300, 27, setting_wifi_obj_id_wifi_add_title,
                                               layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_ADD_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                              896, 16, 80, 32, 2,
+                                              896, 16, 80, 32, setting_wifi_obj_id_wifi_add_img,
                                               (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
         }
         setting_wifi_discovered_network_display();
@@ -324,8 +556,6 @@ static void sat_layout_enter(setting_wifi)
         {
                 setting_wifi_disable_obj_hidden();
         }
-
-        lv_sat_timer_create(wifi_display_status_timer, 1000, NULL);
 }
 static void sat_layout_quit(setting_wifi)
 {

@@ -203,7 +203,6 @@ static void playback_thumb_refresh_display_callback(void)
                 {
                         continue;
                 }
-
                 lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), playback_obj_id_thumb_base + i);
                 if (parent == NULL)
                 {

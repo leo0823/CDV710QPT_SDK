@@ -29,9 +29,13 @@ enum
 };
 static void monitor_obj_handup_display(void);
 static void monitor_obj_normal_lock_display(void);
+static void monitor_obj_lock_1_display(void);
+static void monitor_obj_lock_2_display(void);
 static void monitor_obj_volume_display(void);
 
 static int monitor_timeout_sec = 0;
+static int call_duration = 0;
+
 static bool is_monitor_door_camera_talk = false;
 static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
@@ -360,13 +364,19 @@ static void monitor_obj_talk_click(lv_event_t *e)
         if (is_monitor_door_camera_talk == false)
         {
                 is_monitor_door_camera_talk = true;
+                
+                call_duration = 0;
+                monitor_enter_flag_set(MON_ENTER_MANUAL_TALK_FLAG);
 
                 sat_linphone_answer(-1);
                 monitor_obj_talk_display();
                 monitor_obj_handup_display();
                 monitor_obj_normal_lock_display();
                 monitor_obj_volume_display();
+                monitor_obj_lock_1_display();
+                monitor_obj_lock_2_display();
         }
+        
 }
 /***********************************************
  ** 作者: leo.liu
@@ -404,14 +414,9 @@ static void monitor_obj_handup_display(void)
                 }
                 else
                 {
-                        if (user_data_get()->etc.open_the_door == 0)
-                        {
-                                lv_obj_set_x(obj, 518);
-                        }
-                        else
-                        {
-                                lv_obj_set_x(obj, ((ch == MON_CH_DOOR2) && (lock_num == 2)) ? 576 : 518);
-                        }
+          
+                        lv_obj_set_x(obj, ((ch == MON_CH_DOOR2) && (lock_num == 2)) ? 576 : 518);
+                        
                         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_endcall.png"), LV_PART_MAIN);
                 }
         }
@@ -426,23 +431,72 @@ static void monitor_obj_handup_display(void)
  ** 日期: 2023-2-2 13:42:25
  ** 说明: 开锁指令
  ***********************************************/
-static void monitor_unlock_ctrl(bool en)
+static void monitor_unlock_ctrl(int ch,int mode,bool en)
 {
-        const char *user = monitor_channel_get_url(monitor_channel_get(), false);
-        char *cmd[3] = {
-            "SAT_SHELL echo 33 > /sys/class/gpio/export",
-            "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
-            "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
-
-        if (en == false)
+        if(ch == MON_CH_DOOR1)
         {
-                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
+                if(mode == 0)
+                {
+                        door1_lock1_pin_ctrl(true);
+                }
+                else
+                {
+                        const char *user = monitor_channel_get_url(ch, false);
+                        char *cmd[3] = {
+                        "SAT_SHELL echo 33 > /sys/class/gpio/export",
+                        "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
+                        "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
+
+                        if (en == false)
+                        {
+                                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
+                        }
+
+                        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                        {
+                                sat_linphone_message_cmd_send(user, cmd[i]);
+                        }
+                }       
+        }else if(ch == MON_CH_DOOR2)
+        {
+                if(mode == 1)
+                {
+                        const char *user = monitor_channel_get_url(ch, false);
+                        char *cmd[3] = {
+                        "SAT_SHELL echo 33 > /sys/class/gpio/export",
+                        "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
+                        "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
+
+                        if (en == false)
+                        {
+                                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
+                        }
+
+                        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                        {
+                                sat_linphone_message_cmd_send(user, cmd[i]);
+                        }
+                }else
+                {       const char *user = monitor_channel_get_url(ch, false);
+                        char *cmd[3] = {
+                        "SAT_SHELL echo 32 > /sys/class/gpio/export",
+                        "SAT_SHELL echo out > /sys/class/gpio/gpio32/direction",
+                        "SAT_SHELL echo 1 > /sys/class/gpio/gpio32/value"};
+
+                        if (en == false)
+                        {
+                                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio32/value";
+                        }
+
+                        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                        {
+                                sat_linphone_message_cmd_send(user, cmd[i]);
+                        }
+
+                }
+
         }
 
-        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-        {
-                sat_linphone_message_cmd_send(user, cmd[i]);
-        }
 }
 static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
 {
@@ -452,7 +506,16 @@ static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
         {
                 lv_obj_del(obj);
         }
-        monitor_unlock_ctrl(false);
+        int ch = monitor_channel_get();
+        int mode = 0;
+        if(ch == MON_CH_DOOR1)
+        {
+                mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+        }else if(ch == MON_CH_DOOR1)
+        {
+                mode = user_data_get()->etc.door2_lock_num;
+        }
+        monitor_unlock_ctrl(ch,mode,false);
         lv_timer_del(ptimer);
 }
 static bool monitor_obj_unlock_icon_display(void)
@@ -483,7 +546,16 @@ static void monitor_obj_normal_lock_click(lv_event_t *e)
         if (monitor_obj_unlock_icon_display() == true)
         {
                 ring_unlock_play();
-                monitor_unlock_ctrl(true);
+                int ch = monitor_channel_get();
+                int mode = 0;
+                if(ch == MON_CH_DOOR1)
+                {
+                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                }else if(ch == MON_CH_DOOR1)
+                {
+                        mode = user_data_get()->etc.door2_lock_num;
+                }
+                monitor_unlock_ctrl(ch,mode,true);
         }
 }
 static void monitor_obj_normal_lock_display(void)
@@ -499,24 +571,39 @@ static void monitor_obj_normal_lock_display(void)
         if (is_channel_ipc_camera(ch) == false)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                if (is_monitor_door_camera_talk == false)
+                if (user_data_get()->etc.open_the_door == 0)
                 {
-                        if ((user_data_get()->etc.open_the_door == 0) || (((ch == MON_CH_DOOR2) && (lock_num == 2))))
+                       	if ((ch == MON_CH_DOOR1) || (lock_num == 1))
+                        {
+                                lv_obj_set_x(obj, 402);
+                                if(is_monitor_door_camera_talk == false)
+                                {
+                                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                                }
+          
+                        }
+                        else if ((ch == MON_CH_DOOR2) && (lock_num == 2))
                         {
                                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        }
-                        else
-                        {
-                                lv_obj_set_x(obj, 460);
                         }
                 }
                 else
                 {
-                        if ((user_data_get()->etc.open_the_door == 0) || ((ch == MON_CH_DOOR1) || (lock_num == 1)))
+                        if ((ch == MON_CH_DOOR1) || (lock_num == 1))
                         {
-                                lv_obj_set_x(obj, 402);
+                                if(is_monitor_door_camera_talk)
+                                {
+                                        lv_obj_set_x(obj, 402);
+            
+                                }
+                                else
+                                {
+                                        lv_obj_set_x(obj, 460);
+                    
+                                }
+
                         }
-                        else
+                        else if ((ch == MON_CH_DOOR2) && (lock_num == 2))
                         {
                                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
@@ -535,6 +622,20 @@ static void monitor_obj_normal_lock_display(void)
  ***********************************************/
 static void monitor_obj_lock_1_click(lv_event_t *e)
 {
+        if (monitor_obj_unlock_icon_display() == true)
+        {
+                ring_unlock_play();
+                int ch = monitor_channel_get();
+                int mode = 0;
+                if(ch == MON_CH_DOOR1)
+                {
+                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                }else if(ch == MON_CH_DOOR1)
+                {
+                        mode = user_data_get()->etc.door2_lock_num;
+                }
+                monitor_unlock_ctrl(ch,mode,true);
+        }
 }
 static void monitor_obj_lock_1_display(void)
 {
@@ -545,15 +646,20 @@ static void monitor_obj_lock_1_display(void)
         }
         int ch = monitor_channel_get();
         int lock_num = user_data_get()->etc.door2_lock_num;
+	if ((ch != MON_CH_DOOR2) || (lock_num != 2))
+	{
+		lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                return;
+	}
 
         if (is_channel_ipc_camera(ch) == false)
         {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 if (is_monitor_door_camera_talk == false)
                 {
-                        if ((user_data_get()->etc.open_the_door == 0) || (((ch == MON_CH_DOOR1) && (lock_num == 1))))
+                        if (user_data_get()->etc.open_the_door == 0)
                         {
                                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                                return;
                         }
                         else
                         {
@@ -562,19 +668,15 @@ static void monitor_obj_lock_1_display(void)
                 }
                 else
                 {
-                        if ((user_data_get()->etc.open_the_door == 0) || ((ch == MON_CH_DOOR1) || (lock_num == 1)))
-                        {
-                                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        }
-                        else
-                        {
-                                lv_obj_set_x(obj, 344);
-                        }
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_x(obj, 344);
+                        
                 }
         }
         else
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
         }
 }
 /***********************************************
@@ -584,6 +686,20 @@ static void monitor_obj_lock_1_display(void)
  ***********************************************/
 static void monitor_obj_lock_2_click(lv_event_t *e)
 {
+        if (monitor_obj_unlock_icon_display() == true)
+        {
+                ring_unlock_play();
+                int ch = monitor_channel_get();
+                int mode = 0;
+                if(ch == MON_CH_DOOR1)
+                {
+                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                }else if(ch == MON_CH_DOOR1)
+                {
+                        mode = user_data_get()->etc.door2_lock_num;
+                }
+                monitor_unlock_ctrl(ch,mode,true);
+        }
 }
 static void monitor_obj_lock_2_display(void)
 {
@@ -594,13 +710,18 @@ static void monitor_obj_lock_2_display(void)
         }
         int ch = monitor_channel_get();
         int lock_num = user_data_get()->etc.door2_lock_num;
+	if ((ch != MON_CH_DOOR2) || (lock_num != 2))
+	{
+		lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                return;
+	}
+
 
         if (is_channel_ipc_camera(ch) == false)
         {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 if (is_monitor_door_camera_talk == false)
                 {
-                        if ((user_data_get()->etc.open_the_door == 0) || (((ch == MON_CH_DOOR1) && (lock_num == 1))))
+                        if (user_data_get()->etc.open_the_door == 0)
                         {
                                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
@@ -611,14 +732,9 @@ static void monitor_obj_lock_2_display(void)
                 }
                 else
                 {
-                        if ((user_data_get()->etc.open_the_door == 0) || ((ch == MON_CH_DOOR1) || (lock_num == 1)))
-                        {
-                                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        }
-                        else
-                        {
-                                lv_obj_set_x(obj, 460);
-                        }
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_x(obj, 460);
+                        
                 }
         }
         else
@@ -707,6 +823,46 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
         is_monitor_snapshot_ing = snapshot_ing;
         monitor_obj_record_photo_display();
 }
+
+/************************************************************
+** 函数说明: call机任务
+** 作者: xiaoxiao
+** 日期: 2023-05-11 16:34:40
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void monitor_call_record_delay_task(lv_timer_t *ptimer)
+{
+	
+	if (user_data_get()->auto_record_mode != 0)
+	{
+		if ((media_sdcard_insert_check() == true) && (user_data_get()->auto_record_mode == 1))
+		{
+			if (is_monitor_record_video_ing  == false)
+			{
+				record_video_start(true, REC_MODE_AUTO);
+			}
+
+		}
+        }
+        lv_timer_del(ptimer);
+
+}
+
+/************************************************************
+** 函数说明:call机日志
+** 作者: xiaoxiao
+** 日期: 2023-05-17 11:02:00
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void layout_monitor_timer_task(lv_timer_t *ptimer)
+{
+	
+        call_duration ++;
+
+}
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -723,6 +879,7 @@ static void sat_layout_enter(monitor)
         is_monitor_snapshot_ing = false;
         is_monitor_record_video_ing = false;
         monitor_timeout_sec_reset(0);
+        call_duration = 0;
 
         /***********************************************
          ** 作者: leo.liu
@@ -998,10 +1155,50 @@ static void sat_layout_enter(monitor)
         snapshot_state_callback_register(monitor_snapshot_state_callback);
         /*记录注册*/
         record_state_callback_register(monitor_record_video_state_callback);
+
+        if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
+	{
+                lv_sat_timer_create(monitor_call_record_delay_task, 100, NULL);
+	}
+        lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
 }
 static void sat_layout_quit(monitor)
 {
-
+        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        int ch = monitor_channel_get();
+        CALL_LOG_TYPE type ;
+        
+        if(flag == MON_ENTER_CALL_FLAG)
+        {
+                type = IN_AND_NO_ANSWER;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= call_duration;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type,ch,call_duration,tm_val); 
+                layout_last_call_new_flag_set(true);
+        }else if(flag == MON_ENTER_MANUAL_TALK_FLAG)
+        {
+                type = CALL_OUT;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= call_duration;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type,ch,call_duration,tm_val);
+                layout_last_call_new_flag_set(true);
+        }else if(flag == MON_ENTER_CALL_TALK_FLAG)
+        {
+                type = IN_AND_ANSWER;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= call_duration;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type,ch,call_duration,tm_val);
+                layout_last_call_new_flag_set(true);
+        }
         monitor_close();
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
@@ -1017,6 +1214,7 @@ sat_layout_create(monitor);
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
 //<sip:010193001011@172.16.0.110>
+
 bool monitor_doorcamera_call_extern_func(char *arg)
 {
         SAT_DEBUG("%s", arg);

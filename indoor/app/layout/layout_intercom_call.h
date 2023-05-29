@@ -12,7 +12,10 @@ typedef enum
         INTERCOM_LANG_ID_INCOMMING_CALL,
         INTERCOM_LANG_ID_OUTCOMING_CALL,
         INTERCOM_LANG_ID_CONNECTED_CALL,
-        INTERCOM_LANG_ID_TOTAL
+        INTERCOM_LANG_ID_DOOR_CAMERA,
+        INTERCOM_LANG_ID_COMMON_TRANCE, 
+        INTERCOM_LANG_ID_GUARD_STATION, 
+        INTERCOM_LANG_ID_TOTAL,
 
 } LAYOUT_INTERCOM_LANG_ID;
 
@@ -25,6 +28,9 @@ static const char *layout_intercom_language[INTERCOM_LANG_ID_TOTAL][LANGUAGE_ID_
         {"Incomming call", "Incomming call", "Incomming call"},
         {"Calling.", "Calling.", "Calling."},
         {"Call connected.", "Call connected.", "Call connected."},
+        {"Door camera", "Doro camera", "Door camara"},
+        {"Common trance", "Common trance", "Common trance"},
+        {"Guard station", "Guard station", "Guard station"},
 };
 
 /***

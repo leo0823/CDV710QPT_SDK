@@ -11,13 +11,13 @@ enum
         setting_frame_night_mode_obj_id_list,
         setting_frame_night_mode_obj_id_use_night_mode_cont,
         setting_frame_night_mode_obj_id_use_night_mode_title,
-        setting_frame_night_mode_obj_id_use_night_mode_sub,
+        setting_frame_night_mode_obj_id_use_night_time_sub,
         setting_frame_night_mode_obj_id_use_night_mode_img,
 
         setting_frame_night_mode_obj_id_setting_time_cont,
 
         setting_frame_night_mode_obj_id_roller_start_hour,
-        setting_frame_night_mode_obj_id_rolle_start_minr,
+        setting_frame_night_mode_obj_id_rolle_start_min,
         setting_frame_night_mode_obj_id_roller_end_hour,
         setting_frame_night_mode_obj_id_roller_end_min,
 
@@ -82,6 +82,20 @@ static void setting_frame_night_mode_obj_list_click(lv_event_t *e)
 static void setting_frame_night_mode_obj_slider(lv_event_t *e)
 {
 }
+static void layout_setting_frame_night_mode_display(void)
+{
+        lv_obj_t * parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_frame_night_mode_obj_id_setting_time_cont);
+        lv_obj_t * start_hour = lv_obj_get_child_form_id(parent,setting_frame_night_mode_obj_id_roller_start_hour);
+        lv_obj_t * start_min = lv_obj_get_child_form_id(parent,setting_frame_night_mode_obj_id_rolle_start_min);
+        lv_obj_t * end_hour = lv_obj_get_child_form_id(parent,setting_frame_night_mode_obj_id_roller_end_hour);
+        lv_obj_t * end_min = lv_obj_get_child_form_id(parent,setting_frame_night_mode_obj_id_roller_end_min);
+
+        lv_roller_set_selected(start_hour,user_data_get()->display.night_time_start / 60, false);
+        lv_roller_set_selected(start_min,user_data_get()->display.night_time_start % 60, false);
+        lv_roller_set_selected(end_hour,user_data_get()->display.night_time_end / 60, false);
+        lv_roller_set_selected(end_min,user_data_get()->display.night_time_end % 60, false);
+
+}
 static void sat_layout_enter(setting_frame_night_mode)
 {
         /***********************************************
@@ -118,7 +132,7 @@ static void sat_layout_enter(setting_frame_night_mode)
                 setting_list_info_t main_list_group[] = {
 
                     {0, 0, 928, 88,
-                     setting_frame_night_mode_obj_id_use_night_mode_cont, setting_frame_night_mode_obj_id_use_night_mode_title, setting_frame_night_mode_obj_id_use_night_mode_sub,
+                     setting_frame_night_mode_obj_id_use_night_mode_cont, setting_frame_night_mode_obj_id_use_night_mode_title, setting_frame_night_mode_obj_id_use_night_time_sub,
                      SETTING_STANDBY_SCREEN_LANG_ID_USER_NIGHT_MODE, layout_setting_standby_screen_language_get,
                      SETTING_STANDBY_SCREEN_LANG_ID_ADJUSTS_THE_BRIGHTNESS, layout_setting_standby_screen_language_get,
                      setting_frame_night_mode_obj_list_click, setting_frame_night_mode_obj_id_use_night_mode_img},
@@ -168,7 +182,7 @@ static void sat_layout_enter(setting_frame_night_mode)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 
-                lv_common_roller_create(parent, setting_frame_night_mode_obj_id_rolle_start_minr, 140, 0, 104, 201,
+                lv_common_roller_create(parent, setting_frame_night_mode_obj_id_rolle_start_min, 140, 0, 104, 201,
                                         setting_frame_night_mode_obj_slider, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
@@ -200,6 +214,7 @@ static void sat_layout_enter(setting_frame_night_mode)
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
                                         3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                         resource_ui_src_get("roller_icon.png"));
+                layout_setting_frame_night_mode_display();
         }
 
         setting_frame_night_mode_checkbox_obj_display();
@@ -207,6 +222,35 @@ static void sat_layout_enter(setting_frame_night_mode)
 
 static void sat_layout_quit(setting_frame_night_mode)
 {
+         int hour = 0, min = 0;
+        char buffer[8] = {0};
+        lv_obj_t * parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_frame_night_mode_obj_id_setting_time_cont);
+
+        /***** start_hour *****/
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_frame_night_mode_obj_id_roller_start_hour);
+        lv_roller_get_selected_str(obj, buffer, 8);
+        sscanf(buffer, "%d",&hour);        
+        printf("buffer is %s\n",buffer);
+        /***** start_min *****/
+        obj = lv_obj_get_child_form_id(parent, setting_frame_night_mode_obj_id_rolle_start_min);
+        lv_roller_get_selected_str(obj, buffer, 8);
+        sscanf(buffer, "%d", &min);
+
+        user_data_get()->display.night_time_start = hour * 60 + min;
+        /***** end_hour *****/
+        obj = lv_obj_get_child_form_id(parent, setting_frame_night_mode_obj_id_roller_end_hour);
+        lv_roller_get_selected_str(obj, buffer, 8);
+        sscanf(buffer, "%d",&hour);
+
+
+        /***** end_min *****/
+        obj = lv_obj_get_child_form_id(parent, setting_frame_night_mode_obj_id_roller_end_min);
+        lv_roller_get_selected_str(obj, buffer, 8);
+        sscanf(buffer, "%d", &min);
+
+        user_data_get()->display.night_time_end = hour * 60 + min;
+
+        user_data_save();
 }
 
 sat_layout_create(setting_frame_night_mode);

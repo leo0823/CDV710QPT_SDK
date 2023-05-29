@@ -50,6 +50,11 @@ enum
         setting_general_obj_id_door_opener_module_title,
         setting_general_obj_id_door_opener_module_sub,
 
+        setting_general_obj_id_door_opener_num_cont,
+        setting_general_obj_id_door_opener_num_title,
+        setting_general_obj_id_door_opener_num_sub,
+
+
         setting_general_obj_id_call_time_count,
         setting_general_obj_id_call_time_title,
         setting_general_obj_id_call_time_sub,
@@ -85,6 +90,98 @@ enum
         setting_general_obj_id_msgbox_cancel_img,
 };
 
+/************************************************************
+** 函数说明: general setting列表获取
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:23:47
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static lv_obj_t *setting_general_list_item_sub_get(int cont,int sub_id)
+{
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
+        if (list == NULL)
+        {
+                SAT_DEBUG("lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_general_obj_id_setting_list) faild");
+                return NULL;
+        }
+
+        lv_obj_t *item = lv_obj_get_child_form_id(list, cont);
+        if (item == NULL)
+        {
+                SAT_DEBUG("lv_obj_get_child_form_id(list,cont); ");
+                return NULL;
+        }
+
+        lv_obj_t *sub = lv_obj_get_child_form_id(item, sub_id);
+        if (sub == NULL)
+        {
+                SAT_DEBUG("lv_obj_get_child_form_id(item, sub_id); ");
+                return NULL;
+        }
+
+        return sub;
+}
+
+
+/************************************************************
+** 函数说明: door_open_method 次标题显示
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:19:23
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void door_open_method_sub_display(void)
+{
+        lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opening_method_cont,setting_general_obj_id_door_opening_method_sub);
+        if (sub == NULL)
+        {
+                SAT_DEBUG("open_method_sub is null\n");
+                return ;
+        }
+
+        lv_label_set_text(sub,user_data_get()->etc.open_the_door == 0 ? layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL):layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_WHEN_CALL));
+
+}
+
+/************************************************************
+** 函数说明: doo人open module 次标题显示
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:19:23
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void door1_open_moudle_sub_display(void)
+{
+        lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opener_module_cont,setting_general_obj_id_door_opener_module_sub);
+        if (sub == NULL)
+        {
+                SAT_DEBUG("open_method_sub is null\n");
+                return;
+        }
+        lv_label_set_text(sub,user_data_get()->etc.door1_open_door_mode == 0 ? layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_CAMERA):layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK));
+
+}
+
+/************************************************************
+** 函数说明: door2 锁数量 次标题显示
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:19:23
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void door2_open_lock_num_sub_display(void)
+{
+        lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opener_num_cont,setting_general_obj_id_door_opener_num_sub);
+        if (sub == NULL)
+        {
+                SAT_DEBUG("open_method_sub is null\n");
+                return;
+        }
+
+        lv_label_set_text(sub,user_data_get()->etc.door2_lock_num == 1 ? layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1):layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM2));
+
+}
 static void setting_main_cancel_obj_click(lv_event_t *ev)
 {
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, SAT_VOID);
@@ -262,23 +359,69 @@ static void setting_general_msgbox_moethod_checkbox_click(lv_event_t *e)
                 lv_obj_set_style_bg_img_src(discheck_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
 }
-static void setting_general_msgbox_moethod_confirm_click(lv_event_t *e)
+
+/************************************************************
+** 函数说明: 设置开锁模式（快模式或标准模式）
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:44:35
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void setting_general_door1_opening_moethod_msgbox_confirm_click(lv_event_t *ev)
 {
+        lv_obj_t *item = lv_event_get_current_target(ev);
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1),setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2),setting_general_obj_id_msgbox_check_2_img);
+
+        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->etc.open_the_door = 0;
+
+        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->etc.open_the_door = 1;
+        }
+                user_data_save();
         setting_general_msgbox_del();
+        door_open_method_sub_display();
 }
-static void setting_general_door_opening_moethod_obj_click(lv_event_t *ev)
+
+static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
 {
         const char *item[2] = {0};
         item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL);
         item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_WHEN_CALL);
         setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENING_METHOD),
-                                      setting_general_msgbox_cancel_click, setting_general_msgbox_moethod_confirm_click, setting_general_msgbox_moethod_checkbox_click,
+                                      setting_general_msgbox_cancel_click, setting_general_door1_opening_moethod_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
 }
-static void setting_general_door_opener_module_msgbox_confirm_click(lv_event_t *e)
+
+/************************************************************
+** 函数说明: door1开锁模块设置（开室内机的锁还是门口机的锁）
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:51:13
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void setting_general_door2_opening_modoule_msgbox_confirm_click(lv_event_t *ev)
 {
+        lv_obj_t *item = lv_event_get_current_target(ev);
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1),setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2),setting_general_obj_id_msgbox_check_2_img);
+
+        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->etc.door1_open_door_mode = 0;
+
+        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->etc.door1_open_door_mode = 1;
+        }
+                user_data_save();
         setting_general_msgbox_del();
+        door1_open_moudle_sub_display();
 }
+
 
 static void setting_general_door_opener_module_obj_click(lv_event_t *ev)
 {
@@ -286,9 +429,64 @@ static void setting_general_door_opener_module_obj_click(lv_event_t *ev)
         item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_CAMERA);
         item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK);
         setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENER_MODULE),
-                                      setting_general_msgbox_cancel_click, setting_general_door_opener_module_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
+                                      setting_general_msgbox_cancel_click, setting_general_door2_opening_modoule_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
+
 }
+
+
+static void setting_general_door2_opener_num_msgbox_confirm_click(lv_event_t *ev)
+{
+        lv_obj_t *item = lv_event_get_current_target(ev);
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1),setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2),setting_general_obj_id_msgbox_check_2_img);
+
+        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->etc.door2_lock_num = 1;
+
+        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->etc.door2_lock_num = 2;
+        }
+                user_data_save();
+        setting_general_msgbox_del();
+        door2_open_lock_num_sub_display();
+}
+
+static void setting_general_door2_opener_num_display(void)
+{
+        lv_obj_t * parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_general_obj_id_msgbox_cont),setting_general_obj_id_msgbox_parent);
+        
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1),setting_general_obj_id_msgbox_check_1_img);
+
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2),setting_general_obj_id_msgbox_check_2_img);
+        if (user_data_get()->etc.door2_lock_num == 1)
+        {
+
+            lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+            lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+
+
+        }
+        else
+        {
+            lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+            lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
+}
+static void setting_general_door2_opener_num_obj_click(lv_event_t *e)
+{
+
+        const char *item[2] = {0};
+        item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1);
+        item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM2);
+                                      
+        setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM),setting_general_msgbox_cancel_click, setting_general_door2_opener_num_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
+                                      item, 2);
+        setting_general_door2_opener_num_display();
+}
+
 static void setting_general_call_time_msgbox_item_click(lv_event_t *e)
 {
         lv_obj_t *parent = lv_event_get_current_target(e);
@@ -428,6 +626,9 @@ lv_obj_t *setting_main_list_create(int id)
 
         return list;
 }
+
+
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -441,13 +642,14 @@ static lv_obj_t *setting_sub_list_create(void)
             {0, 72, 622, 72, setting_general_obj_id_language_cont, setting_general_obj_id_language_title, setting_general_obj_id_language_sub, LANGUAGE_ID_LANG_LANG, layout_language_language_get, LANG_COMMON_ID_LANG, language_common_string_get, setting_general_language_obj_click},
             {0, 72 * 2, 622, 72, setting_general_obj_id_password_cont, setting_general_obj_id_password_title, setting_general_obj_id_password_sub, SETTING_GENERAL_LANG_ID_LANG_PASSWORD, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_CHANNGE_PASSWORD_FOR_SECURITY, layout_setting_general_language_get, setting_general_password_obj_click},
             {0, 72 * 3, 622, 72, setting_general_obj_id_storage_space_cont, setting_general_obj_id_storage_space_title, -1, SETTING_GENERAL_LANG_ID_LANG_STORAGE_SPACE, layout_setting_general_language_get, -1, NULL, setting_general_storage_space_obj_click},
-            {0, 72 * 4, 622, 72, setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_title, setting_general_obj_id_door_opening_method_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENING_METHOD, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL, layout_setting_general_language_get, setting_general_door_opening_moethod_obj_click},
+            {0, 72 * 4, 622, 72, setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_title, setting_general_obj_id_door_opening_method_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENING_METHOD, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL, layout_setting_general_language_get, setting_general_door1_opening_moethod_obj_click},
             {0, 72 * 5, 622, 72, setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_title, setting_general_obj_id_door_opener_module_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENER_MODULE, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK, layout_setting_general_language_get, setting_general_door_opener_module_obj_click},
-            {0, 72 * 6, 622, 72, setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_title, setting_general_obj_id_call_time_sub, SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_1_MINUTE, layout_setting_general_language_get, setting_general_call_time_obj_click},
-            {0, 72 * 7, 622, 72, setting_general_obj_id_sensor_usage_setting_cont, setting_general_obj_id_sensor_usage_setting_title, -1, SETTING_GENERAL_LANG_ID_LANG_SENSOR_USAGE_SETTING, layout_setting_general_language_get, -1, NULL, setting_general_sensor_usage_setting_obj_click},
-            {0, 72 * 8, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP, layout_setting_general_language_get, -1, NULL, setting_general_download_mobile_obj_click},
-            {0, 72 * 9, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA, layout_setting_general_language_get, -1, NULL, setting_general_initialization_userdata_obj_click},
-            {0, 72 * 10, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION, layout_setting_general_language_get, -1, NULL, setting_general_version_information_obj_click},
+            {0, 72 * 6, 622, 72, setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_title, setting_general_obj_id_door_opener_num_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1, layout_setting_general_language_get, setting_general_door2_opener_num_obj_click},
+            {0, 72 * 7, 622, 72, setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_title, setting_general_obj_id_call_time_sub, SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_1_MINUTE, layout_setting_general_language_get, setting_general_call_time_obj_click},
+            {0, 72 * 8, 622, 72, setting_general_obj_id_sensor_usage_setting_cont, setting_general_obj_id_sensor_usage_setting_title, -1, SETTING_GENERAL_LANG_ID_LANG_SENSOR_USAGE_SETTING, layout_setting_general_language_get, -1, NULL, setting_general_sensor_usage_setting_obj_click},
+            {0, 72 * 9, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP, layout_setting_general_language_get, -1, NULL, setting_general_download_mobile_obj_click},
+            {0, 72 * 10, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA, layout_setting_general_language_get, -1, NULL, setting_general_initialization_userdata_obj_click},
+            {0, 72 * 11, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION, layout_setting_general_language_get, -1, NULL, setting_general_version_information_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
@@ -470,6 +672,9 @@ static lv_obj_t *setting_sub_list_create(void)
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        door_open_method_sub_display();
+        door1_open_moudle_sub_display();
+        door2_open_lock_num_sub_display();
         return list;
 }
 

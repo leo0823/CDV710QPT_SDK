@@ -2,7 +2,6 @@
 #include "layout_setting_version_information.h"
 #include "layout_setting_general.h"
 #include "common/user_upgrade.h"
-#include "common/sat_ipcamera.h"
 enum
 {
         setting_version_information_obj_id_title,
@@ -74,15 +73,21 @@ static void setting_version_information_update_click(lv_event_t *e)
                 return;
         }
 
-        if (sat_ipcamera_device_name_get(parent->id, 500) == true)
+#if 0
+        char user[128] = {0};
+        char ip[32] = {0};
+
+        if (sip_user_get_number_and_ip(network_data_get()->door_device[parent->id].user, ip, user) == true)
         {
+
                 char msg[128] = {0};
                 sprintf(msg, "%s %s", lv_label_get_text(label), layout_setting_version_information_language_get(SETTING_VERSION_INFORMATION_LANG_ID_UPDATE_ING));
                 setting_version_infomration_msgbox_create(msg);
 
-                outdoor_network_upgrade(sat_ipcamera_ipaddr_get(parent->id));
+           //     outdoor_network_upgrade(ip);
                 lv_sat_timer_create(setting_version_information_timer, 1000, NULL);
         }
+#endif
 
         setting_version_infomration_msgbox_create("modiy this");
         lv_sat_timer_create(setting_version_information_timer, 1000, NULL);
@@ -106,26 +111,26 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
                         memset(user, 0, sizeof(user));
                         memset(ip, 0, sizeof(ip));
                         memset(version_buf, 0, sizeof(version_buf));
+                    //    if (sip_user_get_number_and_ip(network_data_get()->door_device[i].user, ip, user) == true)
+                  //      {
+                  //              user_network_device_version_get(user, ip, version_buf, sizeof(version_buf), 200);
+                  //      }
+
+                        if (version_buf[0] == 0)
+                        {
+                                strcpy(version_buf, "version unknow");
+                        }
 
                         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
                         lv_obj_t *item = lv_obj_get_child_form_id(list, i);
                         lv_obj_t *obj = lv_obj_get_child_form_id(item, 1);
-
-                        if (sat_ipcamera_device_version_get(version_buf, i, 500) == false)
-                        {
-                                lv_label_set_text(obj, "Version unknow");
-                        }
-                        else
-                        {
-                                lv_label_set_text_fmt(obj, "build time:%s", version_buf);
-                        }
+                        lv_label_set_text(obj, version_buf);
                 }
         }
 }
 
 static void sat_layout_enter(setting_version_information)
 {
-        sat_ipcamera_initialization_parameters(network_data_get()->door_device, network_data_get()->door_device_count);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -187,6 +192,8 @@ static void sat_layout_enter(setting_version_information)
          ** 日期: 2023-2-2 13:42:25
          ** 说明: 列表
          ***********************************************/
+        char user[128] = {0};
+        char ip[32] = {0};
         char version_buf[128] = {0};
         bool upgrade = (access(SD_BASE_PATH "/SAT_ANYKA3918OS", F_OK) == 0) ? true : false;
         if (network_data_get()->door_device_count > 0)
@@ -196,24 +203,24 @@ static void sat_layout_enter(setting_version_information)
 
                 for (int i = 0; i < network_data_get()->door_device_count; i++)
                 {
+                        memset(user, 0, sizeof(user));
+                        memset(ip, 0, sizeof(ip));
                         memset(version_buf, 0, sizeof(version_buf));
+                  //      if (sip_user_get_number_and_ip(network_data_get()->door_device[i].sip_url, ip, user) == true)
+                  //      {
+                  //              user_network_device_version_get(user, ip, version_buf, sizeof(version_buf), 200);
+                 //       }
 
-                        if (sat_ipcamera_device_name_get(i, 100) == false)
-                        {
-                                SAT_DEBUG("=============GET NAME Fail");
-                        }
-
-                        if (sat_ipcamera_device_version_get(version_buf, i, 100) == false)
+                        if (version_buf[0] == 0)
                         {
                                 strcpy(version_buf, "version unknow");
                         }
-
                         lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, 72 * i, 928, 72,
                                                                                            NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                            0, 17, 576, 43, 0,
-                                                                                           sat_ipcamera_door_name_get(i), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                           network_data_get()->door_device[i].door_name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                            0, 42, 576, 29, 1,
                                                                                            version_buf, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                            0, 0, 0, 0, -1,
@@ -233,9 +240,6 @@ static void sat_layout_enter(setting_version_information)
                         }
                 }
         }
-
-        
-
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
 
         lv_sat_timer_create(setting_version_information_version_get_timer, 3000, NULL);

@@ -64,9 +64,22 @@ bool ring_unlock_play(void)
 ***********************************************/
 bool ring_intercom_play(void)
 {
-         char cmd[128] = {0};
+        char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
 
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.inter_tone);
         return sat_linphone_audio_play_start(cmd, 100);
+}
+
+/************************************************************
+** 函数说明: 警报ling
+** 作者: xiaoxiao
+** 日期: 2023-05-16 11:43:00
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool ring_alarm_play(void)
+{
+        return true;
+        //return sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
 }

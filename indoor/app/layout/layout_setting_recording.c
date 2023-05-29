@@ -292,6 +292,7 @@ static void ssetting_recording_auto_msgbox_confirm_click(lv_event_t *e)
 }
 static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
 {
+
         lv_obj_t *parent = lv_event_get_current_target(e);
         if (parent == NULL)
         {
@@ -354,6 +355,14 @@ static void setting_recording_motion_obj_click(lv_event_t *ev)
 
 static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
 {
+        int mode = setting_recording_checkbox_mode_get();
+        if (mode >= 0)
+        {
+                user_data_get()->auto_record_mode = (char)mode;
+                user_data_save();
+                setting_recording_auto_sub_display();
+                sat_layout_goto(always_record, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        }
         setting_recording_msgbox_del();
 }
 static void setting_recording_always_obj_click(lv_event_t *ev)

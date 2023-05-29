@@ -94,11 +94,27 @@ typedef struct
 {
         bool auto_record;
 
-        bool alarm_1_enable;
-        bool alarm_1_trigger;
+        int away_alarm_enable_list;
 
-        bool alarm_2_enable;
-        bool alarm_2_trigger;
+        int security_alarm_enable_list;
+
+        bool security_alarm_enable;
+
+        bool away_alarm_enable;
+
+        int emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
+
+        int alarm_enable[8];//0不使能，1：NC低电平触发2：NO高电平触发
+
+        int alarm_trigger[8];
+
+        bool alarm_enable_always[2][8];
+
+        int away_setting_time;
+        int away_release_time;
+
+        bool away_auto_record;
+        bool inside_auto_record;
 
 } user_alarm_info;
 

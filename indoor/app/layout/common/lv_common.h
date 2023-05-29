@@ -264,4 +264,39 @@ lv_obj_t *lv_common_slider_create(lv_obj_t *parent, int id, int x, int y, int w,
  ** 说明: 视频模式选择
  ***********************************************/
 void lv_common_video_mode_enable(bool en);
+
+/************************************************************
+** 函数说明: 消息框的背景创建
+** 作者: xiaoxiao
+** 日期: 2023-05-13 09:04:12
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id,int id,int x,int y,int w,int h);
+
+/************************************************************
+** 函数说明: 消息框标语创建
+** 作者: xiaoxiao
+** 日期: 2023-05-13 09:04:12
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+lv_obj_t * setting_msgdialog_msg_create(lv_obj_t *parent,  int id,const char *msg_string,int x, int y, int w, int h);
+
+/************************************************************
+** 函数说明: 消息框的确认按键创建
+** 作者: xiaoxiao
+** 日期: 2023-05-13 09:06:35
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void setting_msgdialog_msg_confirm_btn_create(lv_obj_t *parent, int id,lv_event_cb_t cb);
+/************************************************************
+** 函数说明: 消息框的取消确认按键创建
+** 作者: xiaoxiao
+** 日期: 2023-05-18 11:59:41
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int confirm_id, int cancel_id,const char *confirm_string,const char *cancel_string,lv_event_cb_t con_cb,lv_event_cb_t can_cb);
 #endif

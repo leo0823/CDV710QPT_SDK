@@ -244,3 +244,37 @@ BYTE1. 010(固定部分).
                                    -BYTE2 bit[7]=1
                                                 个位分机ID号
 ***********************************************/
+/************************************************************
+** 函数说明: 判断通道是否有效
+** 作者: xiaoxiao
+** 日期: 2023-05-26 08:28:22
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool monitor_valid_channel_check(int channel)
+{
+        if(network_data_get()->door_device_count)
+        {
+                if((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
+                {
+                        if(channel > (MON_CH_DOOR1 -1 + network_data_get()->door_device_count))
+                        {
+                                return false;
+                        }
+                        return true;
+                }
+        }
+        if(network_data_get()->cctv_device_count)
+        {
+                if((channel >= MON_CH_CCTV1) || (channel <= MON_CH_CCTV8)) 
+                {
+                        if(channel > (MON_CH_CCTV1 -1 + network_data_get()->cctv_device_count))
+                        {
+                                return false;
+                        }
+                        return true;
+                }
+                
+        }
+        return false;
+}

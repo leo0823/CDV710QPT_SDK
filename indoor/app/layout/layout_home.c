@@ -215,6 +215,10 @@ static void home_latest_video_obj_click(lv_event_t *ev)
  ***********************************************/
 static void home_latest_call_obj_click(lv_event_t *ev)
 {
+        extern void enter_intercomm_call_mode_set(int mode);
+        enter_intercomm_call_mode_set(1);
+        layout_last_call_new_flag_set(false);
+        sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 /***********************************************
@@ -363,7 +367,9 @@ static void home_monitor_obj_click(lv_event_t *ev)
 
 static void home_call_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        extern void enter_intercomm_call_mode_set(int mode);
+        enter_intercomm_call_mode_set(0);
+        sat_layout_goto(intercom_call,LV_SCR_LOAD_ANIM_NONE,SAT_VOID);
 }
 static void home_cctv_obj_click(lv_event_t *ev)
 {
@@ -376,10 +382,11 @@ static void home_cctv_obj_click(lv_event_t *ev)
 }
 static void home_away_obj_click(lv_event_t *ev)
 {
+        sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void home_burglar_obj_click(lv_event_t *ev)
 {
-        exit(1);
+        sat_layout_goto(emergency_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 /***********************************************
@@ -430,15 +437,19 @@ static void home_elevator_obj_click(lv_event_t *ev)
 }
 static void home_emergency_obj_click(lv_event_t *ev)
 {
+        sat_layout_goto(security,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void home_call_list_item_create(lv_obj_t *parent)
 {
-        // 此处当作128个
+        CALL_LOG_TYPE type;
+        int ch;
+        int duration;
         struct tm tm;
-        user_time_read(&tm);
         int item_y = 0;
-        for (int i = 0; i < 128; i++)
+        int total = call_list_total_get();
+        for (int i = total-1; i >= 0; i--)
         {
+                call_list_get(i,&type, &ch, &duration,&tm);
                 char buffer[64] = {0};
                 sprintf(buffer, "%04d-%02d:%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
                 lv_common_text_create(parent, i, 0, item_y, 180, 39,
@@ -735,7 +746,7 @@ static void sat_layout_enter(home)
                                          NULL, false, LV_OPA_TRANSP, 0x242526, LV_OPA_TRANSP, 0x242526,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("ic_main_new.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                         layout_last_call_new_flag_get() ?resource_ui_src_get("ic_main_new.png"):"", LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
 
         /***********************************************
@@ -807,7 +818,7 @@ static void sat_layout_enter(home)
                                               3, 0, 77, 77, home_obj_id_emergency_img,
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
+	
         home_media_thumb_display();
 }
 

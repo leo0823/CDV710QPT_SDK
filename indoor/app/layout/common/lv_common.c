@@ -618,3 +618,97 @@ void lv_common_video_mode_enable(bool en)
         lv_disp_t *disp = lv_disp_get_default();
         disp->driver->screen_transp = en == true ? 1 : 0;
 }
+
+/************************************************************
+** 函数说明: 消息框的背景创建
+** 作者: xiaoxiao
+** 日期: 2023-05-13 09:04:12
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id,int id,int x,int y,int w,int h)
+{
+        lv_obj_t *cont =lv_common_img_btn_create(sat_cur_layout_screen_get(), parent_id, 0, 0, 1024, 600,
+                                NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+	cont =lv_common_img_btn_create(cont, id, x, y, w, h,
+                                NULL, true, LV_OPA_COVER, 0X242526, LV_OPA_COVER, 0X242526,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+
+	return cont;
+}
+
+/************************************************************
+** 函数说明: 消息框标语创建
+** 作者: xiaoxiao
+** 日期: 2023-05-13 09:04:12
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+lv_obj_t * setting_msgdialog_msg_create(lv_obj_t *parent,  int id,const char *msg_string,int x, int y, int w, int h)
+{                          
+        lv_obj_t * obj = lv_common_text_create(parent, id, x, y, w, h,
+                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        msg_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+        return obj;
+}
+
+
+/************************************************************
+** 函数说明: 消息框的确认按键创建
+** 作者: xiaoxiao
+** 日期: 2023-05-13 09:06:35
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void setting_msgdialog_msg_confirm_btn_create(lv_obj_t *parent, int id,lv_event_cb_t cb)
+{
+        int w = lv_obj_get_style_width(parent,LV_PART_MAIN);
+        int h = lv_obj_get_style_height(parent,LV_PART_MAIN);
+        lv_common_img_btn_create(parent, id,  0 , h-72, w, 72,
+                                cb, true, LV_OPA_COVER, 0x0096FF, LV_OPA_COVER, 0x0096FF,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("btn_title_confirm.png"), LV_OPA_TRANSP, 0x0096FF, LV_ALIGN_CENTER);
+}
+
+
+
+
+
+/************************************************************
+** 函数说明: 消息框的取消确认按键创建
+** 作者: xiaoxiao
+** 日期: 2023-05-18 11:59:41
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int confirm_id, int cancel_id,const char *confirm_string,const char *cancel_string,lv_event_cb_t con_cb,lv_event_cb_t can_cb)
+{
+
+        int w = lv_obj_get_style_width(parent,LV_PART_MAIN);
+        int h = lv_obj_get_style_height(parent,LV_PART_MAIN);
+        lv_common_img_text_btn_create(parent, confirm_id, 0 + w/2, h-72, w/2, 72,
+                con_cb, LV_OPA_COVER,0x00A8FF,  LV_OPA_COVER,0x0076cf,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 20, w/2, 72, 0,
+                confirm_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                3, 0, 77, 77, -1,
+                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+        lv_common_img_text_btn_create(parent, cancel_id,  0 , h-72, w/2, 72,
+                can_cb, LV_OPA_COVER, 0x47494a,  LV_OPA_COVER,0x404040,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 20, w/2, 72, 0,
+                cancel_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                3, 0, 77, 77, -1,
+                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+}

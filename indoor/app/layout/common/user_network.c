@@ -293,7 +293,7 @@ static void *user_network_tcp_task(void *arg)
                         memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
                         while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 100)) > 0)
                         {
-                                //  printf("%s\n", receive_data);
+                                 printf("%s\n", receive_data);
                                 tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);
                         }
                         sat_socket_close(client_fd);
@@ -379,56 +379,8 @@ static bool add_multicase_routing_addres(void)
         SAT_DEBUG("%s ", cmd);
         return true;
 }
-
-static bool netsta_port_information_kill(const char *info)
-{
-
-        char *end = strstr(info, "/");
-        if (end == NULL)
-        {
-                return false;
-        }
-        *end = '\0';
-        char *start = end - 1;
-        while ((start != NULL) && !isspace(*start))
-        {
-                start--;
-        }
-        if (start != NULL)
-        {
-                char cmd[128] = {0};
-                sprintf(cmd, "kill -s 9 %s", start);
-                SAT_DEBUG("%s", cmd);
-                system(cmd);
-                return true;
-        }
-        return false;
-}
-static bool kill_related_port_process(char *port)
-{
-        FILE *fp = popen("netstat -anp", "r");
-        if (fp == NULL)
-        {
-                printf("popen netstat -anp\n");
-                return false;
-        }
-        char buffer[1024];
-        while (fgets(buffer, sizeof(buffer), fp) > 0)
-        {
-                if (strstr(buffer, port) != NULL)
-                {
-                        netsta_port_information_kill(buffer);
-                }
-        }
-        pclose(fp);
-        return true;
-}
-
 static bool automatic_ip_setting(void)
 {
-        /*杀死相关的端口进程*/
-        kill_related_port_process("5060");
-
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if (ipaddr_udhcp_server_get_wait() == false)
         {

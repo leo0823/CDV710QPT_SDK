@@ -211,6 +211,7 @@ static lv_obj_t *setting_storage_space_arc_create(lv_obj_t *parent, int id, int 
         lv_arc_set_bg_angles(obj, 0, 360);
         lv_arc_set_range(obj, 0, 360);
         lv_arc_set_value(obj, value);
+        lv_arc_set_change_rate(obj,100);
 
         return obj;
 }

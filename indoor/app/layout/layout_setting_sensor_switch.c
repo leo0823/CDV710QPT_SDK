@@ -123,6 +123,7 @@ static void sat_layout_enter(setting_sensor_switch)
 
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_sensor_switch_obj_id_list);
                 lv_common_style_set_common(list, setting_sensor_switch_obj_id_list, 48, 88, 928, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+                
 
                 for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
                 {
@@ -137,7 +138,7 @@ static void sat_layout_enter(setting_sensor_switch)
                                                                         0, 0, 0, 0, -1,
                                                                         NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                         840, 10, 80, 48, main_list_group[i].img_id,
-                                                                        resource_ui_src_get("btn_switch_off.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                                                        (user_data_get()->alarm.away_alarm_enable_list & (0x01 << i))?resource_ui_src_get("btn_switch_on.png"):resource_ui_src_get("btn_switch_off.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 }
         }
 }

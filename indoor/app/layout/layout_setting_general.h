@@ -28,6 +28,10 @@ typedef enum
         SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_CAMERA,
         SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK,
 
+        SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM,
+        SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1,
+        SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM2,
+
         SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER,
         SETTING_GENERAL_LANG_ID_LANG_1_MINUTE,
         SETTING_GENERAL_LANG_ID_LANG_3_MINUTE,
@@ -134,9 +138,19 @@ static const char *layout_setting_general_language[SETTING_GENERAL_LANG_ID_LANG_
             "Digital door lock",
         },
         {
-            "Call time",
-            "Call time",
-            "Call time",
+            "Door camera #2 : Number of door openings",
+            "Door camera #2 : Number of door openings",
+            "Door camera #2 : Number of door openings",
+        },
+        {
+            "1Door",
+            "1Door",
+            "1Door",
+        },
+        {
+            "2Door",
+            "2Door",
+            "2Door",
         },
         {
             "1 minute",
@@ -188,6 +202,17 @@ typedef struct
 
         int img_id;
 } setting_list_info_t;
+typedef struct
+{
+    int x, y, w, h;
+    int cont_id;
+    lv_event_cb_t click_cb;
+    int check_id;
+    bool select;
+    int main_language_id;
+    const char *(*main_language_cb)(int id);
+
+} security_list_info_t;
 /***
 ** 日期: 2022-04-26 09:16
 ** 作者: leo.liu

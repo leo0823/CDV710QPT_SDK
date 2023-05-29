@@ -290,9 +290,9 @@ static bool ipc_camera_input_old_password_processing(const char *txt)
 }
 static bool ipc_camera_input_new_name_processing(void)
 {
-        lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         char input_name[128] = {0};
-        strcpy(input_name, lv_textarea_get_text(textarea));
+        lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
+        strncpy(input_name, lv_textarea_get_text(textarea), sizeof(input_name));
 
         if (sat_ipcamera_device_name_set(input_name, layout_ipc_camera_edit_index_get(), 1000) == true)
         {

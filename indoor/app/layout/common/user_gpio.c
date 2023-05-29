@@ -15,6 +15,7 @@ static void amp_gpio_init(void)
         gpio_direction_set(AMP_GPIO_PIN, GPIO_DIR_OUT);
         gpio_level_set(AMP_GPIO_PIN, GPIO_LEVEL_LOW);
 }
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -24,6 +25,61 @@ void amp_enable_set(bool en)
 {
         gpio_level_set(AMP_GPIO_PIN, en ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
 }
+#if 0
+#define BL_PWM_NO 0
+#define BL_PWM_CH 0
+/***
+** 日期: 2022-05-10 09:41
+** 作者: leo.liu
+** 函数作用：背光控制
+** 返回参数说明：
+***/
+bool backlight_enable(bool en)
+{
+        return pwm_enable(BL_PWM_NO, BL_PWM_CH, en);
+}
+
+/***
+** 日期: 2022-05-10 09:44
+** 作者: leo.liu
+** 函数作用：设置背光亮度
+** 返回参数说明：
+***/
+bool backlight_brightness_set(int per)
+{
+        pwm_period_set(BL_PWM_NO, BL_PWM_CH, 65536);
+
+        int duty = 5000 + per * (65536 - 5000) / 100;
+        return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, duty);
+}
+#endif
+/************************************************************
+** 函数说明: door1特殊锁控制使能
+** 作者: xiaoxiao
+** 日期: 2023-05-11 14:36:03
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+#define DOOR1_LOCK_1_GPIO_PIN 24
+static void door1_lock1_gpio_init(void)
+{
+        gpio_direction_set(DOOR1_LOCK_1_GPIO_PIN, GPIO_DIR_OUT);
+        gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, GPIO_LEVEL_LOW);
+}
+
+/************************************************************
+** 函数说明: door1特殊锁控制
+** 作者: xiaoxiao
+** 日期: 2023-05-11 14:37:14
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void door1_lock1_pin_ctrl(bool en)
+{
+        gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, en ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
+}
+
+
 
 /***********************************************
 ** 作者: leo.liu
@@ -116,7 +172,7 @@ static void *user_gpio_detect_task(void *arg)
                 for (int i = 0; i < 8; i++)
                 {
                         float value = cd4051_drive_read(i);
-                        if (abs(value - cd4051_value_group[channel_to_sensor[i]]) > 1.0)
+                        if (abs(value -  cd4051_value_group[channel_to_sensor[i]]) > 1.0)
                         {
                                 cd4051_value_group[channel_to_sensor[i]] = value;
                                 SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
@@ -129,6 +185,56 @@ static void *user_gpio_detect_task(void *arg)
         cd4051_drive_enable_set(false);
         return NULL;
 }
+#if 0
+/*********************************************** \
+        ** 作者: leo.liu                              \
+        ** 日期: 2022-11-9 10:15:48                   \
+        ** 说明: gpio任务检测                     \
+        ***********************************************/
+static float cd4051_value_group[8] = {0};
+const int channel_to_sensor[8] = {5, 6, 7, 4, 0, 3, 1, 2};
+float user_sensor_value_get(int ch)
+{
+        if ((ch < 0) || (ch > 7))
+        {
+                return 0xFFFFF;
+        }
+        return cd4051_value_group[channel_to_sensor[ch]];
+}
+static void *user_gpio_detect_task(void *arg)
+{
+        if (sarad_open() == false)
+        {
+                SAT_DEBUG("if(sarad_open() == false)");
+        }
+        cd4051_drive_init(sarad_enable_func, sarad_read_func, ad_ctrl_a_gpio_val_set, ad_ctrl_b_gpio_val_set, ad_ctrl_c_gpio_val_set);
+        cd4051_drive_enable_set(true);
+
+        for (int i = 0; i < 8; i++)
+        {
+                cd4051_value_group[i] = cd4051_drive_read(i);
+        }
+
+        while (1)
+        {
+                for (int i = 0; i < 8; i++)
+                {
+                        float value = cd4051_drive_read(i);
+                        if (abs(value - cd4051_value_group[i]) > 1.0)
+                        {
+                                cd4051_value_group[i] = value;
+                                SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
+                                sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
+                        }
+                        printf("user_sensor_value_get %d is %f\n",i,user_sensor_value_get(i));
+                }
+                usleep(1000 * 100);
+        }
+        sarad_close();
+        cd4051_drive_enable_set(false);
+        return NULL;
+}
+#endif 
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -136,6 +242,10 @@ static void *user_gpio_detect_task(void *arg)
 ***********************************************/
 bool user_gpio_init(void)
 {
+        /***** 初始化背光 *****/
+       //pwm_init(BL_PWM_NO, BL_PWM_CH);
+
+        // backlight_enable(false);
         /* 功放gpio处理 */
         amp_gpio_init();
 
@@ -143,6 +253,9 @@ bool user_gpio_init(void)
         ad_ctrl_gpio_init();
         /* 警报使能 */
         alarm_enable_gpio_init();
+
+        /*door1特殊锁初始化*/
+        door1_lock1_gpio_init();
 
         /*开启gpio 任务检测*/
         pthread_t task_id;

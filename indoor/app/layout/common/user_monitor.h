@@ -9,9 +9,18 @@
 
 #define MON_CH_CCTV1 8
 #define MON_CH_CCTV2 9
+#define MON_CH_CCTV3 10
+#define MON_CH_CCTV4 11
+#define MON_CH_CCTV5 12
+#define MON_CH_CCTV6 13
+#define MON_CH_CCTV7 14
+#define MON_CH_CCTV8 15
 typedef enum
 {
         MON_ENTER_CALL_FLAG,
+        MON_ENTER_TUYA_TALK_FLAG,
+        MON_ENTER_MANUAL_TALK_FLAG,
+        MON_ENTER_CALL_TALK_FLAG,
         MON_ENTER_MANUAL_DOOR_FLAG,
         MON_ENTER_MANUAL_CCTV_FLAG
 } MON_ENTER_FLAG;
@@ -107,3 +116,11 @@ BYTE1. 010(固定部分).
                                                 个位分机ID号
 ***********************************************/
 #endif
+/************************************************************
+** 函数说明: 判断通道是否有效
+** 作者: xiaoxiao
+** 日期: 2023-05-26 08:28:22
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool monitor_valid_channel_check(int channel);

@@ -1,5 +1,3 @@
-
-
 #ifndef _LAYOUT_DEFIEN_H_
 #define _LAYOUT_DEFIEN_H_
 #include <unistd.h>
@@ -27,6 +25,9 @@
 #include "common/user_gpio.h"
 #include "common/layout_common.h"
 #include "common/tuya_common.h"
+#include "common/user_standby.h"
+#include "common/user_alarm_list.h"
+#include "common/user_call_list.h"
 #define SYSTEM_VERSION "Ver:0.0.1.2"
 
 #define TUYA_PID "nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
@@ -149,10 +150,23 @@ sat_layout_define(setting_server_ipaddress);
 sat_layout_define(setting_common_entrance_ip);
 sat_layout_define(setting_guard_station_number);
 sat_layout_define(setting_sensor_settings);
+sat_layout_define(door_camera_password_input);
+sat_layout_define(door_camera_edit);
 sat_layout_define(playback);
 sat_layout_define(photo);
 sat_layout_define(video);
 sat_layout_define(intercom_call);
 sat_layout_define(intercom_talk);
-
+sat_layout_define(intercom_call);
+sat_layout_define(intercom_talk);
+sat_layout_define(emergency_setting);
+sat_layout_define(alarm);
+sat_layout_define(alarm_list);
+sat_layout_define(security);
+sat_layout_define(away);
+sat_layout_define(away_count);
+sat_layout_define(sensor_settings);
+sat_layout_define(close);
+sat_layout_define(frame_show);
+sat_layout_define(always_record);
 #endif

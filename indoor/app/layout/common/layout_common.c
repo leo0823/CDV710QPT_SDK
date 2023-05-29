@@ -226,3 +226,125 @@ void audio_output_event_default_process(int arg)
         SAT_DEBUG("AMP %s", arg ? "enable" : "disable");
         amp_enable_set(arg ? true : false);
 }
+static int alarm_ch;
+/************************************************************
+** 函数说明: 获取警报通道
+** 作者: xiaoxiao
+** 日期: 2023-05-04 17:06:40
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+int layout_alarm_alarm_channel_get(void)
+{
+        return alarm_ch;
+}
+
+/************************************************************
+** 函数说明: 设置警报通道
+** 作者: xiaoxiao
+** 日期: 2023-05-04 17:09:12
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void layout_alarm_alarm_channel_set(int ch)
+{
+        alarm_ch = ch;
+}
+/************************************************************
+** 函数说明: 警报处理函数
+** 作者: xiaoxiao
+** 日期: 2023-04-28 17:07:39
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void layout_alarm_trigger_default(int arg1,int arg2)
+{  
+
+        if(((user_data_get()->alarm.away_alarm_enable == false) && (!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))))
+        && ((user_data_get()->alarm.security_alarm_enable == false) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))) 
+        {
+               
+                return;
+        }
+
+        if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < 100))
+        {
+                layout_alarm_alarm_channel_set(arg1);
+                user_data_get()->alarm.alarm_trigger[arg1]  = true;
+                user_data_get()->alarm.emergency_mode = 1;
+                user_data_save();
+                struct tm tm;
+                user_time_read(&tm);
+                alarm_list_add(security_emergency,arg1, &tm);
+                sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+}
+
+/************************************************************
+** 函数说明: 检测是否需要触发警报
+** 作者: xiaoxiao
+** 日期: 2023-05-08 09:07:36
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool alarm_trigger_check(void)
+{
+
+        bool alarm_occur = false;
+
+        for(int i =0; i<8; i++)
+        {
+                if(user_data_get()->alarm.alarm_enable[i] != 0 )
+                {
+                        if((user_data_get()->alarm.alarm_trigger[i] == true) && (user_data_get()->alarm.alarm_enable[i] != 0))
+                        {
+                                alarm_occur = true;
+                                if(user_data_get()->alarm.alarm_enable[i] == 1)
+                                {
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 0.25 * 100);//发送警报事件
+                                }else
+                                {
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 3.0 * 100);//发送警报事件
+                                }
+                                return true;
+                        }
+                }
+                else
+                {
+                        user_data_get()->alarm.alarm_trigger[i] = false;
+                        user_data_save();
+                }                
+        }
+
+        return alarm_occur;
+
+
+}
+
+/***********************************************************************/
+
+bool last_call_new;
+/************************************************************
+** 函数说明: 设置last_call_log new flag
+** 作者: xiaoxiao
+** 日期: 2023-05-17 16:11:26
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void layout_last_call_new_flag_set(bool new)
+{
+        last_call_new = new;
+}
+/************************************************************
+** 函数说明: 获取是否有未查看的通话记录标志
+** 作者: xiaoxiao
+** 日期: 2023-05-17 16:09:19
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool layout_last_call_new_flag_get(void)
+{
+        return last_call_new;
+}
+
+/***********************************************************************/

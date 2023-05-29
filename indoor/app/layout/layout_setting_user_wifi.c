@@ -89,6 +89,7 @@ static void setting_user_wifi_discover_click(lv_event_t *e)
                 return;
         }
         wifi_input_user_setting(lv_label_get_text(obj));
+
         sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
 static const char *wifi_setting_user_wifi_free_icon_get(const wifi_info *info)

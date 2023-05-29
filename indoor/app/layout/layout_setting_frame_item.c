@@ -42,6 +42,39 @@ static void setting_frame_item_checkbox_click(lv_event_t *e)
         }
 }
 
+static void setting_frame_item_checkbox_display(void)
+{
+        lv_obj_t * list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_frame_item_obj_id_list);
+        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_hour_cont),1);
+        int data = user_data_get()->display.frame_list;
+        printf("frame_list is 0x%x\n",user_data_get()->display.frame_list);
+        if(data & 0x01)
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+        }
+
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_calendar_cont),1);
+        if(data & 0x02)
+        {
+               lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+        }
+         obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_recently_save_video_cont),1);
+        if (data & 0x04)
+        {
+               lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_front_door_video_cont),1);
+        if (data & 0x08)
+        {
+               lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_cctv_fontage_cont),1);
+        if (data & 0x10)
+        {
+               lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+        }
+}
+
 static void sat_layout_enter(setting_frame_item)
 {
         /***********************************************
@@ -121,10 +154,47 @@ static void sat_layout_enter(setting_frame_item)
                                                                         0, 28, 32, 32, main_list_group[i].img_id,
                                                                         resource_ui_src_get((user_data_get()->display.frame_list & (0x01 >> i)) ? "btn_checkbox_s.png" : "btn_checkbox_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 }
+                setting_frame_item_checkbox_display();
         }
 }
 static void sat_layout_quit(setting_frame_item)
 {
+
+        int data = 0;
+        printf("frame_list is 0x%x\n",user_data_get()->display.frame_list);
+        lv_obj_t * list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_frame_item_obj_id_list);
+        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_hour_cont),1);
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
+        {
+               data |= 0x01;
+        }
+
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_calendar_cont),1);
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
+        {
+               data |= 0x02;
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_recently_save_video_cont),1);
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
+        {
+               data |= 0x04;
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_front_door_video_cont),1);
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
+        {
+               data |= 0x08;
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_cctv_fontage_cont),1);
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
+        {
+               data |= 0x10;
+        }
+
+        user_data_get()->display.frame_list = data;
+        
+        user_data_save();
+        printf("frame_list is 0x%x\n",user_data_get()->display.frame_list);
+
 }
 
 sat_layout_create(setting_frame_item);

@@ -14,8 +14,11 @@ typedef enum
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_5,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_6,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_7,
+        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_8,
         SETTING_SENSOR_USAGE_LANG_ID_NOT_USED,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY,
+        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC,
+        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
         SETTING_SENSOR_USAGE_LANG_ID_TOTAL
 } LAYOUT_SETTING_SENSOR_USAGE_LANG_ID;
 
@@ -67,15 +70,31 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Sensor contact 7",
         },
         {
+            "Sensor contact 8",
+            "Sensor contact 8",
+            "Sensor contact 8",
+        },
+        {
             "Not used",
             "Not used",
             "Not used",
         },
         {
-            "Sensor for security",
-            "Sensor for security",
-            "Sensor for security",
+            "NO",
+            "NO",
+            "NO",
         },
+        {
+            "NC",
+            "NC",
+            "NC",
+        },
+        {
+            "Always detect",
+            "Always detect",
+            "Always detect",
+        },
+        
 };
 
 /***

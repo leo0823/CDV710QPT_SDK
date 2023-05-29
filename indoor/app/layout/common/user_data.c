@@ -77,10 +77,52 @@ static const user_data_info user_data_default =
         },
         .alarm = {
             .auto_record = false,
-            .alarm_1_enable = false,
-            .alarm_1_trigger = false,
-            .alarm_2_enable = false,
-            .alarm_2_trigger = false,
+
+        .away_alarm_enable_list = 0x77,
+        .security_alarm_enable_list = 0x77,
+        .security_alarm_enable = false,
+        .away_alarm_enable = false,
+        .emergency_mode = 0,//0:手动触发警报 1:安防系统自动触发警报
+
+        .alarm_enable[0] = 0,//0不使能，1：NC低电平触发2：NO高电平触发
+        .alarm_enable[1] = 0,
+        .alarm_enable[2] = 0,
+        .alarm_enable[3] = 0,
+        .alarm_enable[4] = 0,
+        .alarm_enable[5] = 0,
+        .alarm_enable[6] = 0,
+        .alarm_enable[7] = 0,
+
+        .alarm_trigger[0] = 0,//0非触发状态，1触发状态
+        .alarm_trigger[1] = 0,
+        .alarm_trigger[2] = 0,
+        .alarm_trigger[3] = 0,
+        .alarm_trigger[4] = 0,
+        .alarm_trigger[5] = 0,
+        .alarm_trigger[6] = 0,
+        .alarm_trigger[7] = 0,
+        .alarm_enable_always[0][0] = false,
+        .alarm_enable_always[0][1] = false,
+        .alarm_enable_always[0][2] = false,
+        .alarm_enable_always[0][3] = false,
+        .alarm_enable_always[0][4] = false,
+        .alarm_enable_always[0][5] = false,
+        .alarm_enable_always[0][6] = false,
+        .alarm_enable_always[0][7] = false,
+        .alarm_enable_always[1][0] = false,
+        .alarm_enable_always[1][1] = false,
+        .alarm_enable_always[1][2] = false,
+        .alarm_enable_always[1][3] = false,
+        .alarm_enable_always[1][4] = false,
+        .alarm_enable_always[1][5] = false,
+        .alarm_enable_always[1][6] = false,
+        .alarm_enable_always[1][7] = false,
+        .away_setting_time = 1,
+        .away_release_time = 30,
+        
+        .away_auto_record = false,
+        .inside_auto_record = false,
+        
         },
         .system_mode = 0,
         .time_automatically = 1,
@@ -218,11 +260,49 @@ static void user_data_check_valid(void)
 
         /*****	alarm *****/
         user_data_alarm_check_range_out(auto_record, 0, 1);
-        user_data_alarm_check_range_out(alarm_1_enable, 0, 1);
-        user_data_alarm_check_range_out(alarm_1_trigger, 0, 1);
-        user_data_alarm_check_range_out(alarm_2_enable, 0, 1);
-        user_data_alarm_check_range_out(alarm_2_trigger, 0, 1);
+        user_data_alarm_check_range_out(away_alarm_enable, 0, 1);
+        user_data_alarm_check_range_out(security_alarm_enable, 0, 1);
+        user_data_alarm_check_range_out(emergency_mode, 0, 1);
 
+        user_data_alarm_check_range_out(away_alarm_enable_list, 0, 0xff);
+        user_data_alarm_check_range_out(security_alarm_enable_list, 0,0xff);
+        user_data_alarm_check_range_out(alarm_enable[0], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[0], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[1], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[1], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[2], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[2], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[3], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[3], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[4], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[4], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[5], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[5], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[6], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[6], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable[7], 0, 2);
+        user_data_alarm_check_range_out(alarm_trigger[7], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][0], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][1], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][2], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][3], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][4], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][5], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][6], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[0][7], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][0], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][1], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][2], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][3], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][4], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][5], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][6], 0, 1);
+        user_data_alarm_check_range_out(alarm_enable_always[1][7], 0, 1);
+
+        user_data_alarm_check_range_out(away_setting_time, 1, 3);
+        user_data_alarm_check_range_out(away_release_time, 30, 90);
+        user_data_alarm_check_range_out(away_auto_record, 0, 1);
+        user_data_alarm_check_range_out(inside_auto_record, 0, 1);
         user_data_check_range_out(system_mode, 0, 1);
         user_data_check_range_out(time_automatically, 0, 1);
 }
