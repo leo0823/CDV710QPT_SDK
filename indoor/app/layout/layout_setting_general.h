@@ -153,6 +153,11 @@ static const char *layout_setting_general_language[SETTING_GENERAL_LANG_ID_LANG_
             "2Door",
         },
         {
+            "call time",
+            "call time",
+            "call time",
+        },
+        {
             "1 minute",
             "1 minute",
             "1 minute",
