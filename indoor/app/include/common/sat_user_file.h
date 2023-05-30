@@ -3,6 +3,11 @@
 #include <stdbool.h>
 #include <time.h>
 
+#define SD_STATE_UNPLUG 0X01
+#define SD_STATE_INSERT 0X02
+#define SD_STATE_ERROR 0X03
+#define SD_STATE_FULL 0X04
+
 #define SD_BASE_PATH "/tmp/tf"
 #define SD_MEDIA_PATH SD_BASE_PATH "/media/"
 #define FLASH_PHOTO_PATH "/app/data/photo/"
@@ -40,14 +45,7 @@ void media_file_list_init(void);
 ** 函数作用：判断sd插入
 ** 返回参数说明：
 ***/
-bool media_sdcard_insert_check(void);
-/***
-** 日期: 2022-05-17 14:40
-** 作者: leo.liu
-** 函数作用：判断sd文件是否已经满
-** 返回参数说明：
-***/
-bool media_sdcard_full_check(void);
+char media_sdcard_insert_check(void);
 /***
 ** 日期: 2022-05-17 11:28
 ** 作者: leo.liu
@@ -125,4 +123,10 @@ bool media_sd_memory_query(unsigned int *p_total, unsigned int *p_user, unsigned
 ** 说明: 文件名转时间：300116-191938-01.JPG
 ***********************************************/
 bool media_filename_to_time(const char *filename, struct tm *tm);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-11-5 17:11:35
+** 说明: 获取分区的容量
+***********************************************/
+bool media_capacity_get(file_type type, unsigned long long *total, unsigned long long *free);
 #endif

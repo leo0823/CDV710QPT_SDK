@@ -170,6 +170,8 @@ static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
                 return;
         }
         lv_obj_del(obj);
+
+        media_format_sd();
 }
 static void setting_storage_space_internal_del_click(lv_event_t *e)
 {
@@ -211,7 +213,6 @@ static lv_obj_t *setting_storage_space_arc_create(lv_obj_t *parent, int id, int 
         lv_arc_set_bg_angles(obj, 0, 360);
         lv_arc_set_range(obj, 0, 360);
         lv_arc_set_value(obj, value);
-        lv_arc_set_change_rate(obj,100);
 
         return obj;
 }
@@ -223,6 +224,11 @@ static void setting_storage_space_animation(void *obj, int32_t v)
 
         lv_obj_t *arc = lv_obj_get_parent(obj);
         lv_arc_set_value(arc, v);
+}
+
+static void setting_storage_space_sd_status_channge_callback(void)
+{
+        sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 
 static void sat_layout_enter(setting_storage_space)
@@ -325,9 +331,14 @@ static void sat_layout_enter(setting_storage_space)
          ** 说明: internal storage arc
          ***********************************************/
         {
-                int remain_data = 360 * (1 - 0.3);
+               unsigned long long total = 0, free = 0;
+                unsigned long long use_data = 360;
+                if (media_capacity_get(FILE_TYPE_FLASH_PHOTO, &total, &free) == true)
+                {
+                        use_data = (360 * (total - free)) / (total + 0.1);
+                }
                 lv_obj_t *obj = setting_storage_space_arc_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_internal_arc, 127, 192, 260, 260,
-                                                                 0xd9d9d9, 0x3a7dff, 45, 45, remain_data);
+                                                                 0xd9d9d9, 0x3a7dff, 45, 45, use_data);
 
                 lv_common_text_create(obj, setting_storage_space_obj_id_internal_remaining_data, 77, 65, 104, 52,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
@@ -335,8 +346,8 @@ static void sat_layout_enter(setting_storage_space)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
-                char buffer[5] = {0};
-                sprintf(buffer, "%d%%", (360 - remain_data) * 100 / 360);
+                char buffer[64] = {0};
+                sprintf(buffer, "%llu%%", (360 - use_data) * 100 / 360);
                 lv_obj_t *label = lv_common_text_create(obj, setting_storage_space_obj_id_internal_per_label, 69, 135, 121, 63,
                                                         NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -350,7 +361,7 @@ static void sat_layout_enter(setting_storage_space)
                 lv_anim_set_time(&a, 1500);
                 lv_anim_set_repeat_count(&a, 1);
                 lv_anim_set_repeat_delay(&a, 0);
-                lv_anim_set_values(&a, 0, remain_data);
+                lv_anim_set_values(&a, 0, use_data);
                 lv_anim_start(&a);
         }
         /***********************************************
@@ -359,9 +370,14 @@ static void sat_layout_enter(setting_storage_space)
          ** 说明: internal storage arc
          ***********************************************/
         {
-                int remain_data = 360 * (1 - 0);
+                unsigned long long total = 0, free = 0;
+                unsigned long long use_data = 360;
+                if (media_capacity_get(FILE_TYPE_VIDEO, &total, &free) == true)
+                {
+                        use_data = (360 * (total - free)) / (total + 0.1);
+                }
                 lv_obj_t *obj = setting_storage_space_arc_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external_arc, 640, 192, 260, 260,
-                                                                 0xd9d9d9, 0x3a7dff, 45, 45, remain_data);
+                                                                 0xd9d9d9, 0x3a7dff, 45, 45, use_data);
 
                 lv_common_text_create(obj, setting_storage_space_obj_id_external_remaining_data, 77, 65, 104, 52,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
@@ -369,8 +385,8 @@ static void sat_layout_enter(setting_storage_space)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
-                char buffer[5] = {0};
-                sprintf(buffer, "%d%%", (360 - remain_data) * 100 / 360);
+                char buffer[64] = {0};
+                sprintf(buffer, "%llu%%", (360 - use_data)*100 / 360);
                 lv_obj_t *label = lv_common_text_create(obj, setting_storage_space_obj_id_external_per_label, 69, 135, 121, 63,
                                                         NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -384,9 +400,11 @@ static void sat_layout_enter(setting_storage_space)
                 lv_anim_set_time(&a, 1500);
                 lv_anim_set_repeat_count(&a, 1);
                 lv_anim_set_repeat_delay(&a, 0);
-                lv_anim_set_values(&a, 0, remain_data);
+                lv_anim_set_values(&a, 0, use_data);
                 lv_anim_start(&a);
         }
+
+        sd_state_channge_callback_register(setting_storage_space_sd_status_channge_callback);
 }
 static void sat_layout_quit(setting_storage_space)
 {
