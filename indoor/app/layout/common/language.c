@@ -84,12 +84,18 @@ const char *language_common_string_get(int id)
 ***/
 const char *language_common_ch_string_get(int ch)
 {
-        int group[4][2] =
+        int group[10][2] =
             {
                 {MON_CH_DOOR1, LANG_COMMON_ID_DOOR1},
                 {MON_CH_DOOR2, LANG_COMMON_ID_DOOR2},
                 {MON_CH_CCTV1, LANG_COMMON_ID_CCTV1},
                 {MON_CH_CCTV2, LANG_COMMON_ID_CCTV2},
+                {MON_CH_CCTV3, LANG_COMMON_ID_CCTV3},
+                {MON_CH_CCTV4, LANG_COMMON_ID_CCTV4},
+                {MON_CH_CCTV5, LANG_COMMON_ID_CCTV5},
+                {MON_CH_CCTV6, LANG_COMMON_ID_CCTV6},
+                {MON_CH_CCTV7, LANG_COMMON_ID_CCTV7},
+                {MON_CH_CCTV8, LANG_COMMON_ID_CCTV8},
             };
         for (int i = 0; i < sizeof(group) / sizeof(int); i++)
         {

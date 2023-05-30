@@ -1,6 +1,7 @@
 #include "layout_define.h"
 #include "layout_monitor.h"
 #include "layout_intercom_call.h"
+#include "tuya_api.h"
 enum
 {
         monitor_obj_id_top_cont,
@@ -39,7 +40,7 @@ static int call_duration = 0;
 static bool is_monitor_door_camera_talk = false;
 static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
-
+static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
 static void monitor_obj_cctv_cancel_obj_click(lv_event_t *e)
 {
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -284,6 +285,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                         monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
                         monitor_open(true);
+                        layout_monitor_report_vaild_channel();
                         monitor_timeout_sec_reset(0);
                         monitior_obj_channel_info_obj_display();
                 }
@@ -296,6 +298,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                         monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
                         monitor_open(true);
+                        layout_monitor_report_vaild_channel();
                         monitor_timeout_sec_reset(0);
                         monitior_obj_channel_info_obj_display();
                 }
@@ -435,9 +438,9 @@ static void monitor_unlock_ctrl(int ch,int mode,bool en)
 {
         if(ch == MON_CH_DOOR1)
         {
-                if(mode == 0)
+                if(mode == 1)
                 {
-                        door1_lock1_pin_ctrl(true);
+                        door1_lock1_pin_ctrl(en);
                 }
                 else
                 {
@@ -454,6 +457,7 @@ static void monitor_unlock_ctrl(int ch,int mode,bool en)
 
                         for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                         {
+                                SAT_DEBUG("monitor_unlock_ctrl");
                                 sat_linphone_message_cmd_send(user, cmd[i]);
                         }
                 }       
@@ -510,7 +514,7 @@ static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
         int mode = 0;
         if(ch == MON_CH_DOOR1)
         {
-                mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                mode = (user_data_get()->etc.door1_open_door_mode == 0)? 1: 2;
         }else if(ch == MON_CH_DOOR1)
         {
                 mode = user_data_get()->etc.door2_lock_num;
@@ -550,7 +554,7 @@ static void monitor_obj_normal_lock_click(lv_event_t *e)
                 int mode = 0;
                 if(ch == MON_CH_DOOR1)
                 {
-                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 1: 2;
                 }else if(ch == MON_CH_DOOR1)
                 {
                         mode = user_data_get()->etc.door2_lock_num;
@@ -629,7 +633,7 @@ static void monitor_obj_lock_1_click(lv_event_t *e)
                 int mode = 0;
                 if(ch == MON_CH_DOOR1)
                 {
-                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 1: 2;
                 }else if(ch == MON_CH_DOOR1)
                 {
                         mode = user_data_get()->etc.door2_lock_num;
@@ -693,7 +697,7 @@ static void monitor_obj_lock_2_click(lv_event_t *e)
                 int mode = 0;
                 if(ch == MON_CH_DOOR1)
                 {
-                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 0: 1;
+                        mode = (user_data_get()->etc.door1_open_door_mode == 0)? 1: 12;
                 }else if(ch == MON_CH_DOOR1)
                 {
                         mode = user_data_get()->etc.door2_lock_num;
@@ -778,7 +782,7 @@ static void monitor_obj_record_video_display(void)
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
- ** 说明: 通话按钮
+ ** 说明: 拍照
  ***********************************************/
 static void monitor_obj_record_photo_click(lv_event_t *e)
 {
@@ -833,7 +837,7 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
 ************************************************************/
 static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 {
-	
+	int mode = REC_MODE_TUYA_CALL;
 	if (user_data_get()->auto_record_mode != 0)
 	{
 		if ((media_sdcard_insert_check() == true) && (user_data_get()->auto_record_mode == 1))
@@ -843,7 +847,20 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 				record_video_start(true, REC_MODE_AUTO);
 			}
 
-		}
+		}else
+                {
+                        mode |= REC_MODE_AUTO;
+                }
+        }
+        mode |= REC_MODE_MANUAL;
+        
+        if(record_jpeg_start(mode) == false)
+        {
+                SAT_DEBUG("=======record_jpeg_failed==========\n");
+                return;
+        }else
+        {
+                SAT_DEBUG("=======record_jpeg_success==========\n");
         }
         lv_timer_del(ptimer);
 
@@ -1145,6 +1162,7 @@ static void sat_layout_enter(monitor)
         }
 
         monitor_open(true);
+        layout_monitor_report_vaild_channel();
 
         /*門口機内部呼叫*/
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_inside_func);
@@ -1156,9 +1174,12 @@ static void sat_layout_enter(monitor)
         /*记录注册*/
         record_state_callback_register(monitor_record_video_state_callback);
 
+        /*tuya事件注册*/
+        tuya_event_cmd_register(layout_monitor_tuya_event_handle);
+
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
 	{
-                lv_sat_timer_create(monitor_call_record_delay_task, 100, NULL);
+                lv_sat_timer_create(monitor_call_record_delay_task, 3000, NULL);
 	}
         lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
 }
@@ -1204,6 +1225,10 @@ static void sat_layout_quit(monitor)
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
         /*sd卡状态处理 */
         sd_state_channge_callback_register(NULL);
+
+        /*tuya事件注册*/
+        tuya_event_cmd_register(tuya_event_defalut_handle);
+
 }
 
 sat_layout_create(monitor);
@@ -1221,6 +1246,7 @@ bool monitor_doorcamera_call_extern_func(char *arg)
         int from_channel = 0;
         if ((from_channel = monitor_index_get_by_user(arg)) >= 0)
         {
+                SAT_DEBUG("from_channel is %d\n", from_channel);
                 if (from_channel == 0)
                 {
                         ring_door1_call_play();
@@ -1271,4 +1297,119 @@ bool monitor_doorcamera_call_inside_func(char *arg)
                 }
         }
         return true;
+}
+
+/************************************************************
+** 函数说明: tuya开锁处理
+** 作者: xiaoxiao
+** 日期: 2023-05-30 10:24:19
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static bool tuya_event_cmd_door_open(int arg)
+{
+	bool ok = false;
+	char password[4] = {0};
+	int num = arg % 10;
+	sprintf(password, "%d", (arg / 10) & 0xFFFFFFFF);
+	if (strncmp(user_data_get()->etc.password, password, 4) == 0)
+	{
+		ok = true;
+                if (monitor_obj_unlock_icon_display() == true)
+                {
+                        ring_unlock_play();
+                        int ch = monitor_channel_get();
+                        if(ch == MON_CH_DOOR1)
+                        {
+                                num = (user_data_get()->etc.door1_open_door_mode == 0)? 1: 2;
+                        }else if(ch == MON_CH_DOOR1)
+                        {
+                                num = user_data_get()->etc.door2_lock_num;
+                        }
+                        monitor_unlock_ctrl(ch,num,true);
+                }
+	}
+	tuya_api_open_door_success_report(ok);
+	return ok;
+}
+
+/************************************************************
+** 函数说明: 通道切换
+** 作者: xiaoxiao
+** 日期: 2023-05-30 14:02:14
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static bool tuya_event_cmd_ch_channge(int channel)
+{
+	if (monitor_valid_channel_check(channel) == false)
+	{
+		return false;
+	}
+	/*****  记录上次的通道 *****/
+	tuya_monitor_channel_set(channel);
+	if (monitor_channel_get() == channel)
+	{
+		return layout_monitor_report_vaild_channel();
+	}
+        monitor_channel_set(channel);
+        monitior_obj_channel_info_obj_display();
+        monitor_open(true);
+        layout_monitor_report_vaild_channel();
+
+	return true;
+}
+/************************************************************
+** 函数说明: 开启或关闭移动侦测
+** 作者: xiaoxiao
+** 日期: 2023-05-30 13:50:18
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static bool tuya_event_cmd_motion_enable(int arg)
+{
+	user_data_get()->motion.enable = (bool)arg;
+	user_data_save();
+	return true;
+}
+
+/************************************************************
+** 函数说明: 监控页面涂鸦事件处理
+** 作者: xiaoxiao
+** 日期: 2023-05-30 10:23:31
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
+{
+        SAT_DEBUG("cmd is %d\n",cmd);
+        switch ((cmd))
+        {
+        case TUYA_EVENT_CMD_VIDEO_START:
+                //return tuya_event_cmd_video_start();
+                break;
+        case TUYA_EVENT_CMD_VIDEO_STOP:
+              // return tuya_event_cmd_video_stop();
+                break;
+        case TUYA_EVENT_CMD_AUDIO_START:
+                // tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
+                // return truye_event_cmd_audio_start();
+                break;
+        case TUYA_EVENT_CMD_ONLINE:
+                return layout_monitor_report_vaild_channel();
+                break;
+        case TUYA_EVENT_CMD_CH_CHANGE:
+                    return tuya_event_cmd_ch_channge(arg);
+                break;
+        case TUYA_EVENT_CMD_MOTION_ENBALE:
+                 return tuya_event_cmd_motion_enable(arg);
+                break;
+        case TUYA_EVENT_CMD_DOOR_OPEN:
+                return tuya_event_cmd_door_open(arg);
+                break;
+        default:
+                SAT_DEBUG("unknow tuya event:%d", cmd);
+                break;
+        }
+        return false;
 }

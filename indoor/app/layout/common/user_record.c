@@ -12,6 +12,7 @@
 #include "user_monitor.h"
 #include "common/sat_user_file.h"
 #include "common/sat_linphone_event.h"
+#include "tuya/tuya_api.h"
 /***
 ** 日期: 2022-05-19 10:37
 ** 作者: leo.liu
@@ -20,7 +21,7 @@
 ***/
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 {
-        // printf("=====>>>write size:%d %d\n", size, mode);
+        printf("=====>>>write size:%d %d\n", size, mode);
         if ((mode & 0x1F))
         {
                 file_type type = FILE_TYPE_FLASH_PHOTO;
@@ -56,6 +57,8 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
         }
         if (mode & REC_MODE_TUYA_CALL)
         {
+                printf("======tuya_api_call_event=====\n");
+                tuya_api_call_event(ch,(const char *)data, size);
         }
         if (mode & REC_MODE_TUYA_ALARM)
         {
@@ -74,6 +77,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 ***/
 bool record_jpeg_start(REC_MODE mode)
 {
+        printf("record_jpeg_start \n");
         return sat_linphone_snap(monitor_channel_get(), mode, jpeg_write_callback);
 }
 /*
