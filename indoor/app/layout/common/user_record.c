@@ -25,7 +25,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
         if ((mode & 0x1F))
         {
                 file_type type = FILE_TYPE_FLASH_PHOTO;
-                if (media_sdcard_insert_check() == true)
+                if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
                 {
                         type = FILE_TYPE_PHOTO;
                 }
@@ -87,7 +87,7 @@ bool record_jpeg_start(REC_MODE mode)
  */
 static bool record_video_callback(const char *path, int ch, int mode)
 {
-        if (media_sdcard_insert_check() == false)
+        if((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR))
         {
                 return false;
         }

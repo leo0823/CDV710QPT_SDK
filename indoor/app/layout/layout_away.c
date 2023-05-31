@@ -234,7 +234,7 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
     {
         user_data_get()->alarm.away_alarm_enable  = user_data_get()->alarm.away_alarm_enable  ? false : true;
         user_data_save();
-        sat_layout_goto(home,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 
     }
    
@@ -605,6 +605,38 @@ static void layout_away_msgbox_del(void)
 
 
 
+static void layout_away_setting_time_display(void)
+{
+    lv_obj_t * time = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_setting_time),layout_away_obj_id_setting_time_sub);
+    if(time == NULL)
+    {
+        return;
+    }
+    if(user_data_get()->alarm.away_setting_time == 1)
+    {
+        lv_label_set_text(time,"1 minute");
+    }
+    if(user_data_get()->alarm.away_setting_time == 2)
+    {
+        lv_label_set_text(time,"2 minute");
+    }
+    if(user_data_get()->alarm.away_setting_time == 3)
+    {
+        lv_label_set_text(time,"3 minute");
+    }
+}
+
+static void layout_away_release_time_display(void)
+{
+    lv_obj_t * time = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_release_time),layout_away_obj_id_release_time_sub);
+    if(time == NULL)
+    {
+        return;
+    }
+
+    lv_label_set_text(time,layout_away_language_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + user_data_get()->alarm.away_release_time / 10));
+    
+}
 
 
 /************************************************************
@@ -631,7 +663,7 @@ static void layout_away_release_time_msgbox_confirm_click(lv_event_t *e)
         }
         if (!strncmp((const char *)checkbox->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-            user_data_get()->alarm.away_release_time = i;
+            user_data_get()->alarm.away_release_time = i * 10;
             user_data_save();
             break;
 
@@ -639,6 +671,7 @@ static void layout_away_release_time_msgbox_confirm_click(lv_event_t *e)
     }
 
     layout_away_msgbox_del();
+    layout_away_release_time_display();
 }
 
 
@@ -675,6 +708,7 @@ static void layout_away_setting_time_save(void)
     }
     user_data_save();
     layout_away_msgbox_del();
+    layout_away_setting_time_display();
 }
 
 /************************************************************
@@ -772,7 +806,8 @@ static void layout_away_release_time_msgbox_option_create(lv_obj_t * msgbox, lv_
                                 46, 8, 366 - 16, 32, 0,
                                 layout_away_language_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 away_obj_id_t_msgbox_checkbox_img, 8, 32, 32, 1,
-                                (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
+                                 , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     }
 }
 /************************************************************
@@ -834,6 +869,7 @@ static void layout_away_func_setting_create()
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     0, 0, 80, 48, -1,
                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_RIGHT_MID);
+    layout_away_setting_time_display();                                            
                                             
 
     lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_release_time,514, 72 * 2, 510, 72,
@@ -848,6 +884,7 @@ static void layout_away_func_setting_create()
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     0, 0, 80, 48, -1,
                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_RIGHT_MID);
+    layout_away_release_time_display();
 
     lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo,514, 72 * 3, 510, 72,
                                                     away_alarm_auro_record_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,

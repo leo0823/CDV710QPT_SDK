@@ -160,7 +160,7 @@ static void photo_thumb_refresh_display_callback(void)
 }
 static void photo_sd_state_change_callback(void)
 {
-        if ((media_sdcard_insert_check() == false) && (playback_pview_type_get() != FILE_TYPE_FLASH_PHOTO))
+        if (((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR)) && (playback_pview_type_get() != FILE_TYPE_FLASH_PHOTO))
         {
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }

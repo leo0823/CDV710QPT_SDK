@@ -35,7 +35,16 @@ static void ipc_camera_search_display_register_click(lv_event_t *ev)
                 return;
         }
 
-        int total = network_data_get()->door_device_count;
+
+        int total = 0;
+        if(layout_ipc_cmeara_is_doorcamera_get())
+        {
+                total = network_data_get()->door_device_count;
+        }else
+        {
+                total = network_data_get()->cctv_device_count;
+        }
+                
 
         /**
          * 判断 预览的SIP是否已经注册过了
@@ -54,7 +63,7 @@ static void ipc_camera_search_display_register_click(lv_event_t *ev)
                         }
                 }
                 else
-                {
+                {       
                         const char *door_sip_uri = sat_ipcamera_rtsp_addr_get(layout_ipc_camera_edit_index_get(), 0);
                         if (strcmp(network_data_get()->cctv_device[i].rtsp[0].rtsp_url, door_sip_uri) == 0)
                         {

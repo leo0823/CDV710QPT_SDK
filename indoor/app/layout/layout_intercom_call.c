@@ -129,7 +129,8 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
         {
                 return;
         }
-        lv_obj_t * checkbox = lv_event_get_current_target(ev);
+        
+        lv_obj_t * checkbox = lv_obj_get_child_form_id(lv_obj_get_parent(lv_event_get_current_target(ev)),call_log_list_cont_obj_checkbox_id);
         lv_obj_t * del_num = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_call_obj_id_title);
         if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
         {
@@ -181,7 +182,7 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
 
                 {
                 lv_common_img_text_btn_create(cont, call_log_list_cont_obj_titie_id, 0, 0, 350, 86,
-                                NULL, LV_OPA_COVER, 0,  LV_OPA_COVER, 0,
+                                intercom_call_log_check_obj_click, LV_OPA_COVER, 0,  LV_OPA_COVER, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 50, 20, 300, 43,0,

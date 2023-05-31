@@ -268,7 +268,8 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               48, 8, 365 - 94, 32, setting_general_obj_id_msgbox_check_1_text,
                                               item[0], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_general_obj_id_msgbox_check_1_img,
-                                              (const char *)resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                              user_data_get()->etc.open_the_door == 0? (const char *)resource_ui_src_get("btn_radio_s.png") : (const char *)resource_ui_src_get("btn_radio_n.png"),\
+                                              LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_common_img_text_btn_create(msgbox, setting_general_obj_id_msgbox_check_2, 48, 166, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -277,7 +278,8 @@ static lv_obj_t *setting_general_msgbox_create(const char *title, lv_event_cb_t 
                                               48, 8, 365 - 94, 32, setting_general_obj_id_msgbox_check_2_text,
                                               item[1], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_general_obj_id_msgbox_check_2_img,
-                                              (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                              user_data_get()->etc.open_the_door == 1? (const char *)resource_ui_src_get("btn_radio_s.png") : (const char *)resource_ui_src_get("btn_radio_n.png")\
+                                              , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         else
         {
