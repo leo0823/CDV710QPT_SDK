@@ -647,7 +647,7 @@ static void frame_show_playback_start(void)
 
 	file_type type = FILE_TYPE_FLASH_PHOTO;
 	int total = 0, new_total = 0;
-	if (media_sdcard_insert_check() == true)
+	if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
 	{
 		type = FILE_TYPE_VIDEO;
 	}

@@ -1,5 +1,5 @@
 #!/bin/sh
-PARAM_NUM=$#
+NUM=$#
 make_app()
 {
         cd build
@@ -22,19 +22,22 @@ make_app()
 copy_to_rootfs()
 {
         rm -rf ./rootfs/board/CDV810QPT/app/
+
+        mkdir ./rootfs/board/CDV810QPT/app/
+
         cp ./build/SAT_SSD20X.BIN ./rootfs/board/CDV810QPT/app/
 
-        cp -r ./layout/resource/rings ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/commax_xml ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/onvif ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/rings ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/ttf ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/ui ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/wallpaper ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/commax_xml/ ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/onvif/ ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/rings/ ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/ttf/ ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/ui/ ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/wallpaper/ ./rootfs/board/CDV810QPT/app/
 }
 make_rootfs()
 {	
     	cd  rootfs
+        ./build-project.sh
         ./make_sd_upgrade_sigmastar.sh
         cd -
         cp rootfs/image/output/images/CDV810QPT.BIN ./ 

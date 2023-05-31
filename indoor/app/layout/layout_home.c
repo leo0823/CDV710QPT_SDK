@@ -552,17 +552,26 @@ static void home_media_thumb_display(void)
         file_type type = FILE_TYPE_FLASH_PHOTO;
         char arry[1][128] = {0}; //{"/tmp/tf/media/300116-191938.JPG 1 42 216 174"};
         int total = 0, new_total = 0;
-        if (media_sdcard_insert_check() == true)
+        if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
         {
                 type = FILE_TYPE_VIDEO;
         }
+        SAT_DEBUG("file type is %d\n",type);
         media_file_total_get(type, &total, &new_total);
         if (total <= 0)
         {
                 return;
         }
-        const file_info *info = media_file_info_get(type, total - 1);
+        const file_info *info = NULL;
+        for(int i = 0; i < total; i++)
+        {       
+                info = media_file_info_get(type,  i);
+                SAT_DEBUG("info->total is %d\n",total);
+                SAT_DEBUG("info->file_name is %s\n",info->file_name);
 
+        }
+
+        
         memset(arry[0], 0, sizeof(arry[0]));
         sprintf(arry[0], "%s%s 1 42 %d %d", type == FILE_TYPE_FLASH_PHOTO ? FLASH_PHOTO_PATH : SD_MEDIA_PATH, info->file_name, THUMB_WIDTH, THUMB_HIGHT);
         sat_linphone_media_thumb_display(arry, 1, home_thumb_media_display_callback);

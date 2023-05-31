@@ -98,7 +98,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
          ** 日期: 2023-1-5 10:6:36
          ** 说明:暂时放在连接wifi
         ***********************************************/
-#if 0
+#if 1
         wifi_device_conneting();
         if(user_data_get()->wifi_enable)
         {
