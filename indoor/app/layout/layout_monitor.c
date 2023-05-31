@@ -27,6 +27,7 @@ enum
         monitor_obj_id_lock_2_cont,
 
         monitor_obj_id_unlock_icon,
+        
 };
 static void monitor_obj_handup_display(void);
 static void monitor_obj_normal_lock_display(void);
@@ -142,7 +143,7 @@ static void montior_obj_top_icon_display(void)
                 {
                         return;
                 }
-                if (media_sdcard_insert_check() == true)
+                if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
                 {
                         lv_obj_set_x(obj, pos_x);
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -388,6 +389,11 @@ static void monitor_obj_talk_click(lv_event_t *e)
  ***********************************************/
 static void monitor_obj_handup_click(lv_event_t *e)
 {
+        if(tuya_api_client_num() > 0)
+        {
+                SAT_DEBUG("tuya_api_monitor_handup\n");
+                tuya_api_monitor_handup();
+        }
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void monitor_obj_handup_display(void)
@@ -534,7 +540,7 @@ static bool monitor_obj_unlock_icon_display(void)
                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                       resource_ui_src_get("6_call_notice_door.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                                       resource_ui_src_get("btn_call_notice_door.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
 
         lv_timer_reset(lv_sat_timer_create(monitor_obj_unlock_open_timer, 1500, obj));
         return true;
@@ -840,7 +846,7 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 	int mode = REC_MODE_TUYA_CALL;
 	if (user_data_get()->auto_record_mode != 0)
 	{
-		if ((media_sdcard_insert_check() == true) && (user_data_get()->auto_record_mode == 1))
+		if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 1))
 		{
 			if (is_monitor_record_video_ing  == false)
 			{
@@ -1219,6 +1225,16 @@ static void sat_layout_quit(monitor)
                 user_time_read(tm_val);
                 call_list_add(type,ch,call_duration,tm_val);
                 layout_last_call_new_flag_set(true);
+        }else if(flag == MON_ENTER_TUYA_TALK_FLAG)
+        {
+                type = IN_AND_ANSWER;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= call_duration;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type,ch,call_duration,tm_val);
+                layout_last_call_new_flag_set(true);
         }
         monitor_close();
 
@@ -1342,19 +1358,29 @@ static bool tuya_event_cmd_door_open(int arg)
 ************************************************************/
 static bool tuya_event_cmd_ch_channge(int channel)
 {
+        int ch = channel -1 > MON_CH_DOOR2?  (MON_CH_CCTV1 + channel - 2 -  MON_CH_DOOR2 ): channel - 1;
 	if (monitor_valid_channel_check(channel) == false)
 	{
 		return false;
 	}
 	/*****  记录上次的通道 *****/
-	tuya_monitor_channel_set(channel);
-	if (monitor_channel_get() == channel)
+	tuya_monitor_channel_set(ch);
+	if (monitor_channel_get() == ch)
 	{
 		return layout_monitor_report_vaild_channel();
 	}
-        monitor_channel_set(channel);
-        monitior_obj_channel_info_obj_display();
+        SAT_DEBUG("ch is %d\n",ch);
+        monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
+        monitor_channel_set(ch);
+
         monitor_open(true);
+        monitor_obj_talk_display();
+        monitor_obj_handup_display();
+        monitor_obj_normal_lock_display();
+        monitor_obj_volume_display();
+        monitor_obj_lock_1_display();
+        monitor_obj_lock_2_display();
+        monitior_obj_channel_info_obj_display();
         layout_monitor_report_vaild_channel();
 
 	return true;
@@ -1374,6 +1400,44 @@ static bool tuya_event_cmd_motion_enable(int arg)
 }
 
 /************************************************************
+** 函数说明: app与设备通话处理
+** 作者: xiaoxiao
+** 日期: 2023-05-30 21:22:00
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static bool truye_event_cmd_audio_start(void)
+{
+        if (is_monitor_door_camera_talk == false)
+        {
+                is_monitor_door_camera_talk = true;
+                
+                call_duration = 0;
+                monitor_enter_flag_set(MON_ENTER_TUYA_TALK_FLAG);
+                monitor_obj_talk_display();
+                monitor_obj_handup_display();
+                monitor_obj_normal_lock_display();
+                monitor_obj_volume_display();
+                monitor_obj_lock_1_display();
+                monitor_obj_lock_2_display();
+        }
+	return true;
+}
+
+/************************************************************
+** 函数说明: app退出查看监控
+** 作者: xiaoxiao
+** 日期: 2023-05-30 22:12:48
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void tuya_event_cmd_video_stop(void)
+{
+        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+	return;
+}
+
+/************************************************************
 ** 函数说明: 监控页面涂鸦事件处理
 ** 作者: xiaoxiao
 ** 日期: 2023-05-30 10:23:31
@@ -1383,17 +1447,19 @@ static bool tuya_event_cmd_motion_enable(int arg)
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
 {
         SAT_DEBUG("cmd is %d\n",cmd);
+        SAT_DEBUG("arg is %d\n",arg);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:
                 //return tuya_event_cmd_video_start();
                 break;
         case TUYA_EVENT_CMD_VIDEO_STOP:
-              // return tuya_event_cmd_video_stop();
+                tuya_event_cmd_video_stop();
+                return true;
                 break;
         case TUYA_EVENT_CMD_AUDIO_START:
-                // tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
-                // return truye_event_cmd_audio_start();
+                tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
+                return truye_event_cmd_audio_start();
                 break;
         case TUYA_EVENT_CMD_ONLINE:
                 return layout_monitor_report_vaild_channel();

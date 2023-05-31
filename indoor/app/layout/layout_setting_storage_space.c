@@ -119,6 +119,7 @@ static void setting_storage_space_msgbox_internale_confirm_click(lv_event_t *e)
         {
                 return;
         }
+        media_file_delete_all(FILE_TYPE_FLASH_PHOTO,true);
         lv_obj_del(obj);
 }
 static void setting_storage_space_msgbox_external_confirm_click(lv_event_t *e)
@@ -127,6 +128,15 @@ static void setting_storage_space_msgbox_external_confirm_click(lv_event_t *e)
         if (obj == NULL)
         {
                 return;
+        }
+        lv_obj_t * msgbox = lv_obj_get_child_form_id(obj,setting_storage_space_obj_id_msgbox_parent);
+        lv_obj_t * chckbox1_img = lv_obj_get_child_form_id(lv_obj_get_child_form_id(msgbox,setting_storage_space_obj_id_msgbox_check_1),setting_storage_space_obj_id_msgbox_check_1_img);
+        if (strncmp(chckbox1_img->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
+        {
+                media_file_delete_all(FILE_TYPE_PHOTO,false);
+        }else
+        {
+                media_file_delete_all(FILE_TYPE_VIDEO,false);
         }
         lv_obj_del(obj);
 }

@@ -109,7 +109,7 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
         user_data_save();
         
         
-        away_alarm_release_det = lv_sat_timer_create(away_alarm_release_det_timer, 1000 * user_data_get()->alarm.away_release_time * 10, NULL);
+        away_alarm_release_det = lv_sat_timer_create(away_alarm_release_det_timer, 1000 * user_data_get()->alarm.away_release_time , NULL);
         away_alarm_release_det->lock = true;
         sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);    
 

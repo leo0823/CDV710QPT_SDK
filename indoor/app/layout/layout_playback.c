@@ -112,7 +112,7 @@ const file_info *playback_media_info_get(void)
 
 static void playback_thumb_param_init(void)
 {
-        if (media_sdcard_insert_check() == true)
+        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
         {
                 playback_media_type = FILE_TYPE_VIDEO;
                 playback_media_path = SD_MEDIA_PATH;
@@ -218,7 +218,7 @@ static void playback_thumb_refresh_display_callback(void)
 }
 static void playback_sd_state_change_callback(void)
 {
-        if ((media_sdcard_insert_check() == false) && (playback_media_type != FILE_TYPE_FLASH_PHOTO))
+        if (((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR)) && (playback_media_type != FILE_TYPE_FLASH_PHOTO))
         {
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
