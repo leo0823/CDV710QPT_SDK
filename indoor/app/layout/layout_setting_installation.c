@@ -66,7 +66,7 @@ static void setting_installation_guard_station_number_obj_click(lv_event_t *ev)
 }
 static void setting_installation_sensor_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(setting_sensor_settings, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        sat_layout_goto(sensor_settings, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
 {
@@ -119,7 +119,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              -1, NULL,
              setting_installation_guard_station_number_obj_click, -1},
             {0, 72 * 6, 622, 72,
-             setting_installation_obj_id_sensor_cont, 0, 1,
+             setting_installation_obj_id_sensor_cont, 0, -1,
              INSTALLATION_LANG_ID_SENSOR, layout_setting_installation_language_get,
              LANG_COMMON_ID_OFF, language_common_string_get,
              setting_installation_sensor_obj_click, -1},
