@@ -52,6 +52,12 @@ enum
 	** 说明:本机通话状态查询
 	***********************************************/
 	MSG_EVENT_CMD_SIP_CALL_STATUS,
+	/***********************************************
+	** 作者: leo.liu
+	** 日期: 2022-12-28 13:41:34
+	** 说明:视频流状态
+	***********************************************/
+	MSG_EVNET_CMD_VIDEO_STREAM
 };
 
 typedef struct
@@ -196,5 +202,10 @@ void system_timer_callback_register(void (*callback)(void));
 ** 说明: 注册call在线函数注册
 ***********************************************/
 void sip_call_online_func_register(void (*callback)(void));
-
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-12-28 13:42:13
+** 说明: 视频流状态注册
+***********************************************/
+void video_stream_status_callback_register(void (*callback)(bool));
 #endif
