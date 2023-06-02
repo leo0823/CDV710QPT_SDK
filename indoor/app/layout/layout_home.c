@@ -206,7 +206,7 @@ static void home_date_timer(lv_timer_t *ptimer)
  ***********************************************/
 static void home_latest_video_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(playback, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 /***********************************************
  ** 作者: leo.liu
@@ -563,15 +563,9 @@ static void home_media_thumb_display(void)
                 return;
         }
         const file_info *info = NULL;
-        for(int i = 0; i < total; i++)
-        {       
-                info = media_file_info_get(type,  i);
-                SAT_DEBUG("info->total is %d\n",total);
-                SAT_DEBUG("info->file_name is %s\n",info->file_name);
 
-        }
+        info = media_file_info_get(type,  total - 1);
 
-        
         memset(arry[0], 0, sizeof(arry[0]));
         sprintf(arry[0], "%s%s 1 42 %d %d", type == FILE_TYPE_FLASH_PHOTO ? FLASH_PHOTO_PATH : SD_MEDIA_PATH, info->file_name, THUMB_WIDTH, THUMB_HIGHT);
         sat_linphone_media_thumb_display(arry, 1, home_thumb_media_display_callback);
