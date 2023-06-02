@@ -4,6 +4,7 @@
 #include "user_network.h"
 #define is_channel_ipc_camera(ch) (((ch) >= 8) ? true : false)
 
+#define MON_CH_NONE -1
 #define MON_CH_DOOR1 0
 #define MON_CH_DOOR2 1
 

@@ -13,6 +13,8 @@ typedef enum
 	frame_show_scr_act_obj_id_calendar_week_label,
 	frame_show_scr_act_obj_id_calendar_mon_label,
 	frame_show_scr_act_obj_id_calendar_day_label,
+	frame_show_scr_act_obj_id_playback_name_label,
+	frame_show_scr_act_obj_id_playback_chann_label
     
 }frame_show_id;
 #define THUMB_WIDTH (1024)
@@ -62,6 +64,85 @@ static char *frame_show_frame_path = NULL;
 **   参数说明:
 ***/
 static int frame_show_refresh_cont = 0;
+
+/************************************************************
+** 函数说明: 获取通道
+** 作者: xiaoxiao
+** 日期: 2023-05-26 08:00:46
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static int always_record_channel_get(void)
+{
+
+	if ((monitor_valid_channel_check(MON_CH_DOOR1) == false) && (monitor_valid_channel_check(MON_CH_DOOR2) == false))
+	{
+		for(int i = 0; i < 8; i++)
+        {
+            if(monitor_valid_channel_check(MON_CH_CCTV1 + i))
+            {
+                if( i == 7)
+                {
+                    return MON_CH_NONE;
+                } 
+                break;;
+            }
+
+        }
+	}
+	int ch = monitor_channel_get();
+	if (ch == MON_CH_NONE)
+	{
+		ch = MON_CH_DOOR1;
+		if (monitor_valid_channel_check(ch) == true)
+		{
+			return ch;
+		}
+	}
+	int find = 0;
+find_start:
+	if (ch == MON_CH_DOOR1)
+	{
+		ch = MON_CH_DOOR2;
+		if (monitor_valid_channel_check(ch) == true)
+		{
+			return ch;
+		}
+	}
+	if (ch == MON_CH_DOOR2)
+	{
+		ch = MON_CH_CCTV1;
+		if (monitor_valid_channel_check(ch) == true)
+		{
+			return ch;
+		}
+	}
+    for(int i = 0; i < 8; i++)
+    {
+        if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
+        {
+            ch = MON_CH_CCTV2 + i;
+            if (monitor_valid_channel_check(ch) == true)
+            {
+                return ch;
+            }
+        }
+    }
+	if (ch == MON_CH_CCTV8)
+	{
+		ch = MON_CH_DOOR1;
+		if (monitor_valid_channel_check(ch) == true)
+		{
+			return ch;
+		}
+	}
+	find++;
+	if (find == 2)
+	{
+		return MON_CH_NONE;
+	}
+	goto find_start;
+}
 
 /***
 **   日期:2022-06-10 09:51:32
@@ -630,6 +711,87 @@ static void frame_show_calendar_start(void)
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
 }
 
+/************************************************************
+** 函数说明: 回放媒体文件名字显示
+** 作者: xiaoxiao
+** 日期: 2023-06-01 21:29:19
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void frame_show_playback_name_display(const char * name)
+{
+	if(frame_show_frame_index != 0x04)
+	{
+		return;
+	}
+	lv_obj_t * frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
+	lv_obj_t * frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
+	lv_obj_t *obj = NULL;
+	lv_obj_t * parent = NULL;
+	if(frame_show_pbuffer != frame_buffer_cur_a)
+	{
+		parent = frame1;
+	}else
+	{
+		parent = frame2;
+	}
+	obj = lv_obj_get_child_form_id(parent,frame_show_scr_act_obj_id_playback_name_label);
+	if (obj == NULL)
+	{
+		lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_name_label, 200, 35, 624, 80,
+							NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+							name, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+	}
+}
+	/***********************************************
+ ** 作者: leo.liu
+ ** 日期: 2023-2-2 13:42:25
+ ** 说明: 顶部时间通道显示
+ ***********************************************/
+static void frame_show_monitor_channle_display(void)
+{
+	if(frame_show_frame_index <= 0x07)
+	{
+		return;
+	}
+	lv_obj_t * frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
+	lv_obj_t * frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
+	lv_obj_t *obj = NULL;
+	lv_obj_t * parent = NULL;
+	if(frame_show_pbuffer != frame_buffer_cur_a)
+	{
+		parent = frame1;
+	}else
+	{
+		parent = frame2;
+	}
+	obj = lv_obj_get_child_form_id(parent,frame_show_scr_act_obj_id_playback_chann_label);
+	// struct tm tm;
+	// user_time_read(&tm);
+	int channel = monitor_channel_get();
+	if (obj == NULL)
+	{
+		obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_chann_label, 200, 35, 624, 80,
+							NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+							"", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+	}
+
+	if (is_channel_ipc_camera(channel) == true)
+	{
+
+			channel -= 8;
+			lv_label_set_text_fmt(obj, "Monitoring/%s", network_data_get()->cctv_device[channel].door_name);
+	}
+	else
+	{
+			lv_label_set_text_fmt(obj, "Monitoring/%s", network_data_get()->door_device[channel].door_name);
+	}
+
+}
 
 /************************************************************
 ** 函数说明: 开始回放显示
@@ -661,8 +823,12 @@ static void frame_show_playback_start(void)
 	memset(frame_show_frame_path,0,sizeof(frame_show_frame_path));
 	sprintf(frame_show_frame_path,"%s%s",type == FILE_TYPE_FLASH_PHOTO ? FLASH_PHOTO_PATH : SD_MEDIA_PATH, info->file_name);
 	frame_show_media_thumb_display(frame_show_frame_path);
+	char file_path[128];
+	sprintf(file_path, "%s/%s", info->file_name, info->ch);
+	frame_show_playback_name_display(file_path);
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
 }
+
 
 /************************************************************
 ** 函数说明: 通道信息显示
@@ -674,7 +840,7 @@ static void frame_show_playback_start(void)
 static void frame_show_door_display(void)
 {
 	// frame_show_monitor_head_display();
-	// frame_show_monitor_channle_display();
+	frame_show_monitor_channle_display();
 	// frame_show_monitor_auto_display();
 	// frame_show_monitor_sd_display();
 	frame_show_cancel_btn_display();
@@ -686,7 +852,7 @@ static void frame_show_door_display(void)
 static void frame_show_door1_start(void)
 {
 	monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
-	monitor_channel_set(0);
+	monitor_channel_set(always_record_channel_get());
 	frame_show_door_display();
 	frame_show_thumb_refresh_display_callback();
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
@@ -695,7 +861,7 @@ static void frame_show_door1_start(void)
 static void frame_show_cctv_start(void)
 {
 	monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-	monitor_channel_set(MON_CH_CCTV1);
+	monitor_channel_set(always_record_channel_get());
 	frame_show_door_display();
 	frame_show_thumb_refresh_display_callback();
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
@@ -733,16 +899,34 @@ static void frame_show_restart(void)
 	{
 		frame_show_frame_index = 0x04;
 		frame_show_playback_start();
-	}else if((user_data_get()->display.frame_list & 0x08) && (frame_show_frame_index < 0x08))
+	}else if((user_data_get()->display.frame_list & 0x08) && (frame_show_frame_index <= 0x08))
 	{
-		printf("=====doordoordoor\n");
 		frame_show_frame_index = 0x08;
+		if(network_data_get()->door_device_count == 0)
+		{
+			frame_show_frame_index = 0x09;
+			return frame_show_restart();
+		}
+		int ch = always_record_channel_get();
+		if(ch == MON_CH_DOOR2)
+		{
+			frame_show_frame_index = 0x09;
+		}
 		sat_linphone_media_thumb_destroy();
 		frame_show_door1_start();
-	}else if((user_data_get()->display.frame_list & 0x10) && (frame_show_frame_index < 0x10))
+	}else if((user_data_get()->display.frame_list & 0x10) && (frame_show_frame_index <= 0x10))
 	{
 		frame_show_frame_index = 0x10;
-		
+		int num = network_data_get()->cctv_device_count;
+		if(num == 0)
+		{
+			frame_show_frame_index = 0x11;
+		}
+		int ch = always_record_channel_get();
+		if(ch == MON_CH_CCTV1 + num)
+		{
+			frame_show_frame_index = 0x11;
+		}
 		sat_linphone_media_thumb_destroy();
 		frame_show_cctv_start();
 	}
@@ -752,7 +936,6 @@ static void frame_show_restart(void)
 			{
 				sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 			}
-			printf("=====%s========%d=====\n",__func__,__LINE__);
 			frame_show_frame_index = 0x00;
 			frame_show_restart();
 		
@@ -780,6 +963,7 @@ static void frame_show_layer_init(void)
 
 static void sat_layout_enter(frame_show)
 {
+	monitor_channel_set(MON_CH_NONE);
     {
         
                 lv_obj_t * frame1 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame1_id, 0, 0, THUMB_WIDTH, THUMB_HIGHT,

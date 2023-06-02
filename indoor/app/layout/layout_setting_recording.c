@@ -34,6 +34,9 @@ enum
         setting_recording_obj_id_msgbox_check_3,
         setting_recording_obj_id_msgbox_check_3_text,
         setting_recording_obj_id_msgbox_check_3_img,
+        setting_recording_obj_id_msgbox_check_4,
+        setting_recording_obj_id_msgbox_check_4_text,
+        setting_recording_obj_id_msgbox_check_4_img,
         setting_recording_obj_id_msgbox_confirm,
         setting_recording_obj_id_msgbox_confirm_img,
         setting_recording_obj_id_msgbox_cancel,
@@ -70,27 +73,7 @@ static lv_obj_t *setting_recording_msgbox_create(const char *title, lv_event_cb_
                               0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                               title, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
-        if (n_item == 2)
-        {
-                lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_1, 48, 110, 365, 48,
-                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              48, 8, 365 - 94, 32, setting_recording_obj_id_msgbox_check_1_text,
-                                              item[0], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 32, 32, setting_recording_obj_id_msgbox_check_1_img,
-                                              (const char *)resource_ui_src_get(select_item == 0 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-
-                lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_2, 48, 166, 365, 48,
-                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              48, 8, 365 - 94, 32, setting_recording_obj_id_msgbox_check_2_text,
-                                              item[1], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 32, 32, setting_recording_obj_id_msgbox_check_2_img,
-                                              (const char *)resource_ui_src_get(select_item == 1 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        }
-        else
+        if (n_item == 3)
         {
                 lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_1, 48, 89, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -118,6 +101,44 @@ static lv_obj_t *setting_recording_msgbox_create(const char *title, lv_event_cb_
                                               item[2], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_recording_obj_id_msgbox_check_3_img,
                                               (const char *)resource_ui_src_get(select_item == 2 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        else
+        {
+
+                lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_1, 48, 61, 365, 48,
+                                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                48, 8, 365 - 94, 32, setting_recording_obj_id_msgbox_check_1_text,
+                                                item[0], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                0, 8, 32, 32, setting_recording_obj_id_msgbox_check_1_img,
+                                                (const char *)resource_ui_src_get(select_item == 0 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_2, 48, 117, 365, 48,
+                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              48, 8, 365 - 94, 32, setting_recording_obj_id_msgbox_check_2_text,
+                                              item[1], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              0, 8, 32, 32, setting_recording_obj_id_msgbox_check_2_img,
+                                              (const char *)resource_ui_src_get(select_item == 1 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_3, 48, 173, 365, 48,
+                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              48, 8, 365 - 94, 32, setting_recording_obj_id_msgbox_check_3_text,
+                                              item[2], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              0, 8, 32, 32, setting_recording_obj_id_msgbox_check_3_img,
+                                              (const char *)resource_ui_src_get(select_item == 2 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_4, 48, 228, 365, 48,
+                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              48, 8, 365 - 94, 32, setting_recording_obj_id_msgbox_check_4_text,
+                                              item[3], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              0, 8, 32, 32, setting_recording_obj_id_msgbox_check_4_img,
+                                              (const char *)resource_ui_src_get(select_item == 3 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
 
         lv_common_img_btn_create(msgbox, setting_recording_obj_id_msgbox_cancel, 0, 281, 230, 62,
@@ -171,10 +192,9 @@ static int setting_recording_checkbox_mode_get(void)
 
         if (strncmp((const char *)img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
         {
-                if (user_data_get()->auto_record_mode != 0)
-                {
+
                         return 0;
-                }
+                
                 return -1;
         }
 
@@ -194,10 +214,9 @@ static int setting_recording_checkbox_mode_get(void)
 
         if (strncmp((const char *)img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
         {
-                if (user_data_get()->auto_record_mode != 1)
-                {
+
                         return 1;
-                }
+                
                 return -1;
         }
 
@@ -217,10 +236,28 @@ static int setting_recording_checkbox_mode_get(void)
 
         if (strncmp((const char *)img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
         {
-                if (user_data_get()->auto_record_mode != 2)
-                {
-                        return 2;
-                }
+                return 2;
+                
+                return -1;
+        }
+        checkbox = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_4);
+        if (checkbox == NULL)
+        {
+                SAT_DEBUG("et_parent(obj); is nullpter");
+                return -1;
+        }
+
+        img_obj = lv_obj_get_child_form_id(checkbox, setting_recording_obj_id_msgbox_check_4_img);
+        if (img_obj == NULL)
+        {
+                SAT_DEBUG("lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_3_img) is nullpter");
+                return -1;
+        }
+
+        if (strncmp((const char *)img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
+        {
+                return 3;
+                
                 return -1;
         }
 
@@ -279,6 +316,38 @@ static bool setting_recording_motion_sub_display(void)
         return true;
 }
 
+static bool setting_recording_always_monitoring_sub_display(void)
+{
+        lv_obj_t *sub = setting_record_sub_list_item_sub_get(setting_recording_obj_id_always_cont,setting_recording_obj_id_always_sub);
+        if (sub == NULL)
+        {
+
+                return false;
+        }
+        const char * string = NULL;
+        if(user_data_get()->always_monitoring == 0)
+        {
+               string =  language_common_string_get(LANG_COMMON_ID_OFF);
+        }
+        else if(user_data_get()->always_monitoring == 1)
+        {
+               string =  layout_setting_recording_language_get(RECORDING_LANG_ID_10_SEC_PER_CAMERA);
+        }
+        else if(user_data_get()->always_monitoring == 2)
+        {
+               string =  layout_setting_recording_language_get(RECORDING_LANG_ID_30_SEC_PER_CAMERA);
+        }
+        else if(user_data_get()->always_monitoring == 3)
+        {
+               string =  layout_setting_recording_language_get(RECORDING_LANG_ID_60_SEC_PER_CAMERA);
+        }
+
+        lv_label_set_text(sub,string);
+
+        return true;
+}
+
+
 static void ssetting_recording_auto_msgbox_confirm_click(lv_event_t *e)
 {
         int mode = setting_recording_checkbox_mode_get();
@@ -299,6 +368,7 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
                 return;
         }
         lv_obj_t *check_obj, *discheck1_obj, *discheck2_obj;
+        lv_obj_t* discheck3_obj = NULL;
         if (parent->id == setting_recording_obj_id_msgbox_check_1)
         {
                 check_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_1_img);
@@ -306,6 +376,12 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
                 discheck1_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_2_img);
                 parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_3);
                 discheck2_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_3_img);
+                parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_4);
+                if(parent != NULL)
+                {
+                        discheck3_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_4_img);
+                }
+
         }
         else if (parent->id == setting_recording_obj_id_msgbox_check_2)
         {
@@ -314,8 +390,13 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
                 discheck1_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_1_img);
                 parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_3);
                 discheck2_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_3_img);
+                parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_4);
+                if(parent != NULL)
+                {
+                        discheck3_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_4_img);
+                }
         }
-        else
+        else  if(parent->id == setting_recording_obj_id_msgbox_check_3)
         {
 
                 check_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_3_img);
@@ -323,8 +404,23 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
                 discheck1_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_1_img);
                 parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_2);
                 discheck2_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_2_img);
+                parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_4);
+                if(parent != NULL)
+                {
+                        discheck3_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_4_img);
+                }
         }
+        else
+        {
 
+                check_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_4_img);
+                parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_1);
+                discheck1_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_1_img);
+                parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_2);
+                discheck2_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_2_img);
+                parent = lv_obj_get_child_form_id(lv_obj_get_parent(parent), setting_recording_obj_id_msgbox_check_3);
+                discheck3_obj = lv_obj_get_child_form_id(parent, setting_recording_obj_id_msgbox_check_3_img);
+        }
         if ((check_obj == NULL) || (discheck1_obj == NULL) || (discheck2_obj == NULL) || (check_obj->bg_img_src == NULL) || (discheck1_obj->bg_img_src == NULL) || (discheck2_obj->bg_img_src == NULL))
         {
                 return;
@@ -335,6 +431,11 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
                 lv_obj_set_style_bg_img_src(check_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(discheck1_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(discheck2_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                if(discheck3_obj != NULL)
+                {
+                        lv_obj_set_style_bg_img_src(discheck3_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                }
+                
         }
 }
 
@@ -358,22 +459,23 @@ static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
         int mode = setting_recording_checkbox_mode_get();
         if (mode >= 0)
         {
-                user_data_get()->auto_record_mode = (char)mode;
+                user_data_get()->always_monitoring = mode;
                 user_data_save();
-                setting_recording_auto_sub_display();
                 sat_layout_goto(always_record, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
         }
         setting_recording_msgbox_del();
 }
 static void setting_recording_always_obj_click(lv_event_t *ev)
 {
-        const char *item[3] = {0};
-        item[0] = layout_setting_recording_language_get(RECORDING_LANG_ID_10_SEC_PER_CAMERA);
-        item[1] = layout_setting_recording_language_get(RECORDING_LANG_ID_30_SEC_PER_CAMERA);
-        item[2] = layout_setting_recording_language_get(RECORDING_LANG_ID_60_SEC_PER_CAMERA);
+        const char *item[4] = {0};
+
+	item[0] = language_common_string_get(LANG_COMMON_ID_OFF);
+	item[1] = layout_setting_recording_language_get(RECORDING_LANG_ID_10_SEC_PER_CAMERA);
+	item[2] = layout_setting_recording_language_get(RECORDING_LANG_ID_30_SEC_PER_CAMERA);
+	item[3] = layout_setting_recording_language_get(RECORDING_LANG_ID_60_SEC_PER_CAMERA);
         setting_recording_msgbox_create(layout_setting_recording_language_get(RECORDING_LANG_ID_ALWAYS_MONITORING),
                                         setting_recording_msgbox_cancel_click, ssetting_recording_always_msgbox_confirm_click, setting_recording_auto_msgbox_item_click,
-                                        item, 3, 0);
+                                        item, 4, 0);
 }
 
 static lv_obj_t *setting_recording_sub_list_create(void)
@@ -418,6 +520,7 @@ static lv_obj_t *setting_recording_sub_list_create(void)
 
         setting_recording_auto_sub_display();
         setting_recording_motion_sub_display();
+        setting_recording_always_monitoring_sub_display();
         return list;
 }
 
