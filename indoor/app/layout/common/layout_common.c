@@ -145,6 +145,7 @@ void *resource_wallpaper_src_alloc(char *file, uint32_t w, uint32_t h)
 ***********************************************/
 void lv_layout_touch_callback(lv_event_t *e)
 {
+        standby_timer_restart(false);
         ring_touch_play();
 }
 /***********************************************

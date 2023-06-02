@@ -7,6 +7,9 @@ typedef enum
         SCREEN_LANG_ID_LCD_SCREEN_BRIGHNESS,
         SCREEN_LANG_ID_LCD_STANDBY_SCREEN,
         SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC,
+        SCREEN_LANG_ID_LCD_SCREEN_AFTER_30SEC,
+        SCREEN_LANG_ID_LCD_SCREEN_AFTER_60SEC,
+        SCREEN_LANG_ID_LCD_SCREEN_AFTER_180SEC,
         SCREEN_LANG_ID_LCD_SCREEN_OPEN_FRAME,
         SCREEN_LANG_ID_LCD_SCREEN_CLEANING_MODE,
         SCREEN_LANG_ID_TOTAL
@@ -18,6 +21,9 @@ static const char *layout_setting_screen_language[SCREEN_LANG_ID_TOTAL][LANGUAGE
         {"LCD screen brightness", "LCD screen brightness", "LCD screen brightness"},
         {"Standby screen", "Standby screen", "Standby screen"},
         {"After 15 seconds", "After 15 seconds", "After 15 seconds"},
+        {"After 30 seconds", "After 30 seconds", "After 30 seconds"},
+        {"After 1 minutes", "After 1 minutes", "After 1 minutes"},
+        {"After 1 minutes", "After 3 minutes", "After 3 minutes"},
         {"Open frame", "Open frame", "Open frame"},
         {"Screen Cleaning mode", "Screen Cleaning mode", "Screen Cleaning mode"},
 };

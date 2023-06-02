@@ -52,6 +52,7 @@ static const user_data_info user_data_default =
 
         .display = {
             .standby_mode = 0,
+            .screen_off_time = 30,
             .lcd_brigtness = 100,
             .frame_time_en = 0,
             .frame_time_start = 0,
@@ -126,6 +127,8 @@ static const user_data_info user_data_default =
         },
         .system_mode = 0,
         .time_automatically = 1,
+        .call_time = 1,
+        .always_monitoring = 0,
 
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},

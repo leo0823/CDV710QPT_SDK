@@ -257,7 +257,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
-                // monitor_timeout_sec--;
+                monitor_timeout_sec--;
         }
         else
         {
@@ -287,7 +287,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                         monitor_channel_set(ch);
                         monitor_open(true);
                         layout_monitor_report_vaild_channel();
-                        monitor_timeout_sec_reset(0);
+                        monitor_timeout_sec_reset(user_data_get()->call_time * 60);
                         monitior_obj_channel_info_obj_display();
                 }
         }
@@ -300,7 +300,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                         monitor_channel_set(ch);
                         monitor_open(true);
                         layout_monitor_report_vaild_channel();
-                        monitor_timeout_sec_reset(0);
+                        monitor_timeout_sec_reset(user_data_get()->call_time * 60);
                         monitior_obj_channel_info_obj_display();
                 }
         }
@@ -370,6 +370,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 is_monitor_door_camera_talk = true;
                 
                 call_duration = 0;
+                monitor_timeout_sec = 60;
                 monitor_enter_flag_set(MON_ENTER_MANUAL_TALK_FLAG);
 
                 sat_linphone_answer(-1);
@@ -901,7 +902,7 @@ static void sat_layout_enter(monitor)
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = false;
         is_monitor_record_video_ing = false;
-        monitor_timeout_sec_reset(0);
+        monitor_timeout_sec_reset(user_data_get()->call_time * 60);
         call_duration = 0;
 
         /***********************************************
@@ -1381,6 +1382,7 @@ static bool tuya_event_cmd_ch_channge(int channel)
         monitor_obj_lock_1_display();
         monitor_obj_lock_2_display();
         monitior_obj_channel_info_obj_display();
+        monitor_obj_cctv_cancel_obj_display();
         layout_monitor_report_vaild_channel();
 
 	return true;
@@ -1420,6 +1422,7 @@ static bool truye_event_cmd_audio_start(void)
                 monitor_obj_volume_display();
                 monitor_obj_lock_1_display();
                 monitor_obj_lock_2_display();
+                monitor_obj_cctv_cancel_obj_display();
         }
 	return true;
 }

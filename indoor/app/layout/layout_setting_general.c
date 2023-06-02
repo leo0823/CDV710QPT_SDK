@@ -451,7 +451,7 @@ static void setting_general_door2_opener_num_msgbox_confirm_click(lv_event_t *ev
         {
                 user_data_get()->etc.door2_lock_num = 2;
         }
-                user_data_save();
+        user_data_save();
         setting_general_msgbox_del();
         door2_open_lock_num_sub_display();
 }
@@ -535,9 +535,78 @@ static void setting_general_call_time_msgbox_item_click(lv_event_t *e)
                 lv_obj_set_style_bg_img_src(discheck2_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
 }
-static void setting_general_call_time_msgbox_confirm_click(lv_event_t *e)
+
+/************************************************************
+** 函数说明: door2 锁数量 次标题显示
+** 作者: xiaoxiao
+** 日期: 2023-05-11 15:19:23
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void call_time_obj_sub_display(void)
 {
+        lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_call_time_count,setting_general_obj_id_call_time_sub);
+        if (sub == NULL)
+        {
+                SAT_DEBUG("call_time_sub is null\n");
+                return;
+        }
+
+        lv_label_set_text(sub,layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER + user_data_get()->call_time));
+
+}
+static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
+{
+        
+        lv_obj_t *item = lv_event_get_current_target(ev);
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1),setting_general_obj_id_msgbox_check_1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_2),setting_general_obj_id_msgbox_check_2_img);
+        lv_obj_t * check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_3),setting_general_obj_id_msgbox_check_3_img);
+        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->call_time = 1;
+
+        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->call_time = 2;
+        }else if (!strncmp((const char *)check3->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->call_time = 3;
+        }
+        user_data_save();
         setting_general_msgbox_del();
+        call_time_obj_sub_display();
+}
+
+static void setting_general_call_time_num_display(void)
+{
+        lv_obj_t * parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_general_obj_id_msgbox_cont),setting_general_obj_id_msgbox_parent);
+        
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1),setting_general_obj_id_msgbox_check_1_img);
+
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2),setting_general_obj_id_msgbox_check_2_img);
+
+        lv_obj_t * check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_3),setting_general_obj_id_msgbox_check_3_img);
+        if (user_data_get()->call_time == 1)
+        {
+
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+
+
+        }
+        else if (user_data_get()->call_time == 2)
+        {
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }else if (user_data_get()->call_time == 3)
+        {
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+        }
 }
 static void setting_general_call_time_obj_click(lv_event_t *ev)
 {
@@ -548,6 +617,8 @@ static void setting_general_call_time_obj_click(lv_event_t *ev)
         setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER),
                                       setting_general_msgbox_cancel_click, setting_general_call_time_msgbox_confirm_click, setting_general_call_time_msgbox_item_click,
                                       item, 3);
+        setting_general_call_time_num_display();
+        
 }
 static void setting_general_sensor_usage_setting_obj_click(lv_event_t *ev)
 {
@@ -677,6 +748,7 @@ static lv_obj_t *setting_sub_list_create(void)
         door_open_method_sub_display();
         door1_open_moudle_sub_display();
         door2_open_lock_num_sub_display();
+        call_time_obj_sub_display();
         return list;
 }
 

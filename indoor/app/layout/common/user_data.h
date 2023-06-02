@@ -48,6 +48,8 @@ typedef struct
 {
         /***** 0:lcd off 1:open frame *****/
         char standby_mode;
+        /**屏幕待机时间设置***/
+        int screen_off_time;
         /***** lcd的亮度 *****/
         int lcd_brigtness;
 
@@ -136,6 +138,10 @@ typedef struct
         user_alarm_info alarm;
 
         char system_mode; // 0:单户型 1:服务器型
+
+        int call_time;
+
+        int always_monitoring;
 } user_data_info;
 
 bool user_data_save(void);
