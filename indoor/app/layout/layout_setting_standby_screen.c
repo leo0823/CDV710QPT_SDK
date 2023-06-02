@@ -1,3 +1,4 @@
+
 #include "layout_define.h"
 #include "layout_setting_standby_screen.h"
 #include "layout_setting_screen.h"
@@ -8,6 +9,10 @@ enum
         setting_standby_screen_obj_id_cancel,
 
         setting_standby_screen_obj_id_mian_list,
+        setting_standby_screen_obj_id_not_use_cont,
+        setting_standby_screen_obj_id_not_use_title,
+        setting_standby_screen_obj_id_not_use_sub,
+        setting_standby_screen_obj_id_not_use_img,
         setting_standby_screen_obj_id_screen_off_cont,
         setting_standby_screen_obj_id_screen_off_title,
         setting_standby_screen_obj_id_screen_off_sub,
@@ -29,6 +34,25 @@ enum
         setting_standby_screen_obj_id_background_cont,
         setting_standby_screen_obj_id_background_title,
         setting_standby_screen_obj_id_background_sub,
+
+        setting_standby_screen_obj_id_msg_bg,
+        setting_standby_screen_obj_id_msgbox,
+        
+        setting_standby_screen_off_checkbox1_cont,
+        setting_standby_screen_off_checkbox1_label,
+        setting_standby_screen_off_checkbox1_img,
+        setting_standby_screen_off_checkbox2_cont,
+        setting_standby_screen_off_checkbox2_label,
+        setting_standby_screen_off_checkbox2_img,
+        setting_standby_screen_off_checkbox3_cont,
+        setting_standby_screen_off_checkbox3_label,
+        setting_standby_screen_off_checkbox3_img,
+        setting_standby_screen_off_checkbox4_cont,
+        setting_standby_screen_off_checkbox4_label,
+        setting_standby_screen_off_checkbox4_img,
+        setting_standby_screen_off_obj_id_confirm,
+        setting_standby_screen_off_obj_id_cancel,
+
 };
 
 static void setting_standby_screen_cancel_click(lv_event_t *e)
@@ -42,7 +66,17 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
-        lv_obj_t *item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_screen_off_cont);
+        lv_obj_t *item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_not_use_cont);
+        if (item == NULL)
+        {
+                return;
+        }
+        lv_obj_t *not_use_img = lv_obj_get_child_form_id(item, setting_standby_screen_obj_id_not_use_img);
+        if (not_use_img == NULL)
+        {
+                return;
+        }
+        item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_screen_off_cont);
         if (item == NULL)
         {
                 return;
@@ -52,7 +86,6 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
-
         item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_open_frame_cont);
         lv_obj_t *frame_open_img = lv_obj_get_child_form_id(item, setting_standby_screen_obj_id_open_frame_img);
         if (frame_open_img == NULL)
@@ -65,10 +98,10 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
-
+        SAT_DEBUG("XIAOSIXIAOSI\n");
         if (user_data_get()->display.standby_mode == 0)
         {
-                lv_obj_set_style_bg_img_src(scr_of_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(not_use_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(frame_open_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
 
                 lv_obj_add_flag(sub_list, LV_OBJ_FLAG_HIDDEN);
@@ -76,7 +109,7 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         else
         {
                 lv_obj_set_style_bg_img_src(frame_open_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(scr_of_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(not_use_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
 
                 lv_obj_clear_flag(sub_list, LV_OBJ_FLAG_HIDDEN);
         }
@@ -89,14 +122,13 @@ static void setting_standby_screen_main_list_click(lv_event_t *e)
         {
                 return;
         }
-        if (item->id == setting_standby_screen_obj_id_screen_off_cont)
+        if (item->id == setting_standby_screen_obj_id_not_use_cont)
         {
-                if (user_data_get()->display.standby_mode != 0)
-                {
-                        user_data_get()->display.standby_mode = 0;
-                        user_data_save();
-                        setting_standby_screen_main_checkbox_obj_display();
-                }
+
+                user_data_get()->display.standby_mode = 0;
+                user_data_save();
+                setting_standby_screen_main_checkbox_obj_display();
+                
         }
         else if (user_data_get()->display.standby_mode == 0)
         {
@@ -105,16 +137,169 @@ static void setting_standby_screen_main_list_click(lv_event_t *e)
                 setting_standby_screen_main_checkbox_obj_display();
         }
 }
+
+static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, lv_event_cb_t checkbox_cb)
+{
+
+
+    lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox1_cont, 48, 46, 365, 48,
+                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox1_label,
+                                "15 sceonds later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                0, 8, 32, 32, setting_standby_screen_off_checkbox1_img,
+                                user_data_get()->display.screen_off_time == 15 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+    lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox2_cont, 48, 102, 365, 48,
+                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox2_label,
+                               "30 sceonds later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                0, 8, 32, 32, setting_standby_screen_off_checkbox2_img,
+                                user_data_get()->display.screen_off_time == 30 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+    lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox3_cont, 48, 158, 365, 48,
+                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox3_label,
+                                "1 minute later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                0, 8, 32, 32, setting_standby_screen_off_checkbox3_img,
+                                user_data_get()->display.screen_off_time == 60 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+    lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox4_cont, 48, 214, 365, 48,
+                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox4_label,
+                                "1 minute later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                0, 8, 32, 32, setting_standby_screen_off_checkbox4_img,
+                                user_data_get()->display.screen_off_time == 180 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+
+}
+
+static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
+{
+
+        lv_obj_t *parent = lv_obj_get_parent(lv_event_get_current_target(ev));
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox1_cont),setting_standby_screen_off_checkbox1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox2_cont),setting_standby_screen_off_checkbox2_img);
+        lv_obj_t * check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox3_cont),setting_standby_screen_off_checkbox3_img);
+        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->display.screen_off_time = 15;
+
+        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->display.screen_off_time = 30;
+        }
+        else if (!strncmp((const char *)check3->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->display.screen_off_time = 60;
+        }else{
+                user_data_get()->display.screen_off_time = 180;
+        }
+        user_data_save();
+        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+}
+
+static void  setting_standby_screen_off_msgbox_click(lv_event_t *ev)
+{
+
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        lv_obj_t *parent = lv_obj_get_parent(obj);        
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox1_cont),setting_standby_screen_off_checkbox1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox2_cont),setting_standby_screen_off_checkbox2_img);
+        lv_obj_t * check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox3_cont),setting_standby_screen_off_checkbox3_img);
+        lv_obj_t * check4 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox4_cont),setting_standby_screen_off_checkbox4_img);
+        if (obj->id  == setting_standby_screen_off_checkbox1_cont)
+        {
+
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check4, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+
+        }
+        else if (obj->id  == setting_standby_screen_off_checkbox2_cont)
+        {
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check4, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
+        else if (obj->id  == setting_standby_screen_off_checkbox3_cont)
+        {
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check4, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }else
+        {   
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check4, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+
+        }
+}
+
+
+static void  setting_standby_screen_off_msgbox_cancel_click(lv_event_t *ev)
+{
+        lv_obj_del(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_standby_screen_obj_id_msg_bg));
+}
+/************************************************************
+** 函数说明: 待机时间设置
+** 作者: xiaoxiao
+** 日期: 2023-06-02 14:19:55
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void setting_standby_screen_off_click(lv_event_t *e)
+{
+        lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg,setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
+        setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel ,"确认","取消", setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
+    
+
+}
+
+static void setting_standby_screen_off_sub_display(lv_obj_t * list)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_standby_screen_obj_id_screen_off_cont),setting_standby_screen_obj_id_screen_off_sub);
+        if(user_data_get()->display.screen_off_time == 15)
+        {
+                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC));
+        }else if(user_data_get()->display.screen_off_time == 30)
+        {
+                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_30SEC));
+        }else if(user_data_get()->display.screen_off_time == 60)
+        {
+                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_60SEC));
+        }else if(user_data_get()->display.screen_off_time == 180)
+        {
+                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_180SEC));
+        }
+
+}
+
 static lv_obj_t *setting_standby_screen_main_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
-
             {0, 0, 928, 88,
+             setting_standby_screen_obj_id_not_use_cont, setting_standby_screen_obj_id_not_use_title, -1,
+             SETTING_STANDBY_SCREEN_LANG_ID_NOT_USE, layout_setting_standby_screen_language_get,
+             -1, layout_setting_screen_language_get,
+             setting_standby_screen_main_list_click, setting_standby_screen_obj_id_not_use_img},
+            {0, 88, 928, 88,
              setting_standby_screen_obj_id_screen_off_cont, setting_standby_screen_obj_id_screen_off_title, setting_standby_screen_obj_id_screen_off_sub,
              SETTING_STANDBY_SCREEN_LANG_ID_SCREEN_OFF, layout_setting_standby_screen_language_get,
              SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC, layout_setting_screen_language_get,
-             setting_standby_screen_main_list_click, setting_standby_screen_obj_id_screen_off_img},
-            {0, 88, 928, 88,
+             setting_standby_screen_off_click, setting_standby_screen_obj_id_screen_off_img},
+            {0, 176, 928, 88,
              setting_standby_screen_obj_id_open_frame_cont, setting_standby_screen_obj_id_open_frame_title, -1,
              SETTING_STANDBY_SCREEN_LANG_ID_OPEN_FRAME, layout_setting_standby_screen_language_get,
              -1, NULL,
@@ -139,6 +324,7 @@ static lv_obj_t *setting_standby_screen_main_list_create(void)
                                                                 0, 28, 32, 32, main_list_group[i].img_id,
                                                                 resource_ui_src_get("btn_radio_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        setting_standby_screen_off_sub_display(list);
         return list;
 }
 static void setting_standby_screen_sub_list_click(lv_event_t *e)
@@ -163,6 +349,73 @@ static void setting_standby_screen_sub_list_click(lv_event_t *e)
         else if (obj->id == setting_standby_screen_obj_id_background_cont)
         {
                 sat_layout_goto(setting_frame_backgorund, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        }
+}
+
+static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_time_cont),setting_standby_screen_obj_id_display_time_sub);
+        if(obj != NULL)
+        {
+                if(user_data_get()->display.frame_time_en ==  false)
+                {
+                        lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_ALWAYS));
+                }else
+                {
+		int s_hour = user_data_get()->display.frame_time_start / 60;
+		int s_min = user_data_get()->display.frame_time_start % 60;
+		int e_hour = user_data_get()->display.frame_time_end / 60;
+		int e_min = user_data_get()->display.frame_time_end % 60;
+                lv_label_set_text_fmt(obj,"%02d:%02d-%02d:%02d", s_hour, s_min, e_hour, e_min);
+                }
+                
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_night_mode_cont),setting_standby_screen_obj_id_display_night_mode_sub);
+        if(obj != NULL)
+        {
+                if(user_data_get()->display.night_mode == false)
+                {
+                        lv_label_set_text(obj,language_common_string_get(LANG_COMMON_ID_OFF));
+                }else
+                {
+		int s_hour = user_data_get()->display.night_time_start / 60;
+		int s_min = user_data_get()->display.night_time_start % 60;
+		int e_hour = user_data_get()->display.night_time_end / 60;
+		int e_min = user_data_get()->display.night_time_end % 60;
+                lv_label_set_text_fmt(obj,"%02d:%02d-%02d:%02d", s_hour, s_min, e_hour, e_min);
+                }
+                
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_item_cont),setting_standby_screen_obj_id_display_item_sub);
+        if(obj != NULL)
+        {
+                int data = user_data_get()->display.frame_list;
+                int count = 0;
+                for (int i = 0; i < 5; i++)
+                {
+                        if (data & (0x01 << i))
+                        {
+                                count++;
+                        }
+                }
+                lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_0_ITEM + count));
+
+                
+        }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_background_cont),setting_standby_screen_obj_id_background_sub);
+        if(obj != NULL)
+        {
+                if(user_data_get()->display.frame_background)
+                {
+                        lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_RANDOM_IMAGE));
+                }else
+                {
+                        lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_BASIC));
+                }
+
+
+
+                
         }
 }
 static lv_obj_t *setting_standby_screen_sub_list_create(void)
@@ -192,7 +445,7 @@ static lv_obj_t *setting_standby_screen_sub_list_create(void)
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_standby_screen_obj_id_sub_list);
-        lv_common_style_set_common(list, setting_standby_screen_obj_id_sub_list, 94, 264, 836, 314, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        lv_common_style_set_common(list, setting_standby_screen_obj_id_sub_list, 94, 264+88, 836, 314, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
@@ -209,6 +462,7 @@ static lv_obj_t *setting_standby_screen_sub_list_create(void)
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        setting_standby_screen_sub_list_display(list);
         return list;
 }
 static void sat_layout_enter(setting_standby_screen)

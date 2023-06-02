@@ -4,11 +4,13 @@
 
 typedef enum
 {
+        SETTING_STANDBY_SCREEN_LANG_ID_NOT_USE,
         SETTING_STANDBY_SCREEN_LANG_ID_SCREEN_OFF,
         SETTING_STANDBY_SCREEN_LANG_ID_OPEN_FRAME,
         SETTING_STANDBY_SCREEN_LANG_ID_DISPLAY_TIME,
         SETTING_STANDBY_SCREEN_LANG_ID_ALWAYS,
         SETTING_STANDBY_SCREEN_LANG_ID_ITEM_DISPLAY,
+        SETTING_STANDBY_SCREEN_LANG_ID_0_ITEM,
         SETTING_STANDBY_SCREEN_LANG_ID_1_ITEM,
         SETTING_STANDBY_SCREEN_LANG_ID_2_ITEM,
         SETTING_STANDBY_SCREEN_LANG_ID_3_ITEM,
@@ -33,11 +35,13 @@ typedef enum
 
 static const char *layout_setting_standby_screen_language[SETTING_STANDBY_SCREEN_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
     {
+        {"Not use", "Not use", "Not use"},
         {"Screen off", "Screen off", "Screen off"},
         {"Open frame", "Open frame", "Open frame"},
         {"Display Time", "Display Time", "Display Time"},
         {"Always", "Always", "Always"},
         {"Display item", "Display item", "Display item"},
+        {"0 item", "0 item", "0 item"},
         {"1 item", "1 item", "1 item"},
         {"2 item", "2 item", "2 item"},
         {"3 item", "3 item", "3 item"},
