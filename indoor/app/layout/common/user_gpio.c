@@ -1,5 +1,6 @@
 #include "user_gpio.h"
 #include "common/gpio_ctrl.h"
+#include "common/pwm_ctrl.h"
 #include "common/sat_user_common.h"
 #include "ssd20x_sarad/ssd20x_sarad.h"
 #include "cd4051/cd4051.h"
@@ -25,7 +26,7 @@ void amp_enable_set(bool en)
 {
         gpio_level_set(AMP_GPIO_PIN, en ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
 }
-#if 0
+
 #define BL_PWM_NO 0
 #define BL_PWM_CH 0
 /***
@@ -49,10 +50,9 @@ bool backlight_brightness_set(int per)
 {
         pwm_period_set(BL_PWM_NO, BL_PWM_CH, 65536);
 
-        int duty = 5000 + per * (65536 - 5000) / 100;
-        return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, duty);
+        return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, per);
 }
-#endif
+
 /************************************************************
 ** 函数说明: door1特殊锁控制使能
 ** 作者: xiaoxiao
@@ -243,9 +243,9 @@ static void *user_gpio_detect_task(void *arg)
 bool user_gpio_init(void)
 {
         /***** 初始化背光 *****/
-       //pwm_init(BL_PWM_NO, BL_PWM_CH);
+        pwm_init(BL_PWM_NO, BL_PWM_CH);
 
-        // backlight_enable(false);
+        backlight_enable(true);
         /* 功放gpio处理 */
         amp_gpio_init();
 

@@ -23,6 +23,7 @@
 #include "common/sat_user_file.h"
 #include "common/ring_common.h"
 #include "common/user_gpio.h"
+#include "common/pwm_ctrl.h"
 #include "common/layout_common.h"
 #include "common/tuya_common.h"
 #include "common/user_standby.h"
