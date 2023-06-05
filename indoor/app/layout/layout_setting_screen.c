@@ -27,6 +27,15 @@ enum
 };
 static void setting_screen_slider_obj_change_cb(lv_event_t *ev)
 {
+        // SAT_DEBUG("=========\n");
+        lv_obj_t *parent = lv_event_get_current_target(ev);
+        // lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_screen_obj_id_lcd_screen_title);
+        int value = lv_slider_get_value(parent);
+
+        user_data_get()->display.lcd_brigtness = value;
+        user_data_save();
+        backlight_brightness_set(value == 0 ? 1 : value);
+        	
 }
 static void setting_screen_standby_screen_obj_click(lv_event_t *ev)
 {
@@ -67,19 +76,22 @@ static lv_obj_t *setting_screen_sub_list_create(void)
                 {
                         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
                         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
+                        char light[32] =  {0};
+                        sprintf(light,"%02d",user_data_get()->display.lcd_brigtness);
+                        
                         lv_common_slider_create(item, setting_screen_obj_id_lcd_screen_slider_cont, 173, 11, 449, 48,
                                                 setting_screen_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                50, 8, 23, 23, setting_screen_obj_id_lcd_screen_slider_text,
-                                                "50", 0Xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                38, 8, 35, 23, setting_screen_obj_id_lcd_screen_slider_text,
+                                                light, 0Xffffff, LV_TEXT_ALIGN_RIGHT, lv_font_normal,
                                                 127, 18, 272, 12, setting_screen_obj_id_lcd_screen_slider, LV_OPA_COVER, 0x666666, LV_OPA_COVER, 0x00a8ff,
                                                 74, 3, 42, 42, setting_screen_obj_id_lcd_screen_slider_left_btn,
                                                 left_src, LV_OPA_TRANSP, 0X00, LV_ALIGN_CENTER,
                                                 404, 3, 42, 42, setting_screen_obj_id_lcd_screen_slider_right_btn,
                                                 right_src, LV_OPA_TRANSP, 0x00, LV_ALIGN_CENTER,
                                                 360, 9, 0Xffffff, LV_OPA_COVER, NULL,
-                                                0, 100, 50);
+                                                0, 100, user_data_get()->display.lcd_brigtness);
 
                         resouce_file_src_free(left_src);
                         resouce_file_src_free(right_src);

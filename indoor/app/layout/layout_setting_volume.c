@@ -98,19 +98,267 @@ static void setting_volume_cancel_obj_click(lv_event_t *e)
         sat_layout_goto(setting_sound, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 
-static void setting_volume_slider_change_cb(lv_event_t *e)
+static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
 {
+        lv_obj_t *obj = lv_event_get_current_target(e);
+
+        int y =  lv_obj_get_style_y(lv_obj_get_parent(obj),LV_PART_MAIN);
+        if(y == 8)//调铃声音量
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.buzzer = value;
+                user_data_save();
+        }else if(y == 78)//调通话声音
+        {
+
+        }
 }
+
+static void setting_buzzer_volume_slider_display(lv_obj_t * parent)
+{
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_buzzer_cont),setting_volume_obj_id_buzzer_volume_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_buzzer_volume_slider);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_buzzer_volume_slider_text);
+        int cur_volume = user_data_get()->audio.buzzer;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+        user_data_save();
+
+}
+
+static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
+{
+        lv_obj_t *obj = lv_event_get_current_target(e);
+
+        int y =  lv_obj_get_style_y(lv_obj_get_parent(obj),LV_PART_MAIN);
+
+        if(y == 8)//调铃声音量
+        {
+                int value = lv_slider_get_value(obj);
+                SAT_DEBUG("=====%d=======\n",__LINE__);
+                SAT_DEBUG("=====%d=======\n",value);
+    
+                user_data_get()->audio.entracne_volume = value;
+                user_data_save();
+
+        }else if(y == 78)//调通话声音
+        {
+                SAT_DEBUG("=====%d=======\n",__LINE__);
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.entrancr_voice = value;
+                user_data_save();   
+        }
+}
+static void setting_entrance_volume_slider_display(lv_obj_t * parent)
+{
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_entrance_cont),setting_volume_obj_id_entrance_volume_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_entrance_volume_slider);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_entrance_volume_slider_text);
+        int cur_volume = user_data_get()->audio.entracne_volume;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+        slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_entrance_cont),setting_volume_obj_id_entrance_voice_slider_cont);
+        slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_entrance_voice_slider);
+        value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_entrance_voice_slider_text);
+        cur_volume = user_data_get()->audio.entrancr_voice;
+
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+
+
+}
+
+
+static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
+{
+        lv_obj_t *obj = lv_event_get_current_target(e);
+
+        int y =  lv_obj_get_style_y(lv_obj_get_parent(obj),LV_PART_MAIN);
+
+        if(y == 8)//调铃声音量
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.common_entrance_volume = value;
+                user_data_save();   
+
+        }else if(y == 78)//调通话声音
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.common_entrance_voice = value;
+                user_data_save();                   
+        }
+
+}
+
+static void setting_common_entrance_volume_slider_display(lv_obj_t * parent)
+{
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_common_entrance_cont),setting_volume_obj_id_common_entrance_volume_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_common_entrance_volume_slider);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_common_entrance_volume_slider_text);
+        int cur_volume = user_data_get()->audio.common_entrance_volume;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+        slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_common_entrance_cont),setting_volume_obj_id_common_entrance_voice_slider_cont);
+        slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_common_entrance_voice_slider);
+        value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_common_entrance_voice_slider_text);
+        cur_volume = user_data_get()->audio.common_entrance_voice;
+
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+
+}
+
+
+static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
+{
+        lv_obj_t *obj = lv_event_get_current_target(e);
+
+        int y =  lv_obj_get_style_y(lv_obj_get_parent(obj),LV_PART_MAIN);
+
+        if(y == 8)//调铃声音量
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.guard_station_volume = value;
+                user_data_save();   
+        }else if(y == 78)//调通话声音
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.guard_station_voice = value;
+                user_data_save();   
+        }
+}
+
+static void setting_guard_station_slider_display(lv_obj_t * parent)
+{
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_guard_station_cont),setting_volume_obj_id_guard_station_volume_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_guard_station_volume_slider);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_guard_station_volume_slider_text);
+        int cur_volume = user_data_get()->audio.guard_station_volume;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+        slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_guard_station_cont),setting_volume_obj_id_guard_station_voice_slider_cont);
+        slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_guard_station_voice_slider);
+        value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_guard_station_voice_slider_text);
+        cur_volume = user_data_get()->audio.guard_station_voice;
+
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+
+}
+
+
+static void setting_extension_volume_slider_change_cb(lv_event_t *e)
+{
+        lv_obj_t *obj = lv_event_get_current_target(e);
+
+        int y =  lv_obj_get_style_y(lv_obj_get_parent(obj),LV_PART_MAIN);
+
+        if(y == 8)//调铃声音量
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.extension_volume = value;
+                user_data_save();   
+        }else if(y == 78)//调通话声音
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.extension_voice = value;
+                user_data_save();   
+        }
+
+}
+
+static void setting_extension_volume_slider_display(lv_obj_t * parent)
+{
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_extension_cont),setting_volume_obj_id_extension_volume_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_extension_volume_slider);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_extension_volume_slider_text);
+        int cur_volume = user_data_get()->audio.extension_volume;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+        slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_extension_cont),setting_volume_obj_id_extension_voice_slider_cont);
+        slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_extension_voice_slider);
+        value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_extension_voice_slider_text);
+        cur_volume = user_data_get()->audio.extension_voice;
+
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+}
+
+static void setting_touch_notification_volume_slider_change_cb(lv_event_t *e)
+{
+        lv_obj_t *obj = lv_event_get_current_target(e);
+
+        int y =  lv_obj_get_style_y(lv_obj_get_parent(obj),LV_PART_MAIN);
+
+        if(y == 8)//调铃声音量
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.touch_notification_volume = value;
+                user_data_save();   
+        }else if(y == 78)//调通话声音
+        {
+                int value = lv_slider_get_value(obj);
+                user_data_get()->audio.touch_notification_voice = value;
+                user_data_save();   
+        }
+
+}
+static void setting_touch_notification_slider_display(lv_obj_t * parent)
+{
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_touch_notification_cont),setting_volume_obj_id_touch_notification_volume_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_touch_notification_volume_slider);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_touch_notification_volume_slider_text);
+        int cur_volume = user_data_get()->audio.touch_notification_volume;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+        slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_touch_notification_cont),setting_volume_obj_id_touch_notification_voice_slider_cont);
+        slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_touch_notification_voice_slider);
+        value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_touch_notification_voice_slider_text);
+        cur_volume = user_data_get()->audio.touch_notification_voice;
+
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+
+
+}
+
+
 static lv_obj_t *setting_volume_slider_obj_create(void)
 {
         setting_list_info_t main_list_group[] = {
 
-            {0, 0, 970, 70, setting_volume_obj_id_buzzer_cont, setting_volume_obj_id_buzzer_label, -1, SOUND_LANG_ID_BUZZER, layout_setting_sound_language_get, -1, NULL, NULL, -1},
-            {0, 70, 970, 140, setting_volume_obj_id_entrance_cont, setting_volume_obj_id_entrance_label, -1, SOUND_LANG_ID_ENTRANCE, layout_setting_sound_language_get, -1, NULL, NULL, -1},
-            {0, 70 + 140, 970, 140, setting_volume_obj_id_common_entrance_cont, setting_volume_obj_id_common_entrance_label, -1, SOUND_LANG_ID_COMMON_ENTRANCE, layout_setting_sound_language_get, -1, NULL, NULL, -1},
-            {0, 70 + 140 * 2, 970, 140, setting_volume_obj_id_guard_station_cont, setting_volume_obj_id_guard_station_label, -1, SOUND_LANG_ID_GUARD_STATION, layout_setting_sound_language_get, -1, NULL, NULL, -1},
-            {0, 70 + 140 * 3, 970, 140, setting_volume_obj_id_extension_cont, setting_volume_obj_id_extension_label, -1, SOUND_LANG_ID_EXTENSION, layout_setting_sound_language_get, -1, NULL, NULL, -1},
-            {0, 70 + 140 * 4, 970, 140, setting_volume_obj_id_touch_notification_cont, setting_volume_obj_id_touch_notification_label, -1, SOUND_LANG_ID_TOUCH_NOTIFICATION, layout_setting_sound_language_get, -1, NULL, NULL, -1},
+            {0, 0, 970, 70, setting_volume_obj_id_buzzer_cont, setting_volume_obj_id_buzzer_label, -1, SOUND_LANG_ID_BUZZER, layout_setting_sound_language_get, -1, NULL, setting_buzzer_volume_slider_change_cb, -1},
+            {0, 70, 970, 140, setting_volume_obj_id_entrance_cont, setting_volume_obj_id_entrance_label, -1, SOUND_LANG_ID_ENTRANCE, layout_setting_sound_language_get, -1, NULL, setting_entrance_volume_slider_change_cb, -1},
+            {0, 70 + 140, 970, 140, setting_volume_obj_id_common_entrance_cont, setting_volume_obj_id_common_entrance_label, -1, SOUND_LANG_ID_COMMON_ENTRANCE, layout_setting_sound_language_get, -1, NULL, setting_common_entrance_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 2, 970, 140, setting_volume_obj_id_guard_station_cont, setting_volume_obj_id_guard_station_label, -1, SOUND_LANG_ID_GUARD_STATION, layout_setting_sound_language_get, -1, NULL, setting_guard_station_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 3, 970, 140, setting_volume_obj_id_extension_cont, setting_volume_obj_id_extension_label, -1, SOUND_LANG_ID_EXTENSION, layout_setting_sound_language_get, -1, NULL, setting_extension_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 4, 970, 140, setting_volume_obj_id_touch_notification_cont, setting_volume_obj_id_touch_notification_label, -1, SOUND_LANG_ID_TOUCH_NOTIFICATION, layout_setting_sound_language_get, -1, NULL, setting_touch_notification_volume_slider_change_cb, -1},
         };
         int slider_volume_group[][6] = {
 
@@ -203,7 +451,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 lv_obj_t *item = lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
-                                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                  0, i == 0 ? 17 : 52, 576, 43, main_list_group[i].title_id,
@@ -222,7 +470,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
                                          resource_ui_src_get("volume.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_common_slider_create(item, slider_volume_group[i][1], 255, 8, 678, 54,
-                                        setting_volume_slider_change_cb, LV_OPA_TRANSP, 0X00,
+                                        main_list_group[i].click_cb, LV_OPA_TRANSP, 0X00,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         137, 8, 40, 38, slider_volume_group[i][2],
@@ -244,7 +492,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
                                                  resource_ui_src_get("voice.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                         lv_common_slider_create(item, slider_voice_group[i][1], 255, 78, 678, 54,
-                                                setting_volume_slider_change_cb, LV_OPA_TRANSP, 0X00,
+                                                main_list_group[i].click_cb, LV_OPA_TRANSP, 0X00,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 137, 8, 40, 38, slider_voice_group[i][2],
@@ -258,6 +506,12 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
                                                 0, 100, 50);
                 }
         }
+        setting_buzzer_volume_slider_display(list);
+        setting_entrance_volume_slider_display(list);
+        setting_common_entrance_volume_slider_display(list);
+        setting_guard_station_slider_display(list);
+        setting_extension_volume_slider_display(list);
+        setting_touch_notification_slider_display(list);
 
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
