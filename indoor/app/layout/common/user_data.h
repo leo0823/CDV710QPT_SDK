@@ -35,6 +35,18 @@ typedef struct
         int door_talk_volume;
         int inter_ring_volume;
         int inter_talk_volume;
+
+        int buzzer;
+        int entracne_volume;
+        int entrancr_voice;
+        int common_entrance_volume;
+        int common_entrance_voice;
+        int guard_station_volume;
+        int guard_station_voice;
+        int extension_volume;
+        int extension_voice;
+        int touch_notification_volume;
+        int touch_notification_voice;
 } user_audio_info;
 
 typedef struct
