@@ -5,6 +5,7 @@
 #include "tuya_api.h"
 #include "tuya_uuid_and_key.h"
 #include "layout_monitor.h"
+
 // #include "dds/topic_table.h"
 // #include "dds/msgStruct/message_data.h"
 // #include "dds/public_topic.h"
@@ -43,7 +44,7 @@ static void standby_dection_timer(lv_timer_t *t)
 static void logo_enter_system_timer(lv_timer_t *t)
 {
         /*****  tuya api初始化 *****/
-        //tuya_api_init(TUYA_PID);
+        tuya_api_init(TUYA_PID);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 10:5:6
@@ -71,7 +72,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: linphone 初始化
         ***********************************************/
         user_linphone_init();
-
+        usleep(1000*1000);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-1-5 10:6:36

@@ -235,7 +235,7 @@ static void monitor_timeout_sec_reset(int sec)
         }
         else
         {
-                monitor_timeout_sec = 30;
+                monitor_timeout_sec = 60;
         }
 }
 /***********************************************
@@ -254,15 +254,20 @@ static void monitor_obj_timeout_label_display(void)
 }
 static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 {
+        int num = tuya_api_client_num();
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
                 monitor_timeout_sec--;
         }
-        else
+        else if(num == 0)
         {
-
+                
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }else
+        {
+                monitor_obj_timeout_label_display();
+               monitor_timeout_sec_reset(user_data_get()->call_time * 60);;
         }
 }
 /***********************************************
