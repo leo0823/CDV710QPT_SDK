@@ -56,6 +56,10 @@ enum
        2022-09-21 author:leo.liu tuya
       *****************************************************************/
         MSG_EVENT_CMD_TUYA,
+        /****************************************************************
+         2022-09-21 author:leo.liu motion detection
+        *****************************************************************/
+        MSG_EVENT_CMD_MOTION_DETECTION,
 
 };
 typedef enum
@@ -251,4 +255,10 @@ void alarm_sensor_cmd_register(void (*callback)(int arg1, int arg2));
 ** 说明: tuya事件注册
 ***********************************************/
 void tuya_event_cmd_register(bool (*callback)(TUYA_CMD cmd, int arg1));
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 9:53:56
+** 说明: 移动侦测事件处理
+***********************************************/
+void moiton_detection_event_cmd_register(bool (*callback)(void));
 #endif
