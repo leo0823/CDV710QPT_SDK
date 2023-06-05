@@ -477,7 +477,17 @@ static void lv_common_slider_change_obj_cb(lv_event_t *ev)
 {
         lv_obj_t *slider = lv_event_get_current_target(ev);
         lv_obj_t *label = lv_event_get_user_data(ev);
-        lv_label_set_text_fmt(label, "%02d", lv_slider_get_value(slider));
+        int value = lv_slider_get_value(slider);
+        // printf("value is %d\n",value);
+        // if(value > 99)
+        // {
+        //         lv_label_set_text_fmt(label, "%d", value);
+        // }else
+        // {
+        //         lv_label_set_text_fmt(label, "%02d", value);
+        // }
+        lv_label_set_text_fmt(label, "%02d", value);
+
 }
 static void lv_common_slider_left_obj_click(lv_event_t *ev)
 {
@@ -566,6 +576,11 @@ lv_obj_t *lv_common_slider_create(lv_obj_t *parent, int id, int x, int y, int w,
                         {
                                 lv_obj_add_event_cb(slider_obj, lv_common_slider_change_obj_cb, LV_EVENT_VALUE_CHANGED, text_obj);
                         }
+                        if(cb != NULL)
+                        {
+                                lv_obj_add_event_cb(slider_obj, cb, LV_EVENT_VALUE_CHANGED, NULL);
+                        }
+
                         lv_bar_set_range(slider_obj, min, max);
                         lv_slider_set_mode(slider_obj, LV_SLIDER_MODE_NORMAL);
                         lv_bar_set_value(slider_obj, cur_value, LV_ANIM_OFF);
