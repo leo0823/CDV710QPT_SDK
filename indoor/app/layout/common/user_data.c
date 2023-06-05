@@ -48,6 +48,17 @@ static const user_data_info user_data_default =
             .door_talk_volume = 2,
             .inter_ring_volume = 2,
             .inter_talk_volume = 2,
+            .buzzer = 1,
+            .entracne_volume = 1,
+            .entrancr_voice = 1,
+            .common_entrance_volume = 1,
+            .common_entrance_voice = 1,
+            .guard_station_volume = 1,
+            .guard_station_voice = 1,
+            .extension_volume = 1,
+            .extension_voice = 1,
+            .touch_notification_volume = 1,
+            .touch_notification_voice = 1,
         },
 
         .display = {

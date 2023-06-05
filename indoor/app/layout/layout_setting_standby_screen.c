@@ -98,7 +98,6 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
-        SAT_DEBUG("XIAOSIXIAOSI\n");
         if (user_data_get()->display.standby_mode == 0)
         {
                 lv_obj_set_style_bg_img_src(not_use_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
@@ -126,6 +125,7 @@ static void setting_standby_screen_main_list_click(lv_event_t *e)
         {
 
                 user_data_get()->display.standby_mode = 0;
+                standby_timer_close();
                 user_data_save();
                 setting_standby_screen_main_checkbox_obj_display();
                 
@@ -134,6 +134,7 @@ static void setting_standby_screen_main_list_click(lv_event_t *e)
         {
                 user_data_get()->display.standby_mode = 1;
                 user_data_save();
+                standby_timer_restart(true);
                 setting_standby_screen_main_checkbox_obj_display();
         }
 }
