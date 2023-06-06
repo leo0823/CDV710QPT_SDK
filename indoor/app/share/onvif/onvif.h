@@ -9,7 +9,7 @@
 **@功能: 设备发现
 **@参数：
 *****************************************************************/
-bool ipc_camera_search(char ipc_addr[8][32], char device_name[8][32], int *num, bool door_camera);
+bool ipc_camera_search(char ipc_addr[8][32], char device_name[8][32], int *num, char device_type);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
