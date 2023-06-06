@@ -206,7 +206,7 @@ static void home_date_timer(lv_timer_t *ptimer)
  ***********************************************/
 static void home_latest_video_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 /***********************************************
  ** 作者: leo.liu
@@ -579,6 +579,7 @@ static void home_sd_state_change_callback(void)
 }
 static void sat_layout_enter(home)
 {
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
