@@ -60,11 +60,31 @@ static void logo_enter_system_timer(lv_timer_t *t)
         media_file_list_init();
 
         /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-1-5 10:6:36
+         ** 说明: GPIO 初始化
+         ***********************************************/
+        user_gpio_init();
+
+#if 1
+        wifi_device_conneting();
+        if(user_data_get()->wifi_enable)
+        {
+                wifi_device_open();
+        }
+        else
+        {
+                wifi_device_close();
+        }
+ #endif    
+
+        /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 17:17:15
         ** 说明: 网络初始化
         ***********************************************/
         user_network_init();
+
 
         /***********************************************
         ** 作者: leo.liu
@@ -72,13 +92,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: linphone 初始化
         ***********************************************/
         user_linphone_init();
-        usleep(1000*1000);
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2023-1-5 10:6:36
-         ** 说明: GPIO 初始化
-         ***********************************************/
-        user_gpio_init();
 
         /************************************************************
         ** 函数说明: 待机初始化
@@ -99,17 +112,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
          ** 日期: 2023-1-5 10:6:36
          ** 说明:暂时放在连接wifi
         ***********************************************/
-#if 1
-        wifi_device_conneting();
-        if(user_data_get()->wifi_enable)
-        {
-                wifi_device_open();
-        }
-        else
-        {
-                wifi_device_close();
-        }
- #endif       
+   
         tuya_event_cmd_register(tuya_event_defalut_handle);
         /************************************************************
         ** 函数说明:警报记录初始化
