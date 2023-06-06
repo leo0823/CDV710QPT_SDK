@@ -532,9 +532,10 @@ static void sat_layout_enter(close)
 
 static void sat_layout_quit(close)
 {
+    record_video_stop();
     monitor_close();
-    extern bool tuya_api_app_sync_utc_time(void);
-    tuya_api_app_sync_utc_time();
+    extern bool tuya_api_time_sync(void);
+    tuya_api_time_sync();
     lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_close_click);
 
     /*记录注册*/
