@@ -1415,20 +1415,20 @@ static bool tuya_event_cmd_motion_enable(int arg)
 ************************************************************/
 static bool truye_event_cmd_audio_start(void)
 {
-        if (is_monitor_door_camera_talk == false)
-        {
-                is_monitor_door_camera_talk = true;
+        // if (is_monitor_door_camera_talk == false)
+        // {
+        //         is_monitor_door_camera_talk = true;
                 
-                call_duration = 0;
-                monitor_enter_flag_set(MON_ENTER_TUYA_TALK_FLAG);
-                monitor_obj_talk_display();
-                monitor_obj_handup_display();
-                monitor_obj_normal_lock_display();
-                monitor_obj_volume_display();
-                monitor_obj_lock_1_display();
-                monitor_obj_lock_2_display();
-                monitor_obj_cctv_cancel_obj_display();
-        }
+        //         call_duration = 0;
+        //         monitor_enter_flag_set(MON_ENTER_TUYA_TALK_FLAG);
+        //         monitor_obj_talk_display();
+        //         monitor_obj_handup_display();
+        //         monitor_obj_normal_lock_display();
+        //         monitor_obj_volume_display();
+        //         monitor_obj_lock_1_display();
+        //         monitor_obj_lock_2_display();
+        //         monitor_obj_cctv_cancel_obj_display();
+        // }
 	return true;
 }
 
