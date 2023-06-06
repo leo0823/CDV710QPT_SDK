@@ -30,8 +30,11 @@ bool sat_ipcamera_rtsp_url_get(int index);
 **@日期: 2022-09-21
 **@作者: leo.liu
 **@功能:搜索onvif所有的rtsp流
+0:IPC
+1:DOOR CAMERA
+2:IN DOOR
 *****************************************************************/
-bool sat_ipcamera_device_discover_search(bool doorcamera);
+bool sat_ipcamera_device_discover_search(char doorcamera);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
