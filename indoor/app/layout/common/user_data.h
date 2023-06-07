@@ -128,7 +128,7 @@ typedef struct
         int away_release_time;
 
         bool away_auto_record;
-        bool inside_auto_record;
+        bool security_auto_record;
 
 } user_alarm_info;
 

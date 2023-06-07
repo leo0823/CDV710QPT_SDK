@@ -172,7 +172,7 @@ static void wifi_input_animation_task_create(lv_obj_t *parent)
         }
         //连接状态显示
         {
-                setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
+                setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_CONNECTING), 0, 110, 460, 80);
         }
 
 

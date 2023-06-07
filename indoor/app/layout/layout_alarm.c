@@ -57,14 +57,6 @@ static void alarm_ringplay_timer(lv_timer_t *ptimer)
 ************************************************************/
 static void layout_alarm_monitor_open(void)
 {
-        if(user_data_get()->alarm.inside_auto_record == false)
-        {
-                return;
-        }
-        if( network_data_get()->cctv_device_count <=0)
-        {
-                return;
-        }
         if(user_data_get()->alarm.emergency_mode == 1)
         { 
                 int ch = layout_alarm_alarm_channel_get();
@@ -77,24 +69,18 @@ static void layout_alarm_monitor_open(void)
                 {
                         monitor_channel_set(MON_CH_CCTV1 + ch);
                 }    
-        
-   
                
         }else 
         {       
 
-                if(strlen(network_data_get()->cctv_device[7].door_name) == 0)
-                {
-                        return;
-                }
+                // if(strlen(network_data_get()->cctv_device[7].door_name) == 0)
+                // {
+                //         return;
+                // }
 
-                monitor_channel_set(MON_CH_CCTV8);
-
+                monitor_channel_set(MON_CH_CCTV1);
         }
-        monitor_open(false);
-        sat_linphone_calls_cmd_send();
-        record_video_start(true, REC_MODE_ALARM);
-         
+        monitor_open(false);         
 }
 
 static void alarm_stop_obj_click(lv_event_t *ev)
@@ -184,8 +170,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 user_data_save();
                 struct tm tm;
                 user_time_read(&tm);
-                if (user_data_get()->alarm.away_auto_record)
-                        record_jpeg_start(REC_MODE_AUTO);
+   
                 alarm_list_add(security_emergency, arg1, &tm);
         }
 }
@@ -397,10 +382,40 @@ static void layout_alarm_alarm_time_label_display(void)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),  layout_alarm_obj_id_time);
         lv_label_set_text_fmt(obj, "%04d.%02d.%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 }
+
+static bool layout_alarm_streams_running_register_callback(char *arg)
+{
+        int rec_mode = 0;
+        if(user_data_get()->alarm.security_alarm_enable)
+        {
+                if(user_data_get()->alarm.security_auto_record)
+                {
+                     record_video_start(true, REC_MODE_ALARM);                      
+                }
+        }else if(user_data_get()->alarm.away_alarm_enable)
+        {
+                if(user_data_get()->alarm.away_auto_record)
+                {
+                        rec_mode |= REC_MODE_ALARM;
+                }
+        }
+        
+        record_jpeg_start(REC_MODE_TUYA_ALARM | rec_mode);
+
+        return true;
+}
+/************************************************************
+** 函数说明: 
+** 作者: xiaoxiao
+** 日期: 2023-06-07 18:26:29
+** 参数说明: 
+** 注意事项: 
+************************************************************/
 static void sat_layout_enter(alarm)
 {
         alarm_return = false;
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
+        user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
         layout_alarm_monitor_open();
         /************************************************************
         ** 函数说明: 背景创建
@@ -603,6 +618,7 @@ static void sat_layout_enter(alarm)
 static void sat_layout_quit(alarm)
 {
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
+        user_linphone_call_streams_running_receive_register(NULL);
         record_video_stop();
         monitor_close();
 }
