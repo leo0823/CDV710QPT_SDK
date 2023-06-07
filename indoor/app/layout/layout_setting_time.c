@@ -71,12 +71,13 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
         user_data_save();
         if(user_data_get()->time_automatically)
         {
-                extern bool tuya_api_app_sync_utc_time(void);
-                if(tuya_api_app_sync_utc_time() == true)
+                extern bool tuya_api_time_sync(void);
+                if(tuya_api_time_sync() == true)
                 {
+                        SAT_DEBUG("setting nerwork time success\n");
                         sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
                 }
-                
+                SAT_DEBUG("setting nerwork time failed\n");
         }
         setting_time_set_date_automatically_enable_display(img);
 }

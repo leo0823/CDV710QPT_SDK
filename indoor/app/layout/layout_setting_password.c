@@ -148,10 +148,10 @@ static void setting_password_text_next_foucued(void)
                                                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                         }
 
-                                        if ((i == 1 && j == 2))
-                                        {
-                                                setting_password_modiy_confirm_enable(true);
-                                        }
+                                }
+                                if ((i == 1 && j == 3))
+                                {
+                                        setting_password_modiy_confirm_enable(true);
                                 }
                                 return;
                         }
@@ -180,15 +180,29 @@ static void setting_password_text_prev_foucued(void)
                                                 textarea = lv_obj_get_child_form_id(parent, 3);
                                                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                         }
-                                        else
+                                        else if((i == 1) && (j == 3))
+                                        {
+
+                                                textarea = lv_obj_get_child_form_id(parent, 3);
+                                                if(lv_textarea_get_cursor_pos(textarea) != 0)
+                                                {
+                                                        textarea = lv_obj_get_child_form_id(parent, 3);
+                                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);              
+                                                }
+                                                else
+                                                {
+                                                        textarea = lv_obj_get_child_form_id(parent, j - 1);
+                                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                                                }
+                                        }else
                                         {
                                                 textarea = lv_obj_get_child_form_id(parent, j - 1);
                                                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                         }
-                                        if ((i == 1 && j == 2))
-                                        {
-                                                setting_password_modiy_confirm_enable(false);
-                                        }
+                                }
+                                if ((i == 1 && j == 3))
+                                {
+                                        setting_password_modiy_confirm_enable(false);
                                 }
                                 return;
                         }
@@ -198,6 +212,7 @@ static void setting_password_text_prev_foucued(void)
 
 static bool setting_password_textbox_del(void)
 {
+        setting_password_text_prev_foucued();
         lv_obj_t *textarea = setting_password_textarea_focused_get();
 
         if (textarea == NULL)
@@ -206,7 +221,6 @@ static bool setting_password_textbox_del(void)
         }
 
         lv_textarea_del_char(textarea);
-        setting_password_text_prev_foucued();
         return true;
 }
 
