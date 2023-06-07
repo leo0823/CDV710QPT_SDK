@@ -43,8 +43,6 @@ static void standby_dection_timer(lv_timer_t *t)
 
 static void logo_enter_system_timer(lv_timer_t *t)
 {
-        /*****  tuya api初始化 *****/
-        tuya_api_init(TUYA_PID);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 10:5:6
@@ -58,6 +56,9 @@ static void logo_enter_system_timer(lv_timer_t *t)
          * @注释: 开启文件系统
          */
         media_file_list_init();
+
+        /*****  tuya api初始化 *****/
+        //tuya_api_init(TUYA_PID);
 
         /***********************************************
          ** 作者: leo.liu
@@ -100,8 +101,8 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 参数说明: 
         ** 注意事项: 
         ************************************************************/
-        standby_timer_init(sat_playout_get(frame_show),60000);
-        standby_timer_restart(false);
+        standby_timer_init(sat_playout_get(close),user_data_get()->display.screen_off_time * 1000);
+        standby_timer_restart(true);
 
         lv_timer_t * standby_timer = lv_sat_timer_create(standby_dection_timer, 1000, NULL);
         standby_timer->lock = true;
@@ -133,6 +134,9 @@ static void logo_enter_system_timer(lv_timer_t *t)
         call_list_init();
 
         alarm_sensor_cmd_register(layout_alarm_trigger_default);//警报回调注册
+
+        /***** 设置背光使能亮度 *****/
+	backlight_brightness_set(user_data_get()->display.lcd_brigtness);
 
 
         if (user_data_get()->is_device_init == false)

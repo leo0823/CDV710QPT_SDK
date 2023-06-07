@@ -65,6 +65,18 @@ bool standby_timer_restart(bool fouce_enable)
     return true;
 }
 
+/************************************************************
+** 函数说明: 重置待机时间
+** 作者: xiaoxiao
+** 日期: 2023-06-07 14:52:47
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool standby_timer_reset(int  timeout)
+{
+    standby_timeout = timeout;
+    return true;
+}
 /***
 ** 日期: 2022-05-10 08:42
 ** 作者: leo.liu

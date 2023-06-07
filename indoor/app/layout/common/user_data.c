@@ -16,7 +16,8 @@
 
 static user_data_info user_data =
     {
-        0};
+        0
+    };
 
 static const user_data_info user_data_default =
     {
@@ -88,8 +89,7 @@ static const user_data_info user_data_default =
             .password = {"1234"},
         },
         .alarm = {
-            .auto_record = false,
-
+        .auto_record = false,
         .away_alarm_enable_list = 0x77,
         .security_alarm_enable_list = 0x77,
         .security_alarm_enable = false,
@@ -133,7 +133,7 @@ static const user_data_info user_data_default =
         .away_release_time = 30,
         
         .away_auto_record = false,
-        .inside_auto_record = false,
+        .security_auto_record = false,
         
         },
         .system_mode = 0,
@@ -199,7 +199,7 @@ static void user_data_check_valid(void)
 
         /***** 移动侦测 *****/
         user_data_motion_check_range_out(enable, 0, 1);
-        user_data_motion_check_range_out(select_camera, 0, 3);
+        user_data_motion_check_range_out(select_camera, 0, 15);
         user_data_motion_check_range_out(saving_fmt, 0, 1);
         user_data_motion_check_range_out(sensivity, 0, 2);
         user_data_motion_check_range_out(timer_en, 0, 1);
@@ -316,7 +316,7 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(away_setting_time, 1, 3);
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
-        user_data_alarm_check_range_out(inside_auto_record, 0, 1);
+        user_data_alarm_check_range_out(security_auto_record, 0, 1);
         user_data_check_range_out(system_mode, 0, 1);
         user_data_check_range_out(time_automatically, 0, 1);
 }

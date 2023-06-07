@@ -1,4 +1,3 @@
-
 #include "layout_define.h"
 #include "layout_setting_standby_screen.h"
 #include "layout_setting_screen.h"
@@ -9,10 +8,6 @@ enum
         setting_standby_screen_obj_id_cancel,
 
         setting_standby_screen_obj_id_mian_list,
-        setting_standby_screen_obj_id_not_use_cont,
-        setting_standby_screen_obj_id_not_use_title,
-        setting_standby_screen_obj_id_not_use_sub,
-        setting_standby_screen_obj_id_not_use_img,
         setting_standby_screen_obj_id_screen_off_cont,
         setting_standby_screen_obj_id_screen_off_title,
         setting_standby_screen_obj_id_screen_off_sub,
@@ -52,7 +47,6 @@ enum
         setting_standby_screen_off_checkbox4_img,
         setting_standby_screen_off_obj_id_confirm,
         setting_standby_screen_off_obj_id_cancel,
-
 };
 
 static void setting_standby_screen_cancel_click(lv_event_t *e)
@@ -66,17 +60,7 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
-        lv_obj_t *item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_not_use_cont);
-        if (item == NULL)
-        {
-                return;
-        }
-        lv_obj_t *not_use_img = lv_obj_get_child_form_id(item, setting_standby_screen_obj_id_not_use_img);
-        if (not_use_img == NULL)
-        {
-                return;
-        }
-        item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_screen_off_cont);
+        lv_obj_t *item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_screen_off_cont);
         if (item == NULL)
         {
                 return;
@@ -86,6 +70,7 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
+
         item = lv_obj_get_child_form_id(list, setting_standby_screen_obj_id_open_frame_cont);
         lv_obj_t *frame_open_img = lv_obj_get_child_form_id(item, setting_standby_screen_obj_id_open_frame_img);
         if (frame_open_img == NULL)
@@ -98,9 +83,10 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         {
                 return;
         }
+
         if (user_data_get()->display.standby_mode == 0)
         {
-                lv_obj_set_style_bg_img_src(not_use_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(scr_of_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(frame_open_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
 
                 lv_obj_add_flag(sub_list, LV_OBJ_FLAG_HIDDEN);
@@ -108,35 +94,37 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
         else
         {
                 lv_obj_set_style_bg_img_src(frame_open_img, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(not_use_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(scr_of_img, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
 
                 lv_obj_clear_flag(sub_list, LV_OBJ_FLAG_HIDDEN);
         }
 }
-
-static void setting_standby_screen_main_list_click(lv_event_t *e)
+static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
 {
-        lv_obj_t *item = lv_event_get_current_target(e);
-        if (item == NULL)
-        {
-                return;
-        }
-        if (item->id == setting_standby_screen_obj_id_not_use_cont)
-        {
 
-                user_data_get()->display.standby_mode = 0;
-                standby_timer_close();
-                user_data_save();
-                setting_standby_screen_main_checkbox_obj_display();
-                
-        }
-        else if (user_data_get()->display.standby_mode == 0)
+        lv_obj_t *parent = lv_obj_get_parent(lv_event_get_current_target(ev));
+        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox1_cont),setting_standby_screen_off_checkbox1_img);
+        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox2_cont),setting_standby_screen_off_checkbox2_img);
+        lv_obj_t * check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox3_cont),setting_standby_screen_off_checkbox3_img);
+        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->display.standby_mode = 1;
-                user_data_save();
-                standby_timer_restart(true);
-                setting_standby_screen_main_checkbox_obj_display();
+                user_data_get()->display.screen_off_time = 15;
+
+        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->display.screen_off_time = 30;
         }
+        else if (!strncmp((const char *)check3->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                user_data_get()->display.screen_off_time = 60;
+        }else{
+                user_data_get()->display.screen_off_time = 180;
+        }
+        user_data_get()->display.standby_mode = 0;
+        user_data_save();
+        setting_standby_screen_main_checkbox_obj_display();
+        standby_timer_reset( user_data_get()->display.screen_off_time);
+        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 
 static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, lv_event_cb_t checkbox_cb)
@@ -174,37 +162,13 @@ static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, l
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox4_label,
-                                "1 minute later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                "3 minute later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 0, 8, 32, 32, setting_standby_screen_off_checkbox4_img,
                                 user_data_get()->display.screen_off_time == 180 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
 
 }
 
-static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
-{
-
-        lv_obj_t *parent = lv_obj_get_parent(lv_event_get_current_target(ev));
-        lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox1_cont),setting_standby_screen_off_checkbox1_img);
-        lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox2_cont),setting_standby_screen_off_checkbox2_img);
-        lv_obj_t * check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox3_cont),setting_standby_screen_off_checkbox3_img);
-        if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
-        {
-                user_data_get()->display.screen_off_time = 15;
-
-        }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
-        {
-                user_data_get()->display.screen_off_time = 30;
-        }
-        else if (!strncmp((const char *)check3->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
-        {
-                user_data_get()->display.screen_off_time = 60;
-        }else{
-                user_data_get()->display.screen_off_time = 180;
-        }
-        user_data_save();
-        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-}
 
 static void  setting_standby_screen_off_msgbox_click(lv_event_t *ev)
 {
@@ -252,6 +216,7 @@ static void  setting_standby_screen_off_msgbox_cancel_click(lv_event_t *ev)
 {
         lv_obj_del(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_standby_screen_obj_id_msg_bg));
 }
+
 /************************************************************
 ** 函数说明: 待机时间设置
 ** 作者: xiaoxiao
@@ -266,6 +231,27 @@ static void setting_standby_screen_off_click(lv_event_t *e)
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel ,"确认","取消", setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
     
 
+}
+
+static void setting_standby_screen_main_list_click(lv_event_t *e)
+{
+        lv_obj_t *item = lv_event_get_current_target(e);
+        if (item == NULL)
+        {
+                return;
+        }
+        if (item->id == setting_standby_screen_obj_id_screen_off_cont)
+        {
+                
+                setting_standby_screen_off_click(e);
+                
+        }
+        else if (user_data_get()->display.standby_mode == 0)
+        {
+                user_data_get()->display.standby_mode = 1;
+                user_data_save();
+                setting_standby_screen_main_checkbox_obj_display();
+        }
 }
 
 static void setting_standby_screen_off_sub_display(lv_obj_t * list)
@@ -287,20 +273,17 @@ static void setting_standby_screen_off_sub_display(lv_obj_t * list)
 
 }
 
+
 static lv_obj_t *setting_standby_screen_main_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
+
             {0, 0, 928, 88,
-             setting_standby_screen_obj_id_not_use_cont, setting_standby_screen_obj_id_not_use_title, -1,
-             SETTING_STANDBY_SCREEN_LANG_ID_NOT_USE, layout_setting_standby_screen_language_get,
-             -1, layout_setting_screen_language_get,
-             setting_standby_screen_main_list_click, setting_standby_screen_obj_id_not_use_img},
-            {0, 88, 928, 88,
              setting_standby_screen_obj_id_screen_off_cont, setting_standby_screen_obj_id_screen_off_title, setting_standby_screen_obj_id_screen_off_sub,
              SETTING_STANDBY_SCREEN_LANG_ID_SCREEN_OFF, layout_setting_standby_screen_language_get,
              SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC, layout_setting_screen_language_get,
-             setting_standby_screen_off_click, setting_standby_screen_obj_id_screen_off_img},
-            {0, 176, 928, 88,
+             setting_standby_screen_main_list_click, setting_standby_screen_obj_id_screen_off_img},
+            {0, 88, 928, 88,
              setting_standby_screen_obj_id_open_frame_cont, setting_standby_screen_obj_id_open_frame_title, -1,
              SETTING_STANDBY_SCREEN_LANG_ID_OPEN_FRAME, layout_setting_standby_screen_language_get,
              -1, NULL,
@@ -352,6 +335,7 @@ static void setting_standby_screen_sub_list_click(lv_event_t *e)
                 sat_layout_goto(setting_frame_backgorund, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
         }
 }
+
 
 static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
 {
@@ -446,7 +430,7 @@ static lv_obj_t *setting_standby_screen_sub_list_create(void)
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_standby_screen_obj_id_sub_list);
-        lv_common_style_set_common(list, setting_standby_screen_obj_id_sub_list, 94, 264+88, 836, 314, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        lv_common_style_set_common(list, setting_standby_screen_obj_id_sub_list, 94, 264, 836, 314, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {

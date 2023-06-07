@@ -105,7 +105,7 @@ static void home_mute_obj_click(lv_event_t *ev)
  ***********************************************/
 static void home_use_mobile_app_obj_display(lv_obj_t *obj)
 {
-        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
 }
 
 /***********************************************

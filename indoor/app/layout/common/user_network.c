@@ -39,6 +39,7 @@
 ** 说明: 所有设备的组播IP
 ***********************************************/
 #define S200_OK_REQUEST_PATH ONVIF_XML_PATH "200_ok_requeset.html"
+#define DISCONVER_DEVICE_FILE_PATH ONVIF_XML_PATH "device_discovery_feedback.xml"
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 16:53:57
@@ -46,9 +47,124 @@
 ***********************************************/
 static int user_linphone_multicast_fd = -1;
 
+/*j解析设备*/
+static bool discover_devices_data_parsing(const char *buf, const char *type, char *data, int size)
+{
+        bool reslut = false;
+        char *pxml = strstr(buf, "<?xml version=\"1.0\"");
+        if (pxml == NULL)
+        {
+                printf("%s\n", buf);
+                return false;
+        }
+
+        mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
+        if (root != NULL)
+        {
+                mxml_node_t *probe = mxmlFindElementSub(root, root, type, NULL, NULL, MXML_DESCEND);
+                if (probe != NULL)
+                {
+                        const char *text = mxmlGetText(probe, NULL);
+                        if (text != NULL)
+                        {
+                                strncpy(data, text, size);
+                                reslut = true;
+                        }
+                }
+        }
+        else
+        {
+                SAT_DEBUG("mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);")
+        }
+        mxmlDelete(root);
+        return reslut;
+}
+
+/*向对端发送设备信息*/
+static bool indoor_device_discover_processing(struct sockaddr_in *client_addr, const char *username)
+{
+        bool reslut = true;
+        static long msg_count = 10000;
+        char ip[32] = {0};
+        char local_uuid[128] = {0};
+        const char *local_usernmae = getenv("SIP");
+
+        /*客户需求即搜索分机，用户为空则直接返回，
+        若后续需求所有的室内机，则可以将用户为空作为
+        全局搜索的条件。
+        */
+        if (username == NULL)
+        {
+                SAT_DEBUG("username is null");
+                return false;
+        }
+        /*房号相同*/
+
+        if (strncmp(local_usernmae, username, 12) == 0)
+        {
+                SAT_DEBUG("discover usernmae same ");
+                return false;
+        }
+
+        /*不属于同一个房间内的*/
+        if (strncmp(local_usernmae, username, 11))
+        {
+                SAT_DEBUG("discover usernmae diffrent house:\nlocal usernmae:%s\n dst username:%s", local_usernmae, username);
+                return false;
+        }
+
+        char *xml_buffer = malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        char *xml_buffer_fmt = malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        size_t xml_len = sat_file_read(DISCONVER_DEVICE_FILE_PATH, xml_buffer, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_len <= 0)
+        {
+                SAT_DEBUG("read %s failed ", DISCONVER_DEVICE_FILE_PATH);
+                reslut = false;
+                goto finish;
+        }
+
+        sprintf(local_uuid, "00010010-0001-1020-8000-%s", local_usernmae);
+        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sprintf(xml_buffer_fmt, xml_buffer, msg_count++, local_uuid, local_uuid, local_uuid, local_usernmae, local_usernmae, local_usernmae, ip);
+        //    SAT_DEBUG("%s", xml_buffer_fmt);
+        /****************************************************************
+        2022-09-20 author:leo.liu 说明:发送探测消息
+        *****************************************************************/
+        xml_len = sendto(user_linphone_multicast_fd, xml_buffer_fmt, strlen(xml_buffer_fmt), 0, (const struct sockaddr *)client_addr, sizeof(struct sockaddr_in));
+        if (xml_len < 0)
+        {
+                SAT_DEBUG(" xml_len = sendto(user_linphone_multicast_fd, xml_buffer, xml_len, 0, (const struct sockaddr *)client_addr, sizeof(struct sockaddr_in));");
+        }
+
+finish:
+        if (xml_buffer != NULL)
+        {
+                free(xml_buffer);
+        }
+        if (xml_buffer_fmt != NULL)
+        {
+                free(xml_buffer_fmt);
+        }
+        return reslut;
+}
 /*接受数据解析处理*/
 static bool discover_receive_data_parsing_processing(struct sockaddr_in *client_addr, const char *buf, int size)
 {
+        char data[128] = {0};
+        //   SAT_DEBUG("discover :%s", buf);
+        if (discover_devices_data_parsing(buf, "Types", data, sizeof(data)) == true)
+        {
+                //  SAT_DEBUG("discover :%s", data);
+                /* 设备搜索*/
+                char *p = strstr(data, "CIP70QPT:");
+                if (p != NULL)
+                {
+                        indoor_device_discover_processing(client_addr, p + 9);
+                }
+        }
+
         return true;
 }
 /***********************************************
@@ -62,9 +178,10 @@ static void *user_network_common_multicast_task(void *arg)
         /*存在缺陷，如果两帧都是buffer_size大小的包，并且间隔小于500ms，会被丢失之前的包*/
         char *buffer = malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         struct sockaddr_in client_addr;
-
-        sat_socket_udp_open(&user_linphone_multicast_fd, USER_NETWORK_MULTICAST_PORT, true);
+        usleep(3 * 1000 * 1000);
+        sat_socket_udp_open(&user_linphone_multicast_fd, USER_NETWORK_MULTICAST_PORT, false);
         sat_socket_multicast_join(user_linphone_multicast_fd, USER_NETWORK_MULTICAST_IP);
+        SAT_DEBUG("multicast join:%s:%d", USER_NETWORK_MULTICAST_IP, USER_NETWORK_MULTICAST_PORT);
         while (1)
         {
 
@@ -293,7 +410,7 @@ static void *user_network_tcp_task(void *arg)
                         memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
                         while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 100)) > 0)
                         {
-                                 printf("%s\n", receive_data);
+                                //  printf("%s\n", receive_data);
                                 tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);
                         }
                         sat_socket_close(client_fd);
@@ -302,12 +419,15 @@ static void *user_network_tcp_task(void *arg)
         return NULL;
 }
 
-#define UDHCPC_TIMEOUT_MAX (30)
+#define UDHCPC_TIMEOUT_MAX (300)
 static bool ipaddr_udhcp_server_get_wait(void)
 {
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
+        system("killall udhcpc");
+        system("udhcpc  -i eth0 -s /etc/init.d/udhcpc.script &");
+        usleep(10 * 1000);
         while (sat_ip_mac_addres_get("eth0", ip, mac) == false)
         {
                 usleep(10 * 1000);
@@ -379,8 +499,58 @@ static bool add_multicase_routing_addres(void)
         SAT_DEBUG("%s ", cmd);
         return true;
 }
+
+static bool netsta_port_information_kill(const char *info)
+{
+
+        char *end = strstr(info, "/");
+        if (end == NULL)
+        {
+                return false;
+        }
+        *end = '\0';
+        char *start = end - 1;
+        while ((start != NULL) && !isspace(*start))
+        {
+                start--;
+        }
+        if (start != NULL)
+        {
+                char cmd[128] = {0};
+                sprintf(cmd, "kill -s 9 %s", start);
+                SAT_DEBUG("%s", cmd);
+                system(cmd);
+                return true;
+        }
+        return false;
+}
+static bool kill_related_port_process(char *port)
+{
+        return true;
+
+        FILE *fp = popen("netstat -anp", "r");
+        if (fp == NULL)
+        {
+                printf("popen netstat -anp\n");
+                return false;
+        }
+        char buffer[1024];
+        while (fgets(buffer, sizeof(buffer), fp) > 0)
+        {
+                if (strstr(buffer, port) != NULL)
+                {
+                        netsta_port_information_kill(buffer);
+                }
+        }
+        pclose(fp);
+        return true;
+}
+
 static bool automatic_ip_setting(void)
 {
+        /*杀死相关的端口进程*/
+        kill_related_port_process("5060");
+
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if (ipaddr_udhcp_server_get_wait() == false)
         {
@@ -423,20 +593,16 @@ char *user_linphone_local_multicast_get(void)
         int value[4] = {0};
         static char multicase_ip[32] = {0};
         const char *username = getenv("SIP");
-
         if ((username == NULL) || (strlen(username) < 12))
         {
-
                 SAT_DEBUG("getenv sip failed");
                 return NULL;
         }
-
-        memset(multicase_ip, 0, sizeof(multicase_ip));
-
         value[0] = 225;
         value[1] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
         value[2] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
         value[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10;
+        memset(multicase_ip, 0, sizeof(multicase_ip));
         sprintf(multicase_ip, "%d.%d.%d.%d", value[0], value[1], value[2], value[3]);
 
         SAT_DEBUG("sip:%s,multicase ip:%s", username, multicase_ip);

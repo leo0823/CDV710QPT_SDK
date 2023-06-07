@@ -568,10 +568,10 @@ static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 
         }else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->call_time = 2;
+                user_data_get()->call_time = 3;
         }else if (!strncmp((const char *)check3->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->call_time = 3;
+                user_data_get()->call_time = 5;
         }
         user_data_save();
         setting_general_msgbox_del();

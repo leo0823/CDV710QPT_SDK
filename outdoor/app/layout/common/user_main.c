@@ -34,6 +34,8 @@
 #include "common/sat_user_common.h"
 #include "common/user_network.h"
 #include "common/sat_user_time.h"
+#include "common/user_gpio.h"
+#include "../../include/common/sat_main_event.h"
 #if 0
 dds_inherit_listener
 #endif
@@ -115,7 +117,7 @@ static void linux_kerner_init(void)
         char mac[128] = {0};
         if (network_mac_get(mac) == true)
         {
-                setenv("SIP", mac, 1);
+                //   setenv("SIP", mac, 1);
         }
         else
         {
@@ -205,13 +207,23 @@ static void *media_server_task(void *arg)
         }
         return NULL;
 }
+
+/*视频流状态显示*/
+static void video_stream_status_callback(bool en)
+{
+        SAT_DEBUG("==========>>en=%d", en);
+
+        led_ctrl_enable(((en == false) || (ir_feed_read() == GPIO_LEVEL_LOW)) ? false : true);
+        return;
+}
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
+ * 
  * @功能: 主函数入口
  * @return:
  */
-//#include "anyka/ak_its.h"
+#include "anyka/ak_its.h"
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
@@ -224,7 +236,7 @@ int main(int argc, char *argv[])
         sdk_run_config config = {0};
         ak_sdk_init(&config);
 
-      //  ak_its_start(8765);
+        //  ak_its_start(8765);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 11:38:19
@@ -244,7 +256,7 @@ int main(int argc, char *argv[])
         ** 说明: 呼叫按钮检测
         ***********************************************/
         user_key_init();
-
+        user_gpio_init();
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2022-12-28 13:47:0
@@ -254,6 +266,7 @@ int main(int argc, char *argv[])
         system_timer_callback_register(sys_timer_callback);
         sip_call_online_func_register(sip_call_online_callback);
         sip_call_status_qury_register(sip_call_status_query_callback);
+        video_stream_status_callback_register(video_stream_status_callback);
 
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
