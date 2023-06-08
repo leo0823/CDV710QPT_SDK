@@ -311,7 +311,15 @@ static bool setting_recording_motion_sub_display(void)
                 return false;
         }
 
-        lv_label_set_text(sub,user_data_get()->motion.enable == false ? language_common_string_get(LANG_COMMON_ID_OFF):language_common_ch_string_get(user_data_get()->motion.select_camera));
+        char name[64] = {0};
+        if(user_data_get()->motion.select_camera > MON_CH_DOOR2)
+        {
+                sprintf(name,network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
+        }else
+        {
+                sprintf(name,network_data_get()->door_device[(int)user_data_get()->motion.select_camera].door_name);
+        }
+        lv_label_set_text(sub,name);
 
         return true;
 }

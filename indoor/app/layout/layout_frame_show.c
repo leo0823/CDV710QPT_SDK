@@ -50,6 +50,14 @@ static int frame_show_effeset_x = 0;
 static lv_img_dsc_t *frame_show_pbuffer = NULL;
 
 /***
+**   日期:2022-06-22 09:55:40
+**   作者: leo.liu
+**   函数作用：上次亮度值
+**   参数说明:
+***/
+static int pre_frame_diplay_light_value = -1;
+
+/***
 **   日期:2022-06-10 11:33:05
 **   作者: leo.liu
 **   函数作用：解码文件路径
@@ -94,7 +102,7 @@ static int always_record_channel_get(void)
 	if (ch == MON_CH_NONE)
 	{
 		ch = MON_CH_DOOR1;
-		if (monitor_valid_channel_check(ch) == true)
+		if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x08)
 		{
 			return ch;
 		}
@@ -104,7 +112,7 @@ find_start:
 	if (ch == MON_CH_DOOR1)
 	{
 		ch = MON_CH_DOOR2;
-		if (monitor_valid_channel_check(ch) == true)
+		if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x08)
 		{
 			return ch;
 		}
@@ -112,7 +120,7 @@ find_start:
 	if (ch == MON_CH_DOOR2)
 	{
 		ch = MON_CH_CCTV1;
-		if (monitor_valid_channel_check(ch) == true)
+		if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x10 )
 		{
 			return ch;
 		}
@@ -122,7 +130,7 @@ find_start:
         if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
         {
             ch = MON_CH_CCTV2 + i;
-            if (monitor_valid_channel_check(ch) == true)
+            if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x10 )
             {
                 return ch;
             }
@@ -131,7 +139,7 @@ find_start:
 	if (ch == MON_CH_CCTV8)
 	{
 		ch = MON_CH_DOOR1;
-		if (monitor_valid_channel_check(ch) == true)
+		if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x08 )
 		{
 			return ch;
 		}
@@ -875,6 +883,25 @@ static void frame_show_cctv_start(void)
 ***/
 static void frame_show_restart(void)
 {
+	if (frame_display_timeout_check() == true)
+	{
+		sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+		return;
+	}
+
+	if(frame_display_lightmode_check() == true)
+	{
+		if(pre_frame_diplay_light_value != 0)
+		{
+			pre_frame_diplay_light_value = 0;
+			backlight_brightness_set(1);
+		}
+	}
+	else
+	{
+		pre_frame_diplay_light_value = user_data_get()->display.lcd_brigtness;
+		backlight_brightness_set(user_data_get()->display.lcd_brigtness);
+	}
 	lv_obj_t * frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
 	lv_obj_t * frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
 	if(frame_show_pbuffer == frame_buffer_cur_a)
@@ -913,6 +940,7 @@ static void frame_show_restart(void)
 			frame_show_frame_index = 0x09;
 		}
 		sat_linphone_media_thumb_destroy();
+		SAT_DEBUG("monitor camera\n");
 		frame_show_door1_start();
 	}else if((user_data_get()->display.frame_list & 0x10) && (frame_show_frame_index <= 0x10))
 	{
@@ -928,6 +956,7 @@ static void frame_show_restart(void)
 			frame_show_frame_index = 0x11;
 		}
 		sat_linphone_media_thumb_destroy();
+		SAT_DEBUG("CCTV camera\n");
 		frame_show_cctv_start();
 	}
 	else
@@ -957,6 +986,7 @@ static void frame_show_layer_init(void)
 	frame_show_frame_index = 0x00;
 	frame_show_refresh_cont = 0;
 	frame_show_pbuffer= NULL;
+	pre_frame_diplay_light_value = -1;
     thumb_display_refresh_register(frame_show_thumb_refresh_display_callback);
 
 }

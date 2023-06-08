@@ -753,7 +753,7 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 return false;
         }
         soap_action_end_str[0] = '\0';
-     //   SAT_DEBUG("%s", soap_action_start_ptr);
+        //   SAT_DEBUG("%s", soap_action_start_ptr);
         if (strstr(soap_action_start_ptr, "GetDeviceInformation"))
         {
                 return tcp_device_serverce_xml_get_information(tcp_socket_fd);
@@ -1201,6 +1201,10 @@ static bool automatic_ip_setting(void)
                 }
                 add_multicase_routing_addres();
         }
+
+        char ip[128] = {0};
+        sat_ip_mac_addres_get("eth0", ip, NULL);
+        setenv("SIP", ip, 1);
         return true;
 }
 

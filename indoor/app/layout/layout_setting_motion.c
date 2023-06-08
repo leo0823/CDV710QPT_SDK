@@ -574,7 +574,7 @@ static lv_obj_t *setting_motion_list_create(lv_obj_t *parent)
              setting_motion_list_item_click, 2},
             {0, 88 * 5, 928, 88,
              setting_motion_obj_id_motion_lcd_on_cont, 0, 1,
-             SETTING_MOTION_LANG_ID_MOTION_DETECTING_SCHEDULE, layout_setting_motion_language_get,
+             SETTING_MOTION_LANG_ID_LCD_ON_WHEN_MOTION_DETECTED, layout_setting_motion_language_get,
              LANG_COMMON_ID_OFF, language_common_string_get,
              setting_motion_list_item_click, 2},
         };

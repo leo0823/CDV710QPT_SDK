@@ -30,7 +30,7 @@ static void close_cancel_btn_create(void)
  ** 日期: 2023-2-2 13:42:25
  ** 说明: 获取顶部容器的子控件
  ***********************************************/
-static lv_obj_t *monitor_top_child_obj_get(int id)
+static lv_obj_t *moniton_top_child_obj_get(int id)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), motion_scr_act_obj_id_head_cont);
         if (parent == NULL)
@@ -46,7 +46,7 @@ static lv_obj_t *monitor_top_child_obj_get(int id)
  ** 日期: 2023-2-2 13:42:25
  ** 说明: 顶部图标显示
  ***********************************************/
-static void montior_obj_top_icon_display(void)
+static void motion_obj_top_icon_display(void)
 {
 
         lv_obj_t *obj = NULL;
@@ -57,7 +57,7 @@ static void montior_obj_top_icon_display(void)
          ** 说明: SD卡显示
          ***********************************************/
         {
-                obj = monitor_top_child_obj_get(5);
+                obj = moniton_top_child_obj_get(5);
                 if (obj == NULL)
                 {
                         return;
@@ -80,7 +80,7 @@ static void montior_obj_top_icon_display(void)
          ** 说明: 自动记录
          ***********************************************/
         {
-                obj = monitor_top_child_obj_get(4);
+                obj = moniton_top_child_obj_get(4);
                 if (obj == NULL)
                 {
                         return;
@@ -96,7 +96,7 @@ static void montior_obj_top_icon_display(void)
          ** 说明: 移动侦测
          ***********************************************/
         {
-                obj = monitor_top_child_obj_get(3);
+                obj = moniton_top_child_obj_get(3);
                 if (obj == NULL)
                 {
                         return;
@@ -119,7 +119,7 @@ static void montior_obj_top_icon_display(void)
          ** 说明: 记录
          ***********************************************/
         {
-                obj = monitor_top_child_obj_get(2);
+                obj = moniton_top_child_obj_get(2);
                 if (obj == NULL)
                 {
                     return;
@@ -136,7 +136,7 @@ static void montior_obj_top_icon_display(void)
 static void layout_motion_sd_state_change_callback(void)
 {
     record_video_stop();
-    montior_obj_top_icon_display();
+    motion_obj_top_icon_display();
 }
 
 
@@ -183,7 +183,6 @@ static bool motion_timer_timeout_check(void)
 static void layout_motion_monitor_open(void)
 {
 	monitor_channel_set(user_data_get()->motion.select_camera);
-    printf("user_data_get()->motion.select_camera is %d\n",user_data_get()->motion.select_camera);
 	monitor_open(true);
 }
 
@@ -228,7 +227,7 @@ static void motion_timer_check_task(lv_timer_t *ptimer)
 ************************************************************/
 static void monitor_obj_timeout_label_display(void)
 {
-        lv_obj_t *obj = monitor_top_child_obj_get(6);
+        lv_obj_t *obj = moniton_top_child_obj_get(6);
         if (obj == NULL)
         {
             return;
@@ -266,12 +265,14 @@ static bool layout_close_motion_dectection_callback(void)
 		backlight_enable(true);
 	}
 
-    if ((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR) || (user_data_get()->motion.saving_fmt == 0))
+    if ((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR) || (user_data_get()->motion.saving_fmt == 1))
 	{
+        SAT_DEBUG("record jpg\n");
 		record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
 	}
 	else
 	{
+        SAT_DEBUG("record video\n");
 		record_video_start(true,REC_MODE_MOTION);
 		record_jpeg_start(REC_MODE_TUYA_MOTION);
 	}
@@ -287,7 +288,7 @@ static bool layout_close_motion_dectection_callback(void)
  ***********************************************/
 static void monitior_obj_channel_info_obj_display(void)
 {
-        lv_obj_t *obj = monitor_top_child_obj_get(1);
+        lv_obj_t *obj = moniton_top_child_obj_get(1);
         if (obj == NULL)
         {
                 return;
@@ -314,7 +315,7 @@ static void monitior_obj_channel_info_obj_display(void)
 
 static void layout_motion_rec_icon_hidden(bool en)
 {
-    lv_obj_t *obj = monitor_top_child_obj_get(2);
+    lv_obj_t *obj = moniton_top_child_obj_get(2);
     if (obj == NULL)
     {
             return;
@@ -427,7 +428,7 @@ static void layout_motion_head_cont_create(void)
             
     }
 
-    montior_obj_top_icon_display();
+    motion_obj_top_icon_display();
 }
 
 
@@ -462,30 +463,34 @@ static void layout_motion_video_state_callback(bool record_ing)
 ************************************************************/
 static void layout_motion_snapshot_state_callback(bool record_ing)
 {
+
     is_motion_snapshot_ing = record_ing;
-    lv_obj_t *obj = monitor_top_child_obj_get(2);
+    lv_obj_t *obj = moniton_top_child_obj_get(2);
     if (obj == NULL)
     {
         return;
     }
-    if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
-    {
-        return;
-    }
-    if (is_motion_snapshot_ing == true)
-    {
-        layout_motion_rec_icon_hidden(false);
-    }
-    else
-    {
-        layout_motion_rec_icon_hidden(true);
-    }
+    if ((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR) || (user_data_get()->motion.saving_fmt == 1))
+	{
+        if (is_motion_snapshot_ing == true)
+        {
+            SAT_DEBUG("jpg record success\n");
+            layout_motion_rec_icon_hidden(false);
+        }
+        else
+        {
+            layout_motion_rec_icon_hidden(true);
+        }
+	}
+
              
 }
 
 static bool layout_motion_streams_running_register_callback(char *arg)
 {
-    sat_linphone_motion_detection_start(80,50 );
+    int level = user_data_get()->motion.sensivity;
+    SAT_DEBUG("sensitify level is %d\n",level);
+    sat_linphone_motion_detection_start(80,level == 2 ? 1000 : level == 1 ? 500 : 40);
     return true;
 }
 
@@ -532,6 +537,7 @@ static void sat_layout_enter(close)
 
 static void sat_layout_quit(close)
 {
+
     record_video_stop();
     monitor_close();
     extern bool tuya_api_time_sync(void);
@@ -549,6 +555,10 @@ static void sat_layout_quit(close)
     sd_state_channge_callback_register(NULL);
 
     user_linphone_call_streams_running_receive_register(NULL);
+
+    backlight_enable(true);
+
+    standby_timer_restart(true);
 }
 
 sat_layout_create(close);
