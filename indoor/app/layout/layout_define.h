@@ -170,5 +170,4 @@ sat_layout_define(sensor_settings);
 sat_layout_define(close);
 sat_layout_define(frame_show);
 sat_layout_define(always_record);
-sat_layout_define(always_recordbp);
 #endif
