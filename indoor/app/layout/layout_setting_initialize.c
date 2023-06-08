@@ -27,14 +27,21 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         if (setting_initialize_count == 0)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_call_log_complete);
+                call_list_del_all();
         }
         else if (setting_initialize_count == 1)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_saved_video_complete);
+                if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+                {
+                        media_file_delete_all(FILE_TYPE_VIDEO,false);
+                }
+
         }
         else if (setting_initialize_count == 2)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_emergency_reocrd_complete);
+                alarm_list_del_all();
         }
         else if (setting_initialize_count == 3)
         {

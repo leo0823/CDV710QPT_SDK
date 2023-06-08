@@ -49,13 +49,11 @@ static void setting_frame_night_mode_checkbox_obj_display(void)
         {
                 return;
         }
-
         lv_obj_t *sub_list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_frame_night_mode_obj_id_setting_time_cont);
         if (sub_list == NULL)
         {
                 return;
         }
-
         if (user_data_get()->display.night_mode == 0)
         {
                 lv_obj_set_style_bg_img_src(scr_of_img, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
@@ -74,7 +72,6 @@ static void setting_frame_night_mode_obj_list_click(lv_event_t *e)
         {
                 return;
         }
-
         user_data_get()->display.night_mode = user_data_get()->display.night_mode == 0 ? 1 : 0;
         user_data_save();
         setting_frame_night_mode_checkbox_obj_display();

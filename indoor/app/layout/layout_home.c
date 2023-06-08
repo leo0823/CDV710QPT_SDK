@@ -105,7 +105,7 @@ static void home_mute_obj_click(lv_event_t *ev)
  ***********************************************/
 static void home_use_mobile_app_obj_display(lv_obj_t *obj)
 {
-        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
 }
 
 /***********************************************
@@ -206,7 +206,7 @@ static void home_date_timer(lv_timer_t *ptimer)
  ***********************************************/
 static void home_latest_video_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(playback, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 /***********************************************
  ** 作者: leo.liu

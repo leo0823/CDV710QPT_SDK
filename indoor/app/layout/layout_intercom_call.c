@@ -93,27 +93,37 @@ static void intercom_extension_obj_click(lv_event_t *e)
 {
 }
 
-
+static int intercom_call_id_index = 0;
 static void intercom_id_obj_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_target(e);
-        uint32_t index = lv_btnmatrix_get_selected_btn(obj) + 1;
+        intercom_call_id_index = lv_btnmatrix_get_selected_btn(obj) + 1;
+        sat_ipcamera_device_discover_search(0x02);
+}
 
-        //  network_device_info device_info;
-        //  memset(&device_info, 0, sizeof(network_device_info));
-        // if (sat_sip_local_indoor_number_get(id, device_info.user) == true)
+static void intercom_ipcamera_state_callback(unsigned int type, unsigned int num)
+{
+        SAT_DEBUG("%d ,type:%d num:%d", intercom_call_id_index, type, num);
+        const char *local_username = getenv("SIP");
+        char call_username[64] = {0};
+        if ((type == 1) && (num > 0))
         {
-                if (sat_ipcamera_device_name_get(index, 300) == true)
-                // if (user_network_user_update((unsigned char *)network_data_get()->sip_user, &device_info, 300) >= 0)
+                strcpy(call_username, local_username);
+                call_username[11] = intercom_call_id_index + 48;
+
+                for (int i = 0; i < num; i++)
                 {
-                        intercom_call_status_setting(1);
-                        // intercom_call_username_setting(device_info.user);
-                        intercom_call_username_setting(sat_ipcamera_node_data_get(index)->sip_url);
-                        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                        if (strcmp(sat_ipcamera_door_name_get(i), call_username) == 0)
+                        {
+                                intercom_call_status_setting(1);
+                                char url[128] = {0};
+                                sprintf(url, "%s@%s", call_username, sat_ipcamera_ipaddr_get(i));
+                                intercom_call_username_setting(url);
+                                sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                        }
                 }
         }
 }
-
 
 /************************************************************
 ** 函数说明: call_log_checkbox点击事件
@@ -662,7 +672,7 @@ static void sat_layout_enter(intercom_call)
                 }
                 lv_tabview_set_act(tabview,enter_intercom_mode,LV_ANIM_OFF);
         }
-
+        ipcamera_state_callback_register(intercom_ipcamera_state_callback);
 
 
 
@@ -670,6 +680,7 @@ static void sat_layout_enter(intercom_call)
 
 static void sat_layout_quit(intercom_call)
 {
+        ipcamera_state_callback_register(NULL);
         checkbox_s_num = 0;
 }
 sat_layout_create(intercom_call);

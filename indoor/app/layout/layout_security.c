@@ -292,7 +292,7 @@ static void emergenct_occupy_cctv_record_enable_display(void)
 {
         lv_obj_t * parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_security_obj_id_audto_record);
         lv_obj_t * obj = lv_obj_get_child_form_id(parent,auto_record_switch_id);
-        if (user_data_get()->alarm.inside_auto_record == true)
+        if (user_data_get()->alarm.security_auto_record == true)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
         }
@@ -462,7 +462,7 @@ static void emergency_occupy_audo_record_click(lv_event_t *ev)
     {
         return;
     }
-    user_data_get()->alarm.inside_auto_record = user_data_get()->alarm.inside_auto_record ? false : true;
+    user_data_get()->alarm.security_auto_record = user_data_get()->alarm.security_auto_record ? false : true;
     user_data_save();
     emergenct_occupy_cctv_record_enable_display();
 
