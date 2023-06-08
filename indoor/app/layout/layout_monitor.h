@@ -3,7 +3,7 @@
 #include <stdbool.h>
  bool monitor_doorcamera_call_extern_func(char* arg);
  bool monitor_doorcamera_call_inside_func(char* arg);
-
+int a;
 typedef enum
 {
     MONITOR_LANG_ID_MONITOR_MOBILE_APP,

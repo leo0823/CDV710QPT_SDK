@@ -1,4 +1,3 @@
-
 #include "ring_common.h"
 #include "unistd.h"
 #include "string.h"
@@ -13,7 +12,7 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
-       // return sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
+        return sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
                                                                                    // sat_linphone_audio_play_start("/tmp/nfs/CDV810QPT/indoor/app/layout/resource/rings/sound6.mp3",100);
                                                                                    return true;
 }
@@ -53,11 +52,11 @@ bool ring_door2_call_play(void)
 ***********************************************/
 bool ring_unlock_play(void)
 {
-        // char cmd[128] = {0};
-        // memset(cmd, 0, sizeof(cmd));
+        char cmd[128] = {0};
+        memset(cmd, 0, sizeof(cmd));
 
-        // sprintf(cmd, RESOURCE_RING_PATH "open.mp3");
-        // return sat_linphone_audio_play_start(cmd, 100);
+        sprintf(cmd, RESOURCE_RING_PATH "open.mp3");
+        return sat_linphone_audio_play_start(cmd, 100);
         return true;
 }
 /***********************************************
@@ -84,5 +83,5 @@ bool ring_intercom_play(void)
 bool ring_alarm_play(void)
 {
         return true;
-        //return sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
+        return sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
 }
