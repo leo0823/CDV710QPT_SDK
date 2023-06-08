@@ -58,7 +58,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         media_file_list_init();
 
         /*****  tuya api初始化 *****/
-        //tuya_api_init(TUYA_PID);
+        tuya_api_init(TUYA_PID);
 
         /***********************************************
          ** 作者: leo.liu
