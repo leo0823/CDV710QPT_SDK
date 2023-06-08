@@ -319,6 +319,7 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
         user_data_check_range_out(system_mode, 0, 1);
         user_data_check_range_out(time_automatically, 0, 1);
+        user_data_check_range_out(call_time, 1, 3);
 }
 
 bool user_data_init(void)

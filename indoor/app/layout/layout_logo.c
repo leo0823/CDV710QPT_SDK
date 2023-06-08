@@ -101,7 +101,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 参数说明: 
         ** 注意事项: 
         ************************************************************/
-        standby_timer_init(sat_playout_get(close),user_data_get()->display.screen_off_time * 1000);
+        standby_timer_init(sat_playout_get(close),user_data_get()->display.screen_off_time * 60000);
         standby_timer_restart(true);
 
         lv_timer_t * standby_timer = lv_sat_timer_create(standby_dection_timer, 1000, NULL);

@@ -380,7 +380,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 is_monitor_door_camera_talk = true;
 
                 call_duration = 0;
-                monitor_timeout_sec = user_data_get()->call_time * 60;
+                monitor_timeout_sec = user_data_get()->call_time == 1?1* 60:user_data_get()->call_time == 2?3* 60:5 * 60;
                 monitor_enter_flag_set(MON_ENTER_MANUAL_TALK_FLAG);
 
                 sat_linphone_answer(-1);
