@@ -1,5 +1,6 @@
 #!/bin/sh
-NUM=$#
+PARAM_NUM=$#
+
 make_app()
 {
         cd build
