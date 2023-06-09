@@ -52,14 +52,13 @@ static void layout_away_count_timer_obj_display(void)
 
 static void away_alarm_release_det_timer(lv_timer_t *ptimer)
 {
+    lv_timer_del(away_alarm_release_det);
+    away_alarm_release_det = NULL;
     if(user_data_get()->alarm.away_alarm_enable == false)
     {
-        lv_timer_del(ptimer);
         return;
 
     }
-    lv_timer_del(ptimer);
-
     bool alarm_occur = false;
     for(int i =0 ;i<8;i++)
     {
@@ -106,10 +105,12 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
     {
 
         user_data_get()->alarm.away_alarm_enable = true;
+        extern unsigned char layout_away_sensor_enable_flag(void);
+        user_data_get()->alarm.away_alarm_enable_list |= layout_away_sensor_enable_flag();
         user_data_save();
         
         
-        away_alarm_release_det = lv_sat_timer_create(away_alarm_release_det_timer, 1000 * user_data_get()->alarm.away_release_time , NULL);
+        away_alarm_release_det = lv_sat_timer_create(away_alarm_release_det_timer, 1000 * user_data_get()->alarm.away_release_time  , NULL);
         away_alarm_release_det->lock = true;
         sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);    
 
@@ -131,12 +132,13 @@ static void layout_alarm_count_param_init(void)
         lv_timer_del(away_alarm_release_det);
         away_alarm_release_det = NULL;
     }
-    away_count_sec = 10;;
+    away_count_sec =user_data_get()->alarm.away_setting_time * 60;
 
 }
 
 static void sat_layout_enter(away_count)
 {
+    SAT_DEBUG("away_alarm_enable_list is 0x%x\n",user_data_get()->alarm.away_alarm_enable_list);
 
     /************************************************************
     ** 函数说明:离家设防缓冲页面参数初始化

@@ -771,8 +771,8 @@ static void monitor_obj_record_video_click(lv_event_t *e)
         {
                 record_video_stop();
         }
-        else
-        {
+        else if((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        {    SAT_DEBUG("===========\n");
                 record_video_start(true, REC_MODE_MANUAL);
         }
 }
@@ -1294,6 +1294,11 @@ static void sat_layout_quit(monitor)
         user_linphone_call_streams_running_receive_register(NULL);
         /*sd卡状态处理 */
         sd_state_channge_callback_register(NULL);
+
+        /*抓拍注册*/
+        snapshot_state_callback_register(NULL);
+
+        record_state_callback_register(NULL);
 
         /*tuya事件注册*/
         tuya_event_cmd_register(tuya_event_defalut_handle);

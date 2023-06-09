@@ -69,7 +69,7 @@ static void layout_alarm_list_msgbox_confirm_click(lv_event_t *e)
         sat_layout_goto(home,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
-static lv_obj_t *layout_alarm_list_msgbox_create(const char *title, lv_event_cb_t cancel_cb, lv_event_cb_t confirm_cb, lv_event_cb_t checkbox_cb)
+static lv_obj_t *layout_alarm_list_msgbox_create(const char *title,lv_event_cb_t cancel_cb, lv_event_cb_t confirm_cb, lv_event_cb_t checkbox_cb)
 {
     lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_alrm_list_obj_id_msgbox_bg_cont, 0, 0, 1024, 600,
                                                 NULL, true, LV_OPA_80, 0, LV_OPA_80, 0,
@@ -77,26 +77,27 @@ static lv_obj_t *layout_alarm_list_msgbox_create(const char *title, lv_event_cb_
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-    lv_obj_t * msgbox = lv_common_img_btn_create(parent, layout_alarm_list_obj_id_msgbox_cont, 282, 131, 460, 343,
+    lv_obj_t * msgbox = lv_common_img_btn_create(parent, layout_alarm_list_obj_id_msgbox_cont, 282, 108, 460, 283,
                                                 NULL, false, LV_OPA_COVER, 0x242526, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
 
-    lv_common_text_create(msgbox, layout_alarm_list_obj_id_msgbox_title, 32, 10, 396, 47,
+    lv_common_text_create(msgbox, layout_alarm_list_obj_id_msgbox_title, 0, 106, 460, 47,
     NULL, LV_OPA_TRANSP, 0x323237, LV_OPA_TRANSP, 0,
-    0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-    0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-    title, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_small);
+    0, 2, LV_BORDER_SIDE_NONE, LV_OPA_COVER, 0x323237,
+    0, 2, LV_BORDER_SIDE_NONE, LV_OPA_COVER, 0x323237,
+    title, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-    lv_common_img_btn_create(msgbox, layout_alarm_list_obj_id_msgbox_cancel, 0, 281, 230, 62,
+
+    lv_common_img_btn_create(msgbox, layout_alarm_list_obj_id_msgbox_cancel, 0, 211, 230, 72,
                         cancel_cb, true, LV_OPA_COVER, 0x47494A, LV_OPA_COVER, 0x47494A,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         resource_ui_src_get("btn_title_cancel.png"), LV_OPA_TRANSP, 0x0096FF, LV_ALIGN_CENTER);
 
-    lv_common_img_btn_create(msgbox, layout_alarm_list_obj_id_msgbox_confirm, 230, 281, 230, 62,
+    lv_common_img_btn_create(msgbox, layout_alarm_list_obj_id_msgbox_confirm, 230, 211, 230, 72,
                         confirm_cb, true, LV_OPA_COVER, 0x0096FF, LV_OPA_COVER, 0x0096FF,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -188,6 +189,7 @@ static void alarm_list_info_create(void)
 		{
 			break;
 		}
+                SAT_DEBUG("===========\n");
                 // char tm_buf[128];
                 // sprintf(tm_buf, "%04d.%02d.%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday,tm.tm_hour, tm.tm_min, tm.tm_sec);
                 lv_obj_t * parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, 96 * i, 918, 96,

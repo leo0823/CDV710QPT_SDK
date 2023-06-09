@@ -90,8 +90,8 @@ static const user_data_info user_data_default =
         },
         .alarm = {
         .auto_record = false,
-        .away_alarm_enable_list = 0x77,
-        .security_alarm_enable_list = 0x77,
+        .away_alarm_enable_list = 0x00,
+        .security_alarm_enable_list = 0x00,
         .security_alarm_enable = false,
         .away_alarm_enable = false,
         .emergency_mode = 0,//0:手动触发警报 1:安防系统自动触发警报
@@ -140,6 +140,7 @@ static const user_data_info user_data_default =
         .time_automatically = 1,
         .call_time = 1,
         .always_monitoring = 0,
+        .last_call_new = false,
 
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},
