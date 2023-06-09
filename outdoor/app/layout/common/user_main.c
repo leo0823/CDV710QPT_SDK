@@ -28,14 +28,12 @@
 #include "common/sat_main_event.h"
 #include "common/user_key.h"
 #include "common/sat_linphone_event.h"
-#include "common/sat_main_event.h"
 #include "common/user_data.h"
 #include "common/user_linphone.h"
 #include "common/sat_user_common.h"
 #include "common/user_network.h"
 #include "common/sat_user_time.h"
 #include "common/user_gpio.h"
-#include "../../include/common/sat_main_event.h"
 #if 0
 dds_inherit_listener
 #endif

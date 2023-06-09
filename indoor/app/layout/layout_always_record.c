@@ -128,14 +128,15 @@ find_start:
 ************************************************************/
 static void always_record_record_btn_up(lv_event_t *ev)
 {
-    if (is_always_record_video_ing == true)
-    {
-        record_video_stop();
-    }
-    else
-    {
-        record_video_start(true, REC_MODE_MANUAL);
-    }
+//     SAT_DEBUG("===========\n");
+//     if (is_always_record_video_ing == true)
+//     {    SAT_DEBUG("===========\n");
+//         record_video_stop();
+//     }
+//     else if((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+//     {    SAT_DEBUG("===========\n");
+//         record_video_start(true, REC_MODE_MANUAL);
+//     }
 }
 
 static void layout_always_monitor_open(void)
@@ -153,7 +154,7 @@ static void always_record_record_btn_display(void)
         if (obj == NULL)
         {
             obj =  lv_common_img_btn_create(sat_cur_layout_screen_get(), always_record_scr_act_obj_id_record_obj, 912, 486, 80, 81,
-                    always_record_record_btn_up, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                    always_record_record_btn_up, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                     resource_ui_src_get("btn_call_rec.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
@@ -473,6 +474,14 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 }
 
 
+static bool layout_always_record_streams_running_register_callback(char *arg)
+{
+
+        lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
+        return true;
+
+}
+
 
 
 static void sat_layout_enter(always_record)
@@ -480,6 +489,7 @@ static void sat_layout_enter(always_record)
     always_record_loop = true;
     is_always_record_video_ing = false;
     always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
+    user_linphone_call_streams_running_receive_register(layout_always_record_streams_running_register_callback);
     monitor_channel_set(MON_CH_NONE);
     layout_always_monitor_open();
         /***********************************************
@@ -589,7 +599,6 @@ static void sat_layout_enter(always_record)
     /*抓拍注册*/
     snapshot_state_callback_register(always_record_snapshot_state_callback);
 
-    lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
     
 }
 static void sat_layout_quit(always_record)
@@ -601,6 +610,8 @@ static void sat_layout_quit(always_record)
     record_state_callback_register(NULL);
     
     standby_timer_restart(true);
+
+    user_linphone_call_streams_running_receive_register(NULL);
 }
 
 

@@ -110,6 +110,8 @@ typedef enum
     layout_away_tabview_page_obj_id_cont8,
 } layout_away_tabview_page_obj_id;
 
+static int layout_away_alarm_enable_list = 0x00;
+ 
 
 /************************************************************
 ** 函数说明: 界面退出
@@ -132,45 +134,45 @@ static void layout_away_back_obj_click(lv_event_t *ev)
 ************************************************************/
 unsigned char layout_away_sensor_enable_flag(void)
 {
-    lv_obj_t * tableview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_tabview);
-    lv_obj_t *cont = lv_tabview_get_content(tableview);
-    lv_obj_t * page1 = lv_obj_get_child_form_id(cont,0);
-    lv_obj_t * page2 = lv_obj_get_child_form_id(cont,1);
+    // lv_obj_t * tableview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_tabview);
+    // lv_obj_t *cont = lv_tabview_get_content(tableview);
+    // lv_obj_t * page1 = lv_obj_get_child_form_id(cont,0);
+    // lv_obj_t * page2 = lv_obj_get_child_form_id(cont,1);
 
 
-    unsigned char selected = 0x00;
-    for(int i = 0; i<8; i++)
-    {
-        lv_obj_t* parent_cont =  NULL;
+    // unsigned char selected = 0x00;
+    // for(int i = 0; i<8; i++)
+    // {
+    //     lv_obj_t* parent_cont =  NULL;
 
-        if( i < 4)
-        {
-            parent_cont = lv_obj_get_child_form_id(page1,layout_away_tabview_page_obj_id_cont1 + i);
+    //     if( i < 4)
+    //     {
+    //         parent_cont = lv_obj_get_child_form_id(page1,layout_away_tabview_page_obj_id_cont1 + i);
             
-        }else{
-            parent_cont = lv_obj_get_child_form_id(page1,layout_away_tabview_page_obj_id_cont1 + i);
-            if(parent_cont== NULL)
-            {
-                parent_cont = lv_obj_get_child_form_id(page2,layout_away_tabview_page_obj_id_cont1 + i);
-            }
-        }
-        if(parent_cont == NULL)
-        {
-            continue;
-        }
-        lv_obj_t* checkbox =  lv_obj_get_child_form_id(parent_cont,layout_away_sensor_select_cont_checkbox_id);
-        if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) != 0)
-        {
+    //     }else{
+    //         parent_cont = lv_obj_get_child_form_id(page1,layout_away_tabview_page_obj_id_cont1 + i);
+    //         if(parent_cont== NULL)
+    //         {
+    //             parent_cont = lv_obj_get_child_form_id(page2,layout_away_tabview_page_obj_id_cont1 + i);
+    //         }
+    //     }
+    //     if(parent_cont == NULL)
+    //     {
+    //         continue;
+    //     }
+    //     lv_obj_t* checkbox =  lv_obj_get_child_form_id(parent_cont,layout_away_sensor_select_cont_checkbox_id);
+    //     if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) != 0)
+    //     {
 
-            selected |= (0x01 << i );
+    //         selected |= (0x01 << i );
 
-        }
-        else
-        {
-            lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-        }
-    }
-    return selected;
+    //     }
+    //     else
+    //     {
+    //         lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+    //     }
+    // }
+    return layout_away_alarm_enable_list;
 
 }
 
@@ -218,15 +220,15 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
 {
     if(user_data_get()->alarm.away_alarm_enable == false)
     {
-        user_data_get()->alarm.away_alarm_enable_list = layout_away_sensor_enable_flag();
-        for(int i = 0; i < 8; i++)
-        {
-            if((user_data_get()->alarm.alarm_enable_always[0][i]) || (user_data_get()->alarm.alarm_enable_always[1][i]))
-            {
-                user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
-            }
-        }
-        user_data_save();
+        // user_data_get()->alarm.away_alarm_enable_list = layout_away_sensor_enable_flag();
+        // for(int i = 0; i < 8; i++)
+        // {
+        //     // if((user_data_get()->alarm.alarm_enable_always[0][i]) || (user_data_get()->alarm.alarm_enable_always[1][i]))
+        //     // {
+        //     //     user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
+        //     // }
+        // }
+        // user_data_save();
         sat_layout_goto(away_count,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 
     }
@@ -258,6 +260,7 @@ static void layout_away_sensor_select_obj_click(lv_event_t *ev)
     {
         return;
     }
+
     for(int i = 0; i < 8 ;i++)
     {
         lv_obj_t *cont = NULL;
@@ -274,27 +277,25 @@ static void layout_away_sensor_select_obj_click(lv_event_t *ev)
         }
         if(cont == obj)
         {
-                printf(" main_list_group[i].cont_id is %d\n",i);
                 float value = user_sensor_value_get(i);
-                if((user_data_get()->alarm.alarm_enable[i] == 1 && value > 2.5) || (user_data_get()->alarm.alarm_enable[i] == 2  && value < 1.0))
+                lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_away_sensor_select_cont_checkbox_id);
+                if((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < 1.0) || (user_data_get()->alarm.alarm_enable[i] == 2  && value > 2.5)))
                 {
-                        return;
+
+                    layout_away_alarm_enable_list |= 0x01 << i;
+                    lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+
+                }
+                else
+                {
+                    layout_away_alarm_enable_list &= ~(0x01 << i);
+                    lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+
                 }
                 break;
         }
     }
-    lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_away_sensor_select_cont_checkbox_id);
 
-    if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
-    {
-        lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
-
-    }
-    else
-    {
-        lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-
-    }
     layout_away_ececution_stop_btn_display();
 }
 
@@ -916,7 +917,6 @@ static void layout_away_func_setting_create()
 
 static void sat_layout_enter(away)
 {
-        printf("user_data_get()->alarm.away_alarm_enable_list is 0x%x\n",user_data_get()->alarm.away_alarm_enable_list);
         if(user_data_get()->alarm.away_alarm_enable == false)
         {
             user_data_get()->alarm.away_alarm_enable_list = 0x00;
@@ -930,6 +930,7 @@ static void sat_layout_enter(away)
             user_data_save();
             
         }
+        layout_away_alarm_enable_list = 0x00;
         /************************************************************
         ** 函数说明: 
         ** 作者: xiaoxiao

@@ -12,7 +12,8 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
-        return sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
+        // return true;
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
                                                                                    // sat_linphone_audio_play_start("/tmp/nfs/CDV810QPT/indoor/app/layout/resource/rings/sound6.mp3",100);
                                                                                    return true;
 }
@@ -83,5 +84,6 @@ bool ring_intercom_play(void)
 bool ring_alarm_play(void)
 {
         return true;
-        return sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
+
+        //sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
 }
