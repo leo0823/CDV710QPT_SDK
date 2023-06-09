@@ -123,7 +123,7 @@ static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
         user_data_get()->display.standby_mode = 0;
         user_data_save();
         setting_standby_screen_main_checkbox_obj_display();
-        standby_timer_reset( user_data_get()->display.screen_off_time);
+        standby_timer_reset( user_data_get()->display.screen_off_time * 1000);
         sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 

@@ -129,27 +129,21 @@ static void layout_security_sensor_select_obj_click(lv_event_t *ev)
         if(cont == obj)
         {
                 float value = user_sensor_value_get(i);
-                if((user_data_get()->alarm.alarm_enable[i] == 1 && value > 2.5) || (user_data_get()->alarm.alarm_enable[i] == 2  && value < 1.0))
+                lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_security_sensor_select_cont_checkbox_id);
+                if((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < 1.0) || (user_data_get()->alarm.alarm_enable[i] == 2  && value > 2.5)))
                 {
-                        return;
+
+
+                    lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+
+                }
+                else
+                {
+           
+                    lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+
                 }
         }
-    }
-
-    lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_security_sensor_select_cont_checkbox_id);
-
-    if((user_data_get()->alarm.security_alarm_enable) || (user_data_get()->alarm.away_alarm_enable))
-    {
-        return;
-    }
-    if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
-    {
-            lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
-    }
-    else
-    {
-            lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-
     }
     layout_security_ececution_stop_btn_display();
 }

@@ -267,7 +267,14 @@ void layout_alarm_trigger_default(int arg1,int arg2)
                
                 return;
         }
-
+        // SAT_DEBUG("(user_data_get()->alarm.away_alarm_enable is %d\n",(user_data_get()->alarm.away_alarm_enable));
+        // SAT_DEBUG("(user_data_get()->alarm.security_alarm_enable is %d\n",(user_data_get()->alarm.security_alarm_enable));
+        // SAT_DEBUG("(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)) 0x%x\n",(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)));
+        // SAT_DEBUG("(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1)) 0x%x\n",(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1)));
+        // SAT_DEBUG("arg1 is %d\n",arg1); 
+        // SAT_DEBUG("arg2 is %d\n",arg2);  
+        // SAT_DEBUG("user_data_get()->alarm.alarm_enable[arg1] is %d\n",user_data_get()->alarm.alarm_enable[arg1]);    
+             
         if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < 100))
         {
                 layout_alarm_alarm_channel_set(arg1);
@@ -297,15 +304,16 @@ bool alarm_trigger_check(void)
         {
                 if(user_data_get()->alarm.alarm_enable[i] != 0 )
                 {
+                        SAT_DEBUG("user_data_get()->alarm.alarm_enable[i] Iis %d\n",user_data_get()->alarm.alarm_enable[i]);
                         if((user_data_get()->alarm.alarm_trigger[i] == true) && (user_data_get()->alarm.alarm_enable[i] != 0))
                         {
                                 alarm_occur = true;
                                 if(user_data_get()->alarm.alarm_enable[i] == 1)
                                 {
-                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 0.25 * 100);//发送警报事件
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 3.0 * 100);//发送警报事件
                                 }else
                                 {
-                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 3.0 * 100);//发送警报事件
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 0.25 * 100);//发送警报事件
                                 }
                                 return true;
                         }
@@ -324,7 +332,6 @@ bool alarm_trigger_check(void)
 
 /***********************************************************************/
 
-bool last_call_new;
 /************************************************************
 ** 函数说明: 设置last_call_log new flag
 ** 作者: xiaoxiao
@@ -334,7 +341,8 @@ bool last_call_new;
 ************************************************************/
 void layout_last_call_new_flag_set(bool new)
 {
-        last_call_new = new;
+        user_data_get()->last_call_new = new;
+        user_data_save();
 }
 /************************************************************
 ** 函数说明: 获取是否有未查看的通话记录标志
@@ -345,7 +353,7 @@ void layout_last_call_new_flag_set(bool new)
 ************************************************************/
 bool layout_last_call_new_flag_get(void)
 {
-        return last_call_new;
+        return user_data_get()->last_call_new;
 }
 
 /***********************************************************************/

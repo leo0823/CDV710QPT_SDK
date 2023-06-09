@@ -28,6 +28,7 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_call_log_complete);
                 call_list_del_all();
+                layout_last_call_new_flag_set(false);
         }
         else if (setting_initialize_count == 1)
         {

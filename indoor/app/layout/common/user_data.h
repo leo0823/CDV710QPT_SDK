@@ -108,7 +108,7 @@ typedef struct
 {
         bool auto_record;
 
-        int away_alarm_enable_list;
+        int away_alarm_enable_list;//以前需求离家和居家是可以同时设置安防，现在只能同时存在一种
 
         int security_alarm_enable_list;
 
@@ -118,7 +118,7 @@ typedef struct
 
         int emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
 
-        int alarm_enable[8];//0不使能，1：NC低电平触发2：NO高电平触发
+        int alarm_enable[8];//0不使能，1：NO高电平触发 2：NC低电平触发
 
         int alarm_trigger[8];
 
@@ -154,6 +154,7 @@ typedef struct
         int call_time;
 
         int always_monitoring;
+        bool last_call_new;
 } user_data_info;
 
 bool user_data_save(void);
