@@ -2,6 +2,7 @@
 enum
 {
     emergency_occupy_obj_id_bg,
+    emergency_occupy_obj_id_back,
     emergency_occupy_obj_id_bell,
     emergency_occupy_obj_id_log,
     emergency_occupy_obj_id_title, 
@@ -10,6 +11,10 @@ enum
     emergency_occupy_obj_id_confirm_label,
     
 };
+static void layout_emergeency_back_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(home,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
 
 static void emergency_setting_confirm_obj_click(lv_event_t *ev)
 {
@@ -45,6 +50,13 @@ static void sat_layout_enter(emergency_setting)
                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     }
 
+{
+        lv_common_img_btn_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_back,  35, 15, 48, 48,
+                        layout_emergeency_back_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+}
 
         /************************************************************
         ** 函数说明: emergency title

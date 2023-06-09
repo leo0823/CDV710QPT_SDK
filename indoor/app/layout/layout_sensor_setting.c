@@ -311,12 +311,16 @@ static void layout_sensor_setting_save(void)
                     }
 
                     user_data_get()->alarm.security_alarm_enable_list |= 0x01 << i;
+                    user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
+                    
                     
                 }else
                 {
                     user_data_get()->alarm.alarm_enable_always[0][i] = false;
                     user_data_get()->alarm.alarm_enable_always[1][i] = false;
                     user_data_get()->alarm.security_alarm_enable_list &= ~(0x01 << i);
+                    user_data_get()->alarm.away_alarm_enable_list &= ~(0x01 << i);
+                    
                 }
             }
         }

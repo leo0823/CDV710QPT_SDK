@@ -388,7 +388,7 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
         int rec_mode = 0;
         if(user_data_get()->alarm.security_alarm_enable)
         {
-                if(user_data_get()->alarm.security_auto_record)
+                if((user_data_get()->alarm.security_auto_record) && ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))) 
                 {
                      record_video_start(true, REC_MODE_ALARM);                      
                 }
@@ -399,8 +399,9 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
                         rec_mode |= REC_MODE_ALARM;
                 }
         }
-        
-        record_jpeg_start(REC_MODE_TUYA_ALARM | rec_mode);
+        SAT_DEBUG("=============================\n");
+        sat_linphone_calls_cmd_send();
+        record_jpeg_start(REC_MODE_TUYA_ALARM);
 
         return true;
 }
@@ -415,7 +416,9 @@ static void sat_layout_enter(alarm)
 {
         alarm_return = false;
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
+        if(1)
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
+
         layout_alarm_monitor_open();
         /************************************************************
         ** 函数说明: 背景创建
@@ -617,10 +620,13 @@ static void sat_layout_enter(alarm)
 }
 static void sat_layout_quit(alarm)
 {
-        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
+
         user_linphone_call_streams_running_receive_register(NULL);
+        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
         record_video_stop();
         monitor_close();
+
+
 }
 
 

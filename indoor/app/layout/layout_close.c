@@ -539,6 +539,7 @@ static void sat_layout_quit(close)
 {
 
     record_video_stop();
+    
     monitor_close();
     extern bool tuya_api_time_sync(void);
     tuya_api_time_sync();

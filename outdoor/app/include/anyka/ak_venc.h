@@ -3,10 +3,10 @@
 
 #include "ak_common_video.h"
 
-enum ak_venc_error_type 
+enum ak_venc_error_type
 {
     ERROR_VENC_INIT_LIB_ERROR = (MODULE_ID_VENC << 24) + 0,
-	ERROR_VENC_OPEN_LIB_ERROR,
+    ERROR_VENC_OPEN_LIB_ERROR,
     ERROR_VENC_OPEN_TOO_MANY,
     ERROR_VENC_INVALID_PARAM,
     ERROR_VENC_USER_NULL,
@@ -15,15 +15,17 @@ enum ak_venc_error_type
 };
 
 /* h.264 / h.265 encode control define */
-enum bitrate_ctrl_mode {
+enum bitrate_ctrl_mode
+{
     BR_MODE_CBR,
     BR_MODE_VBR,
     BR_MODE_CONST_QP,
     BR_MODE_LOW_LATENCY,
-	BR_MODE_TYPE_TOTAL
+    BR_MODE_TYPE_TOTAL
 };
 
-enum profile_mode {
+enum profile_mode
+{
     PROFILE_MAIN,
     PROFILE_HIGH,
     PROFILE_BASE,
@@ -34,29 +36,32 @@ enum profile_mode {
     PROFILE_JPEG
 };
 
-enum chroma_mode {
+enum chroma_mode
+{
     CHROMA_MONO,
     CHROMA_4_2_0,
     CHROMA_4_2_2
 };
 
-enum jpeg_quant_table_level {
+enum jpeg_quant_table_level
+{
     JPEG_QLEVEL_DEFAULT,
     JPEG_QLEVEL_HIGHEST,
     JPEG_QLEVEL_HIGH,
     JPEG_QLEVEL_LOW
 };
 
-enum smart_mode {
+enum smart_mode
+{
     SMART_DISABLE,
     SMART_LTR,
     SMART_CHANGING_GOPLEN,
-    SMART_SKIP_FRAME    
+    SMART_SKIP_FRAME
 };
 
-
-struct venc_roi_param {
-    int  enable;    //1 enable, 0 disable
+struct venc_roi_param
+{
+    int enable; // 1 enable, 0 disable
     long top;
     long bottom;
     long left;
@@ -64,61 +69,62 @@ struct venc_roi_param {
     long delta_qp;
 };
 
-struct venc_param {
-    unsigned short                width;
-    unsigned short                height;
-    unsigned short                fps; 
-    unsigned short                goplen; 
-    unsigned short                target_kbps;    
-    unsigned short                max_kbps;              
-    enum profile_mode             profile;             
-    enum bitrate_ctrl_mode        br_mode;     
-    unsigned short                initqp;       //recommend Dynamic bit rate parameter[20,25]
-    unsigned short                minqp;        //recommend Dynamic bit rate parameter[20,25]
-    unsigned short                maxqp;        //recommend Dynamic bit rate parameter[45,50]
-    enum jpeg_quant_table_level   jpeg_qlevel;
-    enum chroma_mode              chroma_mode;
-    enum encode_output_type       enc_out_type; //encode output type, h264 or jpeg or h265
-    unsigned int                  max_picture_size;
-    unsigned short                enc_level;
-    enum smart_mode               smart_mode;         //0:disable smart, 1:mode of LTR, 2:mode of changing GOP length
-    unsigned short                smart_goplen;       //smart goplen
-    unsigned short                smart_quality;      //smart quality
-    unsigned short                smart_static_value; //smart static value
-    
+struct venc_param
+{
+    unsigned short width;
+    unsigned short height;
+    unsigned short fps;
+    unsigned short goplen;
+    unsigned short target_kbps;
+    unsigned short max_kbps;
+    enum profile_mode profile;
+    enum bitrate_ctrl_mode br_mode;
+    unsigned short initqp; // recommend Dynamic bit rate parameter[20,25]
+    unsigned short minqp;  // recommend Dynamic bit rate parameter[20,25]
+    unsigned short maxqp;  // recommend Dynamic bit rate parameter[45,50]
+    enum jpeg_quant_table_level jpeg_qlevel;
+    enum chroma_mode chroma_mode;
+    enum encode_output_type enc_out_type; // encode output type, h264 or jpeg or h265
+    unsigned int max_picture_size;
+    unsigned short enc_level;
+    enum smart_mode smart_mode;        // 0:disable smart, 1:mode of LTR, 2:mode of changing GOP length
+    unsigned short smart_goplen;       // smart goplen
+    unsigned short smart_quality;      // smart quality
+    unsigned short smart_static_value; // smart static value
 };
 
-struct venc_stat {
-    unsigned short fps; 
-    unsigned short goplen; 
-    unsigned short kbps;              
-    unsigned short max_picture_size;     
+struct venc_stat
+{
+    unsigned short fps;
+    unsigned short goplen;
+    unsigned short kbps;
+    unsigned short max_picture_size;
 };
 
 typedef enum slice_type_e
 {
-	AK_VENC_SLICE_B = 0,  /*!< B Slice */
-	AK_VENC_SLICE_P = 1,  /*!< P Slice */
-	AK_VENC_SLICE_I = 2,  /*!< I Slice */
-	AK_VENC_SLICE_PI = 3  /*!< PI Slice */
-}AK_VENC_SLICE_TYPE;
+    AK_VENC_SLICE_B = 0, /*!< B Slice */
+    AK_VENC_SLICE_P = 1, /*!< P Slice */
+    AK_VENC_SLICE_I = 2, /*!< I Slice */
+    AK_VENC_SLICE_PI = 3 /*!< PI Slice */
+} AK_VENC_SLICE_TYPE;
 
 typedef struct
 {
-    AK_VENC_SLICE_TYPE      sliceType;          //待编码帧类型
-    unsigned long           pictureSize;        //已编码帧大小(bytes)
-    unsigned short          curQP;              //已编码帧的平均QP值
-    unsigned long           totalComplexity;    //LCU总的复杂度
-    void                    *pMDInfo;           //ISP的mdinfo,该参数只能使用，不能被修改
-}AK_VENC_RC_INPUT;
- 
+    AK_VENC_SLICE_TYPE sliceType;  // 待编码帧类型
+    unsigned long pictureSize;     // 已编码帧大小(bytes)
+    unsigned short curQP;          // 已编码帧的平均QP值
+    unsigned long totalComplexity; // LCU总的复杂度
+    void *pMDInfo;                 // ISP的mdinfo,该参数只能使用，不能被修改
+} AK_VENC_RC_INPUT;
+
 typedef struct
 {
-    unsigned short           sliceQP;            //回调函数计算出的待编码帧的平均QP值
-    unsigned int             frameSizeEst;       //回调函数计算出的待编码帧的大小(可选)
-}AK_VENC_RC_OUTPUT;
+    unsigned short sliceQP;    // 回调函数计算出的待编码帧的平均QP值
+    unsigned int frameSizeEst; // 回调函数计算出的待编码帧的大小(可选)
+} AK_VENC_RC_OUTPUT;
 
-/* �Զ���RC���ԵĹ����ûص�����ʵ�֣��ɱ������ã�
+/* �Զ���RC���ԵĹ����ûص�����ʵ�֣��ɱ��������ã�
 
 */
 typedef void (*AK_VENC_RC_CB_FUN)(AK_VENC_RC_INPUT *input, AK_VENC_RC_OUTPUT *output, void *pCallbackHandle);
@@ -127,13 +133,13 @@ typedef void (*AK_VENC_RC_CB_FUN)(AK_VENC_RC_INPUT *input, AK_VENC_RC_OUTPUT *ou
  * ak_venc_get_version - get venc version
  * return: version string
  */
-const char* ak_venc_get_version(void);
+const char *ak_venc_get_version(void);
 
 /**
  * ak_venc_get_enc_lib_version - get venc encode lib version
  * return: version string
  */
-const char* ak_venc_get_enc_lib_version(void);
+const char *ak_venc_get_enc_lib_version(void);
 
 /**
  * ak_venc_open - open encoder and set encode param
@@ -142,7 +148,6 @@ const char* ak_venc_get_enc_lib_version(void);
  * return: 0 success , others error code.
  */
 int ak_venc_open(const struct venc_param *param, int *handle_id);
-
 
 /**
  * ak_venc_encode_frame - encode single frame
@@ -154,7 +159,7 @@ int ak_venc_open(const struct venc_param *param, int *handle_id);
  * return: 0 success , others error code.
  */
 int ak_venc_encode_frame(int handle_id, const unsigned char *frame,
-        unsigned int frame_len, void *mdinfo, struct video_stream *stream);
+                         unsigned int frame_len, void *mdinfo, struct video_stream *stream);
 
 /**
  * ak_venc_release_stream - release stream resource
@@ -164,7 +169,6 @@ int ak_venc_encode_frame(int handle_id, const unsigned char *frame,
  * notes:
  */
 int ak_venc_release_stream(int handle_id, struct video_stream *stream);
-
 
 /**
  * ak_venc_close - close video encode
@@ -198,7 +202,6 @@ int ak_venc_get_attr(int handle_id, struct venc_param *param);
  * notes:
  */
 int ak_venc_request_idr(int handle_id);
-
 
 /**
  * ak_venc_get_rate_stat - on stream-encode, get encode rate stat info
@@ -247,7 +250,7 @@ int ak_venc_set_stream_buff(int handle_id, int size);
  * @maxframeSize[IN]: max frame KByte size
  * return: 0 success, others error code.
  */
-int ak_venc_set_iframe_param(int handle_id, int minQP, int maxQP,  int minframeSize, int maxframeSize);
+int ak_venc_set_iframe_param(int handle_id, int minQP, int maxQP, int minframeSize, int maxframeSize);
 
 /**
  * ak_venc_get_iframe_param - get the venc iframe size
@@ -258,7 +261,7 @@ int ak_venc_set_iframe_param(int handle_id, int minQP, int maxQP,  int minframeS
  * @maxframeSize[OUT]: max frame KByte size
  * return: 0 success, others error code.
  */
-int ak_venc_get_iframe_param(int handle_id, int *minQP, int *maxQP,  int *minframeSize, int *maxframeSize);
+int ak_venc_get_iframe_param(int handle_id, int *minQP, int *maxQP, int *minframeSize, int *maxframeSize);
 
 /**
  * ak_venc_set_ROI_Mdinfo - set the ROI param to night mode NR(ROI的功能用于减轻夜视图像中的噪声)
@@ -270,8 +273,7 @@ int ak_venc_get_iframe_param(int handle_id, int *minQP, int *maxQP,  int *minfra
  * @WaitSkip[IN]: wait num of frames to enable skip, 0-disable, 1-enable
  * return: 0 success, others error code.
  */
-int ak_venc_set_ROI_Mdinfo(int handle_id, int Threshold, int Quality,  int RecoverStep, int WaitIntra, int WaitSkip);
-
+int ak_venc_set_ROI_Mdinfo(int handle_id, int Threshold, int Quality, int RecoverStep, int WaitIntra, int WaitSkip);
 
 /**
  * ak_venc_set_jpeg_slice - set the jpeg slice encode config
@@ -280,10 +282,10 @@ int ak_venc_set_ROI_Mdinfo(int handle_id, int Threshold, int Quality,  int Recov
  * @firstSliceHeight[IN]: first Slice Height
  * return: 0 success, others error code.
  */
-int ak_venc_set_jpeg_slice(int handle_id, int picHeight,int firstSliceHeight );
+int ak_venc_set_jpeg_slice(int handle_id, int picHeight, int firstSliceHeight);
 
 /**
- * ak_venc_jpeg_slice_encode - jpeg slice encode 
+ * ak_venc_jpeg_slice_encode - jpeg slice encode
  * @handle_id[IN]: handle id return by ak_venc_open
  * @frame[IN]: slice frame which you want to encode
  * @frame_len[IN]: lenght of slice frame
@@ -293,7 +295,7 @@ int ak_venc_set_jpeg_slice(int handle_id, int picHeight,int firstSliceHeight );
  * return: 0 success , others error code.
  */
 int ak_venc_jpeg_slice_encode(int handle_id, const unsigned char *frame,
-               unsigned int frame_len, int slice_idx, int slice_height,struct video_stream *stream);
+                              unsigned int frame_len, int slice_idx, int slice_height, struct video_stream *stream);
 
 /**
  * ak_venc_change_CUblocksize - brief Set the information of CUsize [0:2] only for HEVC
@@ -311,7 +313,6 @@ int ak_venc_change_CUblocksize(int handle_id, int size);
  */
 int ak_venc_strictlylimit_frameSize(int handle_id, int maxsize);
 
-
 /**
  * ak_venc_set_rc_cb - set rate control callback function
  * @handle_id[IN]: handle id return by ak_venc_open
@@ -322,7 +323,7 @@ int ak_venc_strictlylimit_frameSize(int handle_id, int maxsize);
 int ak_venc_set_rc_cb(int handle_id, AK_VENC_RC_CB_FUN cb, void *user_handle);
 
 /**
- * ak_venc_unset_rc_cb - unset rate control callback function, use default rate control 
+ * ak_venc_unset_rc_cb - unset rate control callback function, use default rate control
  * @handle_id[IN]: handle id return by ak_venc_open
  * return: 0 success, others error code.
  */

@@ -309,6 +309,7 @@ static void  layout_intercom_call_log_msgbox_confirm_click(lv_event_t *ev)
         if(layout_intercom_call_log_select_get() ==  true)
         {
                 call_list_del_all();
+                layout_last_call_new_flag_set(false);
         }
         else
         {
@@ -380,7 +381,7 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
 	
         lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(intercom_call_obj_id_log_msg_bg,call_log_msg_bg_obj_id_msgdialog, 282, 93, 460, 352);
         setting_msgdialog_msg_create(masgbox,call_log_msg_bg_obj_id_title,"Click 'Cinfirm' and the selected item will be displayed asDeleted and cannot be restored.", 0, 110, 460, 120);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,call_log_msg_bg_obj_id_confirm_id,call_log_msg_bg_obj_id_cancel_id ,"确认","取消", layout_intercom_call_log_msgbox_confirm_click,layout_intercom_call_log_msgbox_cancel);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,call_log_msg_bg_obj_id_confirm_id,call_log_msg_bg_obj_id_cancel_id ,"confirm","cancel", layout_intercom_call_log_msgbox_confirm_click,layout_intercom_call_log_msgbox_cancel);
     
 
 
