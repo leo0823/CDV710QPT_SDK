@@ -50,8 +50,9 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         }
         else
         {
-                lv_obj_t *btn = (lv_obj_t *)ptimer->user_data;
-                lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
+                // lv_obj_t *btn = (lv_obj_t *)ptimer->user_data;
+                // lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
+                // lv_obj_set_style_bg_color(btn,lv_color_hex(0x00a8ff),LV_PART_MAIN);
                 lv_timer_del(ptimer);
                 return;
         }
@@ -65,6 +66,7 @@ static void setting_initialize_reset_obj_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_current_target(e);
         lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_style_bg_color(obj,lv_color_hex(0x47494A),LV_PART_MAIN);
         lv_timer_reset(lv_sat_timer_create(setting_initialize_reset_timer, 1000, obj));
 }
 static void sat_layout_enter(setting_initialize)

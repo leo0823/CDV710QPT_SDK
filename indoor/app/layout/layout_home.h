@@ -24,8 +24,8 @@ typedef enum
 static const char *layout_home_language[HOME_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
     {
         {"Currently in use in mobile app.", "Currently in use in mobile app.", "Currently in use in mobile app."},
-        {"Latest Video", "Latest Video", "Latest Video"},
-        {"Latest call", "Latest call", "Latest call"},
+        {"Recent Video", "Recent Video", "Recent Video"},
+        {"Recent call", "Recent call", "Recent call"},
         {"Monitoring", "Monitoring", "Monitoring"},
         {"Call", "Call", "Call"},
         {"CCTV", "CCTV", "CCTV"},

@@ -124,6 +124,7 @@ static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
         user_data_save();
         setting_standby_screen_main_checkbox_obj_display();
         standby_timer_reset( user_data_get()->display.screen_off_time * 1000);
+        standby_timer_restart(true);
         sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 
@@ -228,7 +229,7 @@ static void setting_standby_screen_off_click(lv_event_t *e)
 {
         lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg,setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
         setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel ,"确认","取消", setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel ,"Confirm","Cancel", setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
     
 
 }

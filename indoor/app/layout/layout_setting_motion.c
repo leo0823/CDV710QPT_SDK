@@ -12,6 +12,8 @@ enum
 
         setting_motion_obj_id_select_camera_cont,
 
+        setting_motion_obj_id_msgbox_list,
+
         setting_motion_obj_id_storage_format_cont,
 
         setting_motion_obj_id_storage_sensitivity_cont,
@@ -30,7 +32,7 @@ enum
         setting_motion_obj_id_msgbox_confirm = setting_motion_obj_id_msgbox_check_4 + 10,
         setting_motion_obj_id_msgbox_confirm_img,
         setting_motion_obj_id_msgbox_cancel,
-        setting_motion_obj_id_msgbox_cancel_img,
+        setting_motion_obj_id_msgbox_cancel_img
 };
 
 typedef enum{
@@ -192,9 +194,16 @@ static int setting_motion_msgbox_item_select_index_get(int max_item)
                 return -1;
         }
 
+        lv_obj_t *list = lv_obj_get_child_form_id(parent, setting_motion_obj_id_msgbox_list);
+        if (list == NULL)
+        {
+                SAT_DEBUG("lv_obj_t* parent = lv_obj_get_child_form_id(msgbox, setting_motion_obj_id_msgbox_cont);");
+                return -1;
+        }
+
         for (int i = 0; i < max_item; i++)
         {
-                lv_obj_t *checkbox = lv_obj_get_child_form_id(parent, img_obj_id_group[i][0]);
+                lv_obj_t *checkbox = lv_obj_get_child_form_id(list, img_obj_id_group[i][0]);
                 if (checkbox == NULL)
                 {
                         SAT_DEBUG(" lv_obj_t* checkbox = lv_obj_get_child_form_id(parent,img_obj_id_group[i]);");
@@ -229,9 +238,9 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        static int check_num = 0;
-        msgbox->user_data = &check_num;
-        check_num = n_item ;
+        // static int check_num = 0;
+        // msgbox->user_data = &check_num;
+        // check_num = n_item ;
 
         lv_common_text_create(msgbox, setting_motion_obj_id_msgbox_title, 32, 10, 396, 47,
                               NULL, LV_OPA_TRANSP, 0x323237, LV_OPA_TRANSP, 0,
@@ -239,9 +248,12 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                               0, 2, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                               title, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
+        lv_obj_t *list = setting_list_create(msgbox, setting_motion_obj_id_msgbox_list);
+        lv_common_style_set_common(list, setting_motion_obj_id_msgbox_list,47,73, 460 - 47, 343 - 57, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+
         if (n_item == 2)
         {
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_1, 48, 110, 365, 48,
+                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1, 48, 110, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -250,7 +262,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                                               0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
                                               (const char *)resource_ui_src_get(select_item == 0 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_2, 48, 166, 365, 48,
+                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_2, 48, 166, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -261,7 +273,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
         }
         else if (n_item == 3)
         {
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_1, 48, 89, 365, 48,
+                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1, 48, 89, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -270,7 +282,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                                               0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
                                               (const char *)resource_ui_src_get(select_item == 0 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_2, 48, 145, 365, 48,
+                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_2, 48, 145, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -279,7 +291,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                                               0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
                                               (const char *)resource_ui_src_get(select_item == 1 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_3, 48, 201, 365, 48,
+                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_3, 48, 201, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -290,47 +302,13 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
         }
         else
         {
-                #if 0
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_1, 48, 61, 365, 48,
-                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
-                                              item[0], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
-                                              (const char *)resource_ui_src_get(select_item == 0 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                
 
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_text, 48, 116, 365, 48,
-                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
-                                              item[1], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
-                                              (const char *)resource_ui_src_get(select_item == 1 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_3, 48, 171, 365, 48,
-                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
-                                              item[2], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
-                                              (const char *)resource_ui_src_get(select_item == 2 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-
-                lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_4, 48, 226, 365, 48,
-                                              checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
-                                              item[3], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                              0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
-                                              (const char *)resource_ui_src_get(select_item == 3 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                #endif
                 for(int i = 0; i < network_data_get()->door_device_count; i++)
                 {
                         
-                        lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_1 + i, 48, 61 + 56 * i, 365, 48,
+                        lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i, 48, 61 + 56 * i, 365, 48,
                         checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -345,7 +323,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                 for(int i = 0; i < network_data_get()->cctv_device_count; i++)
                 {
 
-                        lv_common_img_text_btn_create(msgbox, setting_motion_obj_id_msgbox_check_1 + i + network_data_get()->door_device_count, 48, 171 + 56 * i, 365, 48,
+                        lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i + network_data_get()->door_device_count, 48, 171 + 56 * i, 365, 48,
                         checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -357,7 +335,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                         
                 }
                 
-                check_num =  network_data_get()->door_device_count + network_data_get()->cctv_device_count;
+               // check_num =  network_data_get()->door_device_count + network_data_get()->cctv_device_count;
         }
 
         lv_common_img_btn_create(msgbox, setting_motion_obj_id_msgbox_cancel, 0, 281, 230, 62,
@@ -397,7 +375,7 @@ static void setting_motion_msgbox_item_click(lv_event_t *ev)
         if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
         {
                 lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                for (int i = 0; i < *(int *)parent->user_data; i++)
+                for (int i = 0; i < 10; i++)
                 {
                         lv_obj_t *n_item = lv_obj_get_child_form_id(parent, setting_motion_obj_id_msgbox_check_1 + i);
                         if ((n_item == NULL) || (n_item == item))

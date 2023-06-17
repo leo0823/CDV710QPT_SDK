@@ -37,6 +37,10 @@ typedef struct
         int inter_talk_volume;
 
         int buzzer;
+        int front_door;
+        int common_entrance;
+        int securirty_office;
+        int extension;
         int entracne_volume;
         int entrancr_voice;
         int common_entrance_volume;
@@ -99,8 +103,11 @@ typedef struct
         char door1_open_door_mode;
         /***** 1:1lock 2:2lock *****/
         char door2_lock_num;
-        /*****  password *****/
+        /*****  house hold password *****/
         char password[4];
+        /*****  common entrance password *****/
+        char comm_ent_password[4];
+        
 
 } user_etc_info;
 
@@ -138,7 +145,9 @@ typedef struct
         char time_automatically;
 
         char auto_record_mode; // 0:off,1:video,2:photo;
+
         bool wifi_enable;
+
         user_motion_info motion;
 
         user_audio_info audio;

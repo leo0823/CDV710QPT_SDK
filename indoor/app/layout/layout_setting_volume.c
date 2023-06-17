@@ -137,15 +137,12 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
         if(y == 8)//调铃声音量
         {
                 int value = lv_slider_get_value(obj);
-                SAT_DEBUG("=====%d=======\n",__LINE__);
-                SAT_DEBUG("=====%d=======\n",value);
     
                 user_data_get()->audio.entracne_volume = value;
                 user_data_save();
 
         }else if(y == 78)//调通话声音
         {
-                SAT_DEBUG("=====%d=======\n",__LINE__);
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.entrancr_voice = value;
                 user_data_save();   
@@ -337,6 +334,10 @@ static void setting_touch_notification_slider_display(lv_obj_t * parent)
         lv_label_set_text(value_obj,value_str);
 
         slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_touch_notification_cont),setting_volume_obj_id_touch_notification_voice_slider_cont);
+        if(slider_cont == NULL)
+        {
+                return;
+        }
         slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_touch_notification_voice_slider);
         value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_touch_notification_voice_slider_text);
         cur_volume = user_data_get()->audio.touch_notification_voice;
@@ -358,7 +359,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
             {0, 70 + 140, 970, 140, setting_volume_obj_id_common_entrance_cont, setting_volume_obj_id_common_entrance_label, -1, SOUND_LANG_ID_COMMON_ENTRANCE, layout_setting_sound_language_get, -1, NULL, setting_common_entrance_volume_slider_change_cb, -1},
             {0, 70 + 140 * 2, 970, 140, setting_volume_obj_id_guard_station_cont, setting_volume_obj_id_guard_station_label, -1, SOUND_LANG_ID_GUARD_STATION, layout_setting_sound_language_get, -1, NULL, setting_guard_station_volume_slider_change_cb, -1},
             {0, 70 + 140 * 3, 970, 140, setting_volume_obj_id_extension_cont, setting_volume_obj_id_extension_label, -1, SOUND_LANG_ID_EXTENSION, layout_setting_sound_language_get, -1, NULL, setting_extension_volume_slider_change_cb, -1},
-            {0, 70 + 140 * 4, 970, 140, setting_volume_obj_id_touch_notification_cont, setting_volume_obj_id_touch_notification_label, -1, SOUND_LANG_ID_TOUCH_NOTIFICATION, layout_setting_sound_language_get, -1, NULL, setting_touch_notification_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 4, 970, 70, setting_volume_obj_id_touch_notification_cont, setting_volume_obj_id_touch_notification_label, -1, SOUND_LANG_ID_TOUCH_NOTIFICATION, layout_setting_sound_language_get, -1, NULL, setting_touch_notification_volume_slider_change_cb, -1},
         };
         int slider_volume_group[][6] = {
 
@@ -435,12 +436,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
              setting_volume_obj_id_extension_voice_slider_right_btn,
              setting_volume_obj_id_extension_voice_slider},
 
-            {setting_volume_obj_id_touch_notification_voice_img,
-             setting_volume_obj_id_touch_notification_voice_slider_cont,
-             setting_volume_obj_id_touch_notification_voice_slider_text,
-             setting_volume_obj_id_touch_notification_voice_slider_left_btn,
-             setting_volume_obj_id_touch_notification_voice_slider_right_btn,
-             setting_volume_obj_id_touch_notification_voice_slider},
+                {-1, -1, -1, -1, -1, -1},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_volume_obj_id_list);
@@ -454,7 +450,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
                                                                                  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                 0, i == 0 ? 17 : 52, 576, 43, main_list_group[i].title_id,
+                                                                                 0, (i == 0  || i == 5)? 17 : 52, 576, 43, main_list_group[i].title_id,
                                                                                  main_list_group[i].title_language_id == -1 ? NULL : main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                  0, 42, 576, 29, main_list_group[i].sub_id,
                                                                                  main_list_group[i].sub_language_id == -1 ? NULL : main_list_group[i].sub_language_cb(main_list_group[i].sub_language_id), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,

@@ -437,9 +437,8 @@ static void layout_away_sensor_select_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(security_list_info_t); i++)
         {
 
-            if(((user_data_get()->alarm.alarm_enable[i] == 1) || (user_data_get()->alarm.alarm_enable[i] == 2)) && (user_data_get()->alarm.alarm_enable_always[0][i] == false && user_data_get()->alarm.alarm_enable_always[1][i]) == false)
+            if(((user_data_get()->alarm.alarm_enable[i] == 1) || (user_data_get()->alarm.alarm_enable[i] == 2)) && (user_data_get()->alarm.alarm_enable_always[0][i] == false) && (user_data_get()->alarm.alarm_enable_always[1][i] == false))
             {
-                printf(" main_list_group[i].cont_id is %d\n", main_list_group[i].cont_id);
                 lv_obj_t *parent =   lv_common_img_text_btn_create((j <= 3)?page_1:page_2,  main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w,  main_list_group[j].h,
                                         main_list_group[i].click_cb,  LV_OPA_COVER, 0x242526, LV_OPA_COVER, 0x242526,
                                             8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
