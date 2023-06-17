@@ -21,7 +21,7 @@ static const char *layout_setting_recording_language[RECORDING_LANG_ID_TOTAL][LA
         /***** SETTING_RECORD_LANG_ID_ALWAYS_10SEC *****/
         {"10 seconds per camera", "10 seconds per camera", "10 seconds per camera", "10 segundos por cámara", "每个摄像头10秒", "Her kamera icin 10 saniye", "Czas zapisu 10 sek.", "10 sekund na kameru", "10 ثواني"},
         /***** SETTING_RECORD_LANG_ID_ALWAYS_30SEC *****/
-        {"30 seconds per camera", "30 seconds per camera", "30 seconds per cameraу", "30 segundos por cámara", "每个摄像头30秒", "Her kamera icin 30 saniye", "Czas zapisu 30 sek.", "30 sekund na kameru", "30 ثواني"},
+        {"30 seconds per camera", "30 seconds per camera", "30 seconds per camera", "30 segundos por cámara", "每个摄像头30秒", "Her kamera icin 30 saniye", "Czas zapisu 30 sek.", "30 sekund na kameru", "30 ثواني"},
         /***** SETTING_RECORD_LANG_ID_ALWAYS_60SEC *****/
         {"60 seconds per camera", "60 seconds per camera", "60 seconds per camera", "60 segundos por cámara", "每个摄像头60秒", "Her kamera icin 60 saniye", "Czas zapisu 60 sek.", "60 sekund na kameru", "60 ثواني"},
 };

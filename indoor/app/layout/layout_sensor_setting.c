@@ -305,9 +305,12 @@ static void layout_sensor_setting_save(void)
                     if(user_data_get()->alarm.alarm_enable[i] == 1)
                     {
                         user_data_get()->alarm.alarm_enable_always[0][i] = true;
+                        user_data_get()->alarm.alarm_enable_always[1][i] = false;
+                        
                     }else
                     {
                         user_data_get()->alarm.alarm_enable_always[1][i] = true;
+                        user_data_get()->alarm.alarm_enable_always[0][i] = false;
                     }
 
                     user_data_get()->alarm.security_alarm_enable_list |= 0x01 << i;
@@ -509,17 +512,17 @@ static void layout_sensor_list_create(void)
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[6] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
             layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
-        {0, 72 * 7, 928, 72,
-            setting_sensor_settings_obj_id_item8_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_8, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[7] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[7] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[7] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
-            layout_setting_sensor_usage_language_get,
-            setting_sensor_settings_list_click, 2},
+        // {0, 72 * 7, 928, 72,
+        //     setting_sensor_settings_obj_id_item8_cont, 0, 1,
+        //     SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_8, layout_setting_sensor_usage_language_get,
+        // user_data_get()->alarm.alarm_enable[7] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[7] == 1?
+        // SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[7] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        //     layout_setting_sensor_usage_language_get,
+        //     setting_sensor_settings_list_click, 2},
         };
 
     lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_sensor_settings_obj_id_list);
-    lv_common_style_set_common(list, setting_sensor_settings_obj_id_list, 48, 88, 928, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+    lv_common_style_set_common(list, setting_sensor_settings_obj_id_list, 48, 88, 928, 504, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
     for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
     {
@@ -549,7 +552,7 @@ static void sat_layout_enter(sensor_settings)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SENSOR_USAGE_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SENSOR_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

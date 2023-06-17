@@ -1,3 +1,11 @@
+/*
+ * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @Date: 2023-06-09 13:41:31
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-06-10 09:47:03
+ * @FilePath: \app\layout\layout_setting_screen_clean.c
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+ */
 #include "layout_define.h"
 #include "layout_setting_frame_display_time.h"
 #include "layout_setting_standby_screen.h"
@@ -25,6 +33,7 @@ static void setting_screen_clean_timer(lv_timer_t *ptimer)
 }
 static void sat_layout_enter(setting_screen_clean)
 {
+        standby_timer_close();
         screen_clean_value = 30;
         /***********************************************
          ** 作者: leo.liu
@@ -68,6 +77,7 @@ static void sat_layout_enter(setting_screen_clean)
 }
 static void sat_layout_quit(setting_screen_clean)
 {
+        standby_timer_restart(true);
 }
 
 sat_layout_create(setting_screen_clean);

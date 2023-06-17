@@ -16,19 +16,19 @@
 static const char * layout_wifi_input_language[POWER_SETTING_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
 {
     {
-		"Please enter the account number","Please enter the account number","Please enter the account number"
+		"Please enter the account number","Please enter the account number","Please enter the account number","Please enter the account number","Please enter the account number","Please enter the account number","Please enter the account number","Please enter the account number","Please enter the account number"
 	},
 	{
-		"Please enter a password","Please enter a password","Please enter a password"
+		"Please enter a password","Please enter a password","Please enter a password","Please enter a password","Please enter a password","Please enter a password","Please enter a password","Please enter a password","Please enter a password"
 	},
 	{
-		"connrcting","connrcting","connrcting"
+		"connecting","connecting","connecting","connecting","connecting","connecting","connecting","connecting","connecting"
 	},
 	{
-		"connect failed","connect failed","connect failed"
+		"connect failed","connect failed","connect failed","connect failed","connect failed","connect failed","connect failed","connect failed","connect failed"
 	},
 	{
-		"Confirm","Confirm","Confirm"
+		"Confirm","Confirm","Confirm","Confirm","Confirm","Confirm","Confirm","Confirm","Confirm"
 	}
 };
 
