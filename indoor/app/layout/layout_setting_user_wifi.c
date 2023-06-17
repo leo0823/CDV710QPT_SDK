@@ -20,6 +20,8 @@ enum
 
         setting_user_wifi_obj_id_wifi_connected_user_cont,
 
+        setting_user_wifi_obj_id_wifi_connected_user_delete,
+
         setting_user_wifi_obj_id_wifi_discovered_user_cont,
 
         setting_user_wifi_obj_id_list,
@@ -156,6 +158,23 @@ static lv_obj_t *setting_user_wifi_discovered_network_list_create(void)
         list = lv_list_create(sat_cur_layout_screen_get());
         return list;
 }
+
+
+static void setting_wifi_delete_connected_wifi_info(lv_event_t *e)
+{
+        wifi_api_reset_default();
+        wifi_device_conneting();
+        wifi_device_close();
+        wifi_device_open();
+        
+        sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+}
+
+static void settign_wifi_add_click(lv_event_t *ev)
+{
+        wifi_input_user_setting(NULL);
+        sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
+}
 static void setting_user_wifi_discovered_network_display(void)
 {
         int list_item_y = 216;
@@ -165,6 +184,7 @@ static void setting_user_wifi_discovered_network_display(void)
         ** 说明: 加载连接的设备
         ***********************************************/
         unsigned char ip[32] = {0};
+        wifi_connected_status = false;
         wifi_device_connection_stauts((unsigned char *)(wifi_connected_info.name), &wifi_connected_info.free, ip, &wifi_connected_status, NULL);
         wifi_info *p_wifi_info_group;
         int total = 0;
@@ -188,6 +208,11 @@ static void setting_user_wifi_discovered_network_display(void)
                                               wifi_connected_info.name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 48, 48, 2,
                                               wifi_setting_user_wifi_icon_get(&wifi_connected_info), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_connected_user_delete,920, 216 + 12, 48, 48,
+                                                setting_wifi_delete_connected_wifi_info, true, LV_OPA_TRANSP, 0x0096FF, LV_OPA_TRANSP, 0x0096FF,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                resource_ui_src_get("btn_list_delete.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
                 list_item_y += 72;
         }
@@ -198,11 +223,14 @@ static void setting_user_wifi_discovered_network_display(void)
         ** 说明:显示搜索的文本
         ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, 322, list_item_y + 10, 558, 48,
-                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_DISCOVERED_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, 306, list_item_y + 10, 718, 48,
+                                        settign_wifi_add_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        16, 13, 300, 27, 0,
+                                        layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_DISCOVERED_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                        590, 16, 80, 32, 2,
+                                        (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
                 list_item_y += 58;
         }
         /***********************************************
@@ -228,11 +256,7 @@ static void setting_user_wifi_discovered_network_display(void)
                 }
         }
 }
-static void settign_wifi_add_click(lv_event_t *ev)
-{
-        wifi_input_user_setting(NULL);
-        sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
-}
+
 static void wifi_display_status_timer(lv_timer_t *pt)
 {
         bool conneted = false;
@@ -300,13 +324,13 @@ static void sat_layout_enter(setting_user_wifi)
          ***********************************************/
         {
                 lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_add_cont, 306, 168, 718, 48,
-                                              settign_wifi_add_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               16, 13, 300, 27, 0,
                                               layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_ADD_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                              590, 16, 80, 32, 2,
-                                              (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
+                                              590, 16, 80, 32, -1,
+                                              NULL, LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
         }
         setting_user_wifi_discovered_network_display();
 

@@ -535,7 +535,8 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
 }
 
 static void sat_layout_enter(intercom_call)
-{ 
+{
+        standby_timer_close(); 
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
@@ -682,6 +683,7 @@ static void sat_layout_enter(intercom_call)
 static void sat_layout_quit(intercom_call)
 {
         ipcamera_state_callback_register(NULL);
+        standby_timer_restart(true);
         checkbox_s_num = 0;
 }
 sat_layout_create(intercom_call);

@@ -620,10 +620,12 @@ static void setting_general_call_time_obj_click(lv_event_t *ev)
         setting_general_call_time_num_display();
         
 }
+#if 0
 static void setting_general_sensor_usage_setting_obj_click(lv_event_t *ev)
 {
         sat_layout_goto(setting_sensor_usage, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
+#endif
 static void setting_general_download_mobile_obj_click(lv_event_t *ev)
 {
         sat_layout_goto(setting_download, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
@@ -719,10 +721,9 @@ static lv_obj_t *setting_sub_list_create(void)
             {0, 72 * 5, 622, 72, setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_title, setting_general_obj_id_door_opener_module_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENER_MODULE, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK, layout_setting_general_language_get, setting_general_door_opener_module_obj_click},
             {0, 72 * 6, 622, 72, setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_title, setting_general_obj_id_door_opener_num_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1, layout_setting_general_language_get, setting_general_door2_opener_num_obj_click},
             {0, 72 * 7, 622, 72, setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_title, setting_general_obj_id_call_time_sub, SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_1_MINUTE, layout_setting_general_language_get, setting_general_call_time_obj_click},
-            {0, 72 * 8, 622, 72, setting_general_obj_id_sensor_usage_setting_cont, setting_general_obj_id_sensor_usage_setting_title, -1, SETTING_GENERAL_LANG_ID_LANG_SENSOR_USAGE_SETTING, layout_setting_general_language_get, -1, NULL, setting_general_sensor_usage_setting_obj_click},
-            {0, 72 * 9, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP, layout_setting_general_language_get, -1, NULL, setting_general_download_mobile_obj_click},
-            {0, 72 * 10, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA, layout_setting_general_language_get, -1, NULL, setting_general_initialization_userdata_obj_click},
-            {0, 72 * 11, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION, layout_setting_general_language_get, -1, NULL, setting_general_version_information_obj_click},
+            {0, 72 * 8, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP, layout_setting_general_language_get, -1, NULL, setting_general_download_mobile_obj_click},
+            {0, 72 * 9, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA, layout_setting_general_language_get, -1, NULL, setting_general_initialization_userdata_obj_click},
+            {0, 72 * 10, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION, layout_setting_general_language_get, -1, NULL, setting_general_version_information_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);

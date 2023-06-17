@@ -416,7 +416,7 @@ static void sat_layout_enter(alarm)
 {
         alarm_return = false;
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
-        if(1)
+        standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
 
         layout_alarm_monitor_open();
@@ -625,6 +625,7 @@ static void sat_layout_quit(alarm)
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
         record_video_stop();
         monitor_close();
+        standby_timer_restart(true);
 
 
 }
