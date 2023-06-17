@@ -1,5 +1,3 @@
-
-
 #ifndef _SETTING_SIGNLE_OPERATION_NETWORK_H_
 #define _SETTING_SIGNLE_OPERATION_NETWORK_H_
 typedef enum {
@@ -7,6 +5,7 @@ typedef enum {
 	SIGNLE_OPERATION_NETWORK_ID_LANG_OPERATION_NETWORK, 
 	SIGNLE_OPERATION_NETWORK_ID_LANG_OPERATION_STRCUUTRE, 
 	SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE,
+	SIGNLE_OPERATION_NETWORK_ID_LANG_SERVER_SYSTEM,
 	SIGNLE_OPERATION_NETWORK_ID_LANG_IP,
 	SIGNLE_OPERATION_NETWORK_ID_LANG_GATEWAY,
 	SIGNLE_OPERATION_NETWORK_ID_LANG_MASK,
@@ -25,6 +24,9 @@ static const char * layout_single_operation_network_language[SIGNLE_OPERATION_NE
 	},
 	{
 		"하나뿐인", "单户型", "single", 
+	},
+	{
+		"server system","server system","server system",
 	},
 	{
 		"Product IP", "产品IP", "Product IP", 

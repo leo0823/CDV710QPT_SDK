@@ -37,7 +37,8 @@ typedef enum
         SETTING_GENERAL_LANG_ID_LANG_3_MINUTE,
         SETTING_GENERAL_LANG_ID_LANG_5_MINUTE,
 
-        SETTING_GENERAL_LANG_ID_LANG_SENSOR_USAGE_SETTING,
+        SETTING_GENERAL_LANG_ID_LANG_SENSOR_SETTING,
+        SETTING_GENERAL_LANG_ID_LANG_SENSOR_TEST,
         SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP,
         SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA,
         SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION,
@@ -173,9 +174,14 @@ static const char *layout_setting_general_language[SETTING_GENERAL_LANG_ID_LANG_
             "5 minute",
         },
         {
-            "Sensor usage setting",
-            "Sensor usage setting",
-            "Sensor usage setting",
+            "Sensor  setting",
+            "Sensor  setting",
+            "Sensor  setting",
+        },
+        {
+            "Sensor  test",
+            "Sensor  test",
+            "Sensor  test",
         },
         {
             "Download mobile app",

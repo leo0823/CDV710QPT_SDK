@@ -166,7 +166,7 @@ static void sat_layout_enter(setting_frame_display_time)
                      setting_frame_display_time_checkbox_click, setting_frame_display_time_obj_id_always_img},
                     {0, 88, 928, 88,
                      setting_frame_display_time_obj_id_time_designation_cont, setting_frame_display_time_obj_id_time_designation_title, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_OPEN_FRAME, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_LANG_ID_TIME_DESIGNATION, layout_setting_standby_screen_language_get,
                      -1, NULL,
                      setting_frame_display_time_checkbox_click,
                      setting_frame_display_time_obj_id_time_designation_img}};
@@ -262,7 +262,6 @@ static void sat_layout_quit(setting_frame_display_time)
         lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_frame_display_time_obj_id_roller_start_hour);
         lv_roller_get_selected_str(obj, buffer, 8);
         sscanf(buffer, "%d",&hour);        
-        printf("buffer is %s\n",buffer);
         /***** start_min *****/
         obj = lv_obj_get_child_form_id(parent, setting_frame_display_time_obj_id_rolle_start_min);
         lv_roller_get_selected_str(obj, buffer, 8);

@@ -3,6 +3,7 @@
 #include "layout_setting_general.h"
 #include "layout_single_operation_network.h"
 #include "layout_ipc_camera.h"
+#include "tuya/tuya_api.h"
 enum
 {
         setting_installation_obj_id_title,
@@ -37,7 +38,19 @@ enum
         setting_installation_obj_id_front_cctv_cont,
 
         setting_installation_obj_id_factory_reset_cont,
+
+        setting_installation_obj_id_factory_reset_msg_bg,
+
+
 };
+typedef enum
+{
+        factory_reset_obj_id_msgbox,
+        factory_reset_obj_id_title,
+        factory_reset_obj_id_conrfirm,
+        factory_reset_obj_id_cancel,
+        
+}factory_reset_msg_bg_obj_id;
 
 static void setting_installation_operating_structure_obj_click(lv_event_t *ev)
 {
@@ -68,9 +81,7 @@ static void setting_installation_sensor_obj_click(lv_event_t *ev)
 {
         sat_layout_goto(sensor_settings, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
-static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
-{
-}
+
 static void setting_installation_front_door_camera_obj_click(lv_event_t *ev)
 {
         layout_ipc_cmeara_is_doorcamera_set(true);
@@ -81,9 +92,54 @@ static void setting_installation_front_cctv_obj_click(lv_event_t *ev)
         layout_ipc_cmeara_is_doorcamera_set(false);
         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
+
+static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(sensors_test, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void setting_installation_factory_reset_confirm_func(lv_event_t * ev)
+{
+	user_data_reset();
+	tuay_api_data_reset();
+	alarm_list_del_all();
+        call_list_del_all();
+	wifi_api_reset_default();
+	// usleep(1000 * 1000);
+	// system("reboot");
+        setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
+}
+
+static void setting_installation_factory_reset_cancel_func(lv_event_t * ev)
+{
+        setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
+}
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
+        lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg,factory_reset_obj_id_msgbox, 282, 93, 460, 352);
+        setting_msgdialog_msg_create(masgbox,factory_reset_obj_id_title,"Do you want to process initiatialization?", 0, 110, 460, 120);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,factory_reset_obj_id_conrfirm,factory_reset_obj_id_cancel ,"Confirm","Cancel", setting_installation_factory_reset_confirm_func,setting_installation_factory_reset_cancel_func);
 }
+
+static void layout_setting_installation_open_structure_dispaly(lv_obj_t * list)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_installation_obj_id_operating_structure_cont),1);
+        if(user_data_get()->system_mode == 0)
+        {
+                lv_label_set_text(obj,layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE));
+        }else if(user_data_get()->system_mode == 1)
+        {
+                lv_label_set_text(obj,layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SERVER_SYSTEM));
+        }
+}
+
+static void layout_setting_installation_build_house_no_display(lv_obj_t * list)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_installation_obj_id_building_house_no_cont),1);
+        lv_label_set_text(obj,network_data_get()->sip_user);
+       
+}
+
 static lv_obj_t *setting_installation_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
@@ -124,22 +180,22 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              LANG_COMMON_ID_OFF, language_common_string_get,
              setting_installation_sensor_obj_click, -1},
             {0, 72 * 7, 622, 72,
-             setting_installation_obj_id_sensor_test_cont, 0, 1,
+             setting_installation_obj_id_sensor_test_cont, 0, -1,
              INSTALLATION_LANG_ID_SENSOR_TEST, layout_setting_installation_language_get,
              -1, NULL,
              setting_installation_sensor_test_obj_click, -1},
             {0, 72 * 8, 622, 72,
-             setting_installation_obj_id_front_door_camera_cont, 0, 1,
+             setting_installation_obj_id_front_door_camera_cont, 0, -1,
              INSTALLATION_LANG_ID_FRONT_DOOR_CAMERA, layout_setting_installation_language_get,
              -1, NULL,
              setting_installation_front_door_camera_obj_click, -1},
             {0, 72 * 9, 622, 72,
-             setting_installation_obj_id_front_cctv_cont, 0, 1,
+             setting_installation_obj_id_front_cctv_cont, 0, -1,
              INSTALLATION_LANG_ID_FRONT_CCTV, layout_setting_installation_language_get,
              -1, NULL,
              setting_installation_front_cctv_obj_click, -1},
             {0, 72 * 10, 622, 72,
-             setting_installation_obj_id_factory_reset_cont, 0, 1,
+             setting_installation_obj_id_factory_reset_cont, 0, -1,
              INSTALLATION_LANG_ID_FACTORY_RESET, layout_setting_installation_language_get,
              -1, NULL,
              setting_installation_factory_reset_obj_click, -1},
@@ -163,6 +219,8 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        layout_setting_installation_open_structure_dispaly(list);
+        layout_setting_installation_build_house_no_display(list);
         return list;
 }
 
@@ -190,6 +248,7 @@ static void setting_installation_i_heave_read_obj_click(lv_event_t *ev)
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
         }
 }
+
 static void setting_installation_confirm_obj_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_this_menu_label);

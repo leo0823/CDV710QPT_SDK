@@ -43,7 +43,7 @@ static const char *layout_setting_installation_language[INSTALLATION_LANG_ID_TOT
 
         {"Building - House No.", "Building - House No.", "Building - House No."},
 
-        {"IP address", "IP address", "IP address"},
+        {"Operation server IP address.", "Operation server IP address.", "Operation server IP address."},
 
         {"IP address setting, default gateway, subnet mask, DNS setting", "IP address setting, default gateway, subnet mask, DNS setting", "IP address setting, default gateway, subnet mask, DNS setting"},
 

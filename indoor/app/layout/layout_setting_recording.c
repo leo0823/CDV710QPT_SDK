@@ -465,10 +465,10 @@ static void setting_recording_motion_obj_click(lv_event_t *ev)
 static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
 {
         int mode = setting_recording_checkbox_mode_get();
-        if (mode >= 0)
+        user_data_get()->always_monitoring = mode;
+        user_data_save();
+        if (mode >= 1)
         {
-                user_data_get()->always_monitoring = mode;
-                user_data_save();
                 sat_layout_goto(always_record, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
         }
         setting_recording_msgbox_del();
@@ -483,7 +483,7 @@ static void setting_recording_always_obj_click(lv_event_t *ev)
 	item[3] = layout_setting_recording_language_get(RECORDING_LANG_ID_60_SEC_PER_CAMERA);
         setting_recording_msgbox_create(layout_setting_recording_language_get(RECORDING_LANG_ID_ALWAYS_MONITORING),
                                         setting_recording_msgbox_cancel_click, ssetting_recording_always_msgbox_confirm_click, setting_recording_auto_msgbox_item_click,
-                                        item, 4, 0);
+                                        item, 4, user_data_get()->always_monitoring);
 }
 
 static lv_obj_t *setting_recording_sub_list_create(void)
