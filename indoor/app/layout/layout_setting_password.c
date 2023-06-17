@@ -44,7 +44,7 @@ static void setting_password_msg_confirm_click(lv_event_t *e)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_msgbox_parent);
         lv_obj_del(obj);
 }
-static lv_obj_t *setting_password_msgbox_create(void)
+static lv_obj_t *setting_password_msgbox_create(const char * str)
 {
         lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_password_obj_id_msgbox_parent, 0, 0, 1024, 600,
                                                     NULL, true, LV_OPA_80, 0, LV_OPA_80, 0,
@@ -62,7 +62,7 @@ static lv_obj_t *setting_password_msgbox_create(void)
                               NULL, LV_OPA_TRANSP, 0xffffff, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                              layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                              str, 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
         lv_common_img_text_btn_create(msgbox, setting_password_obj_id_confirm, 0, 221, 460, 62,
                                       setting_password_msg_confirm_click, LV_OPA_COVER, 0x0096ff, LV_OPA_COVER, 0x0096ff,
@@ -92,9 +92,28 @@ static void setting_password_modiy_confirm_enable(bool en)
                 lv_obj_set_style_bg_color(apple, lv_color_hex(0x47494a), LV_PART_MAIN);
         }
 }
+
 static void setting_password_modiy_confirm_click(lv_event_t *ev)
 {
-        setting_password_msgbox_create();
+        lv_obj_t * input_cont1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_password_obj_id_modiy_cont),setting_password_obj_id_modiy_inputbox1_cont);
+        lv_obj_t * input_cont2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_password_obj_id_modiy_cont),setting_password_obj_id_modiy_inputbox2_cont);
+        char buffer[5];
+        memset(buffer,0,sizeof(buffer));
+        char verify_buffer[5];
+        memset(verify_buffer,0,sizeof(verify_buffer)); 
+        for(int i = 0; i<4; i++)
+        {
+                strcat(buffer,lv_textarea_get_text(lv_obj_get_child_form_id(input_cont1, i)));
+                strcat(verify_buffer,lv_textarea_get_text(lv_obj_get_child_form_id(input_cont2,  i)));
+        }
+        if(strncmp(buffer,verify_buffer,4) != 0)
+        {
+                setting_password_msgbox_create(layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH));
+        }else
+        {
+                sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
+
 }
 /***********************************************
 ** 作者: leo.liu
@@ -430,6 +449,10 @@ static lv_obj_t *setting_password_reset_list_create(lv_obj_t *parent)
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        if(user_data_get()->system_mode == 0)
+        {
+                setting_password_reset_household_obj_click(NULL);
         }
         return list;
 }

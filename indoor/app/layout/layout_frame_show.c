@@ -223,7 +223,6 @@ static bool frame2_show_thumb_media_display_callback(const char *data, int x, in
 							SAT_DEBUG("frame_buffer_cur_a->header.h != h (%d != %d)", frame_buffer_cur_a->header.h, h);
 							return false;
 					}
-					printf("===%d=========%s===\n",__LINE__,__func__);
 					lv_memcpy_small((uint8_t *)frame_buffer_cur_a->data, data, w * h * 3);
 					SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
         	}
@@ -241,15 +240,12 @@ static bool frame2_show_thumb_media_display_callback(const char *data, int x, in
 							SAT_DEBUG("frame_buffer_cur_a->header.h != h (%d != %d)", frame_buffer_cur_b->header.h, h);
 							return false;
 					}
-					printf("===%d=========%s===\n",__LINE__,__func__);
 					lv_memcpy_small((uint8_t *)frame_buffer_cur_b->data, data, w * h * 3);
 					SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
         	}
 		}
 
- 
-        SAT_DEBUG("thumb display failed(%p,%p)\n", frame_buffer_cur_b, frame_buffer_cur_b->data);
-        return false;
+        return true;
 }
 
 static void frame_show_media_thumb_display(const char * path)

@@ -49,7 +49,13 @@ static const user_data_info user_data_default =
             .door_talk_volume = 2,
             .inter_ring_volume = 2,
             .inter_talk_volume = 2,
+            
             .buzzer = 1,
+            .front_door = 1,
+            .common_entrance = 1,
+            .securirty_office = 1,
+            .securirty_office = 1,
+
             .entracne_volume = 1,
             .entrancr_voice = 1,
             .common_entrance_volume = 1,
@@ -87,13 +93,14 @@ static const user_data_info user_data_default =
             .door1_open_door_mode = 0,
             .door2_lock_num = 1,
             .password = {"1234"},
+            .comm_ent_password = {"1234"},
         },
         .alarm = {
         .auto_record = false,
-        .away_alarm_enable_list = 0x00,
-        .security_alarm_enable_list = 0x00,
-        .security_alarm_enable = false,
-        .away_alarm_enable = false,
+        .away_alarm_enable_list = 0x00,//离家设防列表
+        .security_alarm_enable_list = 0x00,//安全设防列表
+        .away_alarm_enable = false,//离家设防使能状态
+        .security_alarm_enable = false,//安全设防状态显示
         .emergency_mode = 0,//0:手动触发警报 1:安防系统自动触发警报
 
         .alarm_enable[0] = 0,//0不使能，1：NC低电平触发2：NO高电平触发
@@ -235,9 +242,10 @@ static void user_data_check_valid(void)
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
-        user_data_display_check_range_out(lcd_brigtness, 0, 100);
+        user_data_display_check_range_out(lcd_brigtness, 1, 100);
         user_data_display_check_range_out(frame_time_en, 0, 1);
         user_data_display_check_range_out(frame_time_start, 0, 1440);
+        user_data_display_check_range_out(screen_off_time, 15, 180);
         user_data_display_check_range_out(frame_time_end, 0, 1440);
         user_data_display_check_range_out(night_mode, 0, 1);
         user_data_display_check_range_out(night_time_start, 0, 1440);
@@ -279,8 +287,8 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(security_alarm_enable, 0, 1);
         user_data_alarm_check_range_out(emergency_mode, 0, 1);
 
-        user_data_alarm_check_range_out(away_alarm_enable_list, 0, 0xff);
-        user_data_alarm_check_range_out(security_alarm_enable_list, 0,0xff);
+        user_data_alarm_check_range_out(away_alarm_enable_list, 0, 0x7f);
+        user_data_alarm_check_range_out(security_alarm_enable_list, 0,0x7f);
         user_data_alarm_check_range_out(alarm_enable[0], 0, 2);
         user_data_alarm_check_range_out(alarm_trigger[0], 0, 1);
         user_data_alarm_check_range_out(alarm_enable[1], 0, 2);
