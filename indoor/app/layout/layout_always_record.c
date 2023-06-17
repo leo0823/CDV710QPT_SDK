@@ -16,6 +16,8 @@ typedef enum
 	always_record_head_cont_obj_id_timeout_label
 } always_record_head_cont_obj_id;
 static void monitor_obj_timeout_timer(lv_timer_t *ptimer);
+static int streams_count = 0;
+static int snap_count = 0;
 /************************************************************
 ** 函数说明: 多通道循环录像还是单通道
 ** 作者: xiaoxiao
@@ -208,6 +210,8 @@ static void layout_always_record_start(void)
 	}
 	else if((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR))
 	{
+    snap_count ++;
+    SAT_DEBUG("snap callback count is %d\n",snap_count);
         record_jpeg_start(REC_MODE_ALWAYS);
 
 	}
@@ -276,15 +280,13 @@ static void monitior_obj_channel_info_obj_display(void)
 }
 static void layout_always_monitor_open_task(lv_timer_t *task)
 {
-	/* if (always_record_loop == true) */
-	{
-		layout_always_monitor_open();
-        monitior_obj_channel_info_obj_display();
+        /* if (always_record_loop == true) */
+        {
+                layout_always_monitor_open();
+                monitior_obj_channel_info_obj_display();
 
-	}
-	lv_timer_del(task);
-    lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
-    lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
+        }
+    lv_timer_del(task);
 }
 
 
@@ -310,6 +312,8 @@ static void always_record_video_state_callback(bool record_ing)
 static void always_record_snapshot_state_callback(bool record_ing)
 {
     is_always_snapshot_ing = record_ing;
+    snap_count ++;
+    SAT_DEBUG("snap callback count is %d\n",snap_count);
     always_record_record_btn_display();
 }
 
@@ -476,7 +480,9 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_always_record_streams_running_register_callback(char *arg)
 {
-
+        streams_count ++;
+        SAT_DEBUG("streams callback count is %d\n",streams_count);
+        lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
         return true;
 
@@ -486,6 +492,8 @@ static bool layout_always_record_streams_running_register_callback(char *arg)
 
 static void sat_layout_enter(always_record)
 {
+        snap_count = 0;
+        streams_count = 0;
     always_record_loop = true;
     is_always_record_video_ing = false;
     always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
@@ -582,7 +590,6 @@ static void sat_layout_enter(always_record)
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
-                        lv_timer_ready(lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL));
                 }
         }
  
@@ -608,6 +615,7 @@ static void sat_layout_quit(always_record)
     /*sd卡状态处理 */
     sd_state_channge_callback_register(NULL);
     record_state_callback_register(NULL);
+    snapshot_state_callback_register(NULL);
     
     standby_timer_restart(true);
 

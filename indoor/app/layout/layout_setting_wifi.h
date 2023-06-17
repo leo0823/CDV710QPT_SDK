@@ -1,5 +1,3 @@
-
-
 #ifndef _SETTING_WIFI_H_
 #define _SETTING_WIFI_H_
 
@@ -22,7 +20,7 @@ static const char * layout_setting_wifi_language[WIFI_SETTING_ID_LANG_TOTAL][LAN
 		"Wi-Fi", "Wi-Fi","Wi-Fi",
 	},
         {
-		"Add Wi-Fi network", "Add Wi-Fi network","Add Wi-Fi network",
+		"Connected network", "Connected network","Connected network",
 	},
         {
 		"Discovered networks", "Discovered networks","Discovered networks",

@@ -45,6 +45,8 @@ static void setting_screen_screen_clean_obj_click(lv_event_t *ev)
 {
      sat_layout_goto(setting_screen_clean, LV_SCR_LOAD_ANIM_MOVE_LEFT,SAT_VOID);   
 }
+
+
 static lv_obj_t *setting_screen_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
@@ -96,6 +98,14 @@ static lv_obj_t *setting_screen_sub_list_create(void)
                         resouce_file_src_free(left_src);
                         resouce_file_src_free(right_src);
                 }
+
+                if (main_list_group[i].cont_id == setting_screen_obj_id_standby_screen_cont)
+                {
+                        lv_obj_t * sub_obj = lv_obj_get_child_form_id(item,setting_screen_obj_id_standby_screen_sub);
+                        int offset = user_data_get()->display.screen_off_time == 15 ? 0 : user_data_get()->display.screen_off_time == 30 ? 1 : user_data_get()->display.screen_off_time == 60 ? 2 : 3;
+                        lv_label_set_text(sub_obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
+                }
+
         }
         return list;
 }

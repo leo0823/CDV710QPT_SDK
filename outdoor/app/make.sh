@@ -28,6 +28,7 @@ copy_to_rootfs()
 	  mkdir ./rootfs/rootfs/resource/app
         cp ./build/SAT_ANYKA3918.BIN ./rootfs/rootfs/resource/app/
         cp -r layout/resource/rings rootfs/rootfs/resource/app/rings/
+        cp -r layout/resource/onvif rootfs/rootfs/resource/app/onvif/
 }
 
 make_rootfs()

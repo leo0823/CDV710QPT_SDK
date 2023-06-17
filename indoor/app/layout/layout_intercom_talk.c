@@ -231,6 +231,7 @@ static bool intercom_talk_call_answer_callback(char *args)
 }
 static void sat_layout_enter(intercom_talk)
 {
+        standby_timer_close();
         intercom_talk_timeout = 30;
         intercom_talk_status_background_display();
         /***********************************************
@@ -355,6 +356,7 @@ static void sat_layout_enter(intercom_talk)
 
 static void sat_layout_quit(intercom_talk)
 {
+        standby_timer_restart(true);
         intercom_call_state = 0;
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
 
