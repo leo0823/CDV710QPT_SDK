@@ -22,7 +22,7 @@ enum
 
         /****************************************************************
         2022-09-21 author:leo.liu 说明:arg1 1:online,arg2:online num
-                                                                                 2:rtsp streadm,arg2:avlid num
+                                                                2:rtsp streadm,arg2:avlid num
         *****************************************************************/
         MSG_EVENT_CMD_IPCAMERA,
 
@@ -60,7 +60,10 @@ enum
          2022-09-21 author:leo.liu motion detection
         *****************************************************************/
         MSG_EVENT_CMD_MOTION_DETECTION,
-
+        /****************************************************************
+       2022-09-21 author:leo.liu ring play:arg1:0,start,1:finish
+      *****************************************************************/
+        MSG_EVENT_CMD_AUDIO_RING_PLAY,
 };
 typedef enum
 {
@@ -261,4 +264,10 @@ void tuya_event_cmd_register(bool (*callback)(TUYA_CMD cmd, int arg1));
 ** 说明: 移动侦测事件处理
 ***********************************************/
 void moiton_detection_event_cmd_register(bool (*callback)(void));
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 9:53:56
+** 说明:铃声播放处理
+***********************************************/
+void ring_play_event_cmd_register(bool (*callback)(int arg));
 #endif
