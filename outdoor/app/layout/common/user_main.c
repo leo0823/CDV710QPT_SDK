@@ -28,6 +28,7 @@
 #include "common/sat_main_event.h"
 #include "common/user_key.h"
 #include "common/sat_linphone_event.h"
+#include "common/sat_main_event.h"
 #include "common/user_data.h"
 #include "common/user_linphone.h"
 #include "common/sat_user_common.h"
@@ -115,7 +116,7 @@ static void linux_kerner_init(void)
         char mac[128] = {0};
         if (network_mac_get(mac) == true)
         {
-                //   setenv("SIP", mac, 1);
+                setenv("SIP", mac, 1);
         }
         else
         {
@@ -217,7 +218,7 @@ static void video_stream_status_callback(bool en)
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
- * 
+ *
  * @功能: 主函数入口
  * @return:
  */
