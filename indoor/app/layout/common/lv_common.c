@@ -24,7 +24,7 @@ lv_obj_t *lv_common_img_btn_create(lv_obj_t *parent, int id, int x, int y, int w
 
         lv_common_style_set_common(obj, id, x, y, w, h, LV_ALIGN_DEFAULT, LV_PART_MAIN);
         lv_common_style_set_boader(obj, defalut_radius, boarder_default_opa, defalut_boarder_width, default_boarder_side, boarder_default_color, LV_PART_MAIN);
-        lv_common_style_set_boader(obj, press_radius, boarder_press_opa, press_boarder_width, press_boarder_side, boarder_default_color, LV_STATE_PRESSED);
+        lv_common_style_set_boader(obj, press_radius, boarder_press_opa, press_boarder_width, press_boarder_side, boarder_press_color, LV_STATE_PRESSED);
         lv_common_style_set_img(obj, img_src, press_img_recolor_opa, press_img_recolor, align, LV_PART_MAIN, LV_STATE_PRESSED);
         lv_common_style_set_event(obj, cb, click, default_bg_opa, default_bg_color, LV_PART_MAIN, press_bg_opa, press_bg_color, LV_STATE_PRESSED);
         return obj;
@@ -605,7 +605,7 @@ lv_obj_t *lv_common_slider_create(lv_obj_t *parent, int id, int x, int y, int w,
                                                         left_btn_img_src, left_btn_press_img_recolor_opa, left_btn_press_img_recolor, left_btn_img_align);
 
                 lv_obj_add_event_cb(left_btn_obj, lv_common_slider_left_obj_click, LV_EVENT_CLICKED, slider_obj);
-                lv_obj_set_ext_click_area(left_btn_obj, 30);
+                lv_obj_set_ext_click_area(left_btn_obj, 10);
         }
 
         if (right_btn_id >= 0)
@@ -617,7 +617,7 @@ lv_obj_t *lv_common_slider_create(lv_obj_t *parent, int id, int x, int y, int w,
                                                          right_btn_img_src, right_btn_press_img_recolor_opa, right_btn_press_img_recolor, right_btn_img_align);
 
                 lv_obj_add_event_cb(right_btn_obj, lv_common_slider_right_obj_click, LV_EVENT_CLICKED, slider_obj);
-                lv_obj_set_ext_click_area(right_btn_obj, 30);
+                lv_obj_set_ext_click_area(right_btn_obj, 10);
         }
         return obj;
 }
