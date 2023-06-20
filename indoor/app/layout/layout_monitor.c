@@ -298,7 +298,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                         monitor_channel_set(ch);
                         monitor_open(true);
                         layout_monitor_report_vaild_channel();
-                        monitor_timeout_sec_reset(30);
+                        monitor_timeout_sec_reset(60);
                         monitior_obj_channel_info_obj_display();
                 }
         }
@@ -311,7 +311,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                         monitor_channel_set(ch);
                         monitor_open(true);
                         layout_monitor_report_vaild_channel();
-                        monitor_timeout_sec_reset(30);
+                        monitor_timeout_sec_reset(60);
                         monitior_obj_channel_info_obj_display();
                 }
         }
@@ -485,7 +485,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 {
         if (ch == MON_CH_DOOR1)
         {
-                if (mode == 1)
+                if (mode == 2)
                 {
                         door1_lock1_pin_ctrl(en);
                 }
@@ -513,6 +513,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 if (mode == 1)
                 {
+                        SAT_DEBUG("monitor_unlock1_ctrl");
                         const char *user = monitor_channel_get_url(ch, false);
                         char *cmd[3] = {
                             "SAT_SHELL echo 33 > /sys/class/gpio/export",
@@ -531,6 +532,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
                 }
                 else
                 {
+                        SAT_DEBUG("monitor_unlock2_ctrl");
                         const char *user = monitor_channel_get_url(ch, false);
                         char *cmd[3] = {
                             "SAT_SHELL echo 32 > /sys/class/gpio/export",
@@ -999,7 +1001,7 @@ static void sat_layout_enter(monitor)
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = false;
         is_monitor_record_video_ing = false;
-        monitor_timeout_sec_reset(30);
+        monitor_timeout_sec_reset(60);
         call_duration = 0;
 
         /***********************************************

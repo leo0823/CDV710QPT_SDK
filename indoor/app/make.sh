@@ -41,7 +41,7 @@ make_rootfs()
         ./build-project.sh
         ./make_sd_upgrade_sigmastar.sh
         cd -
-        cp rootfs/image/output/images/CDV810QPT.BIN ./ 
+        cp rootfs/image/output/images/CDV70QPT.BIN ./ 
 
 	
        

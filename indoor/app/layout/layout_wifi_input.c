@@ -132,6 +132,7 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
 
                         setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
                         setting_msgdialog_msg_confirm_btn_create(parent,wifi_input_obj_id_confirm_btn,wifi_input_msg_dialog_error_confirm_up);
+                        standby_timer_restart(true);
 		}
 		else
 		{
@@ -238,6 +239,7 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
 		}
                 if(1)
                 {
+                        standby_timer_close();
                         wifi_input_msg_dialog_display();
                 }
 
@@ -326,5 +328,6 @@ static void sat_layout_enter(wifi_input)
 }
 static void sat_layout_quit(wifi_input)
 {
+        standby_timer_restart(true);
 }
 sat_layout_create(wifi_input);
