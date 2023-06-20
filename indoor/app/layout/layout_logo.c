@@ -136,7 +136,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         alarm_sensor_cmd_register(layout_alarm_trigger_default);//警报回调注册
 
         /***** 设置背光使能亮度 *****/
-	backlight_brightness_set(user_data_get()->display.lcd_brigtness);
+	backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
 
 
         if (user_data_get()->is_device_init == false)

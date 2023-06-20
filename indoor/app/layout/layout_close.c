@@ -249,7 +249,6 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
         lv_timer_del(ptimer);
         layout_motion_restart_motion_detection();
 
-
     }        
 }
 
