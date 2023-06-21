@@ -87,9 +87,8 @@ static void sat_layout_enter(setting_frame_item)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_STANDBY_SCREEN), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_ITEM_DISPLAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
-
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-3 14:13:25

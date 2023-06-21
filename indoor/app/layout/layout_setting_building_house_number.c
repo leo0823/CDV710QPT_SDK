@@ -183,6 +183,34 @@ static void setting_building_house_number_obj_keyboad_click(lv_event_t *e)
         }
         setting_building_house_number_next_obj_display();
 }
+
+static void setting_building_house_number_item_display(void)
+{
+        lv_obj_t * item1_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_building_number_label);
+        lv_obj_t * item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_building_number_textbox);
+
+        lv_obj_t * item2_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_foolr_number_label);
+        lv_obj_t * item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_foolr_number_textbox);
+
+        lv_obj_t * item3_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_household_number_label);
+        lv_obj_t * item3_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_household_number_textbox);
+
+        lv_obj_t * item4_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_extension_number_label);
+        lv_obj_t * item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_extension_number_textbox);
+
+        if(user_data_get()->system_mode == 0)
+        {
+                lv_obj_set_style_y(item1_label,250,LV_PART_MAIN);
+                lv_obj_set_style_y(item1_txt,257,LV_PART_MAIN);
+                lv_obj_set_style_y(item3_label,334,LV_PART_MAIN);
+                lv_obj_set_style_y(item3_txt,341,LV_PART_MAIN);
+                lv_obj_add_flag(item2_label,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(item2_txt,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(item4_label,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(item4_txt,LV_OBJ_FLAG_HIDDEN);
+        }
+
+}
 static void sat_layout_enter(setting_building_house_number)
 {
         /***********************************************
@@ -259,7 +287,7 @@ static void sat_layout_enter(setting_building_house_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          building, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 2,
+                                          building, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                           5, 500, 0Xffffff);
         }
         /***********************************************
@@ -286,7 +314,7 @@ static void sat_layout_enter(setting_building_house_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          floor, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 3,
+                                          floor, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                           5, 500, 0Xffffff);
         }
         /***********************************************
@@ -312,7 +340,7 @@ static void sat_layout_enter(setting_building_house_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          household, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 2,
+                                          household, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                           5, 500, 0Xffffff);
         }
         /***********************************************
@@ -339,7 +367,7 @@ static void sat_layout_enter(setting_building_house_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          extension, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 1,
+                                          extension, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                           5, 500, 0Xffffff);
         }
         /***********************************************
@@ -354,6 +382,7 @@ static void sat_layout_enter(setting_building_house_number)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_EXTENSION_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
+        setting_building_house_number_item_display();
 }
 static void sat_layout_quit(setting_building_house_number)
 {

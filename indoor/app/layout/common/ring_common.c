@@ -82,7 +82,7 @@ bool ring_intercom_play(void)
 ************************************************************/
 bool ring_alarm_play(void)
 {
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
         return true;
 
-        //sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
 }
