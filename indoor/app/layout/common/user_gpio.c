@@ -48,7 +48,7 @@ bool backlight_enable(bool en)
 ***/
 bool backlight_brightness_set(int per)
 {
-        pwm_period_set(BL_PWM_NO, BL_PWM_CH, 65536);
+        pwm_period_set(BL_PWM_NO, BL_PWM_CH, 65535);
 
         return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, per);
 }
