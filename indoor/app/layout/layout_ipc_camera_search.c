@@ -22,7 +22,7 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         }
 
         layout_ipc_camera_edit_index_set(parent->id);
-        if (layout_ipc_cmeara_is_doorcamera_get() == true)
+        if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
         {
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
         }

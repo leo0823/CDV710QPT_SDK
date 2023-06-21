@@ -85,6 +85,7 @@ static void layout_alarm_monitor_open(void)
 
 static void alarm_stop_obj_click(lv_event_t *ev)
 {
+
         lv_obj_t * passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_passwd_cont);
 
         if(!alarm_return)
@@ -405,6 +406,23 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
 
         return true;
 }
+
+/************************************************************
+** 函数说明: 铃声播放回调
+** 作者: xiaoxiao
+** 日期: 2023-06-21 10:00:22
+** 参数说明: 0:start 1:finish
+** 注意事项: 
+************************************************************/
+static bool layout_alarm_ringplay_register_callback(int arg)
+{
+        SAT_DEBUG("arg is  %d\n",arg);
+        if(arg == 1)
+        {
+                ring_alarm_play();
+        }
+        return true;
+}
 /************************************************************
 ** 函数说明: 
 ** 作者: xiaoxiao
@@ -418,7 +436,7 @@ static void sat_layout_enter(alarm)
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
-
+        ring_play_event_cmd_register(layout_alarm_ringplay_register_callback);
         layout_alarm_monitor_open();
         /************************************************************
         ** 函数说明: 背景创建
@@ -620,7 +638,7 @@ static void sat_layout_enter(alarm)
 }
 static void sat_layout_quit(alarm)
 {
-
+        ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
         record_video_stop();
