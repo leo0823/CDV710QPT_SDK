@@ -12,6 +12,16 @@ enum
         slave_type_setting_obj_id_extension_number_cont,
         slave_type_setting_obj_id_extension_number_title,
         slave_type_setting_obj_id_extension_number_sub,
+
+        slave_type_setting_obj_id_msgbox_bg_cont,
+
+        slave_type_setting_obj_id_msgbox_cont,
+
+        slave_type_setting_obj_id_titile_id,
+
+        slave_type_setting_obj_id_msgbox_confirm,
+
+        slave_type_setting_obj_id_msgbox_cancel,
 };
 
 static void slave_type_setting_cancel_click(lv_event_t *e)
@@ -24,6 +34,9 @@ static void slave_type_setting_master_indoor_click(lv_event_t *e)
 }
 static void slave_type_setting_extension_number_click(lv_event_t *e)
 {
+        lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont,slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox,slave_type_setting_obj_id_titile_id,"The outing is currently running.The 'Not used' setting is applied after the end of the outing.", 0, 90, 460, 80);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,slave_type_setting_obj_id_msgbox_confirm,slave_type_setting_obj_id_msgbox_cancel ,"Confirm","Cancel", NULL,NULL);
 }
 
 static void sat_layout_enter(slave_type_setting)
