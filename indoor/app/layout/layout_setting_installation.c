@@ -41,7 +41,6 @@ enum
 
         setting_installation_obj_id_factory_reset_msg_bg,
 
-
 };
 typedef enum
 {
@@ -49,8 +48,8 @@ typedef enum
         factory_reset_obj_id_title,
         factory_reset_obj_id_conrfirm,
         factory_reset_obj_id_cancel,
-        
-}factory_reset_msg_bg_obj_id;
+
+} factory_reset_msg_bg_obj_id;
 
 static void setting_installation_operating_structure_obj_click(lv_event_t *ev)
 {
@@ -98,46 +97,48 @@ static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
         sat_layout_goto(sensors_test, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
-static void setting_installation_factory_reset_confirm_func(lv_event_t * ev)
+static void setting_installation_factory_reset_confirm_func(lv_event_t *ev)
 {
-	user_data_reset();
-	tuay_api_data_reset();
-	alarm_list_del_all();
+        user_data_reset();
+        network_data_reset();
+        tuay_api_data_reset();
+        alarm_list_del_all();
         call_list_del_all();
-	wifi_api_reset_default();
-	// usleep(1000 * 1000);
-	// system("reboot");
-        setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
+        wifi_api_reset_default();
+        usleep(1000 * 1000);
+        system("reboot");
+        // setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
 }
 
-static void setting_installation_factory_reset_cancel_func(lv_event_t * ev)
+static void setting_installation_factory_reset_cancel_func(lv_event_t *ev)
 {
         setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
 }
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
-        lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg,factory_reset_obj_id_msgbox, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox,factory_reset_obj_id_title,"Do you want to process initiatialization?", 0, 110, 460, 120);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,factory_reset_obj_id_conrfirm,factory_reset_obj_id_cancel ,"Confirm","Cancel", setting_installation_factory_reset_confirm_func,setting_installation_factory_reset_cancel_func);
+        SAT_DEBUG("================");
+        lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
+        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, "Do you want to process initiatialization?", 0, 110, 460, 120);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, "Confirm", "Cancel", setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
-static void layout_setting_installation_open_structure_dispaly(lv_obj_t * list)
+static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
 {
-        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_installation_obj_id_operating_structure_cont),1);
-        if(user_data_get()->system_mode == 0)
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
+        if (user_data_get()->system_mode == 0)
         {
-                lv_label_set_text(obj,layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE));
-        }else if(user_data_get()->system_mode == 1)
+                lv_label_set_text(obj, layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE));
+        }
+        else if (user_data_get()->system_mode == 1)
         {
-                lv_label_set_text(obj,layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SERVER_SYSTEM));
+                lv_label_set_text(obj, layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SERVER_SYSTEM));
         }
 }
 
-static void layout_setting_installation_build_house_no_display(lv_obj_t * list)
+static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
 {
-        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_installation_obj_id_building_house_no_cont),1);
-        lv_label_set_text(obj,network_data_get()->sip_user);
-       
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_building_house_no_cont), 1);
+        lv_label_set_text(obj, network_data_get()->sip_user);
 }
 
 static lv_obj_t *setting_installation_sub_list_create(void)
