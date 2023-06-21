@@ -551,6 +551,16 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
                 }
         }
 }
+
+static void monitor_lock_close(void)
+{
+        monitor_unlock_ctrl(1,1,false);
+        monitor_unlock_ctrl(1,2,false);
+        monitor_unlock_ctrl(2,1,false);
+        monitor_unlock_ctrl(2,1,false);
+
+}
+
 static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
 {
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
@@ -559,17 +569,7 @@ static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
         {
                 lv_obj_del(obj);
         }
-        int ch = monitor_channel_get();
-        int mode = 0;
-        if (ch == MON_CH_DOOR1)
-        {
-                mode = (user_data_get()->etc.door1_open_door_mode == 0) ? 1 : 2;
-        }
-        else if (ch == MON_CH_DOOR1)
-        {
-                mode = user_data_get()->etc.door2_lock_num;
-        }
-        monitor_unlock_ctrl(ch, mode, false);
+        monitor_lock_close();
         lv_timer_del(ptimer);
 }
 static bool monitor_obj_unlock_icon_display(void)
@@ -606,7 +606,7 @@ static void monitor_obj_normal_lock_click(lv_event_t *e)
                 {
                         mode = (user_data_get()->etc.door1_open_door_mode == 0) ? 1 : 2;
                 }
-                else if (ch == MON_CH_DOOR1)
+                else if (ch == MON_CH_DOOR2)
                 {
                         mode = user_data_get()->etc.door2_lock_num;
                 }
@@ -677,16 +677,7 @@ static void monitor_obj_lock_1_click(lv_event_t *e)
         {
                 ring_unlock_play();
                 int ch = monitor_channel_get();
-                int mode = 0;
-                if (ch == MON_CH_DOOR1)
-                {
-                        mode = (user_data_get()->etc.door1_open_door_mode == 0) ? 1 : 2;
-                }
-                else if (ch == MON_CH_DOOR1)
-                {
-                        mode = user_data_get()->etc.door2_lock_num;
-                }
-                monitor_unlock_ctrl(ch, mode, true);
+                monitor_unlock_ctrl(ch, 1, true);
         }
 }
 static void monitor_obj_lock_1_display(void)
@@ -740,16 +731,7 @@ static void monitor_obj_lock_2_click(lv_event_t *e)
         {
                 ring_unlock_play();
                 int ch = monitor_channel_get();
-                int mode = 0;
-                if (ch == MON_CH_DOOR1)
-                {
-                        mode = (user_data_get()->etc.door1_open_door_mode == 0) ? 1 : 12;
-                }
-                else if (ch == MON_CH_DOOR1)
-                {
-                        mode = user_data_get()->etc.door2_lock_num;
-                }
-                monitor_unlock_ctrl(ch, mode, true);
+                monitor_unlock_ctrl(ch, 1, true);
         }
 }
 static void monitor_obj_lock_2_display(void)
@@ -1479,7 +1461,7 @@ static bool tuya_event_cmd_door_open(int arg)
                         {
                                 num = (user_data_get()->etc.door1_open_door_mode == 0) ? 1 : 2;
                         }
-                        else if (ch == MON_CH_DOOR1)
+                        else if (ch == MON_CH_DOOR2)
                         {
                                 num = user_data_get()->etc.door2_lock_num;
                         }

@@ -2,6 +2,7 @@
         "files.associations": {
                 "ssd20x_sarad.h": "c",
                 "user_standby.h": "c",
-                "user_alarm_list.h": "c"
+                "user_alarm_list.h": "c",
+                "layout_setting_screen.h": "c"
         }
 }
