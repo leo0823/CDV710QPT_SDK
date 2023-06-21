@@ -41,4 +41,17 @@ size_t onvif_user_token_xml_format(char *file, const char *ip, const char *user,
 **@功能: 编辑类型： register/delete
 *****************************************************************/
 size_t onvif_edit_url_xml_format(char *file, const char *ip, const char *user, const char *password, const char *loc_sip_uri, const char *type);
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能: 编辑类型：set scopes
+*****************************************************************/
+size_t onvif_set_scopes_url_xml_format(char *file, const char *ip, const char *user, const char *password, const char *name, const char *type);
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能: 编辑类型：get scopes
+*****************************************************************/
+size_t onvif_get_scopes_url_xml_format(char *file, const char *ip, const char *user, const char *password, const char *type);
+
 #endif

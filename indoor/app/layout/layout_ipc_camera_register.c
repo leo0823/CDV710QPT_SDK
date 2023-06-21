@@ -115,7 +115,7 @@ static void ipc_camera_registered_register_edit_click(lv_event_t *ev)
                 return;
         }
 
-        if (layout_ipc_cmeara_is_doorcamera_get() == false)
+        if (0) // (layout_ipc_cmeara_is_doorcamera_get() == false)
         {
                 layout_ipc_camera_edit_index_set(parent->id);
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_CHANGE_NAME);

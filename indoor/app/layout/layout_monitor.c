@@ -115,13 +115,15 @@ static void monitior_obj_channel_info_obj_display(void)
         int channel = monitor_channel_get();
         if (is_channel_ipc_camera(channel) == true)
         {
-                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN);     
+                lv_obj_set_x(obj, 60);
+                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 channel -= 8;
                 lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
-                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);     
+                lv_obj_set_x(obj, 37);
+                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
@@ -271,9 +273,10 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         else
         {
                 monitor_obj_timeout_label_display();
-               
-                monitor_timeout_sec_reset( is_monitor_door_camera_talk ? (user_data_get()->call_time == 1?1* 60:user_data_get()->call_time == 2?3* 60:5 * 60) : 30);
-        
+
+                monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
+                                                                                                                                                    : 5 * 60)
+                                                                      : 30);
         }
 }
 /***********************************************
@@ -410,7 +413,8 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 is_monitor_door_camera_talk = true;
 
                 call_duration = 0;
-                monitor_timeout_sec = user_data_get()->call_time == 1?1* 60:user_data_get()->call_time == 2?3* 60:5 * 60;
+                monitor_timeout_sec = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
+                                                                                                                 : 5 * 60;
                 monitor_enter_flag_set(monitor_enter_flag_get() == MON_ENTER_CALL_FLAG ? MON_ENTER_CALL_TALK_FLAG : MON_ENTER_MANUAL_TALK_FLAG);
 
                 sat_linphone_answer(-1);
@@ -801,8 +805,9 @@ static void monitor_obj_record_video_click(lv_event_t *e)
         {
                 record_video_stop();
         }
-        else if((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
-        {    SAT_DEBUG("===========\n");
+        else if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        {
+                SAT_DEBUG("===========\n");
                 record_video_start(true, REC_MODE_MANUAL);
         }
 }
@@ -896,12 +901,11 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
                 }
         }
         mode |= REC_MODE_MANUAL;
-        //SAT_DEBUG("==================\n");
+        // SAT_DEBUG("==================\n");
         if (record_jpeg_start(mode) == false)
         {
-                //SAT_DEBUG("=======record_jpeg_failed==========\n");
+                // SAT_DEBUG("=======record_jpeg_failed==========\n");
                 return;
-        
         }
         lv_timer_del(ptimer);
 }
@@ -909,18 +913,14 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 static bool layout_monitor_streams_running_register_callback(char *arg)
 {
 
-        //SAT_DEBUG("==================\n");
+        // SAT_DEBUG("==================\n");
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
-                //SAT_DEBUG("==================\n");
+                // SAT_DEBUG("==================\n");
                 lv_sat_timer_create(monitor_call_record_delay_task, 3000, NULL);
         }
         return true;
-
 }
-
-
-
 
 /************************************************************
 ** 函数说明:call机日志
@@ -951,8 +951,14 @@ static void monitor_record_video_state_callback(bool record_ing)
  ** 日期: 2023-2-2 13:42:25
  ** 说明: app状态显示
  ***********************************************/
-static void home_use_mobile_app_obj_display(lv_obj_t *obj)
+static void home_use_mobile_app_obj_display(void)
 {
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
+        if (obj == NULL)
+        {
+                return;
+        }
+
         if (tuya_api_client_num() > 0)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -967,29 +973,27 @@ static void home_use_mobile_app_obj_display(lv_obj_t *obj)
 ** 函数说明: switch按钮显示
 ** 作者: xiaoxiao
 ** 日期: 2023-06-15 08:32:55
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 static void layout_monitor_switch_btn_display(void)
 {
-        lv_obj_t * obj_left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_channel_switch_left_btn);
-        lv_obj_t * obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_channel_switch_right_btn);
-        if(is_channel_ipc_camera(monitor_channel_get()) == true)
+        lv_obj_t *obj_left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
+        lv_obj_t *obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+        if (is_channel_ipc_camera(monitor_channel_get()) == true)
         {
-                if(network_data_get()->cctv_device_count <= 1)
+                if (network_data_get()->cctv_device_count <= 1)
                 {
-                        lv_obj_add_flag(obj_left,LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_add_flag(obj_right,LV_OBJ_FLAG_HIDDEN);
-
-
+                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
                 }
-        }else
+        }
+        else
         {
-                if(network_data_get()->door_device_count <= 1)
+                if (network_data_get()->door_device_count <= 1)
                 {
-                        lv_obj_add_flag(obj_left,LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_add_flag(obj_right,LV_OBJ_FLAG_HIDDEN);
-
+                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
                 }
         }
 }
@@ -1118,7 +1122,7 @@ static void sat_layout_enter(monitor)
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       layout_monitor_language_get(MONITOR_LANG_ID_MONITOR_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
-                home_use_mobile_app_obj_display(obj);
+                home_use_mobile_app_obj_display();
         }
 
         /***********************************************
@@ -1139,8 +1143,6 @@ static void sat_layout_enter(monitor)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
                 layout_monitor_switch_btn_display();
-
-                
         }
 
         /***********************************************
@@ -1286,8 +1288,6 @@ static void sat_layout_enter(monitor)
         monitor_open(true);
         layout_monitor_report_vaild_channel();
 
-
-
         /*門口機内部呼叫*/
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_inside_func);
         /*sd卡状态处理*/
@@ -1430,9 +1430,15 @@ bool monitor_doorcamera_call_extern_func(char *arg)
 }
 bool monitor_doorcamera_call_inside_func(char *arg)
 {
+        char user[128] = {0};
+        char id[32] = {0};
+        char stream[32] = {0};
+        sscanf(arg, "%s %s %s", user, id, stream);
+        SAT_DEBUG("%s %s %s", user, id, stream);
+
         int from_channel = 0;
         int cur_channel = monitor_channel_get();
-        if ((from_channel = monitor_index_get_by_user(arg)) >= 0)
+        if (((from_channel = monitor_index_get_by_user(arg)) >= 0) || (strcasecmp(stream, "video") == 0))
         {
                 if (from_channel == 0)
                 {
@@ -1442,11 +1448,25 @@ bool monitor_doorcamera_call_inside_func(char *arg)
                 {
                         ring_door2_call_play();
                 }
-
-                if (from_channel != cur_channel)
+                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
+                monitor_channel_set(from_channel);
+                if (is_channel_ipc_camera(cur_channel) == true)
                 {
-                        monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                        monitor_channel_set(from_channel);
+                        monitor_obj_cctv_cancel_obj_display();
+                        montior_obj_top_icon_display();
+                        home_use_mobile_app_obj_display();
+                        layout_monitor_switch_btn_display();
+                        monitor_obj_dispaly_display();
+                        monitor_obj_volume_display();
+                        monitor_obj_talk_display();
+                        monitor_obj_handup_display();
+                        monitor_obj_normal_lock_display();
+                        monitor_obj_lock_1_display();
+                        monitor_obj_lock_2_display();
+                        monitor_obj_record_video_display();
+                        monitor_obj_record_photo_display();
+                }
+                {
                         monitior_obj_channel_info_obj_display();
                 }
         }

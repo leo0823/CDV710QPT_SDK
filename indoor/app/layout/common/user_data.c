@@ -21,7 +21,7 @@ static user_data_info user_data =
 
 static const user_data_info user_data_default =
     {
-        .is_device_init = 1,
+        .is_device_init = 0,
         .auto_record_mode = 0,
         .wifi_enable = true,
         .motion = {
@@ -234,11 +234,19 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(door2_tone, 1, 6);
         user_data_audio_check_range_out(inter_tone, 1, 6);
 
+         user_data_audio_check_range_out(buzzer, 1, 6);
+         user_data_audio_check_range_out(front_door, 1, 6);
+         user_data_audio_check_range_out(common_entrance, 1, 6);
+         user_data_audio_check_range_out(securirty_office, 1, 6);
+         user_data_audio_check_range_out(extension, 1, 6);
+
         user_data_audio_check_range_out(door_ring_volume, 0, 3);
         user_data_audio_check_range_out(inter_ring_volume, 0, 3);
 
         user_data_audio_check_range_out(door_talk_volume, 1, 3);
         user_data_audio_check_range_out(inter_talk_volume, 1, 3);
+
+       
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
