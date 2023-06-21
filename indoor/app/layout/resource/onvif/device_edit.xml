@@ -17,6 +17,6 @@ SOAPAction: %s
     </wsse:Security>
   </s:Header>
   <soap:Body>
-    <soap:Device>%s</soap:Device>
+    <soap:%s>%s</soap:%s>
   </soap:Body>
 </soap:Envelope>
