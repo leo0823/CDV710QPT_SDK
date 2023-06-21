@@ -254,6 +254,8 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_close_motion_dectection_callback(void)
 {
+    SAT_DEBUG("is_motion_snapshot_ing is %d\n",is_motion_snapshot_ing);
+    SAT_DEBUG("is_motion_record_video_ing is %d\n",is_motion_record_video_ing);
     if(is_motion_snapshot_ing || is_motion_record_video_ing)
     {
         return false;
@@ -526,7 +528,7 @@ static void sat_layout_enter(close)
                 lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 1000, NULL));   
             }
     }
-    else if ((user_data_get()->display.standby_mode == 1) && (user_data_get()->display.frame_list & 0x1F) && (frame_display_timeout_check() == false))
+    else if ((user_data_get()->display.standby_mode == 1) && (user_data_get()->display.frame_list & 0x7FFfF) && (frame_display_timeout_check() == false))
 	{
         sat_layout_goto(frame_show,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 	}

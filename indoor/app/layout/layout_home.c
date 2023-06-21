@@ -768,7 +768,7 @@ static void sat_layout_enter(home)
         ** 说明: 监控设置
         ***********************************************/
         {
-                int sec_x = user_data_get()->system_mode == 1 ? 57 : 125;
+                int sec_x = user_data_get()->system_mode == 1 ? 125 : 125;
                 int unit_offset = user_data_get()->system_mode == 1 ? 136 : 136;
                 lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_monitor_cont, sec_x, 436, 103, 121,
                                               home_monitor_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -798,16 +798,28 @@ static void sat_layout_enter(home)
                                               13, 0, 88, 88, home_obj_id_cctv_img,
                                               (const char *)resource_ui_src_get("btn_main_cctv_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 sec_x += unit_offset;
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_away_cont, sec_x, 436, 103, 121,
-                                              home_away_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 83, 103, 27, home_obj_id_away_label,
-                                              layout_home_language_get(HOME_LANG_ID_AWAY), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                              13, 0, 77, 77, home_obj_id_away_img,
-                                              (const char *)resource_ui_src_get("btn_main_away_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                sec_x += unit_offset;
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_burglar_cont, sec_x, 436, 103, 121,
+                if(user_data_get()->system_mode == 0)
+                {
+                        lv_obj_t * away  = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_away_cont, sec_x, 436, 103, 121,
+                                                home_away_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 83, 103, 27, home_obj_id_away_label,
+                                                layout_home_language_get(HOME_LANG_ID_AWAY), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                13, 0, 77, 77, home_obj_id_away_img,
+                                                (const char *)resource_ui_src_get("btn_main_away_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        if(user_data_get()->alarm.away_alarm_enable)
+                        {
+                                lv_common_img_btn_create(away, 0, 55 , 45, 48, 48,
+                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        }
+                        sec_x += unit_offset;
+                }
+
+                lv_obj_t * security = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_burglar_cont, sec_x, 436, 103, 121,
                                               home_burglar_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -815,6 +827,15 @@ static void sat_layout_enter(home)
                                               layout_home_language_get(HOME_LANG_ID_BURGLAR), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                               13, 0, 77, 77, home_obj_id_burglar_img,
                                               (const char *)resource_ui_src_get("btn_main_security_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                if(user_data_get()->alarm.security_alarm_enable)
+                {
+                        lv_common_img_btn_create(security, 0, 55 , 45, 48, 48,
+                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                }
+
                 sec_x += unit_offset;
                 if(user_data_get()->system_mode == 1)
                 {

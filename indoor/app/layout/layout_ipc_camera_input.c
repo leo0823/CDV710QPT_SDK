@@ -74,7 +74,7 @@ static void ipc_camera_password_input_cancel_click(lv_event_t *e)
         int flag = layout_ipc_camera_input_flag_get();
         if ((flag == IPC_CAMERA_FLAG_CHANGE_NAME) || (flag == IPC_CAMERA_FLAG_CHANGE_PWD))
         {
-                if (layout_ipc_cmeara_is_doorcamera_get() == true)
+                if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         sat_layout_goto(ipc_camera_edit, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
@@ -181,7 +181,7 @@ static void ipc_camera_password_input_msgbox_confirm_click(lv_event_t *e)
 }
 static void ipc_camera_password_success_msgbox_confirm_click(lv_event_t *e)
 {
-        if (layout_ipc_cmeara_is_doorcamera_get() == true)
+        if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
         {
                 sat_layout_goto(ipc_camera_edit, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
@@ -204,7 +204,7 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
 /*判断密码长度是否符合要求*/
 static bool ipc_camera_determine_password_length_is_valid(const char *txt)
 {
-        if (layout_ipc_cmeara_is_doorcamera_get() == false)
+        if (0) // (layout_ipc_cmeara_is_doorcamera_get() == false)
         {
                 return true;
         }
@@ -349,7 +349,7 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
         {
                 lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
 
-                if (layout_ipc_cmeara_is_doorcamera_get() == true)
+                if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         strcpy(ipc_camera_password_input_password_old, "admin");
                 }
