@@ -304,7 +304,6 @@ bool alarm_trigger_check(void)
         {
                 if(user_data_get()->alarm.alarm_enable[i] != 0 )
                 {
-                        SAT_DEBUG("user_data_get()->alarm.alarm_enable[i] Iis %d\n",user_data_get()->alarm.alarm_enable[i]);
                         if((user_data_get()->alarm.alarm_trigger[i] == true) && (user_data_get()->alarm.alarm_enable[i] != 0))
                         {
                                 alarm_occur = true;

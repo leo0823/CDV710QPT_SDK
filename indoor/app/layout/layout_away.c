@@ -796,14 +796,14 @@ static void layout_away_setting_time_click(lv_event_t *ev)
 static void layout_away_release_time_msgbox_option_create(lv_obj_t * msgbox, lv_event_cb_t checkbox_cb)
 {
     lv_obj_t *list = setting_list_create(msgbox, layout_away_obj_id_msgbox_list);
-    lv_common_style_set_common(list, layout_away_obj_id_msgbox_list, 47, 73, 366, 200, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+    lv_common_style_set_common(list, layout_away_obj_id_msgbox_list, 27, 73, 460-27, 200, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
     for(int i =0; i<10; i++)
     {
-        lv_common_img_text_btn_create(list, i, 0, 0, 366, 55,
+        lv_common_img_text_btn_create(list, i, 0, 0, 460-27, 55,
                                 checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                46, 8, 366 - 16, 32, 0,
+                                46, 8, 460 - 27 - 16, 32, 0,
                                 layout_away_language_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 away_obj_id_t_msgbox_checkbox_img, 8, 32, 32, 1,
                                 i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
