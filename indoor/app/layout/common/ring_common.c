@@ -13,9 +13,9 @@
 bool ring_touch_play(void)
 {
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
-                                                                                   // sat_linphone_audio_play_start("/tmp/nfs/CDV810QPT/indoor/app/layout/resource/rings/sound6.mp3",100);
-                                                                                   return true;
-}
+        // sat_linphone_audio_play_start("/tmp/nfs/CDV810QPT/indoor/app/layout/resource/rings/sound6.mp3",100);
+        return true;
+        }
 
 /***********************************************
 ** 作者: leo.liu

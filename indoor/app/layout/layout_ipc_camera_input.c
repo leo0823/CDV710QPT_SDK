@@ -204,7 +204,7 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
 /*判断密码长度是否符合要求*/
 static bool ipc_camera_determine_password_length_is_valid(const char *txt)
 {
-        if (0) // (layout_ipc_cmeara_is_doorcamera_get() == false)
+        if (1) // (layout_ipc_cmeara_is_doorcamera_get() == false)
         {
                 return true;
         }
