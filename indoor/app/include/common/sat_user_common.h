@@ -68,28 +68,24 @@ bool sat_sip_local_indoor_number_get(int id, char *dst_number);
 ** 说明: 获取网卡的Ip
 ***********************************************/
 bool sat_ip_mac_addres_get(const char *eth, char *ip, char *mac);
-
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-26 11:25:54
 ** 说明: udhchc 获取IP
 ***********************************************/
 void sat_network_udhcpc_ip(const char *eth);
-
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-26 11:26:51
 ** 说明: 写入mac
 ***********************************************/
 bool sat_network_eth0_mac_write(const char *mac);
-
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-26 11:26:51
 ** 说明: 写入mac
 ***********************************************/
 bool sat_network_eth1_mac_write(const char *mac);
-
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-28 10:6:44
@@ -117,7 +113,6 @@ bool sat_socket_multicast_join(int socket_fd, const char *multicast_ip);
 ** 说明: tcp server open
 ***********************************************/
 bool sat_socket_tcp_open(int *fd, int port, int max_client);
-
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-6 9:8:19

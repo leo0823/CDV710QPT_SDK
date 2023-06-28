@@ -238,21 +238,12 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
         motion_timeout_sec = 10;
         lv_timer_del(ptimer);
         layout_motion_restart_motion_detection();
-<<<<<<< HEAD
-
     }        
-=======
-    }
->>>>>>> 093ddfae6793dc20eba50184b7d0a507e7d5bfbb
 }
 
 static bool layout_close_motion_dectection_callback(void)
 {
-<<<<<<< HEAD
     if (is_motion_snapshot_ing || is_motion_record_video_ing)
-=======
-    if(is_motion_snapshot_ing || is_motion_record_video_ing)
->>>>>>> 093ddfae6793dc20eba50184b7d0a507e7d5bfbb
     {
         return false;
     }
