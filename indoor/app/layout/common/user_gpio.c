@@ -37,6 +37,7 @@ void amp_enable_set(bool en)
 ***/
 bool backlight_enable(bool en)
 {
+        SAT_DEBUG(" backlight_enable is %d \n",en);
         return pwm_enable(BL_PWM_NO, BL_PWM_CH, en);
 }
 
@@ -246,6 +247,7 @@ bool user_gpio_init(void)
         pwm_init(BL_PWM_NO, BL_PWM_CH);
 
         backlight_enable(true);
+
         /* 功放gpio处理 */
         amp_gpio_init();
 
@@ -260,5 +262,7 @@ bool user_gpio_init(void)
         /*开启gpio 任务检测*/
         pthread_t task_id;
         pthread_create(&task_id, sat_pthread_attr_get(), user_gpio_detect_task, NULL);
+
+
         return true;
 }

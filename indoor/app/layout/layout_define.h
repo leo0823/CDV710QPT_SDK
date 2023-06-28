@@ -29,7 +29,7 @@
 #include "common/user_standby.h"
 #include "common/user_alarm_list.h"
 #include "common/user_call_list.h"
-#define SYSTEM_VERSION "Ver:0.0.2.3"
+#define SYSTEM_VERSION "Ver:0.0.2.4"
 
 #define TUYA_PID "nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
 /*
@@ -103,8 +103,8 @@ bool sip_user_get_number_and_ip(const char *user, char *ip, char *number);
  * @作者: leo.liu
  * @注释: 定义layout
  */
-sat_layout_define(logo);
-sat_layout_define(monitor);
+sat_layout_define(logo);//语言已完成
+sat_layout_define(monitor);//语言已完成
 sat_layout_define(home);
 sat_layout_define(power_setting);
 sat_layout_define(setting_language);
@@ -164,11 +164,11 @@ sat_layout_define(emergency_setting);
 sat_layout_define(alarm);
 sat_layout_define(alarm_list);
 sat_layout_define(security);
-sat_layout_define(away);
-sat_layout_define(away_count);
-sat_layout_define(sensor_settings);
-sat_layout_define(close);
-sat_layout_define(frame_show);
-sat_layout_define(always_record);
+sat_layout_define(away);//语言已完成,有缺漏
+sat_layout_define(away_count);//语言已完成,有缺漏
+sat_layout_define(sensor_settings);//语言已完成,有缺漏
+sat_layout_define(close);//语言已完成
+sat_layout_define(frame_show);//语言已完成
+sat_layout_define(always_record);//语言已完成
 sat_layout_define(sensors_test);
 #endif

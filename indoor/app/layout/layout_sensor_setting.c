@@ -366,7 +366,6 @@ static void sensor_setting_msgbox_confirm_click(lv_event_t *e)
 ************************************************************/
 static void setting_sensor_settings_option_display(lv_obj_t * parent)
 {
-    printf("user_sensor_value_get(layout_sensor_setting_select_index_get() is %f\n",user_sensor_value_get(layout_sensor_setting_select_index_get()));
     lv_obj_t * cb1_img = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,sensor_setting_obj_id_msgbox_check_1),sensor_setting_obj_id_msgbox_check_img);
     lv_obj_t * cb2_img = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,sensor_setting_obj_id_msgbox_check_2),sensor_setting_obj_id_msgbox_check_img);
     lv_obj_t * cb3_img = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,sensor_setting_obj_id_msgbox_check_3),sensor_setting_obj_id_msgbox_check_img);
@@ -436,7 +435,7 @@ static void setting_sensor_settings_list_click(lv_event_t *e)
     if(user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
     {
         lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(sensor_setting_obj_id_msgbox_bg_cont,sensor_setting_obj_id_msgbox_cont, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox,sensor_setting_obj_id_titile_id,"The outing is currently running.The 'Not used' setting is applied after the end of the outing.", 0, 90, 460, 80);
+        setting_msgdialog_msg_create(masgbox,sensor_setting_obj_id_titile_id,layout_setting_sensor_usage_language_get(SETTING_SENSOR_USAGE_LANG_ID_RUNNNG_TIPS), 0, 90, 460, 80);
         setting_msgdialog_msg_confirm_btn_create(masgbox,sensor_setting_obj_id_msgbox_confirm,sensor_setting_msgbox_cancel_click );
         return ;
     }
@@ -449,10 +448,10 @@ static void setting_sensor_settings_list_click(lv_event_t *e)
         }
     }
     const char *item[4] = {0};
-    item[0] = "Not used";
-    item[1] = "NO";
-    item[2] = "NC";
-    item[3] = "Always detect";
+    item[0] = layout_setting_sensor_usage_language_get(SETTING_SENSOR_USAGE_LANG_ID_NOT_USED);
+    item[1] = layout_setting_sensor_usage_language_get(SETTING_SENSOR_USAGE_LANG_ID_NO);
+    item[2] = layout_setting_sensor_usage_language_get(SETTING_SENSOR_USAGE_LANG_ID_NC);
+    item[3] = layout_setting_sensor_usage_language_get(SETTING_SENSOR_USAGE_LANG_ID_ALWAYS);
     lv_obj_t * msgbox = layout_senesor_setting_msgbox_create("Sensor setting",
                                 sensor_setting_msgbox_cancel_click, sensor_setting_msgbox_confirm_click, sensor_setting_msgbox_click,
                                 item);
@@ -467,58 +466,51 @@ static void layout_sensor_list_create(void)
             setting_sensor_settings_obj_id_item1_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_1, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[0] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[0] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[0] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[0] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
         layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
         {0, 72, 928, 72,
             setting_sensor_settings_obj_id_item2_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_2, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[1] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[1] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[1] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[1] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
             layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
         {0, 72 * 2, 928, 72,
             setting_sensor_settings_obj_id_item3_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_3, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[2] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[2] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[2] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[2] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
         layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
         {0, 72 * 3, 928, 72,
             setting_sensor_settings_obj_id_item4_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_4, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[3] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[3] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[3] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[3] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
             layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
         {0, 72 * 4, 928, 72,
             setting_sensor_settings_obj_id_item5_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_5, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[4] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[4] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[4] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[4] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
             layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
         {0, 72 * 5, 928, 72,
             setting_sensor_settings_obj_id_item6_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_6, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[5] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[5] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[5] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[5] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
             layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
         {0, 72 * 6, 928, 72,
             setting_sensor_settings_obj_id_item7_cont, 0, 1,
             SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_7, layout_setting_sensor_usage_language_get,
         user_data_get()->alarm.alarm_enable[6] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[6] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[6] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
+        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[6] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
             layout_setting_sensor_usage_language_get,
             setting_sensor_settings_list_click, 2},
-        // {0, 72 * 7, 928, 72,
-        //     setting_sensor_settings_obj_id_item8_cont, 0, 1,
-        //     SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_8, layout_setting_sensor_usage_language_get,
-        // user_data_get()->alarm.alarm_enable[7] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[7] == 1?
-        // SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY: user_data_get()->alarm.alarm_enable[7] == 2?SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_NC:SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_ALWAYS,
-        //     layout_setting_sensor_usage_language_get,
-        //     setting_sensor_settings_list_click, 2},
         };
 
     lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_sensor_settings_obj_id_list);

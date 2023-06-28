@@ -14,7 +14,13 @@ typedef enum
 }LAYOUT_MONITOR_LANG_ID;
 static const char *layout_monitor_language[MONITOR_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
     {
-        {"Currently in monitor in mobile app.", "Currently in monitor in mobile app.", "Currently in monitor in mobile app."},
+        {"Currently in use in mobile app.", 
+        "正在移动应用程序中使用",
+        "Currently in use in mobile app.",
+        "Сейчас используется в мобильном приложении.",
+        "Actualmente en uso en la aplicación móvil.",
+        "Hiện đang được sữ dụng trong ứng dụng di động",
+        "قيد الاستخدام حاليًا في تطبيق الجوّال."},
         {"Currently in talk in mobile app.", "Currently in talk in mobile app.", "Currently in talk in mobile app."},
 
     };

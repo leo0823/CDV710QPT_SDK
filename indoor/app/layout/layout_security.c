@@ -94,7 +94,7 @@ static void layout_security_ececution_stop_btn_display(void)
                 printf("set false");
                 lv_obj_set_style_bg_color(obj,lv_color_hex(0x47494a),LV_PART_MAIN);
                 lv_obj_t * label = lv_obj_get_child_form_id(obj,layout_security_obj_id_confirm_label);
-                lv_label_set_text(label,"End");
+                lv_label_set_text(label,layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_END));
         }
         else
         {
@@ -108,7 +108,7 @@ static void layout_security_ececution_stop_btn_display(void)
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);    
                 }
                 lv_obj_t * label = lv_obj_get_child_form_id(obj,layout_security_obj_id_confirm_label);
-                lv_label_set_text(label,"Confirm");
+                lv_label_set_text(label,layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_EXECUTION));
         }
         }
 
@@ -244,13 +244,13 @@ static void layout_security_sensor_select_create()
             true,
             LAYOUT_SECURITY_LANG_ID_LANG_SEMSOR7, layout_security_language_get,
             },
-            {728, 312, 204, 160,
-            layout_security_obj_id_cont8,
-            layout_security_sensor_select_obj_click,
-            layout_security_sensor_select_cont_checkbox_id,
-            true,
-            LAYOUT_SECURITY_LANG_ID_LANG_SEMSOR8, layout_security_language_get,
-            },
+        //     {728, 312, 204, 160,
+        //     layout_security_obj_id_cont8,
+        //     layout_security_sensor_select_obj_click,
+        //     layout_security_sensor_select_cont_checkbox_id,
+        //     true,
+        //     LAYOUT_SECURITY_LANG_ID_LANG_SEMSOR8, layout_security_language_get,
+        //     },
         };
 
         int j = 0;//标志在第几个容器位置上显示数据
@@ -490,7 +490,7 @@ static void sat_layout_enter(security)
                                     NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                    "Security", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                    layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_HEAD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
 
@@ -506,7 +506,7 @@ static void sat_layout_enter(security)
                                     NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                    "Detect outside intrusion when you are inside home", 0XB8B8B8, 0XB8B8B8, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                    layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_TIP), 0XB8B8B8, 0XB8B8B8, LV_TEXT_ALIGN_LEFT, lv_font_small);
         }
 
         
@@ -524,7 +524,7 @@ static void sat_layout_enter(security)
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 10, 476-110, 32, auto_record_label_id,
-                                              "CCTV automatic recording", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_RIGHT, lv_font_small,
+                                              layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_AUTO_RECORD), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_RIGHT, lv_font_small,
                                               476-100, 0, 80, 48, auto_record_switch_id,
                                               (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 emergenct_occupy_cctv_record_enable_display();
@@ -586,7 +586,7 @@ static void sat_layout_enter(security)
                                     NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                    "Security mode is running", 0xFF6666, 0xFF6666, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                    layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_RUN), 0xFF6666, 0xFF6666, LV_TEXT_ALIGN_CENTER, lv_font_normal);
             if(!user_data_get()->alarm.security_alarm_enable) lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
        }
 
@@ -603,7 +603,7 @@ static void sat_layout_enter(security)
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     400, 17, 224, 27, layout_security_obj_id_confirm_label,
-                                    "Execution", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                    layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_EXECUTION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                     3, 0, 77, 77, -1,
                                     NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
             layout_security_ececution_stop_btn_display();
@@ -648,7 +648,7 @@ static void sat_layout_enter(security)
                                         NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                       "Enter Password", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                       layout_security_language_get(LAYOUT_SECURITY_LANG_ID_LANG_ENTER_PASSSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
             }
 
             /************************************************************

@@ -1,11 +1,3 @@
-/*
- * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @Date: 2023-05-25 20:56:18
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-05-27 08:38:56
- * @FilePath: \indoor\app\layout\layout_setting_complete.c
- * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
- */
 #include "layout_define.h"
 #include "layout_setting_complete.h"
 #include "layout_monitor.h"
@@ -22,6 +14,18 @@ static void setting_complete_cancel_click(lv_event_t *ev)
 }
 static void setting_complete_confirm_click(lv_event_t *ev)
 {
+        /************************************************************
+         ** 函数说明: 待机初始化
+        ** 作者: xiaoxiao
+        ** 日期: 2023-05-19 15:21:05
+        ** 参数说明:
+        ** 注意事项:
+        ************************************************************/
+        standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
+        standby_timer_restart(true);
+        extern void standby_dection_timer(lv_timer_t *t);
+        lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
+        lv_timer_ready(standby_timer);
         user_data_get()->is_device_init = 1;
         user_data_save();
 
