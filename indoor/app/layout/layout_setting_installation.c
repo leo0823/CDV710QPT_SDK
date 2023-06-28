@@ -137,7 +137,10 @@ static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
 static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_building_house_no_cont), 1);
-        lv_label_set_text(obj, network_data_get()->sip_user);
+        if(obj != NULL)
+        {
+                lv_label_set_text(obj, network_data_get()->sip_user);
+        }
 }
 
 static lv_obj_t *setting_installation_sub_list_create(void)
@@ -203,10 +206,18 @@ static lv_obj_t *setting_installation_sub_list_create(void)
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_installation_obj_id_sub_list);
         lv_common_style_set_common(list, setting_installation_obj_id_sub_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-
+        int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                if(user_data_get()->system_mode == 1)
+                {
+                        if( i == 1 || i== 3 || i == 4 || i== 5)
+                        {
+                                continue;
+                        }
+                       
+                }
+                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -218,6 +229,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                j++;
         }
         layout_setting_installation_open_structure_dispaly(list);
         layout_setting_installation_build_house_no_display(list);

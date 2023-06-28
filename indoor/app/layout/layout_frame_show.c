@@ -1034,6 +1034,7 @@ static void sat_layout_quit(frame_show)
         lv_img_buf_free(frame_buffer_cur_b);
 		frame_buffer_cur_b = NULL;
 		monitor_close();
+		backlight_brightness_set(user_data_get()->display.lcd_brigtness);
 	
 }
 

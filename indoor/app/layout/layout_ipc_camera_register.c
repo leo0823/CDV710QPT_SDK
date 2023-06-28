@@ -216,6 +216,7 @@ static lv_obj_t *ipc_camera_registered_list_create(void)
 }
 static void sat_layout_enter(ipc_camera_register)
 {
+        standby_timer_close();
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
@@ -341,6 +342,7 @@ static void sat_layout_enter(ipc_camera_register)
 }
 static void sat_layout_quit(ipc_camera_register)
 {
+        standby_timer_restart(true);
 }
 
 sat_layout_create(ipc_camera_register);

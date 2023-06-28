@@ -42,8 +42,7 @@ static const user_data_info user_data_default =
         .audio = {
             .key_sound = true,
             .ring_mute = false,
-            .door1_tone = 1,
-            .door2_tone = 2,
+            .door_tone = 1,
             .inter_tone = 3,
             .door_ring_volume = 2,
             .door_talk_volume = 2,
@@ -78,7 +77,7 @@ static const user_data_info user_data_default =
             .night_mode = false,
             .night_time_start = 0,
             .night_time_end = 0,
-            .frame_list = 0x00,
+            .frame_list = 0x11,
             .frame_background = false,
             .door1 = {.bright = 10, .cont = 10, .color = 10},
             .door2 = {.bright = 10, .cont = 10, .color = 10},
@@ -230,8 +229,7 @@ static void user_data_check_valid(void)
         /***** audio *****/
         user_data_audio_check_range_out(key_sound, 0, 1);
         user_data_audio_check_range_out(ring_mute, 0, 1);
-        user_data_audio_check_range_out(door1_tone, 1, 6);
-        user_data_audio_check_range_out(door2_tone, 1, 6);
+        user_data_audio_check_range_out(door_tone, 1, 6);
         user_data_audio_check_range_out(inter_tone, 1, 6);
 
          user_data_audio_check_range_out(buzzer, 1, 6);

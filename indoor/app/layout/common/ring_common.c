@@ -20,30 +20,17 @@ bool ring_touch_play(void)
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-26 16:48:12
-** 说明: 播放门口机1的音效
+** 说明: 播放门口机的音效
 ***********************************************/
-bool ring_door1_call_play(void)
+bool ring_door_call_play(void)
 {
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
 
-        sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.door1_tone);
+        sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.door_tone);
         return sat_linphone_audio_play_start(cmd, user_data_get()->audio.door_ring_volume);
 }
 
-/***********************************************
-** 作者: leo.liu
-** 日期: 2022-12-26 16:48:12
-** 说明: 播放门口机2的音效
-***********************************************/
-bool ring_door2_call_play(void)
-{
-        char cmd[128] = {0};
-        memset(cmd, 0, sizeof(cmd));
-
-        sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.door2_tone);
-        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.door_ring_volume);
-}
 
 /***********************************************
 ** 作者: leo.liu
@@ -52,11 +39,11 @@ bool ring_door2_call_play(void)
 ***********************************************/
 bool ring_unlock_play(void)
 {
-        // char cmd[128] = {0};
-        // memset(cmd, 0, sizeof(cmd));
+        char cmd[128] = {0};
+        memset(cmd, 0, sizeof(cmd));
 
-        // sprintf(cmd, RESOURCE_RING_PATH "open.mp3");
-        // return sat_linphone_audio_play_start(cmd, 100);
+        sprintf(cmd, RESOURCE_RING_PATH "open.mp3");
+        return sat_linphone_audio_play_start(cmd, 100);
         return true;
 }
 /***********************************************

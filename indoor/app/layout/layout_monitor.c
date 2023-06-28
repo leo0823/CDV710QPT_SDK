@@ -1377,13 +1377,9 @@ bool monitor_doorcamera_call_extern_func(char *arg)
 
         if (((from_channel = monitor_index_get_by_user(arg)) >= 0) || (strcasecmp(stream, "video") == 0))
         {
-                if (from_channel == 0)
+                if(!user_data_get()->audio.ring_mute)
                 {
-                        ring_door1_call_play();
-                }
-                else
-                {
-                        ring_door2_call_play();
+                        ring_door_call_play();
                 }
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 monitor_channel_set(from_channel);
@@ -1424,14 +1420,11 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         int cur_channel = monitor_channel_get();
         if (((from_channel = monitor_index_get_by_user(arg)) >= 0) || (strcasecmp(stream, "video") == 0))
         {
-                if (from_channel == 0)
+                if(!user_data_get()->audio.ring_mute)
                 {
-                        ring_door1_call_play();
+                        ring_door_call_play();
                 }
-                else
-                {
-                        ring_door2_call_play();
-                }
+
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 monitor_channel_set(from_channel);
                 if (is_channel_ipc_camera(cur_channel) == true)
