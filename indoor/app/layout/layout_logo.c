@@ -33,7 +33,7 @@ enum
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-static void standby_dection_timer(lv_timer_t *t)
+void standby_dection_timer(lv_timer_t *t)
 {
         extern bool standby_timeout_check_and_process(void);
         standby_timeout_check_and_process();
@@ -64,8 +64,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
          ** 说明: GPIO 初始化
          ***********************************************/
         user_gpio_init();
-        /***** 设置背光使能亮度 *****/
-        backlight_brightness_set(user_data_get()->display.lcd_brigtness);
+
 #if 1
         wifi_device_conneting();
         if (user_data_get()->wifi_enable)
@@ -129,6 +128,18 @@ static void logo_enter_system_timer(lv_timer_t *t)
         }
         else
         {
+                /************************************************************
+                 ** 函数说明: 待机初始化
+                ** 作者: xiaoxiao
+                ** 日期: 2023-05-19 15:21:05
+                ** 参数说明:
+                ** 注意事项:
+                ************************************************************/
+                standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
+                standby_timer_restart(true);
+
+                lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
+                lv_timer_ready(standby_timer);
                 audio_output_cmd_register(audio_output_event_default_process);
                 user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
                 if (alarm_trigger_check() == false)
@@ -320,18 +331,7 @@ static void sat_layout_enter(logo)
 
 static void sat_layout_quit(logo)
 {
-        /************************************************************
-         ** 函数说明: 待机初始化
-         ** 作者: xiaoxiao
-         ** 日期: 2023-05-19 15:21:05
-         ** 参数说明:
-         ** 注意事项:
-         ************************************************************/
-        standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
-        standby_timer_restart(true);
 
-        lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
-        lv_timer_ready(standby_timer);
 }
 
 sat_layout_create(logo);
