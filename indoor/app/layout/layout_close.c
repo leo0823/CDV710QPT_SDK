@@ -238,12 +238,12 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
         motion_timeout_sec = 10;
         lv_timer_del(ptimer);
         layout_motion_restart_motion_detection();
-    }
+    }        
 }
 
 static bool layout_close_motion_dectection_callback(void)
 {
-    if(is_motion_snapshot_ing || is_motion_record_video_ing)
+    if (is_motion_snapshot_ing || is_motion_record_video_ing)
     {
         return false;
     }
