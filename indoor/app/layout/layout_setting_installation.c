@@ -116,7 +116,6 @@ static void setting_installation_factory_reset_cancel_func(lv_event_t *ev)
 }
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
-        SAT_DEBUG("================");
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
         setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, "Do you want to process initiatialization?", 0, 110, 460, 120);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, "Confirm", "Cancel", setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
