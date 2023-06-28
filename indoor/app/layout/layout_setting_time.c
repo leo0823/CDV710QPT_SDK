@@ -115,6 +115,7 @@ static void setting_time_param_init(void)
 }
 static void sat_layout_enter(setting_time)
 {
+        standby_timer_close();
         /************************************************************
         ** 函数说明: 用来标志时间是否被修改了
         ** 作者: xiaoxiao
@@ -325,7 +326,6 @@ static void sat_layout_quit(setting_time)
 {
         if(modify)
         {
-
                 struct tm tm;
                 /***** year *****/
                 char buffer[8] = {0};
@@ -364,6 +364,7 @@ static void sat_layout_quit(setting_time)
                 user_time_set(&tm);
 
         }
+        standby_timer_restart(true);
 }
 
 sat_layout_create(setting_time);

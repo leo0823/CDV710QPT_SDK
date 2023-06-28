@@ -423,6 +423,7 @@ static bool layout_alarm_ringplay_register_callback(int arg)
         }
         return true;
 }
+
 /************************************************************
 ** 函数说明: 
 ** 作者: xiaoxiao
@@ -622,29 +623,26 @@ static void sat_layout_enter(alarm)
             ** 说明: 返回按钮
             ***********************************************/
             {
-                    lv_common_img_btn_create(parent, layout_alarm_password_input_obj_id_cancel, 35, 15, 48, 48,
+                lv_common_img_btn_create(parent, layout_alarm_password_input_obj_id_cancel, 35, 15, 48, 48,
                                                 layout_alarm_close_keyboard_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                             resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
             }
-            
-
-                
-
-                    
+       
         }
 
+        lv_obj_pressed_func = NULL;
 }
 static void sat_layout_quit(alarm)
 {
+        lv_obj_pressed_func = lv_layout_touch_callback;
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
         record_video_stop();
         monitor_close();
         standby_timer_restart(true);
-
 
 }
 

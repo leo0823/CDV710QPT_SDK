@@ -1,5 +1,3 @@
-
-
 #ifndef _SETTING_LANGUAGE_H_
 #define _SETTING_LANGUAGE_H_
 

@@ -22,23 +22,41 @@ static void setting_frame_item_cancel_click(lv_event_t *e)
 
 static void setting_frame_item_checkbox_click(lv_event_t *e)
 {
-        lv_obj_t *parent = lv_event_get_current_target(e);
-        if (parent == NULL)
-        {
-                return;
-        }
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+        lv_obj_t *obj = lv_event_get_current_target(e);
         if (obj == NULL)
         {
                 return;
         }
-        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))))
+        lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, 1);
+        if (checkbox == NULL)
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+                return;
+        }
+        if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))))
+        {
+                lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
         }
         else
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+                unsigned int selected = 0x00;
+                for(int i = 0; i<5; i++)
+                {
+                        lv_obj_t* parent_cont =  lv_obj_get_child_form_id(lv_obj_get_parent(obj),setting_frame_item_obj_id_hour_cont + i);
+                        if(parent_cont == NULL)
+                        {
+                                continue;
+                        }
+                        lv_obj_t * checkbox =  lv_obj_get_child_form_id(parent_cont,1);
+                        if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) != 0)
+                        {
+                                
+                                selected ++;
+                        }
+                }
+                if( selected != 1)
+                {
+                        lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+                }
         }
 }
 
