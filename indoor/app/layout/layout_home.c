@@ -1,12 +1,15 @@
 #include "layout_define.h"
 #include "layout_home.h"
 #include "layout_setting_time.h"
+#include "tuya_api.h"
 enum
 {
         home_obj_id_topbar,
 
         home_obj_id_setting_icon,
         home_obj_id_mute_icon,
+
+        home_obj_id_network_icon,
 
         home_obj_id_user_app_label,
 
@@ -618,6 +621,27 @@ static void layout_home_cctv_icon_display(lv_obj_t * obj)
         }
 
 }
+
+static void home_network_check_timer(lv_timer_t *ptimer)
+{
+        lv_obj_t * obj = ptimer->user_data;
+	char state = tuya_api_network_status();
+	if ((state == 0x00) || (user_data_get()->wifi_enable == false))
+	{
+		lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+	}
+	else if (state == 0x01)
+	{
+		lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
+	}
+	else
+	{
+		lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_wifi.png"), LV_PART_MAIN);
+	}
+
+}
 static void sat_layout_enter(home)
 {
 
@@ -893,6 +917,21 @@ static void sat_layout_enter(home)
                                               layout_home_language_get(HOME_LANG_ID_EMERGENCY), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                               13, 0, 77, 77, home_obj_id_emergency_img,
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        {
+                /************************************************************
+                ** 函数说明: 网络图标创建
+                ** 作者: xiaoxiao
+                ** 日期: 2023-06-28 10:45:40
+                ** 参数说明: 
+                ** 注意事项: 
+                ************************************************************/
+                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,842, 55 , 32, 32,
+                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_timer_ready(lv_sat_timer_create(home_network_check_timer, 1000, network));
         }
 	
         home_media_thumb_display();

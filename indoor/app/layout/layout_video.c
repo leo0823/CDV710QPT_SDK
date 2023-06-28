@@ -108,7 +108,7 @@ static void video_info_obj_display(void)
         }
 
         const file_info *info = playback_media_info_get();
-        lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch, playback_pview_item_get() + 1, playback_media_total_get());
+        lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch,  playback_media_total_get() - playback_pview_item_get(), playback_media_total_get());
 }
 static void video_time_obj_display(void)
 {

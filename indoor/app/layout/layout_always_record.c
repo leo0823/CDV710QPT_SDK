@@ -49,20 +49,23 @@ static int always_record_channel_get(void)
 
 	if ((monitor_valid_channel_check(MON_CH_DOOR1) == false) && (monitor_valid_channel_check(MON_CH_DOOR2) == false))
 	{
+                printf("================\n");
 		for(int i = 0; i < 8; i++)
-        {
-            if(monitor_valid_channel_check(MON_CH_CCTV1 + i))
-            {
-                if( i == 7)
                 {
-                    return MON_CH_NONE;
-                } 
-                break;;
-            }
+                        if(monitor_valid_channel_check(MON_CH_CCTV1 + i))
+                        {
+                                printf("i is %d\n",i);
+                                if( i == 7)
+                                {
+                                        return MON_CH_NONE;
+                                } 
+                                break;;
+                        }
 
-        }
+                }
 	}
 	int ch = monitor_channel_get();
+
 	if (always_record_loop == false)
 	{
 		return ch;
@@ -144,6 +147,7 @@ static void always_record_record_btn_up(lv_event_t *ev)
 static void layout_always_monitor_open(void)
 {
 	int ch = always_record_channel_get();
+        printf("ch is %d\n",ch);
 	if (ch != MON_CH_NONE)
 	{
 		monitor_channel_set(ch);

@@ -201,7 +201,7 @@ static void sat_layout_enter(setting_version_information)
                 }
 
 
-                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 304, 928, 72,
+                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * network_data_get()->door_device_count, 928, 72,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
