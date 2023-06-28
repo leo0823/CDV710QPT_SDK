@@ -26,16 +26,16 @@ static const char *layout_home_language[HOME_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
         {"Currently in use in mobile app.", "Currently in use in mobile app.", "Currently in use in mobile app."},
         {"Recent Video", "Recent Video", "Recent Video"},
         {"Recent call", "Recent call", "Recent call"},
-        {"Monitoring", "Monitoring", "Monitoring"},
-        {"Call", "Call", "Call"},
-        {"CCTV", "CCTV", "CCTV"},
-        {"Away", "Away", "Away"},
+        {"Monitoring", "监控","Наблюдение","Monitoring","Monitoreo","Quan sát","مراقبة "},
+        {"Call", "呼入", "Call","Вызов","Llamar","Gọi","إتصال"},
+        {"CCTV", "CCTV", "CCTV","Видеонаблюдение","CCTV","CCTV","CCTV"},
+        {"외출", "外出", "Away","Отсутствие","Salida","Vắng nhà","بعيد"},
         {"Burglar", "Burglar", "Burglar"},
         {"Elevator","Elevator","Elevator",},
         {"Emergency", "Emergency", "Emergency"},
         {"The communication line is being used\nby another device.", "The communication line is being used\nby another device.", "The communication line is being used\nby another device."},
-         {"Door Camera", "Door Camera", "Door Camera"},
-         {"Common entrance", "Common entrance", "Common entrance"},
+        {"Door Camera", "Door Camera", "Door Camera"},
+        {"Common entrance", "Common entrance", "Common entrance"},
     };
 
 /***
@@ -64,7 +64,7 @@ static const char *layout_home_week_language[7][LANGUAGE_ID_TOTAL] = {
     /* HOME_LANG_ID_WEEK_6 */
     {"토요일", "星期六", "Sat", "Суббота", "Sábado", "Cumartesi", "Sobota", "Sobota", "السبت"},
     /* HOME_LANG_ID_WEEK_7 */
-    {"일요일", "Sun", "星期日", "Воскресенье", "Domingo", "Pazar", "Niedziela", "Pátek", "الأحد"},
+    {"일요일", "星期日", "Sun", "Воскресенье", "Domingo", "Pazar", "Niedziela", "Pátek", "الأحد"},
 
 };
 /***
