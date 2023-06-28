@@ -49,9 +49,14 @@ typedef enum
 static const char *layout_setting_general_language[SETTING_GENERAL_LANG_ID_LANG_TOTAL][LANGUAGE_ID_TOTAL] =
     {
         {
+            "환경설정",
+            "环境设置",
             "Settings",
-            "Settings",
-            "Settings",
+            "Ajustes",
+            "Cài đặt",
+            "Настройки",
+            "الإعدادات",
+
         },
         {
             "General",

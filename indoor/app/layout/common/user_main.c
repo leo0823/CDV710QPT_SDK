@@ -28,6 +28,7 @@
 #include "common/ssd20x_common.h"
 #include "common/sat_main_event.h"
 #include "layout_define.h"
+#include "lang_xls.h"
 // #include "dds/topic_table.h"
 #if 0
 dds_inherit_listener
@@ -154,6 +155,8 @@ int main(int argc, char *argv[])
          * @注释: 平台sdk初始化
          */
         platform_sdk_init();
+
+        init_language_xls_info();
 
         /*lv_task_handler
          * @日期: 2022-08-08

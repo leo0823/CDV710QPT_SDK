@@ -3,6 +3,11 @@
                 "ssd20x_sarad.h": "c",
                 "user_standby.h": "c",
                 "user_alarm_list.h": "c",
-                "layout_setting_screen.h": "c"
+                "layout_setting_screen.h": "c",
+                "layout_define.h": "c",
+                "layout_setting_language.h": "c",
+                "language_new.h": "c",
+                "lang_xls.h": "c",
+                "user_data.h": "c"
         }
 }

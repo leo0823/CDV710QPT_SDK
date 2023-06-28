@@ -62,9 +62,9 @@ static const char *lang_common_language[LANG_COMMON_ID_TOTAL][LANGUAGE_ID_TOTAL]
         {"CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5", "كاميرا مرا 5"},
         {"CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6", "كاميرات مراقبة 6"},
         {"CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7", "كاميرا مرا 7"},
-        {"CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "كاميرات مراقبة 8"},
+        {"CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8",},
         /***** LANG_COMMON_ID_LANG *****/
-        {"한국어", "简体中文", "English", "Русский", "Español", "Türkçe", "Polski", "Čeština", "بالعربية"},
+        {"한국어", "中文(简体)", "English", "Русский", "Español", "Tiếng Việt", "عربي",},
 };
 /***
 ** 日期: 2022-04-28 13:55

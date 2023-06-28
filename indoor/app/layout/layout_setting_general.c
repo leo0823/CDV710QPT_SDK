@@ -4,6 +4,7 @@
 #include "layout_setting_wifi.h"
 #include "layout_setting_language.h"
 #include "layout_setting_time.h"
+#include "common/language_new.h"
 enum
 {
 

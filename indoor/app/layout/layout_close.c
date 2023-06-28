@@ -202,7 +202,6 @@ static void motion_timer_check_task(lv_timer_t *ptimer)
 {
     if ((motion_timer_timeout_check() == true))
     {
-        printf("=======%s=====%d====%llu\n\r", __func__, __LINE__, user_timestamp_get());
         layout_motion_monitor_open();
         // sat_linphone_motion_detection_start(80,user_data_get()->motion.sensivity);
         lv_timer_del(ptimer);
@@ -239,23 +238,12 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
         motion_timeout_sec = 10;
         lv_timer_del(ptimer);
         layout_motion_restart_motion_detection();
-<<<<<<< HEAD
     }
-=======
-
-    }        
->>>>>>> 27420c4b9fbffc42e13ac58010135891d23d6565
 }
 
 static bool layout_close_motion_dectection_callback(void)
 {
-<<<<<<< HEAD
-    if (is_motion_snapshot_ing || is_motion_record_video_ing)
-=======
-    SAT_DEBUG("is_motion_snapshot_ing is %d\n",is_motion_snapshot_ing);
-    SAT_DEBUG("is_motion_record_video_ing is %d\n",is_motion_record_video_ing);
     if(is_motion_snapshot_ing || is_motion_record_video_ing)
->>>>>>> 27420c4b9fbffc42e13ac58010135891d23d6565
     {
         return false;
     }
@@ -303,8 +291,6 @@ static void monitior_obj_channel_info_obj_display(void)
     }
     else
     {
-        printf("channel is %d\n", channel);
-        SAT_DEBUG("network_data_get()->door_device[channel].door_name %s\n", network_data_get()->door_device[channel].door_name);
         lv_obj_set_x(obj, 37);
         lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
     }
@@ -431,7 +417,6 @@ static void layout_motion_head_cont_create(void)
 ************************************************************/
 static void layout_motion_video_state_callback(bool record_ing)
 {
-    SAT_DEBUG("record_ing is %d\n", record_ing);
     is_motion_record_video_ing = record_ing;
     if (is_motion_record_video_ing == false)
     {
@@ -484,8 +469,8 @@ static bool layout_motion_streams_running_register_callback(char *arg)
 
 static void sat_layout_enter(close)
 {
-    SAT_DEBUG("===================");
     standby_timer_close();
+    backlight_enable(true);
     backlight_enable(false);
     close_cancel_btn_create();
     if (user_data_get()->motion.enable)
@@ -514,19 +499,10 @@ static void sat_layout_enter(close)
             lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 1000, NULL));
         }
     }
-<<<<<<< HEAD
     else if ((user_data_get()->display.standby_mode == 1) && (user_data_get()->display.frame_list & 0x1F) && (frame_display_timeout_check() == false))
     {
         sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
     }
-=======
-    else if ((user_data_get()->display.standby_mode == 1) && (user_data_get()->display.frame_list & 0x7FFfF) && (frame_display_timeout_check() == false))
-	{
-        sat_layout_goto(frame_show,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-	}
-
-    
->>>>>>> 27420c4b9fbffc42e13ac58010135891d23d6565
 }
 
 static void sat_layout_quit(close)

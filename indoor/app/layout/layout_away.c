@@ -188,9 +188,8 @@ static void layout_away_ececution_stop_btn_display(void)
     lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_execution_btn);
     if(user_data_get()->alarm.away_alarm_enable)
     {
-        printf("set false");
         lv_obj_t * label = lv_obj_get_child_form_id(obj,layout_away_obj_id_execution_btn_label);
-        lv_label_set_text(label,"End");
+        lv_label_set_text(label, layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_END));
     }
     else
     {
@@ -205,7 +204,7 @@ static void layout_away_ececution_stop_btn_display(void)
         }
 
         lv_obj_t * label = lv_obj_get_child_form_id(obj,layout_away_obj_id_execution_btn_label);
-        lv_label_set_text(label,"Excution");
+        lv_label_set_text(label, layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_EXECUTION));
     }
 }
 
@@ -796,14 +795,14 @@ static void layout_away_setting_time_click(lv_event_t *ev)
 static void layout_away_release_time_msgbox_option_create(lv_obj_t * msgbox, lv_event_cb_t checkbox_cb)
 {
     lv_obj_t *list = setting_list_create(msgbox, layout_away_obj_id_msgbox_list);
-    lv_common_style_set_common(list, layout_away_obj_id_msgbox_list, 47, 73, 366, 200, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+    lv_common_style_set_common(list, layout_away_obj_id_msgbox_list, 27, 73, 460-27, 200, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
     for(int i =0; i<10; i++)
     {
-        lv_common_img_text_btn_create(list, i, 0, 0, 366, 55,
+        lv_common_img_text_btn_create(list, i, 0, 0, 460-27, 55,
                                 checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                46, 8, 366 - 16, 32, 0,
+                                46, 8, 460 - 27 - 16, 32, 0,
                                 layout_away_language_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 away_obj_id_t_msgbox_checkbox_img, 8, 32, 32, 1,
                                 i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
@@ -864,7 +863,7 @@ static void layout_away_func_setting_create()
                                                     0, 17, 300, 43,layout_away_obj_id_setting_time_title,
                                                     layout_away_language_get(LAYOUT_AWAY_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     370, 17, 120, 40, layout_away_obj_id_setting_time_sub,
-                                                    "1 minute", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     0, 0, 80, 48, -1,
@@ -879,7 +878,7 @@ static void layout_away_func_setting_create()
                                                     0, 17, 300, 43,layout_away_obj_id_release_time_title,
                                                     layout_away_language_get(LAYOUT_AWAY_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     370, 17, 120, 40, layout_away_obj_id_release_time_sub,
-                                                    "0 Second", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     0, 0, 80, 48, -1,
@@ -893,7 +892,7 @@ static void layout_away_func_setting_create()
                                                     0, 17, 300, 43,layout_away_obj_id_save_photo_title,
                                                     layout_away_language_get(LAYOUT_AWAY_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 17, 120, 40, -1,
-                                                    "1 minute", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     370, 12, 80, 48, layout_away_save_photo_switch_id,
@@ -907,7 +906,7 @@ static void layout_away_func_setting_create()
                                                     0, 17, 300, 43,layout_away_obj_id_bypass_call_title,
                                                     layout_away_language_get(LAYOUT_AWAY_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 17, 120, 40, -1,
-                                                    "1 minute", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     370, 12, 80, 48, layout_away_bypass_call_img_id,
@@ -942,7 +941,7 @@ static void sat_layout_enter(away)
                                     NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                    "Away", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                   layout_away_language_get(LAYOUT_AWAY_COULANG_ID_LANG_AWAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /************************************************************
@@ -1002,7 +1001,7 @@ static void sat_layout_enter(away)
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 17, 514, 46, layout_away_obj_id_execution_btn_label,
-                                    "Execution", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                    layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_EXECUTION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                     3, 0, 77, 77, -1,
                                     NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
             layout_away_ececution_stop_btn_display();
@@ -1032,7 +1031,7 @@ static void sat_layout_enter(away)
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 300, 514, 46, layout_away_obj_id_main_bg_tips,
-                        "Away mode is running", 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                        layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_RUNNING), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                         0, 0, 510, 300, -1,
                         resource_ui_src_get("img_away.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         if(!user_data_get()->alarm.away_alarm_enable) lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);

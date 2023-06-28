@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_slave_type_setting.h"
+#include "layout_setting_general.h"
 enum
 {
         slave_type_setting_obj_id_title,
@@ -17,12 +18,19 @@ enum
 
         slave_type_setting_obj_id_msgbox_cont,
 
+        slave_type_setting_obj_id_list,
+
         slave_type_setting_obj_id_titile_id,
 
         slave_type_setting_obj_id_msgbox_confirm,
 
         slave_type_setting_obj_id_msgbox_cancel,
 };
+
+typedef enum
+{
+        slave_type_setting_obj_id_checkbox,
+}slave_type_setting_list;
 
 static void slave_type_setting_cancel_click(lv_event_t *e)
 {
@@ -32,11 +40,29 @@ static void slave_type_setting_master_indoor_click(lv_event_t *e)
 {
         sat_layout_goto(setting_master_indoor_unit_ip, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
+
+static void  slave_type_setting_cancel_func(lv_event_t *ev)
+{
+        setting_msgdialog_msg_del(slave_type_setting_obj_id_msgbox_bg_cont);
+}
 static void slave_type_setting_extension_number_click(lv_event_t *e)
 {
-        lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont,slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox,slave_type_setting_obj_id_titile_id,"The outing is currently running.The 'Not used' setting is applied after the end of the outing.", 0, 90, 460, 80);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,slave_type_setting_obj_id_msgbox_confirm,slave_type_setting_obj_id_msgbox_cancel ,"Confirm","Cancel", NULL,NULL);
+        lv_obj_t * msgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont,slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
+        lv_obj_t *list = setting_list_create(msgbox, slave_type_setting_obj_id_list);
+        lv_common_style_set_common(list, slave_type_setting_obj_id_list, 27, 10, 460 - 27, 273, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        for(int i =0; i<10; i++)
+        {
+                lv_common_img_text_btn_create(list, i, 0, 0, 366, 55,
+                                        NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        46, 8, 366 - 16, 32, 0,
+                                        "501", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                        0, 8, 32, 32, 1,
+                                        i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
+                                        , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox,slave_type_setting_obj_id_msgbox_confirm,slave_type_setting_obj_id_msgbox_cancel ,"Confirm","Cancel", slave_type_setting_cancel_func,slave_type_setting_cancel_func);
 }
 
 static void sat_layout_enter(slave_type_setting)

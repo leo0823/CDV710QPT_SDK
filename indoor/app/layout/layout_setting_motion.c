@@ -249,7 +249,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                               title, 0XA8A8A8, 0XA8A8A8, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
         lv_obj_t *list = setting_list_create(msgbox, setting_motion_obj_id_msgbox_list);
-        lv_common_style_set_common(list, setting_motion_obj_id_msgbox_list,47,73, 460 - 47, 343 - 57, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        lv_common_style_set_common(list, setting_motion_obj_id_msgbox_list,27,73, 460 - 27, 343 - 57, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
         if (n_item == 2)
         {
