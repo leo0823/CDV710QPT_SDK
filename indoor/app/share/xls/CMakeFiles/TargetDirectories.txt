@@ -1,3 +1,0 @@
-/home/leo/workspace/CDV810QPT_LIB/indoor/app/share/xls/CMakeFiles/xls.dir
-/home/leo/workspace/CDV810QPT_LIB/indoor/app/share/xls/CMakeFiles/edit_cache.dir
-/home/leo/workspace/CDV810QPT_LIB/indoor/app/share/xls/CMakeFiles/rebuild_cache.dir

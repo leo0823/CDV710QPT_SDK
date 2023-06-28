@@ -1,5 +1,5 @@
 
-#include "xls.h"
+#include "xls/xls.h"
 #include <stdlib.h>
 #include <string.h>
 // #include <fcntl.h>
@@ -10,8 +10,12 @@
 #include "language_new.h"
 // #include "user_data.h"
 
-#define LAN_ERR(format,...)      printf("\e[0;1;31m"    "[LANGUAGE ][%s:%04u]\t" format "\e[0m", __FUNCTION__, __LINE__, ##__VA_ARGS__)
-#define LAN_INFO(format,...)     printf("\e[0;1m"       "[LANGUAGE ][%s:%04u]\t" format "\e[0m", __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LAN_ERR(format, ...) printf("\e[0;1;31m"                             \
+                                    "[LANGUAGE ][%s:%04u]\t" format "\e[0m", \
+                                    __FUNCTION__, __LINE__, ##__VA_ARGS__)
+#define LAN_INFO(format, ...) printf("\e[0;1m"                                \
+                                     "[LANGUAGE ][%s:%04u]\t" format "\e[0m", \
+                                     __FUNCTION__, __LINE__, ##__VA_ARGS__)
 
 typedef struct
 {
@@ -26,7 +30,7 @@ xls_info_t xls_info = {false, 0, 0, 0};
 char ***buffer = NULL;
 // /*******************************************************************
 //  * @brief  字符串替换
-//  * @return {char} 
+//  * @return {char}
 //  * @param  {char} source 初始字符串
 //  * @param  {char} find 需要被替换的子串
 //  * @param  {char} replace 替换成的字符串
@@ -45,12 +49,16 @@ void str_replace(char *source, const char *find, const char *replace)
     ptr = source;
     tmp = new_string;
 
-    while (*ptr != '\0') {
-        if (strncmp(ptr, find, find_len) == 0) {
+    while (*ptr != '\0')
+    {
+        if (strncmp(ptr, find, find_len) == 0)
+        {
             strncpy(tmp, replace, replace_len);
             ptr += find_len;
             tmp += replace_len;
-        } else {
+        }
+        else
+        {
             *tmp++ = *ptr++;
         }
     }
@@ -79,18 +87,14 @@ char ***lang_xls_init(int sheet_num)
 
         return NULL;
     }
-
     pWb = xls_open(XLS_TMP_PATH, CODE);
-
     if (NULL == pWb)
     {
         LAN_ERR(XLS_TMP_PATH " open failed\n");
         return NULL;
     }
-
     pWs = xls_getWorkSheet(pWb, sheet_num); // pWs指向第 sheet_num 个 Sheet
     xls_parseWorkSheet(pWs);
-
 #if (0)
     /* 根据程序固定读取 */
     xls_info.row_total = LANGUAGE_STRING_TOTAL;
@@ -129,16 +133,14 @@ char ***lang_xls_init(int sheet_num)
                     return NULL;
 
                 strcpy(buffer[i][j], (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
-                str_replace(buffer[i][j],"\\n","\n");
+                str_replace(buffer[i][j], "\\n", "\n");
             }
             printf("%s\t", (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
         }
         printf("\n");
     }
-
     xls_close_WS(pWs);
     xls_close_WB(pWb);
-
     xls_info.xls_is_exist = true;
 
     return buffer;
@@ -196,8 +198,6 @@ char *lang_xls_str_get(int str_num, int lang_type)
     return buffer[str_num][lang_type];
 }
 
-
-
 static bool is_lan_xls_init_ok = false;
 
 bool is_lan_xls_init_ok_get()
@@ -232,10 +232,10 @@ bool init_language_xls_info(void)
     }
     // printf("33333333333333333333333333333333333\n\n");
 
-    if (lang_xls_str_num_get() != LANGUAGE_STRING_TOTAL+1)
+    if (lang_xls_str_num_get() != LANGUAGE_STRING_TOTAL + 1)
     {
-        printf("XLS表总列数%d\n",lang_xls_str_num_get());
-        printf("id总列数%d\n",LANGUAGE_STRING_TOTAL);
+        printf("XLS表总列数%d\n", lang_xls_str_num_get());
+        printf("id总列数%d\n", LANGUAGE_STRING_TOTAL);
         // LOG_RED("xls lan get str[%d] != LANGUAGE_STRING_TOTAL[%d] \n", lang_xls_str_num_get(), LANGUAGE_STRING_TOTAL);
         return false;
     }
