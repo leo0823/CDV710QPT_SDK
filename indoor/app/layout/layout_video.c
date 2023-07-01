@@ -108,7 +108,7 @@ static void video_info_obj_display(void)
         }
 
         const file_info *info = playback_media_info_get();
-        lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch, playback_pview_item_get() + 1, playback_media_total_get());
+        lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch,  playback_media_total_get() - playback_pview_item_get(), playback_media_total_get());
 }
 static void video_time_obj_display(void)
 {
@@ -298,8 +298,8 @@ static void video_del_msgbox_confirm_click(lv_event_t *e)
 
 static void video_obj_del_click(lv_event_t *e)
 {
-        video_msgbox_create(layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_DELETE),
-                            layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_WOULD_YOU_LIKE_DEL),
+        video_msgbox_create(lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL),
+                            lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                             video_msgbox_del_cancel_click, video_del_msgbox_confirm_click);
 }
 static void video_obj_left_click(lv_event_t *e)

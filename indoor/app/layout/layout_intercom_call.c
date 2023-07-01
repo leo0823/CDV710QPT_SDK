@@ -70,9 +70,9 @@ static lv_obj_t *intercom_call_table_view_obj_create(void)
 
         lv_obj_t *cont = lv_tabview_get_content(tabview);
         lv_common_style_set_common(cont, 0, 0, 56, 1024, 464, LV_ALIGN_CENTER, LV_PART_MAIN);
-        lv_obj_t *page_1 = lv_tabview_add_tab(tabview, layout_intercom_language_get(INTERCOM_LANG_ID_CAll_CHANNEL));
+        lv_obj_t *page_1 = lv_tabview_add_tab(tabview, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_CHANNEL));
         lv_common_style_set_common(page_1, 0, 0, 0, 1024, 464, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-        lv_obj_t *page_2 = lv_tabview_add_tab(tabview, layout_intercom_language_get(INTERCOM_LANG_ID_CAll_LOG));
+        lv_obj_t *page_2 = lv_tabview_add_tab(tabview, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG));
         lv_common_style_set_common(page_2, 1, 0, 0, 1024, 464, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
         lv_obj_t *btnmatrix = lv_tabview_get_tab_btns(tabview);
@@ -196,7 +196,7 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 50, 20, 300, 43,0,
-                                layout_intercom_language_get(INTERCOM_LANG_ID_DOOR_CAMERA), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_large,
+                                lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_large,
                                 0, 15, 80, 48, 1,
                                 type == IN_AND_NO_ANSWER ?( char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ?( char *)resource_ui_src_get("ic_list_call_transmit.png") : ( char *)resource_ui_src_get("ic_list_call_receive.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_LEFT_MID);                              
                 }
@@ -256,7 +256,7 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
         }else
         {
                 
-                lv_label_set_text(title,layout_home_language_get(HOME_LANG_ID_CALL));
+                lv_label_set_text(title,lang_str_get(HOME_XLS_LANG_ID_CALL));
                 lv_obj_add_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(del_cancel,LV_OBJ_FLAG_HIDDEN);
         }
@@ -380,10 +380,9 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
 	}
 	
         lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(intercom_call_obj_id_log_msg_bg,call_log_msg_bg_obj_id_msgdialog, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox,call_log_msg_bg_obj_id_title,"Click 'Cinfirm' and the selected item will be displayed asDeleted and cannot be restored.", 0, 110, 460, 120);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,call_log_msg_bg_obj_id_confirm_id,call_log_msg_bg_obj_id_cancel_id ,"confirm","cancel", layout_intercom_call_log_msgbox_confirm_click,layout_intercom_call_log_msgbox_cancel);
+        setting_msgdialog_msg_create(masgbox,call_log_msg_bg_obj_id_title,lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL_TIPS), 0, 110, 460, 120);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,call_log_msg_bg_obj_id_confirm_id,call_log_msg_bg_obj_id_cancel_id ,layout_intercom_call_log_msgbox_confirm_click,layout_intercom_call_log_msgbox_cancel);
     
-
 
         }
 }
@@ -410,7 +409,7 @@ static void intercom_call_log_obj_del_cancel_click(lv_event_t *ev)
 
 
         checkbox_s_num = 0;
-        lv_label_set_text(title,layout_home_language_get(HOME_LANG_ID_CALL));
+        lv_label_set_text(title,lang_str_get(HOME_XLS_LANG_ID_CALL));
         lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(back,LV_OBJ_FLAG_HIDDEN);
         lv_obj_set_style_bg_img_src(lv_obj_get_child_form_id(del_all,intercom_call_obj_id_del_all_img), resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
@@ -547,7 +546,7 @@ static void sat_layout_enter(intercom_call)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_home_language_get(HOME_LANG_ID_CALL), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(HOME_XLS_LANG_ID_CALL), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -596,7 +595,7 @@ static void sat_layout_enter(intercom_call)
                                                                   intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                  layout_intercom_language_get(INTERCOM_LANG_ID_EXTENSION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                                  lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                         lv_obj_set_style_pad_top(txt_obj, 94, LV_PART_MAIN);
                         lv_obj_set_style_bg_color(txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
@@ -607,7 +606,7 @@ static void sat_layout_enter(intercom_call)
                                                         intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
-                                                        layout_intercom_language_get(INTERCOM_LANG_ID_GUARD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                        lang_str_get(INTERCOM_XLS_LANG_ID_GUARD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                         lv_obj_set_style_pad_top(txt_obj, 94, LV_PART_MAIN);
                         lv_obj_set_style_bg_color(txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);

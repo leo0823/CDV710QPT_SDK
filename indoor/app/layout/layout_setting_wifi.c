@@ -448,7 +448,7 @@ static void setting_wifi_discovered_network_display(void)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_DISCOVERED_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                      lang_str_get(WIFI_SETTING_XLS_LANG_ID_DISCOVERED_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
                 list_item_y += 48;
         }
         /***********************************************
@@ -491,7 +491,7 @@ static void sat_layout_enter(setting_wifi)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_WIFI_WIRELESS_NETWORK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI_WIRELESS_NETWORK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -524,7 +524,7 @@ static void sat_layout_enter(setting_wifi)
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                    0, 8, 838, 50, setting_wifi_obj_id_wifi_title,
-                                                                                   layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_WIFI), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                   lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                    0, 45, 838, 50, setting_wifi_obj_id_wifi_sub,
                                                                                    "Wi-FI MAC: AA:00:00:BB:FF:88", 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                    0, 0, 0, 0, -1,
@@ -546,7 +546,7 @@ static void sat_layout_enter(setting_wifi)
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               16, 13, 300, 27, setting_wifi_obj_id_wifi_add_title,
-                                              layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_ADD_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                              lang_str_get(WIFI_SETTING_XLS_LANG_ID_ADD_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                               896, 16, 80, 32, setting_wifi_obj_id_wifi_add_img,
                                               (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
         }

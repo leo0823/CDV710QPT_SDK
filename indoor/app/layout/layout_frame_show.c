@@ -486,10 +486,14 @@ static void frame_show_date_obj_display(lv_obj_t *parent)
         {
                 return;
         }
-        struct tm tm;
+      	struct tm tm;
         user_time_read(&tm);
-        const char *week_str = layout_home_week_language_get(tm.tm_wday - 1);
-        const char *mon_str = layout_home_month_language_get(tm.tm_mon - 1);
+        char week_str[64] = {0};
+        strcpy(week_str,lang_str_get(tm.tm_wday - 1+HOME_XLS_LANG_ID_MON));
+        // layout_home_week_language_get(tm.tm_wday - 1);
+        char mon_str[64] = {0};
+        strcpy(mon_str,lang_str_get(tm.tm_mon - 1+HOME_XLS_LANG_ID_JAN));
+        // layout_home_month_language_get(tm.tm_mon - 1);
 
         LANGUAGE_ID lang = language_id_get();
         if (lang == LANGUAGE_ID_ENGLISH)
@@ -788,11 +792,11 @@ static void frame_show_monitor_channle_display(void)
 	{
 
 			channel -= 8;
-			lv_label_set_text_fmt(obj, "Monitoring/%s", network_data_get()->cctv_device[channel].door_name);
+			lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING),network_data_get()->cctv_device[channel].door_name);
 	}
 	else
 	{
-			lv_label_set_text_fmt(obj, "Monitoring/%s", network_data_get()->door_device[channel].door_name);
+			lv_label_set_text_fmt(obj,  "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[channel].door_name);
 	}
 
 }
@@ -909,7 +913,6 @@ static void frame_show_restart(void)
 	}
 	if ((user_data_get()->display.frame_list & 0x01) && (frame_show_frame_index < 0x01))
 	{
-		printf("=====%s========%d=====\n",__func__,__LINE__);
 		/*****  开始时间的显示 *****/
 		frame_show_frame_index = 0x01;
 		frame_show_time_start();
@@ -1034,6 +1037,7 @@ static void sat_layout_quit(frame_show)
         lv_img_buf_free(frame_buffer_cur_b);
 		frame_buffer_cur_b = NULL;
 		monitor_close();
+		backlight_brightness_set(user_data_get()->display.lcd_brigtness);
 	
 }
 

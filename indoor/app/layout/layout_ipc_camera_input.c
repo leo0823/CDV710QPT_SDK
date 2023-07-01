@@ -111,9 +111,9 @@ static void ipc_camera_password_input_textarea_placeholder_setting(void)
         else if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)
         {
                 lv_textarea_set_placeholder_text(textarea, ipc_camera_password_state == 0 ? layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_OLD_PASSWORD)
-                                                                                          : layout_ipc_camera_search_language_get(ipc_camera_password_input_password_old[0] == '\0' ? DOOR_CAMERA_SEARCH_ID_CHANGE_PASSWORD
-                                                                                                                                  : ipc_camera_password_input_password_temp[0] == 0 ? DOOR_CAMERA_SEARCH_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER
-                                                                                                                                                                                    : DOOR_CAMERA_SEARCH_ID_CHANGE_TH_CONNETION_PASSWORD));
+                                                                                          : lang_str_get(ipc_camera_password_input_password_old[0] == '\0' ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_PASSWORD
+                                                                                                                                  : ipc_camera_password_input_password_temp[0] == 0 ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER
+                                                                                                                                                                                    : DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD));
         }
         else if (ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_USER | IPC_CAMERA_FLAG_INPUT_PWD))
         {
@@ -218,8 +218,8 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
 {
         if (ipc_camera_password_mixture_char_check(txt) == false)
         {
-                ipc_camera_password_input_msgbox_create(layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_PASSWORD),
-                                                        layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_SET_THE_PASSWORD_TO_A_MIXTURE),
+                ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
+                                                        lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_SET_THE_PASSWORD_TO_A_MIXTURE),
                                                         ipc_camera_password_input_msgbox_confirm_click);
                 return true;
         }
@@ -239,8 +239,8 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         {
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
-                        ipc_camera_password_input_msgbox_create(layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_PASSWORD),
-                                                                layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_PASSWORD_MODIY_SUCCESS),
+                        ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
+                                                                lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_PASSWORD_MODIY_SUCCESS),
                                                                 ipc_camera_password_success_msgbox_confirm_click);
 
                         if (layout_ipc_cmeara_is_doorcamera_get() == true)
@@ -258,7 +258,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
                 }
         }
 
-        ipc_camera_password_input_msgbox_create(layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_PASSWORD),
+        ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                 layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH),
                                                 ipc_camera_password_input_msgbox_confirm_click);
 
@@ -282,7 +282,7 @@ static bool ipc_camera_input_old_password_processing(const char *txt)
                 return true;
         }
 
-        ipc_camera_password_input_msgbox_create(layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_PASSWORD),
+        ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                 layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH),
                                                 ipc_camera_password_input_msgbox_confirm_click);
 
@@ -309,14 +309,14 @@ static bool ipc_camera_input_new_name_processing(void)
 
                 network_data_save();
 
-                ipc_camera_password_input_msgbox_create(layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_PASSWORD),
-                                                        layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_NAME_MODIY_SUCCESS),
+                ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
+                                                        lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_NAME_MODIY_SUCCESS),
                                                         ipc_camera_password_success_msgbox_confirm_click);
 
                 return true;
         }
         ipc_camera_password_input_msgbox_create(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name,
-                                                layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_NAME_MODIY_FAIL),
+                                                lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_NAME_MODIY_FAIL),
                                                 ipc_camera_password_input_msgbox_confirm_click);
         return true;
 }
@@ -406,9 +406,9 @@ static void sat_layout_enter(ipc_camera_input)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       (ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_PWD | IPC_CAMERA_FLAG_INPUT_USER) ? sat_ipcamera_door_name_get(layout_ipc_camera_edit_index_get())
-                                       : (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)                           ? layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_CHANGE_PASSWORD)
-                                       : (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME)                          ? layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_CHANGE_NAME)
-                                                                                                                        : layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_CHANGE_PASSWORD)),
+                                       : (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)                           ? lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_PASSWORD)
+                                       : (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME)                          ? lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_NAME)
+                                                                                                                        : lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_PASSWORD)),
                                       0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************

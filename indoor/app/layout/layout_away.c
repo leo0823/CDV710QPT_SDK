@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_away.h"
+#include "layout_security.h"
 #include "layout_setting_general.h"
 typedef enum
 {
@@ -189,7 +190,7 @@ static void layout_away_ececution_stop_btn_display(void)
     if(user_data_get()->alarm.away_alarm_enable)
     {
         lv_obj_t * label = lv_obj_get_child_form_id(obj,layout_away_obj_id_execution_btn_label);
-        lv_label_set_text(label, layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_END));
+        lv_label_set_text(label, lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_END));
     }
     else
     {
@@ -204,7 +205,7 @@ static void layout_away_ececution_stop_btn_display(void)
         }
 
         lv_obj_t * label = lv_obj_get_child_form_id(obj,layout_away_obj_id_execution_btn_label);
-        lv_label_set_text(label, layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_EXECUTION));
+        lv_label_set_text(label, lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_EXECUTION));
     }
 }
 
@@ -353,28 +354,28 @@ static void layout_away_sensor_select_create(void)
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR1, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR1, lang_str_get,
             },
             {261 - 49, 141 -141, 204, 160,
            layout_away_tabview_page_obj_id_cont2,
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR2, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR2, lang_str_get,
             },
             {49 - 49, 309 - 141, 204, 160,
            layout_away_tabview_page_obj_id_cont3,
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR3, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR3, lang_str_get,
             },
             {261 -49, 309 - 141, 204, 160,
            layout_away_tabview_page_obj_id_cont4,
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR4, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR4, lang_str_get,
             },
 
             {49 - 49, 141 -141, 204, 160,
@@ -382,29 +383,29 @@ static void layout_away_sensor_select_create(void)
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR5, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR5, lang_str_get,
             },
             {261 - 49, 141 -141, 204, 160,
             layout_away_tabview_page_obj_id_cont6,
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR6, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR6, lang_str_get,
             },
             {49 - 49, 309 - 141, 204, 160,
             layout_away_tabview_page_obj_id_cont7,
             layout_away_sensor_select_obj_click,
             layout_away_sensor_select_cont_checkbox_id,
             true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR7, layout_away_language_get,
+            LAYOUT_SECURITY_XLS_LANG_ID_SENSOR7, lang_str_get,
             },
-            {261 -49, 309 - 141, 204, 160,
-            layout_away_tabview_page_obj_id_cont8,
-            layout_away_sensor_select_obj_click,
-            layout_away_sensor_select_cont_checkbox_id,
-            true,
-            LAYOUT_AWAY_LANG_ID_LANG_SEMSOR8, layout_away_language_get,
-            },
+            // {261 -49, 309 - 141, 204, 160,
+            // layout_away_tabview_page_obj_id_cont8,
+            // layout_away_sensor_select_obj_click,
+            // layout_away_sensor_select_cont_checkbox_id,
+            // true,
+            // LAYOUT_SECURITY_XLS_LANG_ID_SENSOR8, lang_str_get,
+            // },
       };
 
     /************************************************************
@@ -633,7 +634,7 @@ static void layout_away_release_time_display(void)
         return;
     }
 
-    lv_label_set_text(time,layout_away_language_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + user_data_get()->alarm.away_release_time / 10));
+    lv_label_set_text(time,lang_str_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + user_data_get()->alarm.away_release_time / 10));
     
 }
 
@@ -803,7 +804,7 @@ static void layout_away_release_time_msgbox_option_create(lv_obj_t * msgbox, lv_
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 46, 8, 460 - 27 - 16, 32, 0,
-                                layout_away_language_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                lang_str_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 away_obj_id_t_msgbox_checkbox_img, 8, 32, 32, 1,
                                 i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
                                  , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -861,7 +862,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_setting_time_title,
-                                                    layout_away_language_get(LAYOUT_AWAY_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     370, 17, 120, 40, layout_away_obj_id_setting_time_sub,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -876,7 +877,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_release_time_title,
-                                                    layout_away_language_get(LAYOUT_AWAY_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     370, 17, 120, 40, layout_away_obj_id_release_time_sub,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -890,7 +891,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_save_photo_title,
-                                                    layout_away_language_get(LAYOUT_AWAY_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 17, 120, 40, -1,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -904,7 +905,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_bypass_call_title,
-                                                    layout_away_language_get(LAYOUT_AWAY_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 17, 120, 40, -1,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -941,7 +942,7 @@ static void sat_layout_enter(away)
                                     NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                   layout_away_language_get(LAYOUT_AWAY_COULANG_ID_LANG_AWAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                   lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_AWAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /************************************************************
@@ -1001,7 +1002,7 @@ static void sat_layout_enter(away)
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                     0, 17, 514, 46, layout_away_obj_id_execution_btn_label,
-                                    layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_EXECUTION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                    lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_EXECUTION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                     3, 0, 77, 77, -1,
                                     NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
             layout_away_ececution_stop_btn_display();
@@ -1031,7 +1032,7 @@ static void sat_layout_enter(away)
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 300, 514, 46, layout_away_obj_id_main_bg_tips,
-                        layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_RUNNING), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_RUNNING), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                         0, 0, 510, 300, -1,
                         resource_ui_src_get("img_away.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         if(!user_data_get()->alarm.away_alarm_enable) lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);

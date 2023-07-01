@@ -46,23 +46,24 @@ void always_record_time_set(int sec)
 ************************************************************/
 static int always_record_channel_get(void)
 {
-
 	if ((monitor_valid_channel_check(MON_CH_DOOR1) == false) && (monitor_valid_channel_check(MON_CH_DOOR2) == false))
 	{
 		for(int i = 0; i < 8; i++)
-        {
-            if(monitor_valid_channel_check(MON_CH_CCTV1 + i))
-            {
-                if( i == 7)
                 {
-                    return MON_CH_NONE;
-                } 
-                break;;
-            }
+                        if(monitor_valid_channel_check(MON_CH_CCTV1 + i))
+                        {
+                                printf("i is %d\n",i);
+                                if( i == 7)
+                                {
+                                        return MON_CH_NONE;
+                                } 
+                                break;;
+                        }
 
-        }
+                }
 	}
 	int ch = monitor_channel_get();
+
 	if (always_record_loop == false)
 	{
 		return ch;
@@ -211,7 +212,6 @@ static void layout_always_record_start(void)
 	else if((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR))
 	{
     snap_count ++;
-    SAT_DEBUG("snap callback count is %d\n",snap_count);
         record_jpeg_start(REC_MODE_ALWAYS);
 
 	}
@@ -424,7 +424,6 @@ static void always_record_loop_btn_up(lv_event_t *ev)
 ************************************************************/
 static void always_record_loop_btn_display(void)
 {
-    SAT_DEBUG("always_record_loop_btn_display\n");
 	lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), always_record_scr_act_obj_id_loop_obj);
 	if (obj == NULL)
 	{

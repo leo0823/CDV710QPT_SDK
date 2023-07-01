@@ -78,7 +78,7 @@ static void wifi_input_textarea_placeholder_setting(void)
 
                 return;
         }
-        lv_textarea_set_placeholder_text(textarea, layout_wifi_input_language_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_LANG_ID_INPUT_USER : WIFI_INPUT_LANG_ID_INPUT_PASSWORD));
+        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_INPUT_USER : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
 }
 
 
@@ -130,7 +130,7 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
 			lv_obj_clean(parent);
 			lv_timer_del(task);
 
-                        setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
+                        setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
                         setting_msgdialog_msg_confirm_btn_create(parent,wifi_input_obj_id_confirm_btn,wifi_input_msg_dialog_error_confirm_up);
                         standby_timer_restart(true);
 		}
@@ -173,7 +173,7 @@ static void wifi_input_animation_task_create(lv_obj_t *parent)
         }
         //连接状态显示
         {
-                setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_CONNECTING), 0, 110, 460, 80);
+                setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECTING), 0, 110, 460, 80);
         }
 
 

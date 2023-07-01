@@ -97,7 +97,7 @@ static void sat_layout_enter(setting_motion_timer)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_MOTION_DETECTING_SCHEDULE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_MOTION_DETECTING_SCHEDULE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -138,7 +138,7 @@ static void sat_layout_enter(setting_motion_timer)
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                 0, 20, 838, 50, 0,
-                                                                layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_SCHEDULE_SETTING), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                lang_str_get(SETTING_MOTION_XLS_LANG_ID_SCHEDULE_SETTING), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, -1,
                                                                 NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
@@ -366,13 +366,13 @@ static void sat_layout_enter(setting_motion_timer)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_START), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_START), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 
                 lv_common_text_create(parent, setting_motion_timer_obj_id_end_label, 90, 270, 66, 43,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_END), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_MOTION_XLS_LANG_ID_END), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 }
 static void sat_layout_quit(setting_motion_timer)

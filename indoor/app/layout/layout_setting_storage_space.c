@@ -186,17 +186,17 @@ static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
 }
 static void setting_storage_space_internal_del_click(lv_event_t *e)
 {
-        setting_storage_space_msgbox_create(layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_INTERNAL_STORAGE), layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_WOULD_YOU_LIKE_DEL),
+        setting_storage_space_msgbox_create(lang_str_get(SETTING_STORAGE_XLS_LANG_ID_INTERNAL_STORAGE), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                                             setting_storage_space_msgbox_cancel_click, setting_storage_space_msgbox_internale_confirm_click, NULL, false);
 }
 static void setting_storage_space_external_del_click(lv_event_t *e)
 {
-        setting_storage_space_msgbox_create(layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_EXTERNAL_STORAGE), layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_WOULD_YOU_LIKE_DEL),
+        setting_storage_space_msgbox_create(lang_str_get(SETTING_STORAGE_XLS_LANG_ID_EXTERNAL_STORAGE), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                                             setting_storage_space_msgbox_cancel_click, setting_storage_space_msgbox_external_confirm_click, setting_storage_space_msgbox_external_checkbox_click, true);
 }
 static void setting_storage_space_fmatsd_click(lv_event_t *e)
 {
-        setting_storage_space_msgbox_create(layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_INTERNAL_STORAGE), layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_WOULD_YOU_LIKE_FORMAT),
+        setting_storage_space_msgbox_create(lang_str_get(SETTING_STORAGE_XLS_LANG_ID_INTERNAL_STORAGE), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_FORMAT),
                                             setting_storage_space_msgbox_cancel_click, setting_storage_space_msgbox_external_fmatsd_click, NULL, false);
 }
 static lv_obj_t *setting_storage_space_arc_create(lv_obj_t *parent, int id, int x, int y, int w, int h,
@@ -279,13 +279,13 @@ static void sat_layout_enter(setting_storage_space)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_INTERNAL_STORAGE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_INTERNAL_STORAGE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external, 680, 93, 177, 36,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_EXTERNAL_STORAGE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_EXTERNAL_STORAGE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
 
         /***********************************************
@@ -332,7 +332,7 @@ static void sat_layout_enter(setting_storage_space)
                                                       setting_storage_space_fmatsd_click, LV_OPA_COVER, 0x00a8ff, LV_OPA_COVER, 0x00a8ff,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_SD_FORMAT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_SD_FORMAT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
@@ -355,7 +355,7 @@ static void sat_layout_enter(setting_storage_space)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
                 char buffer[64] = {0};
                 sprintf(buffer, "%llu%%", (360 - use_data) * 100 / 360);
@@ -394,7 +394,7 @@ static void sat_layout_enter(setting_storage_space)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
                 char buffer[64] = {0};
                 sprintf(buffer, "%llu%%", (360 - use_data)*100 / 360);

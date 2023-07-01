@@ -108,7 +108,7 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
         }
         if(strncmp(buffer,verify_buffer,4) != 0)
         {
-                setting_password_msgbox_create(layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH));
+                setting_password_msgbox_create(lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH));
         }else
         {
                 sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -322,7 +322,7 @@ static void setting_password_modiy_obj_create(void)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_RESET), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                              lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_RESET), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                 }
                 /***********************************************
                  ** 作者: leo.liu
@@ -334,7 +334,7 @@ static void setting_password_modiy_obj_create(void)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_NEW_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                              lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_NEW_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
                 }
 
                 /***********************************************
@@ -347,7 +347,7 @@ static void setting_password_modiy_obj_create(void)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_VERIFY_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                              lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_VERIFY_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
                 }
 
                 for (int i = 0; i < 2; i++)
@@ -394,7 +394,7 @@ static void setting_password_modiy_obj_create(void)
                                                               setting_password_modiy_confirm_click, LV_OPA_COVER, 0x47494a, LV_OPA_COVER, 0x00a8ff,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_APPLE), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                              lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_APPLE), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                         lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
                         setting_password_modiy_confirm_enable(false);
                 }
@@ -423,12 +423,12 @@ static lv_obj_t *setting_password_reset_list_create(lv_obj_t *parent)
 
             {0, 0, 928, 72,
              setting_password_obj_id_reset_household_cont, setting_password_obj_id_reset_household_title, -1,
-             SETTING_PASSWORD_LANG_ID_RESET_HOUSEHOLD_PASSWORD, layout_setting_password_language_get,
+             SETTING_PASSWORD_XLS_LANG_ID_RESET_HOUSEHOLD_PASSWORD, lang_str_get,
              -1, NULL,
              setting_password_reset_household_obj_click},
             {0, 72, 928, 72,
              setting_password_obj_id_reset_common_cont, setting_password_obj_id_reset_common_title, -1,
-             SETTING_PASSWORD_LANG_ID_RESET_COMMON_ENTRANCE_PASSWORD, layout_setting_password_language_get,
+             SETTING_PASSWORD_XLS_LANG_ID_RESET_COMMON_ENTRANCE_PASSWORD, lang_str_get,
              -1, NULL,
              setting_password_reset_common_entrance_obj_click}};
 
@@ -475,7 +475,7 @@ static void sat_layout_enter(setting_password)
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                         }
 
                         /***********************************************

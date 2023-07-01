@@ -141,7 +141,7 @@ static void door_open_method_sub_display(void)
                 return ;
         }
 
-        lv_label_set_text(sub,user_data_get()->etc.open_the_door == 0 ? layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL):layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_WHEN_CALL));
+        lv_label_set_text(sub,user_data_get()->etc.open_the_door == 0 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_OPEN_AFTER_CALL):lang_str_get(SETTING_GENERAL_XLS_LANG_ID_OPEN_WHEN_CALL));
 
 }
 
@@ -160,7 +160,7 @@ static void door1_open_moudle_sub_display(void)
                 SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
-        lv_label_set_text(sub,user_data_get()->etc.door1_open_door_mode == 0 ? layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_CAMERA):layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK));
+        lv_label_set_text(sub,user_data_get()->etc.door1_open_door_mode == 0 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_CAMERA):lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK));
 
 }
 
@@ -180,7 +180,7 @@ static void door2_open_lock_num_sub_display(void)
                 return;
         }
 
-        lv_label_set_text(sub,user_data_get()->etc.door2_lock_num == 1 ? layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1):layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM2));
+        lv_label_set_text(sub,user_data_get()->etc.door2_lock_num == 1 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM1):lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM2));
 
 }
 static void setting_main_cancel_obj_click(lv_event_t *ev)
@@ -392,9 +392,9 @@ static void setting_general_door1_opening_moethod_msgbox_confirm_click(lv_event_
 static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
 {
         const char *item[2] = {0};
-        item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL);
-        item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_OPEN_WHEN_CALL);
-        setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENING_METHOD),
+        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_OPEN_AFTER_CALL);
+        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_OPEN_WHEN_CALL);
+        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENING_METHOD),
                                       setting_general_msgbox_cancel_click, setting_general_door1_opening_moethod_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
 }
@@ -429,9 +429,9 @@ static void setting_general_door2_opening_modoule_msgbox_confirm_click(lv_event_
 static void setting_general_door_opener_module_obj_click(lv_event_t *ev)
 {
         const char *item[2] = {0};
-        item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_CAMERA);
-        item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK);
-        setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENER_MODULE),
+        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_CAMERA);
+        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK);
+        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENER_MODULE),
                                       setting_general_msgbox_cancel_click, setting_general_door2_opening_modoule_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
 
@@ -482,10 +482,10 @@ static void setting_general_door2_opener_num_obj_click(lv_event_t *e)
 {
 
         const char *item[2] = {0};
-        item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1);
-        item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM2);
+        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM1);
+        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM2);
                                       
-        setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM),setting_general_msgbox_cancel_click, setting_general_door2_opener_num_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
+        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM),setting_general_msgbox_cancel_click, setting_general_door2_opener_num_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
         setting_general_door2_opener_num_display();
 }
@@ -553,7 +553,7 @@ static void call_time_obj_sub_display(void)
                 return;
         }
 
-        lv_label_set_text(sub,layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER + user_data_get()->call_time));
+        lv_label_set_text(sub,lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER + user_data_get()->call_time));
 
 }
 static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
@@ -612,10 +612,10 @@ static void setting_general_call_time_num_display(void)
 static void setting_general_call_time_obj_click(lv_event_t *ev)
 {
         const char *item[3] = {0};
-        item[0] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_1_MINUTE);
-        item[1] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_3_MINUTE);
-        item[2] = layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_5_MINUTE);
-        setting_general_msgbox_create(layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER),
+        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_1_MINUTE);
+        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_3_MINUTE);
+        item[2] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_5_MINUTE);
+        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER),
                                       setting_general_msgbox_cancel_click, setting_general_call_time_msgbox_confirm_click, setting_general_call_time_msgbox_item_click,
                                       item, 3);
         setting_general_call_time_num_display();
@@ -662,7 +662,7 @@ lv_obj_t *setting_main_list_create(int id)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SETTINGS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_SETTINGS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -678,12 +678,12 @@ lv_obj_t *setting_main_list_create(int id)
         }
 
         setting_list_info_t main_list_group[] = {
-            {0, 0, 272, 88, setting_general_obj_id_main_general_cont, setting_general_obj_id_main_general_title, -1, SETTING_GENERAL_LANG_ID_LANG_GENERAL, layout_setting_general_language_get, -1, NULL, setting_main_general_obj_click},
-            {0, 88, 272, 88, setting_general_obj_id_main_wifi_cont, setting_general_obj_id_main_wifi_titile, -1, WIFI_SETTING_ID_LANG_WIFI, layout_setting_wifi_language_get, -1, NULL, setting_main_wifi_obj_click},
-            {0, 88 * 2, 272, 88, setting_general_obj_id_main_sound_cont, setting_general_obj_id_main_sound_title, -1, SETTING_GENERAL_LANG_ID_LANG_SOUND, layout_setting_general_language_get, -1, NULL, setting_main_sound_obj_click},
-            {0, 88 * 3, 272, 88, setting_general_obj_id_main_screen_cont, setting_general_obj_id_main_screen_title, -1, SETTING_GENERAL_LANG_ID_LANG_SCREEN, layout_setting_general_language_get, -1, NULL, setting_main_screen_obj_click},
-            {0, 88 * 4, 272, 88, setting_general_obj_id_main_recording_monitoring_cont, setting_general_obj_id_main_recording_monitoring_title, -1, SETTING_GENERAL_LANG_ID_LANG_RECORD_MONITORING, layout_setting_general_language_get, -1, NULL, setting_main_recording_obj_click},
-            {0, 88 * 5, 272, 88, setting_general_obj_id_main_installation_configuration_cont, setting_general_obj_id_main_installation_configuration_title, -1, SETTING_GENERAL_LANG_ID_LANG_INSTALLATION_CONFIGURATION, layout_setting_general_language_get, -1, NULL, setting_main_installation_obj_click},
+            {0, 0, 272, 88, setting_general_obj_id_main_general_cont, setting_general_obj_id_main_general_title, -1, SETTING_GENERAL_XLS_LANG_ID_GENERAL, lang_str_get, -1, NULL, setting_main_general_obj_click},
+            {0, 88, 272, 88, setting_general_obj_id_main_wifi_cont, setting_general_obj_id_main_wifi_titile, -1, WIFI_SETTING_XLS_LANG_ID_WIFI, lang_str_get, -1, NULL, setting_main_wifi_obj_click},
+            {0, 88 * 2, 272, 88, setting_general_obj_id_main_sound_cont, setting_general_obj_id_main_sound_title, -1, SETTING_GENERAL_XLS_LANG_ID_SOUND, lang_str_get, -1, NULL, setting_main_sound_obj_click},
+            {0, 88 * 3, 272, 88, setting_general_obj_id_main_screen_cont, setting_general_obj_id_main_screen_title, -1, SETTING_GENERAL_XLS_LANG_ID_SCREEN, lang_str_get, -1, NULL, setting_main_screen_obj_click},
+            {0, 88 * 4, 272, 88, setting_general_obj_id_main_recording_monitoring_cont, setting_general_obj_id_main_recording_monitoring_title, -1, SETTING_GENERAL_XLS_LANG_ID_RECORD_MONITORING, lang_str_get, -1, NULL, setting_main_recording_obj_click},
+            {0, 88 * 5, 272, 88, setting_general_obj_id_main_installation_configuration_cont, setting_general_obj_id_main_installation_configuration_title, -1, SETTING_GENERAL_XLS_LANG_ID_INSTALLATION_CONFIGURATION, lang_str_get, -1, NULL, setting_main_installation_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_main_list);
@@ -714,17 +714,17 @@ static lv_obj_t *setting_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
 
-            {0, 0, 622, 72, setting_general_obj_id_data_and_time_count, setting_general_obj_id_data_and_time_title, setting_general_obj_id_data_and_time_sub, SETTING_GENERAL_LANG_ID_LANG_DATA_AND_TIME, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_AUTO_SETUP_ON, layout_setting_general_language_get, setting_general_data_time_obj_click},
-            {0, 72, 622, 72, setting_general_obj_id_language_cont, setting_general_obj_id_language_title, setting_general_obj_id_language_sub, LANGUAGE_ID_LANG_LANG, layout_language_language_get, LANG_COMMON_ID_LANG, language_common_string_get, setting_general_language_obj_click},
-            {0, 72 * 2, 622, 72, setting_general_obj_id_password_cont, setting_general_obj_id_password_title, setting_general_obj_id_password_sub, SETTING_GENERAL_LANG_ID_LANG_PASSWORD, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_CHANNGE_PASSWORD_FOR_SECURITY, layout_setting_general_language_get, setting_general_password_obj_click},
-            {0, 72 * 3, 622, 72, setting_general_obj_id_storage_space_cont, setting_general_obj_id_storage_space_title, -1, SETTING_GENERAL_LANG_ID_LANG_STORAGE_SPACE, layout_setting_general_language_get, -1, NULL, setting_general_storage_space_obj_click},
-            {0, 72 * 4, 622, 72, setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_title, setting_general_obj_id_door_opening_method_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENING_METHOD, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_OPEN_AFTER_CALL, layout_setting_general_language_get, setting_general_door1_opening_moethod_obj_click},
-            {0, 72 * 5, 622, 72, setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_title, setting_general_obj_id_door_opener_module_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPENER_MODULE, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_DIGITAL_DOOR_LOCK, layout_setting_general_language_get, setting_general_door_opener_module_obj_click},
-            {0, 72 * 6, 622, 72, setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_title, setting_general_obj_id_door_opener_num_sub, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_DOOR_OPEN_NUM1, layout_setting_general_language_get, setting_general_door2_opener_num_obj_click},
-            {0, 72 * 7, 622, 72, setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_title, setting_general_obj_id_call_time_sub, SETTING_GENERAL_LANG_ID_LANG_CALL_TIMER, layout_setting_general_language_get, SETTING_GENERAL_LANG_ID_LANG_1_MINUTE, layout_setting_general_language_get, setting_general_call_time_obj_click},
-            {0, 72 * 8, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP, layout_setting_general_language_get, -1, NULL, setting_general_download_mobile_obj_click},
-            {0, 72 * 9, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA, layout_setting_general_language_get, -1, NULL, setting_general_initialization_userdata_obj_click},
-            {0, 72 * 10, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION, layout_setting_general_language_get, -1, NULL, setting_general_version_information_obj_click},
+            {0, 0, 622, 72, setting_general_obj_id_data_and_time_count, setting_general_obj_id_data_and_time_title, setting_general_obj_id_data_and_time_sub, SETTING_GENERAL_XLS_LANG_ID_DATA_AND_TIME, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_AUTO_SETUP, lang_str_get, setting_general_data_time_obj_click},
+            {0, 72, 622, 72, setting_general_obj_id_language_cont, setting_general_obj_id_language_title, setting_general_obj_id_language_sub, SETTING_GENERAL_XLS_LANG_ID_LANG, lang_str_get, XLS_LANG_ID_LANGUAGE_TYPE, lang_str_get, setting_general_language_obj_click},
+            {0, 72 * 2, 622, 72, setting_general_obj_id_password_cont, setting_general_obj_id_password_title, setting_general_obj_id_password_sub, SETTING_GENERAL_XLS_LANG_ID_PASSWORD, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_CHANNGE_PASSWORD_FOR_SECURITY, lang_str_get, setting_general_password_obj_click},
+            {0, 72 * 3, 622, 72, setting_general_obj_id_storage_space_cont, setting_general_obj_id_storage_space_title, -1, SETTING_GENERAL_XLS_LANG_ID_STORAGE_SPACE, lang_str_get, -1, NULL, setting_general_storage_space_obj_click},
+            {0, 72 * 4, 622, 72, setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_title, setting_general_obj_id_door_opening_method_sub, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENING_METHOD, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_OPEN_AFTER_CALL, lang_str_get, setting_general_door1_opening_moethod_obj_click},
+            {0, 72 * 5, 622, 72, setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_title, setting_general_obj_id_door_opener_module_sub, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENER_MODULE, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK, lang_str_get, setting_general_door_opener_module_obj_click},
+            {0, 72 * 6, 622, 72, setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_title, setting_general_obj_id_door_opener_num_sub, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_DOOR_OPEN_NUM1, lang_str_get, setting_general_door2_opener_num_obj_click},
+            {0, 72 * 7, 622, 72, setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_title, setting_general_obj_id_call_time_sub, SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER, lang_str_get, SETTING_GENERAL_XLS_LANG_ID_1_MINUTE, lang_str_get, setting_general_call_time_obj_click},
+            {0, 72 * 8, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_XLS_LANG_ID_DOWNLOAD_MOBILE_APP, lang_str_get, -1, NULL, setting_general_download_mobile_obj_click},
+            {0, 72 * 9, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_XLS_LANG_ID_INITIALIZATION_USER_DATA, lang_str_get, -1, NULL, setting_general_initialization_userdata_obj_click},
+            {0, 72 * 10, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_XLS_LANG_ID_VERSION_INFORMATION, lang_str_get, -1, NULL, setting_general_version_information_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);

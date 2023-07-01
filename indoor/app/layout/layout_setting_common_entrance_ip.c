@@ -139,7 +139,7 @@ static void sat_layout_enter(setting_common_entrance_ip)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_installation_language_get(INSTALLATION_LANG_ID_COMMON_ENTRANCE_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_COMMON_ENTRANCE_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -198,7 +198,7 @@ static void sat_layout_enter(setting_common_entrance_ip)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        layout_setting_installation_language_get(INSTALLATION_LANG_ID_COMMON_ENTRANCE_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                        lang_str_get(INSTALLATION_XLS_LANG_ID_COMMON_ENTRANCE_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 }
 static void sat_layout_quit(setting_common_entrance_ip)
