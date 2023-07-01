@@ -48,7 +48,7 @@ static void sat_layout_enter(ipc_camera_edit)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_CHANGE_DOOR_CAMERA_INFOMATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_DOOR_CAMERA_INFOMATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -73,13 +73,13 @@ static void sat_layout_enter(ipc_camera_edit)
 
                     {0, 0, 928, 88,
                      0, 0, -1,
-                     DOOR_CAMERA_SEARCH_ID_CHANGE_NAME, layout_ipc_camera_search_language_get,
+                     DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_NAME, lang_str_get,
                      -1, NULL,
                      ipc_camera_edit_channge_name_obj_click, -1},
 
                     {0, 88, 928, 88,
                      1, 0, -1,
-                     DOOR_CAMERA_SEARCH_ID_CHANGE_TH_CONNETION_PASSWORD, layout_ipc_camera_search_language_get,
+                     DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD, lang_str_get,
                      -1, NULL,
                      ipc_camera_edit_channge_password_obj_click, -1}};
 

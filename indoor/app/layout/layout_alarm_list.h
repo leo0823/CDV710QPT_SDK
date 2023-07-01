@@ -1,6 +1,7 @@
 typedef enum
 {
-
+    ALARM_LIST_DELETED_ALL,
+    ALARM_LIST_EMERGENCY_LOG,
     ALARM_LIST_EMERGENCY_OCCURS,
     ALARM_LIST_EMERGENCY_STOP,
     ALARM_LIST_EMERGENCY_RETURN,
@@ -8,6 +9,7 @@ typedef enum
     ALARM_LIST_SECURITY_EMERGENCY_STOP,
     ALARM_LIST_SECURITY_EMERGENCY_RETURN,
     ALARM_LIST_INDOOR_OPERATION,
+    ALARM_LIST_USER_OPERATION,
     ALARM_LIST_SECURITY_SENSOR1,
     ALARM_LIST_SECURITY_SENSOR2,
     ALARM_LIST_SECURITY_SENSOR3,
@@ -22,6 +24,7 @@ typedef enum
 
 static const char *layout_alarm_list_language[ALARM_LIST_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
     {
+        {"Delete all?","Delete all?","Delete all?"},
         {"Emergency occurs", "Emergency occurs", "Emergency occurs"},
         {"Emergency stop", "Emergency stop", "Emergency stop"},
         {"Emergency return", "Emergency return", "Emergency return"},
@@ -29,6 +32,7 @@ static const char *layout_alarm_list_language[ALARM_LIST_LANG_ID_TOTAL][LANGUAGE
         {"Security emergency stop", "Security emergency stop", "Security emergency stop"},
         {"Security emergency return", "Security emergency return", "Security emergency return"},
         {"indoor unit operation", "indoor unit operation","indoor unit operation"},
+        {"user operation","user operation","user operation"},
         {"Security sensor1", "Security sensor1","Security sensor1"},
         {"Security sensor1", "Security sensor1","Security sensor2"},
         {"Security sensor1", "Security sensor1","Security sensor3"},

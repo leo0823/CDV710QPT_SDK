@@ -62,52 +62,52 @@ static void layout_sensor_list_create(void)
     setting_list_info_t main_list_group[] = {
         {0, 0, 928, 72,
             setting_sensor_settings_obj_id_item1_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_1, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[0] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[0] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[0] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-        layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1, lang_str_get,
+        user_data_get()->alarm.alarm_enable[0] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[0] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[0] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+        lang_str_get,
             NULL, 2},
         {0, 72, 928, 72,
             setting_sensor_settings_obj_id_item2_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_2, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[1] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[1] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[1] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-            layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_2, lang_str_get,
+        user_data_get()->alarm.alarm_enable[1] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[1] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[1] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+            lang_str_get,
             NULL, 2},
         {0, 72 * 2, 928, 72,
             setting_sensor_settings_obj_id_item3_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_3, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[2] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[2] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[2] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-        layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_3, lang_str_get,
+        user_data_get()->alarm.alarm_enable[2] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[2] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[2] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+        lang_str_get,
             NULL, 2},
         {0, 72 * 3, 928, 72,
             setting_sensor_settings_obj_id_item4_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_4, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[3] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[3] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[3] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-            layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_4, lang_str_get,
+        user_data_get()->alarm.alarm_enable[3] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[3] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[3] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+            lang_str_get,
             NULL, 2},
         {0, 72 * 4, 928, 72,
             setting_sensor_settings_obj_id_item5_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_5, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[4] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[4] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[4] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-            layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_5, lang_str_get,
+        user_data_get()->alarm.alarm_enable[4] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[4] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[4] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+            lang_str_get,
             NULL, 2},
         {0, 72 * 5, 928, 72,
             setting_sensor_settings_obj_id_item6_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_6, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[5] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[5] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[5] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-            layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_6, lang_str_get,
+        user_data_get()->alarm.alarm_enable[5] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[5] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[5] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+            lang_str_get,
             NULL, 2},
         {0, 72 * 6, 928, 72,
             setting_sensor_settings_obj_id_item7_cont, 0, 1,
-            SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_7, layout_setting_sensor_usage_language_get,
-        user_data_get()->alarm.alarm_enable[6] == 0?SETTING_SENSOR_USAGE_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[6] == 1?\
-        SETTING_SENSOR_USAGE_LANG_ID_NO: user_data_get()->alarm.alarm_enable[6] == 2?SETTING_SENSOR_USAGE_LANG_ID_NC:SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-            layout_setting_sensor_usage_language_get,
+            SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_7, lang_str_get,
+        user_data_get()->alarm.alarm_enable[6] == 0?SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED :user_data_get()->alarm.alarm_enable[6] == 1?\
+        SETTING_SENSOR_USAGE_XLS_LANG_ID_NO: user_data_get()->alarm.alarm_enable[6] == 2?SETTING_SENSOR_USAGE_XLS_LANG_ID_NC:SETTING_SENSOR_USAGE_XLS_LANG_ID_ALWAYS,
+            lang_str_get,
             NULL, 2},
         };
 
@@ -159,7 +159,7 @@ static void sat_layout_enter(sensors_test)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SENSOR_TEST), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_SENSOR_TEST), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

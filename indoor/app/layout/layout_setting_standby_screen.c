@@ -229,7 +229,7 @@ static void setting_standby_screen_off_click(lv_event_t *e)
 {
         lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg,setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
         setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel ,"Confirm","Cancel", setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel , setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
     
 
 }
@@ -281,12 +281,12 @@ static lv_obj_t *setting_standby_screen_main_list_create(void)
 
             {0, 0, 928, 88,
              setting_standby_screen_obj_id_screen_off_cont, setting_standby_screen_obj_id_screen_off_title, setting_standby_screen_obj_id_screen_off_sub,
-             SETTING_STANDBY_SCREEN_LANG_ID_SCREEN_OFF, layout_setting_standby_screen_language_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_SCREEN_OFF, lang_str_get,
              SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC, layout_setting_screen_language_get,
              setting_standby_screen_main_list_click, setting_standby_screen_obj_id_screen_off_img},
             {0, 88, 928, 88,
              setting_standby_screen_obj_id_open_frame_cont, setting_standby_screen_obj_id_open_frame_title, -1,
-             SETTING_STANDBY_SCREEN_LANG_ID_OPEN_FRAME, layout_setting_standby_screen_language_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_OPEN_FRAME, lang_str_get,
              -1, NULL,
              setting_standby_screen_main_list_click,
              setting_standby_screen_obj_id_open_frame_img}};
@@ -345,7 +345,7 @@ static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
         {
                 if(user_data_get()->display.frame_time_en ==  false)
                 {
-                        lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_ALWAYS));
+                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS));
                 }else
                 {
 		int s_hour = user_data_get()->display.frame_time_start / 60;
@@ -384,7 +384,7 @@ static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
                                 count++;
                         }
                 }
-                lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_0_ITEM + count));
+                lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_0_ITEM + count));
 
                 
         }
@@ -393,10 +393,10 @@ static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
         {
                 if(user_data_get()->display.frame_background)
                 {
-                        lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_RANDOM_IMAGE));
+                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE));
                 }else
                 {
-                        lv_label_set_text(obj,layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_BASIC));
+                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_BASIC));
                 }
 
 
@@ -410,23 +410,23 @@ static lv_obj_t *setting_standby_screen_sub_list_create(void)
 
             {0, 0, 836, 72,
              setting_standby_screen_obj_id_display_time_cont, setting_standby_screen_obj_id_display_time_title, setting_standby_screen_obj_id_display_time_sub,
-             SETTING_STANDBY_SCREEN_LANG_ID_DISPLAY_TIME, layout_setting_standby_screen_language_get,
-             SETTING_STANDBY_SCREEN_LANG_ID_ALWAYS, layout_setting_standby_screen_language_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_DISPLAY_TIME, lang_str_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS, lang_str_get,
              setting_standby_screen_sub_list_click},
             {0, 72, 836, 72,
              setting_standby_screen_obj_id_display_night_mode_cont, setting_standby_screen_obj_id_display_night_mode_title, setting_standby_screen_obj_id_display_night_mode_sub,
-             SETTING_STANDBY_SCREEN_LANG_ID_USER_NIGHT_MODE, layout_setting_standby_screen_language_get,
-             SETTING_STANDBY_SCREEN_LANG_ID_ADJUSTS_THE_BRIGHTNESS, layout_setting_standby_screen_language_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_USER_NIGHT_MODE, lang_str_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_ADJUSTS_THE_BRIGHTNESS, lang_str_get,
              setting_standby_screen_sub_list_click},
             {0, 72 * 2, 836, 72,
              setting_standby_screen_obj_id_display_item_cont, setting_standby_screen_obj_id_display_item_title, setting_standby_screen_obj_id_display_item_sub,
-             SETTING_STANDBY_SCREEN_LANG_ID_ITEM_DISPLAY, layout_setting_standby_screen_language_get,
-             SETTING_STANDBY_SCREEN_LANG_ID_1_ITEM, layout_setting_standby_screen_language_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_ITEM_DISPLAY, lang_str_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_1_ITEM, lang_str_get,
              setting_standby_screen_sub_list_click},
             {0, 72 * 3, 836, 72,
              setting_standby_screen_obj_id_background_cont, setting_standby_screen_obj_id_background_title, setting_standby_screen_obj_id_background_sub,
-             SETTING_STANDBY_SCREEN_LANG_ID_BACKROUND, layout_setting_standby_screen_language_get,
-             SETTING_STANDBY_SCREEN_LANG_ID_RANDOM_IMAGE, layout_setting_standby_screen_language_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_BACKROUND, lang_str_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE, lang_str_get,
              setting_standby_screen_sub_list_click},
         };
 

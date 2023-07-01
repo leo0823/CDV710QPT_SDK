@@ -190,6 +190,7 @@ static void setting_building_house_number_item_display(void)
         lv_obj_t * item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_building_number_textbox);
 
         lv_obj_t * item2_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_foolr_number_label);
+        
         lv_obj_t * item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_foolr_number_textbox);
 
         lv_obj_t * item3_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_household_number_label);
@@ -223,7 +224,7 @@ static void sat_layout_enter(setting_building_house_number)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_BUILD_HOUSE_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_BUILD_HOUSE_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -300,7 +301,7 @@ static void sat_layout_enter(setting_building_house_number)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_BUILD_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_BUILD_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 
         /***********************************************
@@ -327,7 +328,7 @@ static void sat_layout_enter(setting_building_house_number)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_FOOLR_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      "lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_FOOLR_NUMBER)", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -353,7 +354,7 @@ static void sat_layout_enter(setting_building_house_number)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_HOUSEHOLD_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_HOUSEHOLD_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 
         /***********************************************
@@ -380,7 +381,7 @@ static void sat_layout_enter(setting_building_house_number)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_EXTENSION_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      "lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_EXTENSION_NUMBER)", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
         setting_building_house_number_item_display();
 }

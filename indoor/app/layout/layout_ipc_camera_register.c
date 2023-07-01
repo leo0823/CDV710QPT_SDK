@@ -194,7 +194,7 @@ static void ipc_camera_registered_register_del_click(lv_event_t *ev)
         }
 
         lv_obj_t *msgbox = ipc_camera_register_msgbox_create(layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_DELETE),
-                                                             layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_DO_YOU_WANT_DELETE_CCTV),
+                                                             lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DO_YOU_WANT_DELETE_CCTV),
                                                              ipc_camera_register_msgbox_del_cancel_click, ipc_camera_register_del_msgbox_confirm_click);
 
         msgbox->user_data = parent;
@@ -227,7 +227,7 @@ static void sat_layout_enter(ipc_camera_register)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_ipc_cmeara_is_doorcamera_get() == false ? layout_home_language_get(HOME_LANG_ID_CCTV) : layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA),
+                                      layout_ipc_cmeara_is_doorcamera_get() == false ? layout_home_language_get(HOME_LANG_ID_CCTV) : lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DOOR_CAMERA),
                                       0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
@@ -261,7 +261,7 @@ static void sat_layout_enter(ipc_camera_register)
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               160, 0, 150, 35, 0,
-                                              layout_ipc_cmeara_is_doorcamera_get() == false ? layout_home_language_get(HOME_LANG_ID_CCTV) : layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA_SEARCH),
+                                              layout_ipc_cmeara_is_doorcamera_get() == false ? layout_home_language_get(HOME_LANG_ID_CCTV) : lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DOOR_CAMERA_SEARCH),
                                               0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
                                               70, 1, 80, 32, 1,
                                               (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_RIGHT_MID);
@@ -286,7 +286,7 @@ static void sat_layout_enter(ipc_camera_register)
                                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              layout_ipc_camera_search_language_get(layout_ipc_cmeara_is_doorcamera_get() == false ? DOOR_CAMERA_SEARCH_ID_SEARCHED_CCTV : DOOR_CAMERA_SEARCH_ID_SEARCHED_DOOR_CAMERA),
+                                                              lang_str_get(layout_ipc_cmeara_is_doorcamera_get() == false ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_SEARCHED_CCTV : DOOR_CAMERA_SEARCH_XLS_LANG_ID_SEARCHED_DOOR_CAMERA),
                                                               0X00A8ff, 0X00A8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                         lv_obj_set_style_pad_left(obj, 16, LV_PART_MAIN);

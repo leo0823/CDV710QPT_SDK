@@ -1104,7 +1104,7 @@ static void sat_layout_enter(monitor)
                                                       NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_monitor_language_get(MONITOR_LANG_ID_MONITOR_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                      lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 home_use_mobile_app_obj_display();
         }
@@ -1549,7 +1549,7 @@ static bool truye_event_cmd_audio_start(void)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
         if (obj != NULL)
         {
-                lv_label_set_text(obj, layout_monitor_language_get(MONITOR_LANG_ID_TALK_MOBILE_APP));
+                lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP));
         }
         // if (is_monitor_door_camera_talk == false)
         // {

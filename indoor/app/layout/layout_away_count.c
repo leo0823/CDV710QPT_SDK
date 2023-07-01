@@ -178,7 +178,7 @@ static void sat_layout_enter(away_count)
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 250, 1024, 46, layout_away_count_obj_id_main_bg_tips,
-                        layout_away_language_get(LAYOUT_AWAY_COULANG_ID_LANG_AWAY), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_AWAY), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                         0, 0, 1024, 300, -1,
                         resource_ui_src_get("img_away.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
      
@@ -216,7 +216,7 @@ static void sat_layout_enter(away_count)
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 17, 1024, 46, layout_away_count_obj_id_end_btn_label,
-                         layout_away_language_get(LAYOUT_AWAY_LANG_ID_LANG_END), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                         lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_END), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                         3, 0, 77, 77, -1,
                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     }

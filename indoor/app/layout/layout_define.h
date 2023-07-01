@@ -13,6 +13,7 @@
 #include "common/user_record.h"
 #include "common/user_data.h"
 #include "common/language.h"
+#include "common/language_new.h"
 #include "common/user_monitor.h"
 #include "common/sat_user_time.h"
 #include "common/user_network.h"
@@ -113,6 +114,7 @@ sat_layout_define(server_operation_network);
 sat_layout_define(operating_structure);
 sat_layout_define(slave_type_setting);
 sat_layout_define(setting_wifi);
+
 sat_layout_define(wifi_info);
 sat_layout_define(wifi_input);
 sat_layout_define(setting_time);
@@ -121,6 +123,7 @@ sat_layout_define(ipc_camera_search);
 sat_layout_define(ipc_camera_input);
 sat_layout_define(ipc_camera_edit);
 sat_layout_define(ipc_camera_display);
+
 sat_layout_define(setting_complete);
 sat_layout_define(setting_general);
 sat_layout_define(setting_user_wifi);
@@ -151,19 +154,17 @@ sat_layout_define(setting_server_ipaddress);
 sat_layout_define(setting_common_entrance_ip);
 sat_layout_define(setting_guard_station_number);
 sat_layout_define(setting_sensor_settings);
-sat_layout_define(door_camera_password_input);
-sat_layout_define(door_camera_edit);
+// sat_layout_define(door_camera_password_input);
+// sat_layout_define(door_camera_edit);
 sat_layout_define(playback);
 sat_layout_define(photo);
 sat_layout_define(video);
 sat_layout_define(intercom_call);
 sat_layout_define(intercom_talk);
-sat_layout_define(intercom_call);
-sat_layout_define(intercom_talk);
 sat_layout_define(emergency_setting);
 sat_layout_define(alarm);
 sat_layout_define(alarm_list);
-sat_layout_define(security);
+sat_layout_define(security);//语言已完成,有缺漏
 sat_layout_define(away);//语言已完成,有缺漏
 sat_layout_define(away_count);//语言已完成,有缺漏
 sat_layout_define(sensor_settings);//语言已完成,有缺漏

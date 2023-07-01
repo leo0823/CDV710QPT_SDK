@@ -167,7 +167,7 @@ static void sat_layout_enter(single_operation_network)
 				      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_OPERATION_NETWORK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+				      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_OPERATION_NETWORK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 
 	/***********************************************
@@ -200,9 +200,9 @@ static void sat_layout_enter(single_operation_network)
 								0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
 								0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
 								0, 8, 838, 50, setting_single_operation_network_obj_id_operating_structure_title_lable,
-								layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_OPERATION_STRCUUTRE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+								lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_OPERATION_STRCUUTRE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
 								0, 45, 838, 50, setting_single_operation_network_obj_id_operating_structure_single_label,
-								layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+								lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
 								0, 0, 0, 0, -1,
 								NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
 								880, 20, 48, 48, setting_single_operation_network_obj_id_operating_structure_img,
@@ -272,25 +272,25 @@ static void sat_layout_enter(single_operation_network)
 				      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+				      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
 		lv_common_text_create(sat_cur_layout_screen_get(), setting_single_operation_network_obj_id_gateway_label, 32, 295, 200, 50,
 				      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_GATEWAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+				      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_GATEWAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
 		lv_common_text_create(sat_cur_layout_screen_get(), setting_single_operation_network_obj_id_mask_label, 32, 355, 200, 50,
 				      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_MASK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+				      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_MASK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
 		lv_common_text_create(sat_cur_layout_screen_get(), setting_single_operation_network_obj_id_dns_label, 32, 415, 200, 50,
 				      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_DNS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+				      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_DNS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 	}
 
 	/***********************************************

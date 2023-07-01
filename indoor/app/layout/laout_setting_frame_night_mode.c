@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_frame_display_time.h"
 #include "layout_setting_standby_screen.h"
 #include "layout_setting_general.h"
 #include "layout_setting_screen.h"
@@ -105,7 +104,7 @@ static void sat_layout_enter(setting_frame_night_mode)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_NIGHT_MODE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_NIGHT_MODE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -130,8 +129,8 @@ static void sat_layout_enter(setting_frame_night_mode)
 
                     {0, 0, 928, 88,
                      setting_frame_night_mode_obj_id_use_night_mode_cont, setting_frame_night_mode_obj_id_use_night_mode_title, setting_frame_night_mode_obj_id_use_night_time_sub,
-                     SETTING_STANDBY_SCREEN_LANG_ID_USER_NIGHT_MODE, layout_setting_standby_screen_language_get,
-                     SETTING_STANDBY_SCREEN_LANG_ID_ADJUSTS_THE_BRIGHTNESS, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_USER_NIGHT_MODE, lang_str_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_ADJUSTS_THE_BRIGHTNESS, lang_str_get,
                      setting_frame_night_mode_obj_list_click, setting_frame_night_mode_obj_id_use_night_mode_img},
                 };
 

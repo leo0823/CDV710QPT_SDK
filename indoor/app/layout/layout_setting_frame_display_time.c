@@ -136,7 +136,7 @@ static void sat_layout_enter(setting_frame_display_time)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_DISPLAY_TIME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_STANDBY_SCREEN_LANG_ID_DISPLAY_TIME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -161,12 +161,12 @@ static void sat_layout_enter(setting_frame_display_time)
 
                     {0, 0, 928, 88,
                      setting_frame_display_time_obj_id_always_cont, setting_frame_display_time_obj_id_always_title, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_ALWAYS, layout_setting_standby_screen_language_get,
-                     SETTING_FRAME_DISPLAY_TIME_LANG_ID_TIME_DESIGNATION, layout_setting_frame_display_time_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS, lang_str_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_TIME_DESIGNATION, lang_str_get,
                      setting_frame_display_time_checkbox_click, setting_frame_display_time_obj_id_always_img},
                     {0, 88, 928, 88,
                      setting_frame_display_time_obj_id_time_designation_cont, setting_frame_display_time_obj_id_time_designation_title, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_TIME_DESIGNATION, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_TIME_DESIGNATION, lang_str_get,
                      -1, NULL,
                      setting_frame_display_time_checkbox_click,
                      setting_frame_display_time_obj_id_time_designation_img}};

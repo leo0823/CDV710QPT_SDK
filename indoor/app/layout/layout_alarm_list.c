@@ -118,7 +118,7 @@ static lv_obj_t *layout_alarm_list_msgbox_create(const char *title,lv_event_cb_t
 static void layout_alarm_list_del_btn_obj_click(lv_event_t *ev)
 {
 
-    layout_alarm_list_msgbox_create("Delete All?",
+    layout_alarm_list_msgbox_create(lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_DELETED_ALL),
                                 layout_alarm_list_msgbox_cancel_click, layout_alarm_list_msgbox_confirm_click, NULL
                                );
 
@@ -135,30 +135,30 @@ static void alarm_list_display(lv_obj_t * parent,int type,int ch,struct tm tm)
         lv_obj_t * img = lv_obj_get_child_form_id(parent,layout_alarm_list_obj_id_img);
         if(type == 0)
         {
-                lv_label_set_text(type_lebel,layout_alarm_language_get(ALARM_LIST_EMERGENCY_OCCURS));
+                lv_label_set_text(type_lebel,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_OCCURS));
                    
         }else if(type == 1)
         {
-               lv_label_set_text(type_lebel,layout_alarm_language_get(ALARM_LIST_EMERGENCY_STOP));    
+               lv_label_set_text(type_lebel,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_STOP));    
         }else if(type == 2)
         {
-                lv_label_set_text(type_lebel,layout_alarm_language_get(ALARM_LIST_EMERGENCY_RETURN));    
+                lv_label_set_text(type_lebel,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_RETURN));    
         }else if(type == 3)
         {
-                lv_label_set_text(type_lebel,layout_alarm_language_get(ALARM_LIST_SECURITY_EMERGENCY));
+                lv_label_set_text(type_lebel,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_EMERGENCY));
         }else if(type == 4)
         {
-                lv_label_set_text(type_lebel,layout_alarm_language_get(ALARM_LIST_SECURITY_EMERGENCY_STOP));
+                lv_label_set_text(type_lebel,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_EMERGENCY_STOP));
         }else if(type == 5)
         {
-                lv_label_set_text(type_lebel,layout_alarm_language_get(ALARM_LIST_SECURITY_EMERGENCY_RETURN));
+                lv_label_set_text(type_lebel,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_EMERGENCY_RETURN));
         }
         if((type == 0) || (type == 1) || (type == 2))
         {
-                lv_label_set_text(ch_label,layout_alarm_language_get(ALARM_LIST_INDOOR_OPERATION));
+                lv_label_set_text(ch_label,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_INDOOR_OPERATION));
         }else
         {
-                lv_label_set_text(ch_label,layout_alarm_language_get(ALARM_LIST_SECURITY_SENSOR1 + ch));
+                lv_label_set_text(ch_label,lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_SECURITY_SENSOR1 + ch));
         }
         lv_obj_set_style_bg_img_src(img,(type == 0 || type == 1) ? resource_ui_src_get("ic_list_emergency_01.png") : resource_ui_src_get("ic_list_emergency_02.png"),LV_PART_MAIN);
         lv_label_set_text_fmt(time_label,"%04d.%02d.%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday,tm.tm_hour, tm.tm_min, tm.tm_sec);
@@ -197,9 +197,9 @@ static void alarm_list_info_create(void)
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                 60, 17, 576, 43, layout_alarm_list_obj_id_type,
-                                                                "Emergency occurs", 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                "", 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 60, 42, 576, 29, layout_alarm_list_obj_id_ch,
-                                                                "indoor unit operation", 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                "", 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 700, 24, 200, 72, layout_alarm_list_obj_id_time,
                                                                 "", 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 24, 48, 48, layout_alarm_list_obj_id_img,
@@ -221,7 +221,7 @@ static void sat_layout_enter(alarm_list)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "Emergency log", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_EMERGENCY_LOG), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
 

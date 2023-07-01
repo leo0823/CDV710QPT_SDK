@@ -208,7 +208,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_LOCAL_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_LOCAL_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -234,7 +234,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_SIP_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_SIP_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -260,7 +260,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_UPDATE_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_UPDATE_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -286,7 +286,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_server_operation_network_language_get(SERVER_OPERATION_NETWORK_ID_LANG_CCTV_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_CCTV_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 }
 static void sat_layout_quit(setting_server_ipaddress)

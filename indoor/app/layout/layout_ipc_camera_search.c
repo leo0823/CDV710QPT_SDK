@@ -100,8 +100,8 @@ static void sat_layout_enter(ipc_camera_search)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_ipc_cmeara_is_doorcamera_get() == true ? layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_DOOR_CAMERA)
-                                                                                    : layout_home_language_get(HOME_LANG_ID_CCTV),
+                                      layout_ipc_cmeara_is_doorcamera_get() == true ? lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DOOR_CAMERA)
+                                                                                    : lang_str_get(HOME_XLS_LANG_ID_CCTV),
                                       0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
@@ -127,7 +127,7 @@ static void sat_layout_enter(ipc_camera_search)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_ipc_camera_search_language_get(layout_ipc_cmeara_is_doorcamera_get() == true ? DOOR_CAMERA_SEARCH_ID_SEARCHED_DOOR_CAMERA : DOOR_CAMERA_SEARCH_ID_SEARCHED_CCTV),
+                                      lang_str_get(layout_ipc_cmeara_is_doorcamera_get() == true ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_SEARCHED_DOOR_CAMERA : DOOR_CAMERA_SEARCH_XLS_LANG_ID_SEARCHED_CCTV),
                                       0X00A8ff, 0X00A8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
         }
         p_ipc_camera_search_timer = lv_sat_timer_create(ipc_camera_emty_timer, 3000, NULL);
