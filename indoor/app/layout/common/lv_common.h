@@ -298,7 +298,7 @@ void setting_msgdialog_msg_confirm_btn_create(lv_obj_t *parent, int id,lv_event_
 ** 参数说明: 
 ** 注意事项: 
 ************************************************************/
-void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int confirm_id, int cancel_id,const char *confirm_string,const char *cancel_string,lv_event_cb_t con_cb,lv_event_cb_t can_cb);
+void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int confirm_id, int cancel_id,lv_event_cb_t con_cb,lv_event_cb_t can_cb);
 /************************************************************
 ** 函数说明: 消息框删除
 ** 作者: xiaoxiao

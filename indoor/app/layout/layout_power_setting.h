@@ -19,13 +19,13 @@ static const char * layout_power_setting_language[POWER_SETTING_LANG_ID_TOTAL][L
 		"시작설정","开始设置","Start setting","开始设置","Начать настройку","Configuración de inicio","Bắt đầu cài đặt","إعدادات البداية",
 	},
 	{
-		"시작설정.\n이 설정은 제품을 정상적으로 운영하기 위한 필수 요소를 진행합니다.",
-		"欢迎新的开始\n此设置是使产品正常运行所必需的",
-		"Welcome to a new start.\nThis setting is necessary for the normal operation of the product.",
-		"Добро пожаловать в Начальная Настройка. На следующей странице начнется настройка основных параметров для работы с утройством.",
-		"Bienvenido a la configuración de inicio. A partir de la siguiente página, comienza la configuración de los elementos básicos para el funcionamiento del producto."
-		"Chào mừng đến với cài đặt ban đầu. Từ trang tiếp theo, các thiết lập cơ bản cho thiết bị bắt đầu hoạt động",
-		"مرحبًا بك في إعدادات البداية. من الصفحة التالية ، يبدأ إعداد العناصر الأساسية لتشغيل المنتج."
+		"새로운 시작을 환영합니다.\n이 설정은 제품을 정상적으로 운영하기 위한 필수 요소를 진행합니다.",
+		"欢迎来到新的开始\n此设置包含产正常运行的基本要素",
+		"Welcome to the Start Setting.\nFrom the next page, the setting of basic elements for operating the product begins.",
+		"Добро пожаловать в Начальная Настройка.\nНа следующей странице начнется настройка основных параметров для работы с утройством."
+		"Bienvenido a la configuración de inicio.\nA partir de la siguiente página, comienza la configuración de los elementos básicos para el funcionamiento del producto."
+		"Chào mừng đến với cài đặt ban đầu.\nTừ trang tiếp theo, các thiết lập cơ bản cho thiết bị bắt đầu hoạt động"
+		"مرحبًا بك في إعدادات البداية. من الصفحة التالية، يبدأ إعداد العناصر الأساسية لتشغيل المنتج."
 	},
 	{
 		"실행","运行","Run","Выполнение","Ejecución","Thực hiện","تنفيذ",

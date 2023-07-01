@@ -62,7 +62,7 @@ static void slave_type_setting_extension_number_click(lv_event_t *e)
                                         i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
                                         , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox,slave_type_setting_obj_id_msgbox_confirm,slave_type_setting_obj_id_msgbox_cancel ,"Confirm","Cancel", slave_type_setting_cancel_func,slave_type_setting_cancel_func);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox,slave_type_setting_obj_id_msgbox_confirm,slave_type_setting_obj_id_msgbox_cancel ,slave_type_setting_cancel_func,slave_type_setting_cancel_func);
 }
 
 static void sat_layout_enter(slave_type_setting)
@@ -77,7 +77,7 @@ static void sat_layout_enter(slave_type_setting)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_slave_type_setting_language_get(LAYOUT_SLAVE_TYPE_SETTING_LANG_ID_SLAVE_TYPE_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_SLAVE_TYPE_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -104,9 +104,9 @@ static void sat_layout_enter(slave_type_setting)
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                 0, 8, 838, 50, slave_type_setting_obj_id_master_indoor_tile,
-                                                                layout_slave_type_setting_language_get(LAYOUT_SLAVE_TYPE_SETTING_LANG_ID_MASTTER_INDOOR), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_MASTTER_INDOOR), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, slave_type_setting_obj_id_master_indoor_sub,
-                                                                layout_slave_type_setting_language_get(LAYOUT_SLAVE_TYPE_SETTING_LANG_ID_NOT_SET), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 880, 20, 48, 48, -1,
@@ -117,9 +117,9 @@ static void sat_layout_enter(slave_type_setting)
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                 0, 8, 838, 50, slave_type_setting_obj_id_extension_number_title,
-                                                                layout_slave_type_setting_language_get(LAYOUT_SLAVE_TYPE_SETTING_LANG_ID_EXTENSION_NUMBER), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_EXTENSION_NUMBER), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, slave_type_setting_obj_id_extension_number_sub,
-                                                                layout_slave_type_setting_language_get(LAYOUT_SLAVE_TYPE_SETTING_LANG_ID_NOT_SET), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 880, 20, 48, 48, -1,

@@ -96,7 +96,7 @@ static void operating_structure_sub_info_display(bool is_single)
 {
         lv_obj_t *item = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_slave_setting_cont);
         lv_obj_t *sub_label = lv_obj_get_child_form_id(item, layout_operating_structure_obj_id_slave_setting_sub);
-        lv_label_set_text(sub_label, layout_operation_structure_language_get(is_single ? SIGNLE_OPERATION_STRUCTURE_ID_LANG_SLAVE_SETTING_INFO : SIGNLE_OPERATION_STRUCTURE_ID_LANG_SLAVE_SETTING_INFO_MSTAR));
+        lv_label_set_text(sub_label, lang_str_get(is_single ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO_MSTAR));
 }
 static void operating_structure_single_check_click(lv_event_t *e)
 {
@@ -134,7 +134,7 @@ static void sat_layout_enter(operating_structure)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_operation_structure_language_get(SIGNLE_OPERATION_STRUCTURE_ID_LANG_STRUCTURE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_STRUCTURE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -167,9 +167,9 @@ static void sat_layout_enter(operating_structure)
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                 0, 8, 838, 50, layout_operating_structure_obj_id_slave_setting_title,
-                                                                layout_operation_structure_language_get(SIGNLE_OPERATION_STRUCTURE_ID_LANG_SLAVE_SETTING), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, layout_operating_structure_obj_id_slave_setting_sub,
-                                                                layout_operation_structure_language_get(SIGNLE_OPERATION_STRUCTURE_ID_LANG_SLAVE_SETTING_INFO), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 880, 20, 48, 48, layout_operating_structure_obj_id_slave_setting_img,
@@ -208,13 +208,13 @@ static void sat_layout_enter(operating_structure)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_operation_structure_language_get(SIGNLE_OPERATION_STRUCTURE_ID_LANG_SINGLE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SINGLE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_text, 513, 295, 511, 141,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_operation_structure_language_get(SIGNLE_OPERATION_STRUCTURE_ID_LANG_SERVER_SYSTEM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SERVER_SYSTEM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
         /***********************************************
         ** 作者: leo.liu

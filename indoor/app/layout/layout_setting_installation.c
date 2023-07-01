@@ -118,7 +118,7 @@ static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
         setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, "Do you want to process initiatialization?", 0, 110, 460, 120);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, "Confirm", "Cancel", setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
 static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
@@ -126,21 +126,23 @@ static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
         lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
         if (user_data_get()->system_mode == 0)
         {
-                lv_label_set_text(obj, layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE));
+                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE));
         }
         else if (user_data_get()->system_mode == 1)
         {
-                lv_label_set_text(obj, layout_single_operation_network_language_get(SIGNLE_OPERATION_NETWORK_ID_LANG_SERVER_SYSTEM));
+                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
         }
 }
 
 static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_building_house_no_cont), 1);
-        if(obj != NULL)
+        lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_building_house_no_cont);
+        if(parent != NULL)
         {
-                lv_label_set_text(obj, network_data_get()->sip_user);
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+                lv_label_set_text(obj, network_data_get()->sip_user);   
         }
+
 }
 
 static lv_obj_t *setting_installation_sub_list_create(void)
@@ -149,57 +151,57 @@ static lv_obj_t *setting_installation_sub_list_create(void)
 
             {0, 0, 622, 72,
              setting_installation_obj_id_operating_structure_cont, 0, 1,
-             SIGNLE_OPERATION_NETWORK_ID_LANG_OPERATION_STRCUUTRE, layout_single_operation_network_language_get,
-             SIGNLE_OPERATION_NETWORK_ID_LANG_SINGLE, layout_single_operation_network_language_get,
+             SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_OPERATION_STRCUUTRE, lang_str_get,
+             SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE, lang_str_get,
              setting_installation_operating_structure_obj_click, -1},
             {0, 72, 622, 72,
              setting_installation_obj_id_building_house_no_cont, 0, 1,
-             INSTALLATION_LANG_ID_BUILDING_HOUSE_NO, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_BUILDING_HOUSE_NO, lang_str_get,
              -1, NULL,
              setting_installation_building_house_no_obj_click, -1},
             {0, 72 * 2, 622, 72,
              setting_installation_obj_id_ipaddres_cont, 0, 1,
-             INSTALLATION_LANG_ID_IP_ADDRES, layout_setting_installation_language_get,
-             INSTALLATION_LANG_ID_IP_ADDRES_GATEWAY_DNS_SETTING, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_IP_ADDRES, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_IP_ADDRES_GATEWAY_DNS_SETTING, lang_str_get,
              setting_installation_ipaddres_obj_click, -1},
             {0, 72 * 3, 622, 72,
              setting_installation_obj_id_operation_server_ip_addres_cont, 0, 1,
-             INSTALLATION_LANG_ID_OPERATIONG_SERVER_IP_ADDRES, layout_setting_installation_language_get,
-             INSTALLATION_LANG_ID_LOCAL_SERVER_SIP_SERVER_UPDATE, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_OPERATIONG_SERVER_IP_ADDRES, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_LOCAL_SERVER_SIP_SERVER_UPDATE, lang_str_get,
              setting_installation_operation_server_ip_obj_click, -1},
             {0, 72 * 4, 622, 72,
              setting_installation_obj_id_common_entrance_ip_cont, 0, 1,
-             INSTALLATION_LANG_ID_COMMON_ENTRANCE_IP, layout_setting_installation_language_get,
-             INSTALLATION_LANG_ID_COMMON_ENTRANCE_IP_FOR_INTERLOCKING, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_COMMON_ENTRANCE_IP, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_COMMON_ENTRANCE_IP_FOR_INTERLOCKING, lang_str_get,
              setting_installation_common_entrance_ip_obj_click, -1},
             {0, 72 * 5, 622, 72,
              setting_installation_obj_id_guard_station_number_cont, 0, 1,
-             INSTALLATION_LANG_ID_GUARD_STATION_NUMBER, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_GUARD_STATION_NUMBER, lang_str_get,
              -1, NULL,
              setting_installation_guard_station_number_obj_click, -1},
             {0, 72 * 6, 622, 72,
              setting_installation_obj_id_sensor_cont, 0, -1,
-             INSTALLATION_LANG_ID_SENSOR, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_SENSOR, lang_str_get,
              LANG_COMMON_ID_OFF, language_common_string_get,
              setting_installation_sensor_obj_click, -1},
             {0, 72 * 7, 622, 72,
              setting_installation_obj_id_sensor_test_cont, 0, -1,
-             INSTALLATION_LANG_ID_SENSOR_TEST, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_SENSOR_TEST, lang_str_get,
              -1, NULL,
              setting_installation_sensor_test_obj_click, -1},
             {0, 72 * 8, 622, 72,
              setting_installation_obj_id_front_door_camera_cont, 0, -1,
-             INSTALLATION_LANG_ID_FRONT_DOOR_CAMERA, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_FRONT_DOOR_CAMERA, lang_str_get,
              -1, NULL,
              setting_installation_front_door_camera_obj_click, -1},
             {0, 72 * 9, 622, 72,
              setting_installation_obj_id_front_cctv_cont, 0, -1,
-             INSTALLATION_LANG_ID_FRONT_CCTV, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_FRONT_CCTV, lang_str_get,
              -1, NULL,
              setting_installation_front_cctv_obj_click, -1},
             {0, 72 * 10, 622, 72,
              setting_installation_obj_id_factory_reset_cont, 0, -1,
-             INSTALLATION_LANG_ID_FACTORY_RESET, layout_setting_installation_language_get,
+             INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
              -1, NULL,
              setting_installation_factory_reset_obj_click, -1},
         };
@@ -314,7 +316,7 @@ static void sat_layout_enter(setting_installation)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_installation_language_get(INSTALLATION_LANG_ID_THE_MENU_IS_TO_OPERATE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_THE_MENU_IS_TO_OPERATE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -326,7 +328,7 @@ static void sat_layout_enter(setting_installation)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_installation_language_get(INSTALLATION_LANG_ID_WE_ARE_NOT_RESPONSIBLE), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_WE_ARE_NOT_RESPONSIBLE), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -339,9 +341,10 @@ static void sat_layout_enter(setting_installation)
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               48, 3, 415, 32, setting_installation_obj_id_i_have_read_label,
-                                              layout_setting_installation_language_get(INSTALLATION_LANG_ID_I_HAVE_READ_AND_UNDERSTOOD), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                              lang_str_get(INSTALLATION_XLS_LANG_ID_I_HAVE_READ_AND_UNDERSTOOD), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                               0, 0, 32, 32, setting_installation_obj_id_i_have_read_checkbox,
                                               (const char *)resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                SAT_DEBUG("========%s=========\n",lang_str_get(INSTALLATION_XLS_LANG_ID_I_HAVE_READ_AND_UNDERSTOOD));
         }
         /***********************************************
          ** 作者: leo.liu

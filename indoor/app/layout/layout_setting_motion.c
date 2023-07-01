@@ -113,7 +113,7 @@ static bool setting_motion_storage_foramt_display(void)
                 return false;
         }
 
-        lv_label_set_text(sub, language_common_string_get(user_data_get()->motion.saving_fmt == 0 ? LANG_COMMON_ID_VIDEO : LANG_COMMON_ID_PHOTO));
+        lv_label_set_text(sub, lang_str_get(user_data_get()->motion.saving_fmt == 0 ? RECORDING_XLS_LANG_ID_SAVE_VIDEO : RECORDING_XLS_LANG_ID_SAVE_PICTURE));
         return true;
 }
 
@@ -126,8 +126,8 @@ static bool setting_motion_sensivitity_display(void)
                 return false;
         }
 
-        lv_label_set_text(sub, layout_setting_motion_language_get(user_data_get()->motion.sensivity == 0 ? SETTING_MOTION_LANG_ID_HIGH : user_data_get()->motion.sensivity == 1 ? SETTING_MOTION_LANG_ID_MIDDLE
-                                                                                                                                                                                : SETTING_MOTION_LANG_ID_LOW));
+        lv_label_set_text(sub, lang_str_get(user_data_get()->motion.sensivity == 0 ? SETTING_MOTION_XLS_LANG_ID_HIGH : user_data_get()->motion.sensivity == 1 ? SETTING_MOTION_XLS_LANG_ID_MIDDLE
+                                                                                                                                                                                : SETTING_MOTION_XLS_LANG_ID_LOW));
         return true;
 }
 
@@ -139,7 +139,7 @@ static bool setting_motion_timer_diplay(void)
                 SAT_DEBUG(" lv_obj_t*sub = setting_motion_list_item_sub_get(setting_motion_obj_id_motion_detecting_schedule_cont);");
                 return false;
         }
-        lv_label_set_text(sub, language_common_string_get(user_data_get()->motion.timer_en == 0 ? LANG_COMMON_ID_OFF:LANG_COMMON_ID_ON));
+        lv_label_set_text(sub, lang_str_get(user_data_get()->motion.timer_en == 0 ? LANG_COMMON_ID_OFF:LANG_COMMON_ID_ON));
         return true;
 }
 
@@ -152,7 +152,7 @@ static bool setting_motion_lcd_display(void)
                 return false;
         }
 
-        lv_label_set_text(sub, language_common_string_get(user_data_get()->motion.lcd_en == 0 ? LANG_COMMON_ID_OFF:LANG_COMMON_ID_ON));
+        lv_label_set_text(sub, lang_str_get(user_data_get()->motion.lcd_en == 0 ? LANG_COMMON_ID_OFF:LANG_COMMON_ID_ON));
         return true;
 }
 
@@ -479,30 +479,30 @@ static void setting_motion_list_item_click(lv_event_t *e)
         else if (item->id == setting_motion_obj_id_select_camera_cont)
         {
                 const char *item[4] = {0};
-                item[0] = language_common_string_get(LANG_COMMON_ID_DOOR1);
-                item[1] = language_common_string_get(LANG_COMMON_ID_DOOR2);
-                item[2] = language_common_string_get(LANG_COMMON_ID_CCTV1);
-                item[3] = language_common_string_get(LANG_COMMON_ID_CCTV2);
-                setting_motion_msgbox_create(layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_SELECT_CAMERA),
+                item[0] = lang_str_get(LANG_COMMON_ID_DOOR1);
+                item[1] = lang_str_get(LANG_COMMON_ID_DOOR2);
+                item[2] = lang_str_get(LANG_COMMON_ID_CCTV1);
+                item[3] = lang_str_get(LANG_COMMON_ID_CCTV2);
+                setting_motion_msgbox_create(lang_str_get(SETTING_MOTION_XLS_LANG_ID_SELECT_CAMERA),
                                              setting_motion_msgbox_cancel_obj_click, setting_motion_select_camera_msgbox_confim_click, setting_motion_msgbox_item_click,
                                              item, 4, user_data_get()->motion.select_camera);
         }
         else if (item->id == setting_motion_obj_id_storage_format_cont)
         {
                 const char *item[2] = {0};
-                item[0] = language_common_string_get(LANG_COMMON_ID_VIDEO);
-                item[1] = language_common_string_get(LANG_COMMON_ID_PHOTO);
-                setting_motion_msgbox_create(layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_STORAGE_FORMAT),
+                item[0] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_VIDEO);
+                item[1] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_PICTURE);
+                setting_motion_msgbox_create(lang_str_get(SETTING_MOTION_XLS_LANG_ID_STORAGE_FORMAT),
                                              setting_motion_msgbox_cancel_obj_click, setting_motion_storage_foramt_msgbox_confim_click, setting_motion_msgbox_item_click,
                                              item, 2, user_data_get()->motion.saving_fmt);
         }
         else if (item->id == setting_motion_obj_id_storage_sensitivity_cont)
         {
                 const char *item[3] = {0};
-                item[0] = layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_HIGH);
-                item[1] = layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_MIDDLE);
-                item[2] = layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_LOW);
-                setting_motion_msgbox_create(layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_SENSITIVTY_SETTING),
+                item[0] = lang_str_get(SETTING_MOTION_XLS_LANG_ID_HIGH);
+                item[1] = lang_str_get(SETTING_MOTION_XLS_LANG_ID_MIDDLE);
+                item[2] = lang_str_get(SETTING_MOTION_XLS_LANG_ID_LOW);
+                setting_motion_msgbox_create(lang_str_get(SETTING_MOTION_XLS_LANG_ID_SENSITIVTY_SETTING),
                                              setting_motion_msgbox_cancel_obj_click, setting_motion_sensivity_msgbox_confim_click, setting_motion_msgbox_item_click,
                                              item, 3, user_data_get()->motion.sensivity);
         }
@@ -513,9 +513,9 @@ static void setting_motion_list_item_click(lv_event_t *e)
         else if (item->id == setting_motion_obj_id_motion_lcd_on_cont)
         {
                 const char *item[2] = {0};
-                item[0] = language_common_string_get(LANG_COMMON_ID_OFF);
-                item[1] = language_common_string_get(LANG_COMMON_ID_ON);
-                setting_motion_msgbox_create(layout_setting_motion_language_get(SETTING_MOTION_LANG_ID_LCD_ON_WHEN_MOTION_DETECTED),
+                item[0] = lang_str_get(LANG_COMMON_ID_OFF);
+                item[1] = lang_str_get(LANG_COMMON_ID_ON);
+                setting_motion_msgbox_create(lang_str_get(SETTING_MOTION_XLS_LANG_ID_LCD_ON_WHEN_MOTION_DETECTED),
                                              setting_motion_msgbox_cancel_obj_click, setting_motion_lcd_on_msgbox_confim_click, setting_motion_msgbox_item_click,
                                              item, 2, user_data_get()->motion.lcd_en ? 1 : 0);
         }
@@ -527,33 +527,33 @@ static lv_obj_t *setting_motion_list_create(lv_obj_t *parent)
 
             {48, 88, 928, 88,
              setting_motion_obj_id_use_motion_cont, 0, -1,
-             SETTING_MOTION_LANG_ID_USE_MOTION_DETECTION, layout_setting_motion_language_get,
+             SETTING_MOTION_XLS_LANG_ID_USE_MOTION_DETECTION, lang_str_get,
              -1, NULL,
              setting_motion_list_item_click, 2},
             {0, 88, 928, 88,
              setting_motion_obj_id_select_camera_cont, 0, 1,
-             SETTING_MOTION_LANG_ID_SELECT_CAMERA, layout_setting_motion_language_get,
+             SETTING_MOTION_XLS_LANG_ID_SELECT_CAMERA, lang_str_get,
              -1, NULL,
              setting_motion_list_item_click, 2},
             {0, 88 * 2, 928, 88,
              setting_motion_obj_id_storage_format_cont, 0, 1,
-             SETTING_MOTION_LANG_ID_STORAGE_FORMAT, layout_setting_motion_language_get,
-             LANG_COMMON_ID_PHOTO, language_common_string_get,
+             SETTING_MOTION_XLS_LANG_ID_STORAGE_FORMAT, lang_str_get,
+             LANG_COMMON_ID_PHOTO, lang_str_get,
              setting_motion_list_item_click, 2},
             {0, 88 * 3, 928, 88,
              setting_motion_obj_id_storage_sensitivity_cont, 0, 1,
-             SETTING_MOTION_LANG_ID_SENSITIVTY_SETTING, layout_setting_motion_language_get,
-             SETTING_MOTION_LANG_ID_HIGH, language_common_string_get,
+             SETTING_MOTION_XLS_LANG_ID_SENSITIVTY_SETTING, lang_str_get,
+             SETTING_MOTION_XLS_LANG_ID_HIGH, lang_str_get,
              setting_motion_list_item_click, 2},
             {0, 88 * 4, 928, 88,
              setting_motion_obj_id_motion_detecting_schedule_cont, 0, 1,
-             SETTING_MOTION_LANG_ID_MOTION_DETECTING_SCHEDULE, layout_setting_motion_language_get,
-             LANG_COMMON_ID_OFF, language_common_string_get,
+             SETTING_MOTION_XLS_LANG_ID_MOTION_DETECTING_SCHEDULE, lang_str_get,
+             LANG_COMMON_ID_OFF, lang_str_get,
              setting_motion_list_item_click, 2},
             {0, 88 * 5, 928, 88,
              setting_motion_obj_id_motion_lcd_on_cont, 0, 1,
-             SETTING_MOTION_LANG_ID_LCD_ON_WHEN_MOTION_DETECTED, layout_setting_motion_language_get,
-             LANG_COMMON_ID_OFF, language_common_string_get,
+             SETTING_MOTION_XLS_LANG_ID_LCD_ON_WHEN_MOTION_DETECTED, lang_str_get,
+             LANG_COMMON_ID_OFF, lang_str_get,
              setting_motion_list_item_click, 2},
         };
 
@@ -595,7 +595,7 @@ static void sat_layout_enter(setting_motion)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_recording_language_get(RECORDING_LANG_ID_MOTION_DETECTION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(RECORDING_XLS_LANG_ID_MOTION_DETECTION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu

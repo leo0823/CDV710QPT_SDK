@@ -51,9 +51,9 @@ static lv_obj_t *setting_screen_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
 
-            {0, 0, 622, 72, setting_screen_obj_id_lcd_screen_cont, setting_screen_obj_id_lcd_screen_title, -1, SCREEN_LANG_ID_LCD_SCREEN_BRIGHNESS, layout_setting_screen_language_get, -1, NULL, NULL},
-            {0, 72, 622, 72, setting_screen_obj_id_standby_screen_cont, setting_screen_obj_id_standby_screen_title, setting_screen_obj_id_standby_screen_sub, SCREEN_LANG_ID_LCD_STANDBY_SCREEN, layout_setting_screen_language_get, SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC, layout_setting_screen_language_get, setting_screen_standby_screen_obj_click},
-            {0, 72 * 2, 622, 72, setting_screen_obj_id_screen_clean_cont, setting_screen_obj_id_screen_clean_title, -1, SCREEN_LANG_ID_LCD_SCREEN_CLEANING_MODE, layout_setting_screen_language_get, -1, NULL, setting_screen_screen_clean_obj_click},
+            {0, 0, 622, 72, setting_screen_obj_id_lcd_screen_cont, setting_screen_obj_id_lcd_screen_title, -1, SCREEN_XLS_LANG_ID_LCD_SCREEN_BRIGHNESS, lang_str_get, -1, NULL, NULL},
+            {0, 72, 622, 72, setting_screen_obj_id_standby_screen_cont, setting_screen_obj_id_standby_screen_title, setting_screen_obj_id_standby_screen_sub, SCREEN_XLS_LANG_ID_LCD_STANDBY_SCREEN, lang_str_get, SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC, lang_str_get, setting_screen_standby_screen_obj_click},
+            {0, 72 * 2, 622, 72, setting_screen_obj_id_screen_clean_cont, setting_screen_obj_id_screen_clean_title, -1, SCREEN_XLS_LANG_ID_LCD_SCREEN_CLEANING_MODE, lang_str_get, -1, NULL, setting_screen_screen_clean_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_screen_obj_id_sub_list);
@@ -103,7 +103,7 @@ static lv_obj_t *setting_screen_sub_list_create(void)
                 {
                         lv_obj_t * sub_obj = lv_obj_get_child_form_id(item,setting_screen_obj_id_standby_screen_sub);
                         int offset = user_data_get()->display.screen_off_time == 15 ? 0 : user_data_get()->display.screen_off_time == 30 ? 1 : user_data_get()->display.screen_off_time == 60 ? 2 : 3;
-                        lv_label_set_text(sub_obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
+                        lv_label_set_text(sub_obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
                 }
 
         }

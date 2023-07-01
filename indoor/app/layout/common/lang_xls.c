@@ -135,9 +135,9 @@ char ***lang_xls_init(int sheet_num)
                 strcpy(buffer[i][j], (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
                 str_replace(buffer[i][j], "\\n", "\n");
             }
-            printf("%s\t", (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
+            //printf("%s\t", (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
         }
-        printf("\n");
+       // printf("\n");
     }
     xls_close_WS(pWs);
     xls_close_WB(pWb);

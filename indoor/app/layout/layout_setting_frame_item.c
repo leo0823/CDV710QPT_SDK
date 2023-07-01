@@ -105,7 +105,7 @@ static void sat_layout_enter(setting_frame_item)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_standby_screen_language_get(SETTING_STANDBY_SCREEN_LANG_ID_ITEM_DISPLAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_ITEM_DISPLAY), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -129,27 +129,27 @@ static void sat_layout_enter(setting_frame_item)
 
                     {0, 0, 928, 88,
                      setting_frame_item_obj_id_hour_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_HOUR, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_HOUR, lang_str_get,
                      -1, NULL,
                      setting_frame_item_checkbox_click, 1},
                     {0, 88, 928, 88,
                      setting_frame_item_obj_id_calendar_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_CALENDAR, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_CALENDAR, lang_str_get,
                      -1, NULL,
                      setting_frame_item_checkbox_click, 1},
                     {0, 88 * 2, 928, 88,
                      setting_frame_item_obj_id_recently_save_video_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_RECENTLY_SAVED_VIDEO, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_RECENTLY_SAVED_VIDEO, lang_str_get,
                      -1, NULL,
                      setting_frame_item_checkbox_click, 1},
                     {0, 88 * 3, 928, 88,
                      setting_frame_item_obj_id_front_door_video_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_FRONT_DOOR_VIDEO, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_FRONT_DOOR_VIDEO, lang_str_get,
                      -1, NULL,
                      setting_frame_item_checkbox_click, 1},
                     {0, 88 * 2, 928, 88,
                      setting_frame_item_obj_id_cctv_fontage_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_CCTV_FOOTAGE, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_CCTV_FOOTAGE, lang_str_get,
                      -1, NULL,
                      setting_frame_item_checkbox_click, 1}};
 

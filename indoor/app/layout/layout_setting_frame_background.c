@@ -92,7 +92,7 @@ static void sat_layout_enter(setting_frame_backgorund)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_STANDBY_SCREEN), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SCREEN_XLS_LANG_ID_LCD_STANDBY_SCREEN), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -117,12 +117,12 @@ static void sat_layout_enter(setting_frame_backgorund)
 
                     {0, 0, 928, 88,
                      setting_frame_background_obj_id_basic_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_BASIC, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_BASIC, lang_str_get,
                      -1, NULL,
                      setting_frame_background_obj_checkbox_click, 1},
                     {0, 88, 928, 88,
                      setting_frame_background_obj_id_random_img_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_LANG_ID_RANDOM_IMAGE, layout_setting_standby_screen_language_get,
+                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE, lang_str_get,
                      -1, NULL,
                      setting_frame_background_obj_checkbox_click, 1},
                 };

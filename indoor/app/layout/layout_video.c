@@ -298,8 +298,8 @@ static void video_del_msgbox_confirm_click(lv_event_t *e)
 
 static void video_obj_del_click(lv_event_t *e)
 {
-        video_msgbox_create(layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_DELETE),
-                            layout_setting_storage_space_language_get(SETTING_STORAGE_LANG_ID_WOULD_YOU_LIKE_DEL),
+        video_msgbox_create(lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL),
+                            lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                             video_msgbox_del_cancel_click, video_del_msgbox_confirm_click);
 }
 static void video_obj_left_click(lv_event_t *e)

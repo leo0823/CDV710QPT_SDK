@@ -61,7 +61,7 @@ static void sat_layout_enter(power_setting)
 			NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0, 
 			0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
 			0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
-			layout_power_setting_language_get(POWER_SETTING_LANG_POWER_SET), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+			lang_str_get(POWER_SETTING_XLS_LANG_ID_POWER_SET), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 
 	/***********************************************
@@ -74,7 +74,7 @@ static void sat_layout_enter(power_setting)
 			NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0, 
 			0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
 			0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
-			layout_power_setting_language_get(POWER_SETTING_LANG_WELCOM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+			lang_str_get(POWER_SETTING_XLS_LANG_ID_WELCOM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 	}
 
 	/***********************************************
@@ -88,7 +88,7 @@ static void sat_layout_enter(power_setting)
 			0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
 			0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
 			0, 19, 107, 33, power_setting_obj_id_languge_label, 
-			language_common_string_get(LANG_COMMON_ID_LANG), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_RIGHT, lv_font_normal, 
+			lang_str_get(XLS_LANG_ID_LANGUAGE_TYPE), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_RIGHT, lv_font_normal, 
 			108, 12, 48, 48, power_setting_obj_id_languge_icon, 
 			(const char *) resource_ui_src_get("btn_list_right.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
@@ -99,19 +99,19 @@ static void sat_layout_enter(power_setting)
 	** 说明: 运行和跳过
 	***********************************************/
 	{
-		lv_obj_t *		obj = lv_common_text_create(sat_cur_layout_screen_get(), power_setting_obj_id_run_btn, 165, 450, 311, 72, 
+		lv_obj_t * obj = lv_common_text_create(sat_cur_layout_screen_get(), power_setting_obj_id_run_btn, 165, 450, 311, 72, 
 			power_setting_run_btn_client, LV_OPA_COVER, 0x00a8ff, LV_OPA_COVER, 0x808080, 
 			60, 		0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
 			60, 		0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
-			layout_power_setting_language_get(POWER_SETTING_LANG_RUN), 0XFFFFFFFF, 0xFFFFff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+			lang_str_get(POWER_SETTING_XLS_LANG_ID_RUN), 0XFFFFFFFF, 0xFFFFff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
 		lv_obj_set_style_pad_top(obj, 20, LV_PART_MAIN);
 
-		obj 				= lv_common_text_create(sat_cur_layout_screen_get(), power_setting_obj_id_skip_btn, 548, 450, 311, 72, 
+		obj = lv_common_text_create(sat_cur_layout_screen_get(), power_setting_obj_id_skip_btn, 548, 450, 311, 72, 
 			power_setting_skip_btn_client, LV_OPA_COVER, 0x47494a, LV_OPA_COVER, 0x808080, 
 			60, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
 			60, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0, 
-			layout_power_setting_language_get(POWER_SETTING_LANG_SKIP), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+			lang_str_get(POWER_SETTING_XLS_LANG_ID_SKIP), 0XFFFFFFFF, 0XFFFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
 		lv_obj_set_style_pad_top(obj, 20, LV_PART_MAIN);
 	}

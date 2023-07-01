@@ -86,7 +86,7 @@ static const user_data_info user_data_default =
 
         },
         .etc = {
-            .language = 0,
+            .language = 2,
             .deive_id = 0,
             .open_the_door = 0,
             .door1_open_door_mode = 0,

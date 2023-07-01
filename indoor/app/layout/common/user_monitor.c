@@ -253,7 +253,6 @@ BYTE1. 010(固定部分).
 ************************************************************/
 bool monitor_valid_channel_check(int channel)
 {
-        
 
         if(network_data_get()->door_device_count)
         {
