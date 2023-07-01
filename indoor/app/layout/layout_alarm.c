@@ -1,4 +1,5 @@
 #include "layout_define.h"
+#include "layout_alarm.h"
 enum
 {
          layout_alarm_obj_id_bg,
@@ -187,14 +188,17 @@ static void layout_alarm_alarm_mode_label_display(void)
 {
         struct tm tm;
         user_time_read(&tm);
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),  layout_alarm_obj_id_mode);
+        lv_obj_t *obj1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),  layout_alarm_obj_id_title);
+        lv_obj_t *obj2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),  layout_alarm_obj_id_mode);
         if (user_data_get()->alarm.emergency_mode == 0)
         {
-                lv_label_set_text_fmt(obj, "Household operation");
+                lv_label_set_text_fmt(obj1, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_EMERHENCY));
+                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_HOUSEHOLD_OPERATION));
         }
         else
         {
-                lv_label_set_text_fmt(obj, "Security area sensor %d", layout_alarm_alarm_channel_get() + 1);
+                lv_label_set_text_fmt(obj1, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SECURITY_EMERGENCY));
+                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SECURITY_EMERGENCY) + layout_alarm_alarm_channel_get());
         }
 }
 
@@ -258,7 +262,7 @@ static void  layout_alarm_passwd_input_text_next_foucued(void)
                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN);
                                         alarm_return =  true;
                                         lv_obj_t * label = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_confirm_btn),layout_alarm_obj_id_confirm_label);
-                                        lv_label_set_text(label,"return");
+                                        lv_label_set_text(label,lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_RETURN));
                                         return;
 
 
@@ -400,7 +404,6 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
                         rec_mode |= REC_MODE_ALARM;
                 }
         }
-        SAT_DEBUG("=============================\n");
         sat_linphone_calls_cmd_send();
         record_jpeg_start(REC_MODE_TUYA_ALARM);
 
@@ -482,7 +485,7 @@ static void sat_layout_enter(alarm)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              "Emergency", 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                              lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_EMERHENCY), 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 }
 
                 /************************************************************
@@ -530,7 +533,7 @@ static void sat_layout_enter(alarm)
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       400, 17, 224, 27,  layout_alarm_obj_id_confirm_label,
-                                                      "Stop", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                                      lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_STOP), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                       3, 0, 77, 77, -1,
                                                       NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
@@ -587,7 +590,7 @@ static void sat_layout_enter(alarm)
                                         NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                       "Enter Password", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                       lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_ENTER_PASSSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
             }
 
             /************************************************************

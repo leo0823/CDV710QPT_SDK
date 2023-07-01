@@ -27,8 +27,7 @@ typedef struct
         bool key_sound;
         bool ring_mute;
         /***** 1-6 rings *****/
-        int door1_tone;
-        int door2_tone;
+        int door_tone;
         int inter_tone;
 
         int door_ring_volume;

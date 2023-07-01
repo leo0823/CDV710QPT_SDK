@@ -354,12 +354,12 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
 {
         setting_list_info_t main_list_group[] = {
 
-            {0, 0, 970, 70, setting_volume_obj_id_buzzer_cont, setting_volume_obj_id_buzzer_label, -1, SOUND_LANG_ID_BUZZER, layout_setting_sound_language_get, -1, NULL, setting_buzzer_volume_slider_change_cb, -1},
-            {0, 70, 970, 140, setting_volume_obj_id_entrance_cont, setting_volume_obj_id_entrance_label, -1, SOUND_LANG_ID_ENTRANCE, layout_setting_sound_language_get, -1, NULL, setting_entrance_volume_slider_change_cb, -1},
-            {0, 70 + 140, 970, 140, setting_volume_obj_id_common_entrance_cont, setting_volume_obj_id_common_entrance_label, -1, SOUND_LANG_ID_COMMON_ENTRANCE, layout_setting_sound_language_get, -1, NULL, setting_common_entrance_volume_slider_change_cb, -1},
-            {0, 70 + 140 * 2, 970, 140, setting_volume_obj_id_guard_station_cont, setting_volume_obj_id_guard_station_label, -1, SOUND_LANG_ID_GUARD_STATION, layout_setting_sound_language_get, -1, NULL, setting_guard_station_volume_slider_change_cb, -1},
-            {0, 70 + 140 * 3, 970, 140, setting_volume_obj_id_extension_cont, setting_volume_obj_id_extension_label, -1, SOUND_LANG_ID_EXTENSION, layout_setting_sound_language_get, -1, NULL, setting_extension_volume_slider_change_cb, -1},
-            {0, 70 + 140 * 4, 970, 70, setting_volume_obj_id_touch_notification_cont, setting_volume_obj_id_touch_notification_label, -1, SOUND_LANG_ID_TOUCH_NOTIFICATION, layout_setting_sound_language_get, -1, NULL, setting_touch_notification_volume_slider_change_cb, -1},
+            {0, 0, 970, 70, setting_volume_obj_id_buzzer_cont, setting_volume_obj_id_buzzer_label, -1, SOUND_XLS_LANG_ID_BUZZER, lang_str_get, -1, NULL, setting_buzzer_volume_slider_change_cb, -1},
+            {0, 70, 970, 140, setting_volume_obj_id_entrance_cont, setting_volume_obj_id_entrance_label, -1, SOUND_XLS_LANG_ID_ENTRANCE, lang_str_get, -1, NULL, setting_entrance_volume_slider_change_cb, -1},
+            {0, 70 + 140, 970, 140, setting_volume_obj_id_common_entrance_cont, setting_volume_obj_id_common_entrance_label, -1, SOUND_XLS_LANG_ID_COMMON_ENTRANCE, lang_str_get, -1, NULL, setting_common_entrance_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 2, 970, 140, setting_volume_obj_id_guard_station_cont, setting_volume_obj_id_guard_station_label, -1, SOUND_XLS_LANG_ID_GUARD_STATION, lang_str_get, -1, NULL, setting_guard_station_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 3, 970, 140, setting_volume_obj_id_extension_cont, setting_volume_obj_id_extension_label, -1, SOUND_XLS_LANG_ID_EXTENSION, lang_str_get, -1, NULL, setting_extension_volume_slider_change_cb, -1},
+            {0, 70 + 140 * 4, 970, 70, setting_volume_obj_id_touch_notification_cont, setting_volume_obj_id_touch_notification_label, -1, SOUND_XLS_LANG_ID_TOUCH_NOTIFICATION, lang_str_get, -1, NULL, setting_touch_notification_volume_slider_change_cb, -1},
         };
         int slider_volume_group[][6] = {
 
@@ -527,7 +527,7 @@ static void sat_layout_enter(setting_volume)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_sound_language_get(SOUND_LANG_ID_VOLUME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SOUND_XLS_LANG_ID_VOLUME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

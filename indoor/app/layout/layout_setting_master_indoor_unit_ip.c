@@ -113,7 +113,7 @@ static void sat_layout_enter(setting_master_indoor_unit_ip)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_slave_type_setting_language_get(LAYOUT_SLAVE_TYPE_SETTING_LANG_ID_MASTTER_INDOOR), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_MASTTER_INDOOR), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -172,7 +172,7 @@ static void sat_layout_enter(setting_master_indoor_unit_ip)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_master_indoor_unit_ip_language_get(_SETTING_MASTER_INDOOR_UNIT_IP_LANG_ID_MASTER_WALLPAD_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(_SETTING_MASTER_INDOOR_UNIT_IP_XLS_LANG_ID_MASTER_WALLPAD_IP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 }
 static void sat_layout_quit(setting_master_indoor_unit_ip)

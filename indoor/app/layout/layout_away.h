@@ -1,20 +1,13 @@
 #include "common/language.h"
 typedef enum
 {
-    LAYOUT_AWAY_COULANG_ID_LANG_AWAY,
+    LAYOUT_AWAY_LANG_ID_LANG_DETECTS_INSTRUDERS,
+    LAYOUT_AWAY_LANG_ID_LANG_OUT_GOING,
+    LAYOUT_AWAY_LANG_ID_LANG_RELEASE,
+    LAYOUT_AWAY_LANG_ID_LANG_AWAY,
     LAYOUT_AWAY_LANG_ID_LANG_END,
     LAYOUT_AWAY_LANG_ID_LANG_EXECUTION,
     LAYOUT_AWAY_LANG_ID_LANG_RUNNING,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR1,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR2,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR3,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR4,
-    
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR5,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR6,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR7,
-    LAYOUT_AWAY_LANG_ID_LANG_SEMSOR8,
-
     LAYOUT_AWAY_FUNCRION_SETTING_TIME,
     LAYOUT_AWAY_FUNCRION_RELEASE_TIME,
     LAYOUT_AWAY_SAVE_VISITORS_PHORO,
@@ -29,7 +22,9 @@ typedef enum
     LAYOUT_AWAY_RELEASE_TIME_SECOND_70,
     LAYOUT_AWAY_RELEASE_TIME_SECOND_80,
     LAYOUT_AWAY_RELEASE_TIME_SECOND_90,
-
+    LAYOUT_AWAY_SETTING_TIME_1_MINUTE,
+    LAYOUT_AWAY_SETTING_TIME_2_MINUTE,
+    LAYOUT_AWAY_SETTING_TIME_3_MINUTE,
     
 
     LAYOUT_AWAY_LANG_ID_LANG_TOTAL
@@ -37,6 +32,10 @@ typedef enum
 
 static const char *layout_away_general_language[LAYOUT_AWAY_LANG_ID_LANG_TOTAL][LANGUAGE_ID_TOTAL] =
     {
+        {"Detects intruders inside and outside \nour house in away mode","Detects intruders inside and outside \nour house in away mode","Detects intruders inside and outside \nour house in away mode"},
+        {"Outgoing time setting","Outgoing time setting","Outgoing time setting"},
+        {"release time Setting","release time Setting","release time Setting"},
+
         {"외출", "外出", "Away","Отсутствие","Salida","Vắng nhà","بعيد"},
 
         {"종료", "结束", "End","thúc","Fin","Kết","إنهاء"},
@@ -44,69 +43,7 @@ static const char *layout_away_general_language[LAYOUT_AWAY_LANG_ID_LANG_TOTAL][
         {"실행", "执行", "Execution","Выполнение","Ejecución","Thực hiện","تنفيذ"},
 
         {"외출기능이 실행중입니다.", "外出功能正在运行", "Away mode is running","Режим отсуствия активирован","El modo Salida está funcionando","Chế độ vắng nhà đang hoạt động","وضع الخروج قيد التشغيل "},
-        {
-            "방범구역\n센서 1",
-            "防止犯罪区域\nsensor 1",
-            "security area\nsensor 1",
-            "зоны безопасности\nДатчик 1"
-            "de zona de seguridad\nSensor1 "
-            "an ninh khu vực\nCảm biến 1"
-            " منطقة الأمان\nمستشعر 1"
-        },
-        {
-            "방범구역\n센서 2",
-            "防止犯罪区域\nsensor 2",
-            "security area\nsensor 2",
-            "зоны безопасности\nДатчик 2"
-            "de zona de seguridad\nSensor 2 "
-            "an ninh khu vực\nCảm biến 2"
-            " منطقة الأمان\nمستشعر 2"
-        },
-        {
-            "방범구역\n센서 3",
-            "防止犯罪区域\nsensor 3",
-            "security area\nsensor 3",
-            "зоны безопасности\nДатчик 3"
-            "de zona de seguridad\nSensor 3 "
-            "an ninh khu vực\nCảm biến 3"
-            " منطقة الأمان\nمستشعر 3"
-        },
-        {
-            "방범구역\n센서 4",
-            "防止犯罪区域\nsensor 4",
-            "security area\nsensor 4",
-            "зоны безопасности\nДатчик 4"
-            "de zona de seguridad\nSensor 4"
-            "an ninh khu vực\nCảm biến 4"
-            " منطقة الأمان\nمستشعر 4"
-        },
-        {
-            "방범구역\n센서 5",
-            "防止犯罪区域\nsensor 5",
-            "security area\nsensor 5",
-            "зоны безопасности\nДатчик 5"
-            "de zona de seguridad\nSensor 5 "
-            "an ninh khu vực\nCảm biến 5"
-            " منطقة الأمان\nمستشعر 5"
-        },
-        {
-            "방범구역\n센서 6",
-            "防止犯罪区域\nsensor 6",
-            "security area\nsensor 6",
-            "зоны безопасности\nДатчик 6"
-            "de zona de seguridad\nSensor 6 "
-            "an ninh khu vực\nCảm biến 6"
-            " منطقة الأمان\nمستشعر 6"
-        },
-        {
-            "방범구역\n센서 7",
-            "防止犯罪区域\nsensor 7",
-            "security area\nsensor 7",
-            "зоны безопасности\nДатчик 7"
-            "de zona de seguridad\nSensor 7"
-            "an ninh khu vực\nCảm biến 7"
-            " منطقة الأمان\nمستشعر 7"
-        },
+
         {
             "외출기능 설정 시간",
             "外出功能设置时间",

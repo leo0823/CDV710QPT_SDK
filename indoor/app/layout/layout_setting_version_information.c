@@ -82,7 +82,7 @@ static void setting_version_information_update_click(lv_event_t *e)
         if (sat_ipcamera_device_name_get(parent->id, 500) == true)
         {
                 char msg[128] = {0};
-                sprintf(msg, "%s %s", lv_label_get_text(label), layout_setting_version_information_language_get(SETTING_VERSION_INFORMATION_LANG_ID_UPDATE_ING));
+                sprintf(msg, "%s %s", lv_label_get_text(label), lang_str_get(SETTING_VERSION_INFORMATION_XLS_LANG_ID_UPDATE_ING));
                 setting_version_infomration_msgbox_create(msg);
 
                 outdoor_network_upgrade(sat_ipcamera_ipaddr_get(parent->id));
@@ -177,7 +177,7 @@ static void sat_layout_enter(setting_version_information)
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                 0, 17, 576, 43, setting_version_information_obj_id_current_version_title,
-                                                                layout_setting_version_information_language_get(SETTING_VERSION_INFORMATION_LANG_ID_CURRENT_VERSION), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                lang_str_get(SETTING_VERSION_INFORMATION_XLS_LANG_ID_CURRENT_VERSION), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 42, 576, 29, setting_version_information_obj_id_current_version_sub,
                                                                 version_info, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
@@ -201,7 +201,7 @@ static void sat_layout_enter(setting_version_information)
                 }
 
 
-                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 304, 928, 72,
+                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * network_data_get()->door_device_count, 928, 72,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -260,7 +260,7 @@ static void sat_layout_enter(setting_version_information)
                                                                       setting_version_information_update_click, LV_OPA_COVER, 0x00a8FF, LV_OPA_COVER, 0x00a8FF,
                                                                       25, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                       25, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                      layout_setting_version_information_language_get(SETTING_VERSION_INFORMATION_LANG_ID_UPDATE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                                      lang_str_get(SETTING_VERSION_INFORMATION_XLS_LANG_ID_UPDATE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                                 lv_obj_set_style_pad_top(obj, 8, LV_PART_MAIN);
                         }

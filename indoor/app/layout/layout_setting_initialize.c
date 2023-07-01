@@ -106,7 +106,7 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_DATA_CANNOT_BE), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_DATA_CANNOT_BE), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -118,7 +118,7 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_INITIALZATION_LIST), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_INITIALZATION_LIST), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -130,13 +130,13 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_CALL_LOG), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_CALL_LOG), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
 
                 lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_call_log_complete, 517, 193, 234, 29,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -151,13 +151,13 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_SAVED_VIDEO), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_SAVED_VIDEO), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
 
                 lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_saved_video_complete, 517, 232, 234, 29,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -171,13 +171,13 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_EMERGENCY_RECORD), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_EMERGENCY_RECORD), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
 
                 lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_emergency_reocrd_complete, 517, 271, 234, 29,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -192,7 +192,7 @@ static void sat_layout_enter(setting_initialize)
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_INITIALZATION_IS_COMPLETE), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_INITIALZATION_IS_COMPLETE), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -208,7 +208,7 @@ static void sat_layout_enter(setting_initialize)
                                                       setting_initialize_reset_obj_click, LV_OPA_COVER, 0x00a8ff, LV_OPA_COVER, 0x00a8ff,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_setting_initialize_language_get(SETTING_INITIALIZE_LANG_ID_RESET), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_RESET), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
         setting_initialize_count = 0;

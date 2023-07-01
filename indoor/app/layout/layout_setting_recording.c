@@ -339,15 +339,15 @@ static bool setting_recording_always_monitoring_sub_display(void)
         }
         else if(user_data_get()->always_monitoring == 1)
         {
-               string =  layout_setting_recording_language_get(RECORDING_LANG_ID_10_SEC_PER_CAMERA);
+               string =  lang_str_get(RECORDING_XLS_LANG_ID_10_SEC_PER_CAMERA);
         }
         else if(user_data_get()->always_monitoring == 2)
         {
-               string =  layout_setting_recording_language_get(RECORDING_LANG_ID_30_SEC_PER_CAMERA);
+               string =  lang_str_get(RECORDING_XLS_LANG_ID_30_SEC_PER_CAMERA);
         }
         else if(user_data_get()->always_monitoring == 3)
         {
-               string =  layout_setting_recording_language_get(RECORDING_LANG_ID_60_SEC_PER_CAMERA);
+               string =  lang_str_get(RECORDING_XLS_LANG_ID_60_SEC_PER_CAMERA);
         }
 
         lv_label_set_text(sub,string);
@@ -453,7 +453,7 @@ static void setting_recording_auto_obj_click(lv_event_t *ev)
         item[0] = language_common_string_get(LANG_COMMON_ID_OFF);
         item[1] = language_common_string_get(LANG_COMMON_ID_VIDEO);
         item[2] = language_common_string_get(LANG_COMMON_ID_PHOTO);
-        setting_recording_msgbox_create(layout_setting_recording_language_get(RECORDING_LANG_ID_AUTO_RECORIDNG_CALLS),
+        setting_recording_msgbox_create(lang_str_get(RECORDING_XLS_LANG_ID_AUTO_RECORIDNG_CALLS),
                                         setting_recording_msgbox_cancel_click, ssetting_recording_auto_msgbox_confirm_click, setting_recording_auto_msgbox_item_click,
                                         item, 3, user_data_get()->auto_record_mode);
 }
@@ -478,10 +478,10 @@ static void setting_recording_always_obj_click(lv_event_t *ev)
         const char *item[4] = {0};
 
 	item[0] = language_common_string_get(LANG_COMMON_ID_OFF);
-	item[1] = layout_setting_recording_language_get(RECORDING_LANG_ID_10_SEC_PER_CAMERA);
-	item[2] = layout_setting_recording_language_get(RECORDING_LANG_ID_30_SEC_PER_CAMERA);
-	item[3] = layout_setting_recording_language_get(RECORDING_LANG_ID_60_SEC_PER_CAMERA);
-        setting_recording_msgbox_create(layout_setting_recording_language_get(RECORDING_LANG_ID_ALWAYS_MONITORING),
+	item[1] = lang_str_get(RECORDING_XLS_LANG_ID_10_SEC_PER_CAMERA);
+	item[2] = lang_str_get(RECORDING_XLS_LANG_ID_30_SEC_PER_CAMERA);
+	item[3] = lang_str_get(RECORDING_XLS_LANG_ID_60_SEC_PER_CAMERA);
+        setting_recording_msgbox_create(lang_str_get(RECORDING_XLS_LANG_ID_ALWAYS_MONITORING),
                                         setting_recording_msgbox_cancel_click, ssetting_recording_always_msgbox_confirm_click, setting_recording_auto_msgbox_item_click,
                                         item, 4, user_data_get()->always_monitoring);
 }
@@ -492,17 +492,17 @@ static lv_obj_t *setting_recording_sub_list_create(void)
 
             {0, 0, 622, 72,
              setting_recording_obj_id_auto_cont, setting_recording_obj_id_auto_title, setting_recording_obj_id_auto_sub,
-             RECORDING_LANG_ID_AUTO_RECORIDNG_CALLS, layout_setting_recording_language_get,
+             RECORDING_XLS_LANG_ID_AUTO_RECORIDNG_CALLS, lang_str_get,
              -1, NULL,
              setting_recording_auto_obj_click},
             {0, 72, 622, 72,
              setting_recording_obj_id_motion_cont, setting_recording_obj_id_motion_title, setting_recording_obj_id_motion_sub,
-             RECORDING_LANG_ID_MOTION_DETECTION, layout_setting_recording_language_get,
+             RECORDING_XLS_LANG_ID_MOTION_DETECTION, lang_str_get,
              -1, NULL,
              setting_recording_motion_obj_click},
             {0, 72 * 2, 622, 72,
              setting_recording_obj_id_always_cont, setting_recording_obj_id_always_title, setting_recording_obj_id_always_sub,
-             RECORDING_LANG_ID_ALWAYS_MONITORING, layout_setting_recording_language_get,
+             RECORDING_XLS_LANG_ID_ALWAYS_MONITORING, lang_str_get,
              -1, NULL,
              setting_recording_always_obj_click},
         };

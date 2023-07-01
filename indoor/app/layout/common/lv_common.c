@@ -698,7 +698,7 @@ void setting_msgdialog_msg_confirm_btn_create(lv_obj_t *parent, int id, lv_event
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int confirm_id, int cancel_id, const char *confirm_string, const char *cancel_string, lv_event_cb_t con_cb, lv_event_cb_t can_cb)
+void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int confirm_id, int cancel_id, lv_event_cb_t con_cb, lv_event_cb_t can_cb)
 {
 
         int w = lv_obj_get_style_width(parent, LV_PART_MAIN);
@@ -707,19 +707,19 @@ void setting_msgdialog_msg_confirm_and_cancel_btn_create(lv_obj_t *parent, int c
                                       con_cb, LV_OPA_COVER, 0x00A8FF, LV_OPA_COVER, 0x0076cf,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      0, 20, w / 2, 72, 0,
-                                      confirm_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                      3, 0, 77, 77, -1,
-                                      NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                      0, 20, w / 2, 72, -1,
+                                      "", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                      0, 0, w / 2, 77, 1,
+                                      resource_ui_src_get("btn_title_confirm.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
         lv_common_img_text_btn_create(parent, cancel_id, 0, h - 72, w / 2, 72,
                                       can_cb, LV_OPA_COVER, 0x47494a, LV_OPA_COVER, 0x404040,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      0, 20, w / 2, 72, 0,
-                                      cancel_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                      3, 0, 77, 77, -1,
-                                      NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                      0, 20, w / 2, 72, -1,
+                                      "", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                      0, 0, w / 2, 77, 1,
+                                      resource_ui_src_get("btn_title_cancel.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 }
 /************************************************************
 ** 函数说明: 消息框删除

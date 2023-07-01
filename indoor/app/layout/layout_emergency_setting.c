@@ -70,7 +70,7 @@ static void sat_layout_enter(emergency_setting)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "Emergency", 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(HOME_XLS_LANG_ID_EMERGENCY), 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }                                               
 
 
@@ -86,7 +86,7 @@ static void sat_layout_enter(emergency_setting)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "would you like to active aan emergency", 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                     lang_str_get(LAYOUT_EMERGENCY_XLS_LANG_ID_ACTIVE_EMERGENCY), 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
 
 
@@ -136,7 +136,7 @@ static void sat_layout_enter(emergency_setting)
                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                             400, 17, 224, 27, emergency_occupy_obj_id_confirm_label,
-                                            "Confirm", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                            lang_str_get(LAYOUT_EMERGENCY_XLS_LANG_ID_CONFIRM), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                             3, 0, 77, 77, -1,
                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }

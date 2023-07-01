@@ -64,12 +64,12 @@ static void sat_layout_enter(setting_sensor_usage)
 
                     {0, 0, 928, 72,
                      setting_sensor_usage_obj_id_sensor_going_out_cont, setting_sensor_usage_obj_id_sensor_going_out_title, -1,
-                     SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTINGS_WHEN_GOING_OUT, layout_setting_sensor_usage_language_get,
+                     SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS_WHEN_GOING_OUT, lang_str_get,
                      -1, NULL,
                      setting_sensor_usage_going_out_click},
                     {0, 72, 928, 72,
                      setting_sensor_usage_obj_id_sensor_security_mode_cont, setting_sensor_usage_obj_id_sensor_security_mode_title, -1,
-                     SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTING_WHEN_SECURITY_MODE, layout_setting_sensor_usage_language_get,
+                     SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTING_WHEN_SECURITY_MODE, lang_str_get,
                      -1, NULL,
                      setting_sensor_usage_security_mode}};
 

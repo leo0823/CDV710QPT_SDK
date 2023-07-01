@@ -174,7 +174,7 @@ static void sat_layout_enter(ipc_camera_display)
                                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_IF_YOUT_CANNOT_SEE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                                              lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_SEE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
                                 }
                         }
                 }
@@ -189,7 +189,7 @@ static void sat_layout_enter(ipc_camera_display)
                                                       ipc_camera_search_display_register_click, LV_OPA_COVER, 0X00A8FF, LV_OPA_COVER, 0X00A8FF,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      layout_ipc_camera_search_language_get(DOOR_CAMERA_SEARCH_ID_REGISTRATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                      lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTRATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
 

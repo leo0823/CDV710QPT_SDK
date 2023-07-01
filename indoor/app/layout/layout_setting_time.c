@@ -137,7 +137,7 @@ static void sat_layout_enter(setting_time)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_time_language_get(SETTING_TIME_ID_DATE_TIME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_TIME_XLS_LANG_ID_DATE_TIME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -172,9 +172,9 @@ static void sat_layout_enter(setting_time)
                                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                 0, 8, 838, 50, setting_time_obj_id_setting_title,
-                                                                                layout_setting_time_language_get(SETTING_TIME_ID_SET_DATE_AND_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                lang_str_get(SETTING_TIME_XLS_LANG_ID_SET_DATE_AND_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                 0, 45, 838, 50, setting_time_obj_id_setting_sub,
-                                                                                layout_setting_time_language_get(SETTING_TIME_ID_THE_TIME_IS_SET_AUTOMATICALLY), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                                lang_str_get(SETTING_TIME_XLS_LANG_ID_THE_TIME_IS_SET_AUTOMATICALLY), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                 0, 0, 0, 0, -1,
                                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                 840, 20, 80, 48, setting_time_obj_id_setting_img,

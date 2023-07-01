@@ -1,11 +1,10 @@
-
 #ifndef _LANG_XLS_H_
 #define _LANG_XLS_H_
 
 #include <stdbool.h>
 
 
-#define XLS_TMP_PATH    "/tmp/nfs/language.xls"           // xls文件的路径
+// #define XLS_TMP_PATH    "/tmp/nfs//language.xls"           // xls文件的路径
 #define XLS_NFS_PATH    "/mnt/nfs/language.xls"                 // 
 
 #define CODE "UTF-8"                       // xls文件的编码格式

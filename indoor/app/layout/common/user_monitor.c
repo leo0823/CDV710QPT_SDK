@@ -253,26 +253,33 @@ BYTE1. 010(固定部分).
 ************************************************************/
 bool monitor_valid_channel_check(int channel)
 {
+
         if(network_data_get()->door_device_count)
         {
                 if((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
                 {
                         if(channel > (MON_CH_DOOR1 -1 + network_data_get()->door_device_count))
                         {
+                                SAT_DEBUG("ch %d channel is false\n",channel);
                                 return false;
                         }
+                        SAT_DEBUG("ch %d channel is true\n",channel);
                         return true;
+                        
                 }
         }
         if(network_data_get()->cctv_device_count)
         {
-                if((channel >= MON_CH_CCTV1) || (channel <= MON_CH_CCTV8)) 
+                if((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8)) 
                 {
                         if(channel > (MON_CH_CCTV1 -1 + network_data_get()->cctv_device_count))
                         {
+                                SAT_DEBUG("ch %d channel is false\n",channel);
                                 return false;
                         }
+                        SAT_DEBUG("ch %d channel is true\n",channel);
                         return true;
+                        
                 }
                 
         }

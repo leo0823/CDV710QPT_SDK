@@ -5,8 +5,7 @@
 
 typedef enum
 {
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTINGS_WHEN_GOING_OUT,
-        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTING_WHEN_SECURITY_MODE,
+        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTINGS,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_1,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_2,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_3,
@@ -14,26 +13,24 @@ typedef enum
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_5,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_6,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_CONTACT_7,
+        SETTING_SENSOR_USAGE_LANG_ID_RUNNNG_TIPS,
+        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTINGS_WHEN_GOING_OUT,
+        SETTING_SENSOR_USAGE_LANG_ID_SENSOR_SETTING_WHEN_SECURITY_MODE,
         SETTING_SENSOR_USAGE_LANG_ID_SENSOR_FOR_SECURITY,
         SETTING_SENSOR_USAGE_LANG_ID_NOT_USED,
         SETTING_SENSOR_USAGE_LANG_ID_NO,
         SETTING_SENSOR_USAGE_LANG_ID_NC,
         SETTING_SENSOR_USAGE_LANG_ID_ALWAYS,
-        SETTING_SENSOR_USAGE_LANG_ID_RUNNNG_TIPS,
+
         SETTING_SENSOR_USAGE_LANG_ID_TOTAL
 } LAYOUT_SETTING_SENSOR_USAGE_LANG_ID;
 
 static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
     {
         {
-            "Sensor settings when going out",
-            "Sensor settings when going out",
-            "Sensor settings when going out",
-        },
-        {
-            "Sensor settings for security mode",
-            "Sensor settings for security mode",
-            "Sensor settings for security mode",
+            "Sensor settings",
+            "Sensor settings",
+            "Sensor settings",
         },
         {
             "센서 접점 1",
@@ -106,26 +103,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "لإتصال بالمستشعر 7",
         },
         {
-            "Not used",
-            "Not used",
-            "Not used",
-        },
-        {
-            "NO",
-            "NO",
-            "NO",
-        },
-        {
-            "NC",
-            "NC",
-            "NC",
-        },
-        {
-            "Always detect",
-            "Always detect",
-            "Always detect",
-        },
-        {
             "NULL",
             "NULL",
             "The outing is currently running.The 'Not used' setting is applied after the end of the outing.",
@@ -134,8 +111,44 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "NULL",
             "NULL",
 
-        }
+        },
         
+        {
+            "Not used",
+            "Not used",
+            "Not used",
+        },
+        {
+            "NO",
+            "NO",
+            "NO",
+        },
+        {
+            "NC",
+            "NC",
+            "NC",
+        },
+        {
+            "Always detect",
+            "Always detect",
+            "Always detect",
+        },
+        {
+            "Sensor settings when going out",
+            "Sensor settings when going out",
+            "Sensor settings when going out",
+        },
+        {
+            "Sensor settings for security mode",
+            "Sensor settings for security mode",
+            "Sensor settings for security mode",
+        },
+        {
+            "Sensor for security",
+            "Sensor for security",
+            "Sensor for security"
+        },
+
 };
 
 /***

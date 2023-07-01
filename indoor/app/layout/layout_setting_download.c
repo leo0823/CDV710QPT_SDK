@@ -56,19 +56,19 @@ static void sat_layout_enter(setting_download)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_download_language_get(SETTING_DOWNLOAD_LANG_ID_GOOGLE_PLAY_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_PLAY_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_store, 680, 94, 198, 35,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_download_language_get(SETTING_DOWNLOAD_LANG_ID_GOOGLE_APP_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_APP_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_qrcode, 299, 428, 426, 80,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_download_language_get(SETTING_DOWNLOAD_LANG_ID_VIDEO_CALL_WITH_MOBILE_APP), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_VIDEO_CALL_WITH_MOBILE_APP), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
 
         /***********************************************

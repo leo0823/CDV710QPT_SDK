@@ -100,9 +100,9 @@ static void intercom_talk_call_status_label_display(void)
                 return;
         }
 
-        lv_label_set_text(obj, layout_intercom_language_get(intercom_call_state == 1   ? INTERCOM_LANG_ID_OUTCOMING_CALL
-                                                            : intercom_call_state == 2 ? INTERCOM_LANG_ID_INCOMMING_CALL
-                                                                                       : INTERCOM_LANG_ID_CONNECTED_CALL));
+        lv_label_set_text(obj, lang_str_get(intercom_call_state == 1   ? INTERCOM_XLS_LANG_ID_OUTCOMING_CALL
+                                                            : intercom_call_state == 2 ? INTERCOM_XLS_LANG_ID_INCOMMING_CALL
+                                                                                       : INTERCOM_XLS_LANG_ID_CONNECTED_CALL));
 }
 static void intercom_talk_call_status_icon_display(void)
 {
