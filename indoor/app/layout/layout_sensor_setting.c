@@ -209,11 +209,9 @@ static void sensor_setting_msgbox_click(lv_event_t *e)
             }
             if(user_sensor_value_get(layout_sensor_setting_select_index_get()) < 1.0)
             {
-                printf("======%d====\n",__LINE__);
                 lv_obj_add_flag(alway_cb_obj_bg,LV_OBJ_FLAG_HIDDEN);
             }else
             {
-                printf("======%d====\n",__LINE__);
                 lv_obj_clear_flag(alway_cb_obj_bg,LV_OBJ_FLAG_HIDDEN);
             }   
 

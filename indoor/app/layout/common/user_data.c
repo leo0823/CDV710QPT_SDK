@@ -49,11 +49,10 @@ static const user_data_info user_data_default =
             .inter_ring_volume = 2,
             .inter_talk_volume = 2,
             
-            .buzzer = 1,
-            .front_door = 1,
-            .common_entrance = 1,
-            .securirty_office = 1,
-            .securirty_office = 1,
+            .buzzer_tone = 1,
+            .buzzer_volume = 1,
+            .common_entrance_tone = 1,
+            .securirty_office_tone = 1,
 
             .entracne_volume = 1,
             .entrancr_voice = 1,
@@ -71,6 +70,7 @@ static const user_data_info user_data_default =
             .standby_mode = 0,
             .screen_off_time = 30,
             .lcd_brigtness = 100,
+            .wait_display_time = 15,
             .frame_time_en = 0,
             .frame_time_start = 0,
             .frame_time_end = 0,
@@ -135,6 +135,24 @@ static const user_data_info user_data_default =
         .alarm_enable_always[1][5] = false,
         .alarm_enable_always[1][6] = false,
         .alarm_enable_always[1][7] = false,
+
+        .away_sensor_enable[0] = false,
+        .away_sensor_enable[1] = false,
+        .away_sensor_enable[2] = false,
+        .away_sensor_enable[3] = false,
+        .away_sensor_enable[4] = false,
+        .away_sensor_enable[5] = false,
+        .away_sensor_enable[6] = false,
+        .away_sensor_enable[7] = false,
+        .security_sensor_enable[0] = false,
+        .security_sensor_enable[1] = false,
+        .security_sensor_enable[2] = false,
+        .security_sensor_enable[3] = false,
+        .security_sensor_enable[4] = false,
+        .security_sensor_enable[5] = false,
+        .security_sensor_enable[6] = false,
+        .security_sensor_enable[7] = false,
+
         .away_setting_time = 1,
         .away_release_time = 30,
         
@@ -232,11 +250,13 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(door_tone, 1, 6);
         user_data_audio_check_range_out(inter_tone, 1, 6);
 
-         user_data_audio_check_range_out(buzzer, 1, 6);
-         user_data_audio_check_range_out(front_door, 1, 6);
-         user_data_audio_check_range_out(common_entrance, 1, 6);
-         user_data_audio_check_range_out(securirty_office, 1, 6);
-         user_data_audio_check_range_out(extension, 1, 6);
+        user_data_audio_check_range_out(buzzer_tone, 1, 6);
+        user_data_audio_check_range_out(buzzer_volume, 1, 6);
+         
+         user_data_audio_check_range_out(common_entrance_tone, 1, 6);
+         
+         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
+         user_data_audio_check_range_out(extension_tone, 1, 6);
 
         user_data_audio_check_range_out(door_ring_volume, 0, 3);
         user_data_audio_check_range_out(inter_ring_volume, 0, 3);
@@ -249,6 +269,8 @@ static void user_data_check_valid(void)
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
         user_data_display_check_range_out(lcd_brigtness, 1, 100);
+        user_data_display_check_range_out(wait_display_time, 15, 180);
+        
         user_data_display_check_range_out(frame_time_en, 0, 1);
         user_data_display_check_range_out(frame_time_start, 0, 1440);
         user_data_display_check_range_out(screen_off_time, 15, 180);
@@ -332,7 +354,7 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
-        user_data_check_range_out(system_mode, 0, 1);
+        user_data_check_range_out(system_mode, 0, 9);
         user_data_check_range_out(time_automatically, 0, 1);
         user_data_check_range_out(call_time, 1, 3);
 }
@@ -378,6 +400,8 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .sip_user = {"010129001011"},
+    .cctv_ch_index = {0},
+    .door_ch_index = {0},
     .ip = {0},
     .mask = {"255.0.0.0"},
     .door_device_count = 0,
@@ -486,6 +510,20 @@ static void network_data_check_valid(void)
                         break;
                 }
         }
+
+        for (int i = 0; i < sizeof(network_data.cctv_ch_index)/sizeof(int);  i++)
+        {
+
+                network_data_check_range_out(cctv_ch_index[i], 0, 9);
+  
+        }
+        for (int i = 0; i < sizeof(network_data.door_ch_index)/sizeof(int);  i++)
+        {
+
+                network_data_check_range_out(door_ch_index[i], 0, 9);
+  
+        }
+        
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-10 9:40:52

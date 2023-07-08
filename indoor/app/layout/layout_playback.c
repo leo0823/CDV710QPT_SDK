@@ -171,6 +171,7 @@ static void playback_obj_cancel_click(lv_event_t *e)
 }
 static bool playback_thumb_media_display_callback(const char *data, int x, int y, int w, int h)
 {
+        SAT_DEBUG("medie thumb display\n");
         for (int i = 0; i < 6; i++)
         {
                 if ((media_thumb_img_dsc_group[i] != NULL) && (media_thumb_point_gorup[i] != NULL) && (media_thumb_point_gorup[i]->x == x) && (media_thumb_point_gorup[i]->y == y))
@@ -378,6 +379,27 @@ static void playback_media_channel_obj_display(lv_obj_t *parent, const char *ch_
         }
         lv_label_set_text(obj, ch_name);
 }
+static void playback_thumb_left_right_arrow_display(void)
+{
+        lv_obj_t * left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),playback_obj_id_left);
+        lv_obj_t * right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),playback_obj_id_right);
+        if ((playback_media_total < 7) || ((playback_media_total - playback_media_top ) < 7))
+        {
+                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        if ((playback_media_total < 7) ||( playback_media_top < 6))
+        {
+                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }else
+        {
+                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }
+
+}
 static void playback_thumb_decode_all_display(void)
 {
         /*显示加载的图像*/
@@ -420,6 +442,7 @@ static void playback_obj_left_click(lv_event_t *e)
                 }
         }
         playback_thumb_decode_all_display();
+        playback_thumb_left_right_arrow_display();
 }
 static void playback_obj_right_click(lv_event_t *e)
 {
@@ -433,6 +456,7 @@ static void playback_obj_right_click(lv_event_t *e)
                 playback_media_top = playback_media_total - 1;
         }
         playback_thumb_decode_all_display();
+        playback_thumb_left_right_arrow_display();
 }
 static void sat_layout_enter(playback)
 {
@@ -553,7 +577,7 @@ static void sat_layout_enter(playback)
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           resource_ui_src_get("btn_thumbnail_arrow_left_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                if (playback_media_total < 7)
+                if ((playback_media_total < 7) || (playback_media_total - playback_media_top - 1) < 6)
                 {
                         lv_obj_add_flag(obj1, LV_OBJ_FLAG_HIDDEN);
                 }
@@ -563,7 +587,7 @@ static void sat_layout_enter(playback)
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                if (playback_media_total < 7)
+                if ((playback_media_total < 7) ||( playback_media_top < 6))
                 {
                         lv_obj_add_flag(obj2, LV_OBJ_FLAG_HIDDEN);
                 }

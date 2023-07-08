@@ -270,12 +270,12 @@ static void monitior_obj_channel_info_obj_display(void)
         {
                 lv_obj_set_x(obj, 96);
                 channel -= 8;
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[network_data_get()->cctv_ch_index[channel]].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
                 lv_obj_set_x(obj, 96);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[network_data_get()->door_ch_index[channel]].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 static void layout_always_monitor_open_task(lv_timer_t *task)
@@ -466,9 +466,8 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
     else
     {
     	layout_always_record_stop();
-		usleep(500 * 1000);
-
-		monitor_close();
+        usleep(500 * 1000);
+        monitor_close();
         always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
         lv_timer_del(ptimer);
         lv_sat_timer_create(layout_always_monitor_open_task, 1000, NULL);
@@ -588,6 +587,7 @@ static void sat_layout_enter(always_record)
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                        monitor_obj_timeout_label_display();
 
                 }
         }

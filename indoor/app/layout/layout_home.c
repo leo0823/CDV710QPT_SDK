@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_home.h"
 #include "layout_setting_time.h"
 #include "tuya_api.h"
 enum
@@ -179,20 +178,13 @@ static void home_date_obj_display(void)
         else if (lang == LANGUAGE_ID_CHINESE)
         {
                 lv_label_set_text_fmt(label_date, "%04d年%d月%d日,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
-        }
-        else if (lang == LANGUAGE_ID_TUERQI)
+        }else if (lang == LANGUAGE_ID_YUENAN)
         {
-                lv_label_set_text_fmt(label_date, "%d %s %04d,%s", tm.tm_mday, week_str, tm.tm_year, mon_str);
-        }
-        else if (lang == LANGUAGE_ID_BOLAN)
+                lv_label_set_text_fmt(label_date, "%s,%d,%04d,%s", mon_str, tm.tm_mday, tm.tm_year,week_str);
+        }else if (lang == LANGUAGE_ID_ALABOYU)
         {
-                lv_label_set_text_fmt(label_date, "%s,%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_JIEKE)
-        {
-                lv_label_set_text_fmt(label_date, "%s,%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_ALABOYU)
+                lv_label_set_text_fmt(label_date, "%s,%d,%04d,%s", mon_str, tm.tm_mday, tm.tm_year,week_str);
+        }else if (lang == LANGUAGE_ID_ALABOYU)
         {
                 lv_label_set_text_fmt(label_date, "%s, %s %d, %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
         }
@@ -375,7 +367,18 @@ static void home_monitor_obj_click(lv_event_t *ev)
         }
         else
         {                     
-                monitor_channel_set(0);
+                int loop, smallest;
+                
+                smallest = network_data_get()->door_ch_index[0];
+                
+                for(loop = 0; loop < network_data_get()->cctv_device_count; loop++) {
+                        SAT_DEBUG("network_data_get()->door_ch_index[%d] is %d\n",loop,network_data_get()->door_ch_index[loop]);
+                if( smallest > network_data_get()->door_ch_index[loop] )
+                
+                        smallest = network_data_get()->door_ch_index[loop];
+                }
+                
+                monitor_channel_set(smallest);
                 monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -392,7 +395,18 @@ static void home_cctv_obj_click(lv_event_t *ev)
         if (network_data_get()->cctv_device_count > 0)
         {
                 monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-                monitor_channel_set(8);
+
+                int loop, smallest;
+                
+                smallest = network_data_get()->cctv_ch_index[0];
+                
+                for(loop = 0; loop < network_data_get()->cctv_device_count; loop++) {
+                if( smallest > network_data_get()->cctv_ch_index[loop] )
+                
+                        smallest = network_data_get()->cctv_ch_index[loop];
+                }
+                
+                monitor_channel_set(smallest + 8);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
 }
@@ -402,7 +416,7 @@ static void home_away_obj_click(lv_event_t *ev)
 }
 static void home_burglar_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 /***********************************************
@@ -467,7 +481,7 @@ static void home_call_list_item_create(lv_obj_t *parent)
         {
                 call_list_get(i,&type, &ch, &duration,&tm);
                 char buffer[64] = {0};
-                sprintf(buffer, "%04d-%02d:%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                sprintf(buffer, "%04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
                 lv_common_text_create(parent, i, 0, item_y, 180, 39,
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
                                       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x505050,
@@ -828,7 +842,7 @@ static void sat_layout_enter(home)
         ** 说明: 监控设置
         ***********************************************/
         {
-                int sec_x = user_data_get()->system_mode == 1 ? 125 : 125;
+                int sec_x = user_data_get()->system_mode != 1 ? 125 : 193;//user_data_get()->system_mode == 1?193:329;
                 int unit_offset = user_data_get()->system_mode == 1 ? 136 : 136;
                 lv_obj_t * monitor = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_monitor_cont, sec_x, 436, 103, 121,
                                               home_monitor_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -841,7 +855,8 @@ static void sat_layout_enter(home)
                 layout_home_monitor_icon_display(monitor);
 
                 sec_x += unit_offset;
-
+                if(1/*user_data_get()->system_mode == 0*/)
+                {
                 lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_call_cont, sec_x, 436, 103, 121,
                                               home_call_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -851,6 +866,7 @@ static void sat_layout_enter(home)
                                               13, 0, 77, 77, home_obj_id_call_img,
                                               (const char *)resource_ui_src_get("btn_main_interphone_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 sec_x += unit_offset;
+                }
                 lv_obj_t * cctv = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_cctv_cont, sec_x, 436, 103, 121,
                                               home_cctv_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -861,7 +877,7 @@ static void sat_layout_enter(home)
                                               (const char *)resource_ui_src_get("btn_main_cctv_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 layout_home_cctv_icon_display(cctv);
                 sec_x += unit_offset;
-                if(user_data_get()->system_mode == 0)
+                if(1/*user_data_get()->system_mode == 0*/)
                 {
                         lv_obj_t * away  = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_away_cont, sec_x, 436, 103, 121,
                                                 home_away_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -881,25 +897,28 @@ static void sat_layout_enter(home)
                         }
                         sec_x += unit_offset;
                 }
-
-                lv_obj_t * security = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_burglar_cont, sec_x, 436, 103, 121,
-                                              home_burglar_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 83, 103, 27, home_obj_id_burglar_label,
-                                              lang_str_get(HOME_XLS_LANG_ID_BURGLAR), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                              13, 0, 77, 77, home_obj_id_burglar_img,
-                                              (const char *)resource_ui_src_get("btn_main_security_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                if(user_data_get()->alarm.security_alarm_enable)
+                if(1/*(user_data_get()->system_mode == 0) || (user_data_get()->system_mode == 1)*/)
                 {
-                        lv_common_img_btn_create(security, 0, 55 , 45, 48, 48,
-                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        lv_obj_t * security = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_burglar_cont, sec_x, 436, 103, 121,
+                                                home_burglar_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 83, 103, 27, home_obj_id_burglar_label,
+                                                lang_str_get(HOME_XLS_LANG_ID_BURGLAR), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                13, 0, 77, 77, home_obj_id_burglar_img,
+                                                (const char *)resource_ui_src_get("btn_main_security_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        if(user_data_get()->alarm.security_alarm_enable)
+                        {
+                                lv_common_img_btn_create(security, 0, 55 , 45, 48, 48,
+                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        }
+                        sec_x += unit_offset;
                 }
 
-                sec_x += unit_offset;
+
                 if(user_data_get()->system_mode == 1)
                 {
                                         lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_elevator_cont, sec_x, 436, 103, 121,
@@ -930,7 +949,7 @@ static void sat_layout_enter(home)
                 ** 参数说明: 
                 ** 注意事项: 
                 ************************************************************/
-                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,842, 72 , 35, 35,
+                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,842, 75 , 35, 35,
                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

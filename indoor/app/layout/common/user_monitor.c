@@ -30,10 +30,10 @@ static const char *monitor_channel_door_sip_uri_get(int index, bool update)
         {
                 if (sat_ipcamera_device_name_get(index, 100) == true)
                 {
-                        if (strcmp(network_data_get()->door_device[index].door_name, sat_ipcamera_door_name_get(index)))
+                        if (strncmp(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
                         {
-                                memset(network_data_get()->door_device[index].door_name, 0, sizeof(network_data_get()->door_device[index].door_name));
-                                strcpy(network_data_get()->door_device[index].door_name, sat_ipcamera_door_name_get(index));
+                                memset(&network_data_get()->door_device[index].door_name[6], 0, strlen(sat_ipcamera_door_name_get(index)));
+                                strncpy(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
                                 network_data_save();
                         }
                         return sat_ipcamera_sip_addr_get(index);
@@ -46,6 +46,16 @@ static const char *monitor_channel_cctv_rtsp_uri_get(int index)
 {
         static char rtsp_uri[128] = {0};
         sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, network_data_get()->cctv_device_count);
+
+        if (sat_ipcamera_device_name_get(index, 100) == true)
+        {
+                if (strncmp(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
+                {
+                        memset(&network_data_get()->cctv_device[index].door_name[6], 0, strlen(sat_ipcamera_door_name_get(index)));
+                        strncpy(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
+                        network_data_save();
+                }
+        }
         memset(rtsp_uri, 0, sizeof(rtsp_uri));
         sprintf(rtsp_uri, "%s %s %s", sat_ipcamera_rtsp_addr_get(index, 0), sat_ipcamera_username_get(index), sat_ipcamera_password_get(index));
         SAT_DEBUG("CCTV:%s", rtsp_uri);
@@ -56,14 +66,28 @@ const char *monitor_channel_get_url(int index, bool update)
 {
         if (index < 8)
         {
+                for(int i = 0 ;i < 8; i++)
+                {
+                        if(index == network_data_get()->door_ch_index[i])
+                        {
+                                index = i;
+                                break;
+                        }
+                }
                 return monitor_channel_door_sip_uri_get(index, update);
         }
-
         index -= 8;
-        if (index < network_data_get()->cctv_device_count)
+        for(int i = 0 ;i < 8; i++)
         {
-                return monitor_channel_cctv_rtsp_uri_get(index);
+                if(index == network_data_get()->cctv_ch_index[i])
+                {
+                        index = i;
+                        break;
+                }
         }
+        SAT_DEBUG("index is %d\n",index);
+        return monitor_channel_cctv_rtsp_uri_get(index);
+        
 
         return NULL;
 }
@@ -190,6 +214,7 @@ static void monitor_reset(void)
 }
 void monitor_open(bool refresh)
 {
+
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
                 monitor_reset();
@@ -260,10 +285,8 @@ bool monitor_valid_channel_check(int channel)
                 {
                         if(channel > (MON_CH_DOOR1 -1 + network_data_get()->door_device_count))
                         {
-                                SAT_DEBUG("ch %d channel is false\n",channel);
                                 return false;
                         }
-                        SAT_DEBUG("ch %d channel is true\n",channel);
                         return true;
                         
                 }
@@ -274,10 +297,8 @@ bool monitor_valid_channel_check(int channel)
                 {
                         if(channel > (MON_CH_CCTV1 -1 + network_data_get()->cctv_device_count))
                         {
-                                SAT_DEBUG("ch %d channel is false\n",channel);
                                 return false;
                         }
-                        SAT_DEBUG("ch %d channel is true\n",channel);
                         return true;
                         
                 }

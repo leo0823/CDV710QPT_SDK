@@ -1,9 +1,5 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
-#include "layout_home.h"
-#include "layout_setting_wifi.h"
-#include "layout_setting_language.h"
-#include "layout_setting_user_wifi.h"
 #include "layout_wifi_input.h"
 #include "layout_wifi_info.h" // 临时用默认代替
 static wifi_info wifi_connected_info = {0};

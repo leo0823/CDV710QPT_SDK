@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_recording.h"
 #include "layout_setting_general.h"
 #include "common/language.h"
 enum
@@ -298,8 +297,8 @@ static bool setting_recording_auto_sub_display(void)
                 SAT_DEBUG("lv_obj_t* sub = setting_record_auto_item_sub_get(setting_recording_obj_id_auto_sub);");
                 return false;
         }
-        lv_label_set_text(sub, language_common_string_get(user_data_get()->auto_record_mode == 1 ? LANG_COMMON_ID_VIDEO : user_data_get()->auto_record_mode == 2 ? LANG_COMMON_ID_PHOTO
-                                                                                                                                                                 : LANG_COMMON_ID_OFF));
+        lv_label_set_text(sub, lang_str_get(user_data_get()->auto_record_mode == 1 ? RECORDING_XLS_LANG_ID_SAVE_VIDEO : user_data_get()->auto_record_mode == 2 ? RECORDING_XLS_LANG_ID_SAVE_PICTURE
+                                                                                                                                                                 : RECORDING_XLS_LANG_ID_SAVE_OFF));
         return true;
 }
 static bool setting_recording_motion_sub_display(void)
@@ -335,7 +334,7 @@ static bool setting_recording_always_monitoring_sub_display(void)
         const char * string = NULL;
         if(user_data_get()->always_monitoring == 0)
         {
-               string =  language_common_string_get(LANG_COMMON_ID_OFF);
+               string =  lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF);
         }
         else if(user_data_get()->always_monitoring == 1)
         {
@@ -450,9 +449,9 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
 static void setting_recording_auto_obj_click(lv_event_t *ev)
 {
         const char *item[3] = {0};
-        item[0] = language_common_string_get(LANG_COMMON_ID_OFF);
-        item[1] = language_common_string_get(LANG_COMMON_ID_VIDEO);
-        item[2] = language_common_string_get(LANG_COMMON_ID_PHOTO);
+        item[0] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF);
+        item[1] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_VIDEO);
+        item[2] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_PICTURE);
         setting_recording_msgbox_create(lang_str_get(RECORDING_XLS_LANG_ID_AUTO_RECORIDNG_CALLS),
                                         setting_recording_msgbox_cancel_click, ssetting_recording_auto_msgbox_confirm_click, setting_recording_auto_msgbox_item_click,
                                         item, 3, user_data_get()->auto_record_mode);
@@ -477,7 +476,7 @@ static void setting_recording_always_obj_click(lv_event_t *ev)
 {
         const char *item[4] = {0};
 
-	item[0] = language_common_string_get(LANG_COMMON_ID_OFF);
+	item[0] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF);
 	item[1] = lang_str_get(RECORDING_XLS_LANG_ID_10_SEC_PER_CAMERA);
 	item[2] = lang_str_get(RECORDING_XLS_LANG_ID_30_SEC_PER_CAMERA);
 	item[3] = lang_str_get(RECORDING_XLS_LANG_ID_60_SEC_PER_CAMERA);
@@ -509,10 +508,14 @@ static lv_obj_t *setting_recording_sub_list_create(void)
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_recording_obj_id_sub_list);
         lv_common_style_set_common(list, setting_recording_obj_id_sub_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-
+        int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                if( user_data_get()->system_mode != 0 && (i == 1 || i == 2))
+                {
+                        continue;
+                }
+                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -524,6 +527,7 @@ static lv_obj_t *setting_recording_sub_list_create(void)
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                j++;
         }
 
         setting_recording_auto_sub_display();

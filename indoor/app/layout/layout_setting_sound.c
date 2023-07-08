@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_sound.h"
 #include "layout_setting_general.h"
 enum
 {
@@ -119,18 +118,18 @@ static void layout_setting_sound_sub_title_display(lv_obj_t *parent)
         {
                 return;
         }
-        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.buzzer));
+        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.buzzer_tone));
         obj = lv_obj_get_child_form_id(parent, setting_sound_obj_id_front_door_cont);
         if (obj == NULL)
         {
                 return;
         }
-        sub_obj = lv_obj_get_child_form_id(obj, setting_sound_obj_id_front_door_title);
+        sub_obj = lv_obj_get_child_form_id(obj, setting_sound_obj_id_front_door_sub);
         if (sub_obj == NULL)
         {
                 return;
         }
-        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.front_door));
+        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.door_tone));
         obj = lv_obj_get_child_form_id(parent, setting_sound_obj_id_common_entrance_cont);
         if (obj == NULL)
         {
@@ -141,7 +140,7 @@ static void layout_setting_sound_sub_title_display(lv_obj_t *parent)
         {
                 return;
         }
-        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.common_entrance));
+        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.common_entrance_tone));
         obj = lv_obj_get_child_form_id(parent, setting_sound_obj_id_security_office_cont);
         if (obj == NULL)
         {
@@ -152,7 +151,7 @@ static void layout_setting_sound_sub_title_display(lv_obj_t *parent)
         {
                 return;
         }
-        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.securirty_office));
+        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.securirty_office_tone));
         obj = lv_obj_get_child_form_id(parent, setting_sound_obj_id_extension_cont);
         if (obj == NULL)
         {
@@ -163,7 +162,7 @@ static void layout_setting_sound_sub_title_display(lv_obj_t *parent)
         {
                 return;
         }
-        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.extension));
+        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.extension_tone));
 }
 
 static void setting_sound_ring_msgbox_confirm_click(lv_event_t *e)
@@ -190,23 +189,23 @@ static void setting_sound_ring_msgbox_confirm_click(lv_event_t *e)
                         int id = layout_setting_sound_select_id_get();
                         if (id == setting_sound_obj_id_buzzer_cont)
                         {
-                                user_data_get()->audio.buzzer = i + 1;
+                                user_data_get()->audio.buzzer_tone = i + 1;
                         }
                         else if (id == setting_sound_obj_id_front_door_cont)
                         {
-                                user_data_get()->audio.front_door = i + 1;
+                                user_data_get()->audio.door_tone = i + 1;
                         }
                         else if (id == setting_sound_obj_id_common_entrance_cont)
                         {
-                                user_data_get()->audio.common_entrance = i + 1;
+                                user_data_get()->audio.common_entrance_tone = i + 1;
                         }
                         else if (id == setting_sound_obj_id_security_office_cont)
                         {
-                                user_data_get()->audio.securirty_office = i + 1;
+                                user_data_get()->audio.securirty_office_tone = i + 1;
                         }
                         else if (id == setting_sound_obj_id_extension_cont)
                         {
-                                user_data_get()->audio.extension = i + 1;
+                                user_data_get()->audio.extension_tone = i + 1;
                         }
                         user_data_save();
                         break;
@@ -266,28 +265,28 @@ static void setting_sound_ring_msg_box_create(const char *title_sting, int s_ite
 static void setting_sound_buzzer_obj_click(lv_event_t *ev)
 {
         layout_setting_sound_select_id_set(setting_sound_obj_id_buzzer_cont);
-        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_BUZZER), user_data_get()->audio.buzzer);
+        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_BUZZER), user_data_get()->audio.buzzer_tone);
 }
 static void setting_sound_front_door_obj_click(lv_event_t *ev)
 {
         layout_setting_sound_select_id_set(setting_sound_obj_id_front_door_cont);
-        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_FRONT_DOOR), user_data_get()->audio.front_door);
+        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_FRONT_DOOR), user_data_get()->audio.door_tone);
 }
 static void setting_sound_common_entrance_obj_click(lv_event_t *ev)
 {
 
         layout_setting_sound_select_id_set(setting_sound_obj_id_common_entrance_cont);
-        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_COMMON_ENTRANCE), user_data_get()->audio.common_entrance);
+        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_COMMON_ENTRANCE), user_data_get()->audio.common_entrance_tone);
 }
 static void setting_sound_security_office_obj_click(lv_event_t *ev)
 {
         layout_setting_sound_select_id_set(setting_sound_obj_id_security_office_cont);
-        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_SECURITY_OFFICE), user_data_get()->audio.securirty_office);
+        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_SECURITY_OFFICE), user_data_get()->audio.securirty_office_tone);
 }
 static void setting_sound_extension_obj_click(lv_event_t *ev)
 {
         layout_setting_sound_select_id_set(setting_sound_obj_id_extension_cont);
-        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_EXTENSION), user_data_get()->audio.extension);
+        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_EXTENSION), user_data_get()->audio.extension_tone);
 }
 
 /***********************************************
@@ -310,9 +309,15 @@ static lv_obj_t *setting_sound_sub_list_create(void)
 
         lv_common_style_set_common(list, setting_sound_obj_id_sub_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
+        int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                if((user_data_get()->system_mode == 0) && (i == 3 || i == 4))
+                {
+                        continue;
+                }
+                
+                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -324,6 +329,7 @@ static lv_obj_t *setting_sound_sub_list_create(void)
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        j ++;
         }
 
         layout_setting_sound_sub_title_display(list);

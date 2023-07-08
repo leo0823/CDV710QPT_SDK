@@ -39,7 +39,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 1",
             "Sensor de contacto 1",
             "Cảm biến tiếp xúc 1",
-            "Контакт датчика 1",
             "الإتصال بالمستشعر 1",
         },
         {
@@ -49,7 +48,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 2",
             "Sensor de contacto 2",
             "Cảm biến tiếp xúc 2",
-            "Контакт датчика 2",
             "لإتصال بالمستشعر 2",
         },
         {
@@ -59,7 +57,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 3",
             "Sensor de contacto 3",
             "Cảm biến tiếp xúc 3",
-            "Контакт датчика 3",
             "لإتصال بالمستشعر 3",
         },
         {
@@ -69,7 +66,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 4",
             "Sensor de contacto 4",
             "Cảm biến tiếp xúc 4",
-            "Контакт датчика 4",
             "لإتصال بالمستشعر 4",
         },
         {
@@ -79,7 +75,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 5",
             "Sensor de contacto 5",
             "Cảm biến tiếp xúc 5",
-            "Контакт датчика 5",
             "لإتصال بالمستشعر 5",
         },
         {
@@ -89,7 +84,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 6",
             "Sensor de contacto 6",
             "Cảm biến tiếp xúc 6",
-            "Контакт датчика 6",
             "لإتصال بالمستشعر 6",
         },
         {
@@ -99,7 +93,6 @@ static const char *layout_setting_sensor_usage_language[SETTING_SENSOR_USAGE_LAN
             "Контакт датчика 7",
             "Sensor de contacto 7",
             "Cảm biến tiếp xúc 7",
-            "Контакт датчика 6",
             "لإتصال بالمستشعر 7",
         },
         {
@@ -162,4 +155,5 @@ static inline const char *layout_setting_sensor_usage_language_get(int id)
         return layout_setting_sensor_usage_language[id][language_id_get()];
 }
 
+bool layout_sensor_usage_setting_is_going_out(void);
 #endif

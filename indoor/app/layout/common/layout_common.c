@@ -260,32 +260,28 @@ void layout_alarm_alarm_channel_set(int ch)
 ************************************************************/
 void layout_alarm_trigger_default(int arg1,int arg2)
 {  
+        if(arg1 == 7)
+        {
+                sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }else
+        {
+                if((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))&&(!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
+                {
+                        return;
+                }
+                if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < 100))
+                {
+                        layout_alarm_alarm_channel_set(arg1);
+                        user_data_get()->alarm.alarm_trigger[arg1]  = true;
+                        user_data_get()->alarm.emergency_mode = 1;
+                        user_data_save();
+                        struct tm tm;
+                        user_time_read(&tm);
+                        alarm_list_add(security_emergency,arg1, &tm);
+                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                }
+        }
 
-        if(((user_data_get()->alarm.away_alarm_enable == false) && (!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))))
-        && ((user_data_get()->alarm.security_alarm_enable == false) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))) 
-        {
-               
-                return;
-        }
-        // SAT_DEBUG("(user_data_get()->alarm.away_alarm_enable is %d\n",(user_data_get()->alarm.away_alarm_enable));
-        // SAT_DEBUG("(user_data_get()->alarm.security_alarm_enable is %d\n",(user_data_get()->alarm.security_alarm_enable));
-        // SAT_DEBUG("(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)) 0x%x\n",(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)));
-        // SAT_DEBUG("(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1)) 0x%x\n",(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1)));
-        // SAT_DEBUG("arg1 is %d\n",arg1); 
-        // SAT_DEBUG("arg2 is %d\n",arg2);  
-        // SAT_DEBUG("user_data_get()->alarm.alarm_enable[arg1] is %d\n",user_data_get()->alarm.alarm_enable[arg1]);    
-             
-        if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < 100))
-        {
-                layout_alarm_alarm_channel_set(arg1);
-                user_data_get()->alarm.alarm_trigger[arg1]  = true;
-                user_data_get()->alarm.emergency_mode = 1;
-                user_data_save();
-                struct tm tm;
-                user_time_read(&tm);
-                alarm_list_add(security_emergency,arg1, &tm);
-                sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-        }
 }
 
 /************************************************************

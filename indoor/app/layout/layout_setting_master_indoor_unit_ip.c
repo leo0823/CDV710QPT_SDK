@@ -1,6 +1,4 @@
 #include "layout_define.h"
-#include "layout_slave_type_setting.h"
-#include "layout_setting_master_indoor_unit_ip.h"
 enum
 {
         setting_master_indoor_unit_ip_obj_id_titile_label,
