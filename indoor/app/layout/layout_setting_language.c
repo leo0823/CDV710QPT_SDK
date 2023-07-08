@@ -1,6 +1,5 @@
 
 #include "layout_define.h"
-#include "layout_setting_language.h"
 
 enum
 {
@@ -40,15 +39,9 @@ enum
 	setting_language_obj_id_language_list_xibanya,
 	setting_language_obj_id_language_list_xibanya_label,
 	setting_language_obj_id_language_list_xibanya_img,
-	setting_language_obj_id_language_list_tuerqi,
-	setting_language_obj_id_language_list_tuerqi_label,
-	setting_language_obj_id_language_list_tuerqi_img,
-	setting_language_obj_id_language_list_bolan,
-	setting_language_obj_id_language_list_bolan_label,
-	setting_language_obj_id_language_list_bolan_img,
-	setting_language_obj_id_language_list_jieke,
-	setting_language_obj_id_language_list_jieke_label,
-	setting_language_obj_id_language_list_jieke_img,
+	setting_language_obj_id_language_list_yuenan,
+	setting_language_obj_id_language_list_yuenan_label,
+	setting_language_obj_id_language_list_yuenan_img,
 	setting_language_obj_id_language_list_alabo,
 	setting_language_obj_id_language_list_alabo_label,
 	setting_language_obj_id_language_list_alabo_img,
@@ -85,25 +78,16 @@ static int setting_language_list_id_get(LANGUAGE_ID lang, int type)
 		setting_language_obj_id_language_list_xibanya_label,
 	    },
 	    {
-		setting_language_obj_id_language_list_tuerqi,
-		setting_language_obj_id_language_list_tuerqi_img,
-		setting_language_obj_id_language_list_tuerqi_label,
+		setting_language_obj_id_language_list_yuenan,
+		setting_language_obj_id_language_list_yuenan_img,
+		setting_language_obj_id_language_list_yuenan_label,
 	    },
-	    {
-		setting_language_obj_id_language_list_bolan,
-		setting_language_obj_id_language_list_bolan_img,
-		setting_language_obj_id_language_list_bolan_label,
-	    },
-	    {
-		setting_language_obj_id_language_list_jieke,
-		setting_language_obj_id_language_list_jieke_img,
-		setting_language_obj_id_language_list_jieke_label,
-	    },
-	    {
-		setting_language_obj_id_language_list_alabo,
-		setting_language_obj_id_language_list_alabo_img,
-		setting_language_obj_id_language_list_alabo_label,
-	    },
+		{
+			setting_language_obj_id_language_list_alabo,
+			setting_language_obj_id_language_list_alabo_label,
+			setting_language_obj_id_language_list_alabo_img,
+		}
+
 	};
 
 	return obj_id[lang][type];
@@ -200,8 +184,8 @@ static lv_obj_t *setting_language_list_create(void)
 									       setting_language_list_client, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 									       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
 									       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-									       52, 0, 120, 30, label_id,
-									       language_common_string_get(LANG_COMMON_ID_LANG), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+									       52, 0, 160, 30, label_id,
+									       lang_str_get(XLS_LANG_ID_LANGUAGE_TYPE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
 									       0, 0, 0, 0, -1,
 									       NULL, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
 									       0, 0, 0, 0, -1,

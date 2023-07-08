@@ -1,6 +1,7 @@
 #include "layout_define.h"
 #include "layout_setting_sensor_usage.h"
 #include "layout_setting_general.h"
+
 enum
 {
         setting_sensor_settings_obj_id_title,
@@ -60,7 +61,7 @@ static void sat_layout_enter(setting_sensor_settings)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SENSOR_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

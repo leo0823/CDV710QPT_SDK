@@ -2,17 +2,7 @@
 #define _LAYOUT_HOME_H_
 #include "common/language.h"
 #include "common/sat_user_file.h"
-typedef enum
-{
-        PLAYBACK_LANG_ID_PLAYBACK,
-        PLAYBACK_LANG_ID_TOTAL
 
-} LAYOUT_PLAYBACK_LANG_ID;
-
-static const char *layout_playback_language[PLAYBACK_LANG_ID_TOTAL][LANGUAGE_ID_TOTAL] =
-    {
-        {"Playback", "Playback", "Playback"},
-};
 /***
 **   日期:2022-05-23 18:35:40
 **   作者: leo.liu
@@ -28,16 +18,7 @@ void playback_pview_item_set(int item);
 **   参数说明:
 ***/
 file_type playback_pview_type_get(void);
-/***
-** 日期: 2022-04-26 09:16
-** 作者: leo.liu
-** 函数作用：获取home页面的字符串资源
-** 返回参数说明：年/년 !@
-***/
-static inline const char *layout_playback_language_get(int id)
-{
-        return layout_playback_language[id][language_id_get()];
-}
+
 /***
 **   日期:2022-05-24 10:23:22
 **   作者: leo.liu

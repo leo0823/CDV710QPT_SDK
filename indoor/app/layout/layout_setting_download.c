@@ -1,6 +1,5 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
-#include "layout_setting_download.h"
 #define GOOLE_APP "https://play.google.com/store/apps/details?id=com.commaxcall.ipvideophone2"
 #define APPLE_APP "https://apps.apple.com/kr/app/commax-hey-call/id1585757748"
 enum
@@ -30,7 +29,7 @@ static void sat_layout_enter(setting_download)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_DOWNLOAD_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOWNLOAD_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

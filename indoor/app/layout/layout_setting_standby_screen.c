@@ -1,6 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_standby_screen.h"
-#include "layout_setting_screen.h"
 #include "layout_setting_general.h"
 enum
 {
@@ -17,6 +15,11 @@ enum
         setting_standby_screen_obj_id_open_frame_img,
 
         setting_standby_screen_obj_id_sub_list,
+
+        setting_standby_screen_obj_id_wait_display_time_cont,
+        setting_standby_screen_obj_id_wait_display_time_title,
+        setting_standby_screen_obj_id_wait_display_time_sub,
+
         setting_standby_screen_obj_id_display_time_cont,
         setting_standby_screen_obj_id_display_time_title,
         setting_standby_screen_obj_id_display_time_sub,
@@ -32,6 +35,7 @@ enum
 
         setting_standby_screen_obj_id_msg_bg,
         setting_standby_screen_obj_id_msgbox,
+        setting_standby_screen_obj_id_mesg,
         
         setting_standby_screen_off_checkbox1_cont,
         setting_standby_screen_off_checkbox1_label,
@@ -47,6 +51,8 @@ enum
         setting_standby_screen_off_checkbox4_img,
         setting_standby_screen_off_obj_id_confirm,
         setting_standby_screen_off_obj_id_cancel,
+
+
 };
 
 static void setting_standby_screen_cancel_click(lv_event_t *e)
@@ -99,9 +105,10 @@ static void setting_standby_screen_main_checkbox_obj_display(void)
                 lv_obj_clear_flag(sub_list, LV_OBJ_FLAG_HIDDEN);
         }
 }
-static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
-{
 
+
+static void  setting_standby_msgbox_confirm_screen_time_save(lv_event_t *ev)
+{
         lv_obj_t *parent = lv_obj_get_parent(lv_event_get_current_target(ev));
         lv_obj_t * check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox1_cont),setting_standby_screen_off_checkbox1_img);
         lv_obj_t * check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_off_checkbox2_cont),setting_standby_screen_off_checkbox2_img);
@@ -120,12 +127,26 @@ static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
         }else{
                 user_data_get()->display.screen_off_time = 180;
         }
+        user_data_save();
+        standby_timer_reset( user_data_get()->display.screen_off_time * 1000);
+        standby_timer_restart(true);;
+}
+static void  setting_standby_screen_off_msgbox_confirm_click(lv_event_t *ev)
+{
+
+        setting_standby_msgbox_confirm_screen_time_save(ev);
+        user_data_get()->display.standby_mode = 1;
+        user_data_save();
+        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID)
+}
+
+static void  setting_standby_wait_display_time_confirm_click(lv_event_t *ev)
+{
+
+        setting_standby_msgbox_confirm_screen_time_save(ev);
         user_data_get()->display.standby_mode = 0;
         user_data_save();
-        setting_standby_screen_main_checkbox_obj_display();
-        standby_timer_reset( user_data_get()->display.screen_off_time * 1000);
-        standby_timer_restart(true);
-        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID)
 }
 
 static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, lv_event_cb_t checkbox_cb)
@@ -137,7 +158,7 @@ static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, l
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox1_label,
-                                "15 sceonds later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 0, 8, 32, 32, setting_standby_screen_off_checkbox1_img,
                                 user_data_get()->display.screen_off_time == 15 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -146,7 +167,7 @@ static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, l
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox2_label,
-                               "30 sceonds later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                               lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_30SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 0, 8, 32, 32, setting_standby_screen_off_checkbox2_img,
                                 user_data_get()->display.screen_off_time == 30 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -155,7 +176,7 @@ static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, l
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox3_label,
-                                "1 minute later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_60SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 0, 8, 32, 32, setting_standby_screen_off_checkbox3_img,
                                 user_data_get()->display.screen_off_time == 60 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     lv_common_img_text_btn_create(msgbox, setting_standby_screen_off_checkbox4_cont, 48, 214, 365, 48,
@@ -163,7 +184,7 @@ static void setting_standby_screen_off_msgbox_option_create(lv_obj_t * msgbox, l
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 48, 8, 365 - 94, 32, setting_standby_screen_off_checkbox4_label,
-                                "3 minute later", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_180SEC), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 0, 8, 32, 32, setting_standby_screen_off_checkbox4_img,
                                 user_data_get()->display.screen_off_time == 180 ?( char *)resource_ui_src_get("btn_radio_s.png") : ( char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -219,7 +240,7 @@ static void  setting_standby_screen_off_msgbox_cancel_click(lv_event_t *ev)
 }
 
 /************************************************************
-** 函数说明: 待机时间设置
+** 函数说明: 设置屏幕关闭
 ** 作者: xiaoxiao
 ** 日期: 2023-06-02 14:19:55
 ** 参数说明: 
@@ -229,9 +250,54 @@ static void setting_standby_screen_off_click(lv_event_t *e)
 {
         lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg,setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
         setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel , setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel , setting_standby_wait_display_time_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
     
 
+}
+
+/************************************************************
+** 函数说明: 设置open frame
+** 作者: xiaoxiao
+** 日期: 2023-07-06 15:14:04
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void  setting_standby_open_frame_msgbox_confirm_click(lv_event_t *ev)
+{
+
+        user_data_get()->display.standby_mode = 1;
+        user_data_save();
+        setting_standby_screen_main_checkbox_obj_display();
+        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID)
+}
+
+/************************************************************
+** 函数说明: 取消设置open frame
+** 作者: xiaoxiao
+** 日期: 2023-07-06 15:15:11
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void  setting_standby_open_frame_msgbox_cancel_click(lv_event_t *ev)
+{
+
+        setting_msgdialog_msg_del(setting_standby_screen_obj_id_msg_bg);
+}
+
+/************************************************************
+** 函数说明: 点击按键open frame
+** 作者: xiaoxiao
+** 日期: 2023-07-06 15:14:43
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void setting_standby_open_frame_click(void)
+{
+        lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg,setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
+        setting_msgdialog_msg_create(masgbox,setting_standby_screen_obj_id_mesg,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_OPEN_FRAME_APPLY_CONFIRM), 0, 90, 460, 120);
+        // setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel , setting_standby_open_frame_msgbox_confirm_click,setting_standby_open_frame_msgbox_cancel_click);
+    
 }
 
 static void setting_standby_screen_main_list_click(lv_event_t *e)
@@ -249,9 +315,16 @@ static void setting_standby_screen_main_list_click(lv_event_t *e)
         }
         else if (user_data_get()->display.standby_mode == 0)
         {
-                user_data_get()->display.standby_mode = 1;
-                user_data_save();
-                setting_standby_screen_main_checkbox_obj_display();
+                if(user_data_get()->always_monitoring)
+                {
+                        setting_standby_open_frame_click();
+                }else
+                {
+                        user_data_get()->display.standby_mode = 1;
+                        user_data_save();
+                        setting_standby_screen_main_checkbox_obj_display();
+                        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID)
+                }
         }
 }
 
@@ -260,16 +333,16 @@ static void setting_standby_screen_off_sub_display(lv_obj_t * list)
         lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_standby_screen_obj_id_screen_off_cont),setting_standby_screen_obj_id_screen_off_sub);
         if(user_data_get()->display.screen_off_time == 15)
         {
-                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC));
+                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC));
         }else if(user_data_get()->display.screen_off_time == 30)
         {
-                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_30SEC));
+                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_30SEC));
         }else if(user_data_get()->display.screen_off_time == 60)
         {
-                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_60SEC));
+                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_60SEC));
         }else if(user_data_get()->display.screen_off_time == 180)
         {
-                lv_label_set_text(obj,layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_SCREEN_AFTER_180SEC));
+                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_180SEC));
         }
 
 }
@@ -282,7 +355,7 @@ static lv_obj_t *setting_standby_screen_main_list_create(void)
             {0, 0, 928, 88,
              setting_standby_screen_obj_id_screen_off_cont, setting_standby_screen_obj_id_screen_off_title, setting_standby_screen_obj_id_screen_off_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_SCREEN_OFF, lang_str_get,
-             SCREEN_LANG_ID_LCD_SCREEN_AFTER_15SEC, layout_setting_screen_language_get,
+             SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC, lang_str_get,
              setting_standby_screen_main_list_click, setting_standby_screen_obj_id_screen_off_img},
             {0, 88, 928, 88,
              setting_standby_screen_obj_id_open_frame_cont, setting_standby_screen_obj_id_open_frame_title, -1,
@@ -318,6 +391,14 @@ static void setting_standby_screen_sub_list_click(lv_event_t *e)
         if (obj == NULL)
         {
                 return;
+        }
+        if (obj->id == setting_standby_screen_obj_id_wait_display_time_cont)
+        {
+                // sat_layout_goto(setting_frame_display_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+                lv_obj_t * masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg,setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
+                setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
+                setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox,setting_standby_screen_off_obj_id_confirm,setting_standby_screen_off_obj_id_cancel , setting_standby_screen_off_msgbox_confirm_click,setting_standby_screen_off_msgbox_cancel_click);
+        
         }
         if (obj->id == setting_standby_screen_obj_id_display_time_cont)
         {
@@ -356,12 +437,30 @@ static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
                 }
                 
         }
+        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_wait_display_time_cont),setting_standby_screen_obj_id_wait_display_time_sub);
+        if(obj != NULL)
+        {
+                if(user_data_get()->display.screen_off_time == 15)
+                {
+                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC));
+                }else if(user_data_get()->display.screen_off_time == 30)
+                {
+                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_30SEC));
+                }else if(user_data_get()->display.screen_off_time == 60)
+                {
+                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_60SEC));
+                }else if(user_data_get()->display.screen_off_time == 180)
+                {
+                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_180SEC));
+                }
+
+        }
         obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_night_mode_cont),setting_standby_screen_obj_id_display_night_mode_sub);
         if(obj != NULL)
         {
                 if(user_data_get()->display.night_mode == false)
                 {
-                        lv_label_set_text(obj,language_common_string_get(LANG_COMMON_ID_OFF));
+                        lv_label_set_text(obj,lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF));
                 }else
                 {
 		int s_hour = user_data_get()->display.night_time_start / 60;
@@ -408,22 +507,28 @@ static lv_obj_t *setting_standby_screen_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
 
+
             {0, 0, 836, 72,
+             setting_standby_screen_obj_id_wait_display_time_cont, setting_standby_screen_obj_id_wait_display_time_title, setting_standby_screen_obj_id_wait_display_time_sub,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_WAIT_DISPLAY_TIME, lang_str_get,
+             SETTING_STANDBY_SCREEN_XLS_LANG_ID_WAIT_DISPLAY_TIME, lang_str_get,
+             setting_standby_screen_sub_list_click},
+            {0, 72, 836, 72,
              setting_standby_screen_obj_id_display_time_cont, setting_standby_screen_obj_id_display_time_title, setting_standby_screen_obj_id_display_time_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_DISPLAY_TIME, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS, lang_str_get,
              setting_standby_screen_sub_list_click},
-            {0, 72, 836, 72,
+            {0, 72 * 2, 836, 72,
              setting_standby_screen_obj_id_display_night_mode_cont, setting_standby_screen_obj_id_display_night_mode_title, setting_standby_screen_obj_id_display_night_mode_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_USER_NIGHT_MODE, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_ADJUSTS_THE_BRIGHTNESS, lang_str_get,
              setting_standby_screen_sub_list_click},
-            {0, 72 * 2, 836, 72,
+            {0, 72 * 3, 836, 72,
              setting_standby_screen_obj_id_display_item_cont, setting_standby_screen_obj_id_display_item_title, setting_standby_screen_obj_id_display_item_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_ITEM_DISPLAY, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_1_ITEM, lang_str_get,
              setting_standby_screen_sub_list_click},
-            {0, 72 * 3, 836, 72,
+            {0, 72 * 4, 836, 72,
              setting_standby_screen_obj_id_background_cont, setting_standby_screen_obj_id_background_title, setting_standby_screen_obj_id_background_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_BACKROUND, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE, lang_str_get,
@@ -463,7 +568,7 @@ static void sat_layout_enter(setting_standby_screen)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_screen_language_get(SCREEN_LANG_ID_LCD_STANDBY_SCREEN), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SCREEN_XLS_LANG_ID_LCD_STANDBY_SCREEN), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

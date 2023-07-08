@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_complete.h"
 #include "layout_monitor.h"
 enum
 {
@@ -85,7 +84,7 @@ static void sat_layout_enter(setting_complete)
                                                       setting_complete_confirm_click, LV_OPA_COVER, 0X00A8FF, LV_OPA_COVER, 0X00A8FF,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      language_common_string_get(LANG_COMMON_ID_CONFIRM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                      lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_CONFIRM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
 }

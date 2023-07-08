@@ -1,8 +1,5 @@
 
 #include "layout_define.h"
-#include "layout_power_setting.h"
-
-
 enum {
 
 	power_setting_obj_id_power_setting_label, 

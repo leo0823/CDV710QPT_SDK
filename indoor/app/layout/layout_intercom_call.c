@@ -1,6 +1,5 @@
 #include "layout_define.h"
 #include "layout_intercom_call.h"
-#include "layout_home.h"
 enum
 {
         intercom_call_obj_id_log_msg_bg,

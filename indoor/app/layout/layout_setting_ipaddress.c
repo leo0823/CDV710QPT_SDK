@@ -1,6 +1,4 @@
 #include "layout_define.h"
-#include "layout_single_operation_network.h"
-#include "layout_setting_installation.h"
 enum
 {
         setting_ipaddress_obj_id_titile_label,
@@ -149,7 +147,7 @@ static void sat_layout_enter(setting_ipaddress)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_installation_language_get(INSTALLATION_LANG_ID_IP_ADDRES), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_IP_ADDRES), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

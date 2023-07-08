@@ -1,6 +1,5 @@
 #include "layout_define.h"
 #include "layout_playback.h"
-#include "layout_setting_storage_space.h"
 #define PHOTO_WIDTH (1024)
 #define PHOTO_HIGHT (600)
 enum
@@ -287,6 +286,29 @@ static void photo_obj_del_click(lv_event_t *e)
                             lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                             photo_msgbox_del_cancel_click, photo_del_msgbox_confirm_click);
 }
+
+static void photo_thumb_left_right_arrow_display(void)
+{
+        lv_obj_t * left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_left);
+        lv_obj_t * right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_right);
+        if ((playback_media_total_get() < 2) || (playback_media_total_get() == (playback_pview_item_get() + 1)))
+        {
+
+                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        if ((playback_media_total_get() < 2) ||( playback_pview_item_get() == 0))
+        {
+                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }else
+        {
+                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }
+
+}
 static void photo_obj_left_click(lv_event_t *e)
 {
         int item = playback_pview_item_get();
@@ -303,6 +325,7 @@ static void photo_obj_left_click(lv_event_t *e)
         }
 
         photo_thumb_decode_all_display();
+        photo_thumb_left_right_arrow_display();
 }
 static void photo_obj_right_click(lv_event_t *e)
 {
@@ -320,6 +343,7 @@ static void photo_obj_right_click(lv_event_t *e)
         }
 
         photo_thumb_decode_all_display();
+        photo_thumb_left_right_arrow_display();
 }
 static void sat_layout_enter(photo)
 {

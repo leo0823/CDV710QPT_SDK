@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_server_operating_network.h"
 enum
 {
         setting_building_house_number_obj_id_titile_label,
@@ -56,11 +55,16 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
         sscanf(foolr_str, "%d", &foolr);
         sscanf(household_str, "%d", &household);
         sscanf(extension_str, "%d", &extension);
-
+        const char *username = getenv("SIP");
+        extension = username[11] - 48;
+        if((strlen(building_str) != 4) || (strlen(household_str) != 4) || (building > 255) || (household % 100) > 24)
+        {
+                return;
+        }
         if (building < 32)
         {
                 char number[64] = {0};
-                sprintf(number, "010%03d%03d%03d", building | 0x80, foolr, household * 10 + extension);
+                sprintf(number, "010%03d%03d%03d", building | 0x80, household /100 , (household % 100) * 10 + extension);
                 SAT_DEBUG("channge number:%s", number);
                 if (strcmp(number, network_data_get()->sip_user))
                 {
@@ -81,7 +85,7 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
                         memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         network_data_get()->door_device_count = 0;
                         network_data_save();
-
+                        setenv("SIP", network_data_get()->sip_user, 1);
                         usleep(1000 * 1000);
                         exit(0);
                 }
@@ -261,21 +265,18 @@ static void sat_layout_enter(setting_building_house_number)
         }
         //"010001001011" -> 010.001.001.011
         char building[8] = {0};
-        char floor[8] = {0};
         char household[8] = {0};
+        char floor[8] = {0};
         char extension[8] = {0};
         int loacal_number[8] = {0};
 
         const char *username = getenv("SIP");
+        SAT_DEBUG("username is %s\n",username);
         loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-        loacal_number[1] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
-        loacal_number[2] = (username[9] - 48) * 10 + (username[10] - 48);
-        loacal_number[3] = (username[11] - 48);
+        loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
 
-        sprintf(building, "%02d", loacal_number[0]);
-        sprintf(floor, "%03d", loacal_number[1]);
-        sprintf(household, "%02d", loacal_number[2]);
-        sprintf(extension, "%d", loacal_number[3]);
+        sprintf(building, "%04d", loacal_number[0]);
+        sprintf(household, "%04d", loacal_number[1]);
 
         /***********************************************
          ** 作者: leo.liu

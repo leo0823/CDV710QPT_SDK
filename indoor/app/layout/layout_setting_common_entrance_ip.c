@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_installation.h"
 enum
 {
         setting_common_entrance_ip_obj_id_titile_label,
