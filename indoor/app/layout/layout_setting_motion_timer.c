@@ -1,7 +1,5 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
-#include "layout_setting_motion.h"
-#include "layout_setting_recording.h"
 enum
 {
         setting_motion_timer_obj_id_title,

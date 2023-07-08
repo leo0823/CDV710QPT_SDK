@@ -186,56 +186,7 @@ static void *user_gpio_detect_task(void *arg)
         cd4051_drive_enable_set(false);
         return NULL;
 }
-#if 0
-/*********************************************** \
-        ** 作者: leo.liu                              \
-        ** 日期: 2022-11-9 10:15:48                   \
-        ** 说明: gpio任务检测                     \
-        ***********************************************/
-static float cd4051_value_group[8] = {0};
-const int channel_to_sensor[8] = {5, 6, 7, 4, 0, 3, 1, 2};
-float user_sensor_value_get(int ch)
-{
-        if ((ch < 0) || (ch > 7))
-        {
-                return 0xFFFFF;
-        }
-        return cd4051_value_group[channel_to_sensor[ch]];
-}
-static void *user_gpio_detect_task(void *arg)
-{
-        if (sarad_open() == false)
-        {
-                SAT_DEBUG("if(sarad_open() == false)");
-        }
-        cd4051_drive_init(sarad_enable_func, sarad_read_func, ad_ctrl_a_gpio_val_set, ad_ctrl_b_gpio_val_set, ad_ctrl_c_gpio_val_set);
-        cd4051_drive_enable_set(true);
 
-        for (int i = 0; i < 8; i++)
-        {
-                cd4051_value_group[i] = cd4051_drive_read(i);
-        }
-
-        while (1)
-        {
-                for (int i = 0; i < 8; i++)
-                {
-                        float value = cd4051_drive_read(i);
-                        if (abs(value - cd4051_value_group[i]) > 1.0)
-                        {
-                                cd4051_value_group[i] = value;
-                                SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
-                                sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
-                        }
-                        printf("user_sensor_value_get %d is %f\n",i,user_sensor_value_get(i));
-                }
-                usleep(1000 * 100);
-        }
-        sarad_close();
-        cd4051_drive_enable_set(false);
-        return NULL;
-}
-#endif 
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48

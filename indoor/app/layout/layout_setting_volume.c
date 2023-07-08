@@ -1,6 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_version_information.h"
-#include "layout_setting_sound.h"
 #include "layout_setting_general.h"
 enum
 {
@@ -106,7 +104,7 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
         if(y == 8)//调铃声音量
         {
                 int value = lv_slider_get_value(obj);
-                user_data_get()->audio.buzzer = value;
+                user_data_get()->audio.buzzer_volume = value;
                 user_data_save();
         }else if(y == 78)//调通话声音
         {
@@ -119,7 +117,7 @@ static void setting_buzzer_volume_slider_display(lv_obj_t * parent)
         lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_buzzer_cont),setting_volume_obj_id_buzzer_volume_slider_cont);
         lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_buzzer_volume_slider);
         lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_buzzer_volume_slider_text);
-        int cur_volume = user_data_get()->audio.buzzer;
+        int cur_volume = user_data_get()->audio.buzzer_tone;
         char value_str[32] =  {0};
         sprintf(value_str,"%02d",cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);

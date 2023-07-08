@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_initialize.h"
 #include "layout_setting_general.h"
 enum
 {
@@ -33,10 +32,13 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         else if (setting_initialize_count == 1)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_saved_video_complete);
-                if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
-                {
-                        media_file_delete_all(FILE_TYPE_VIDEO,false);
-                }
+                // if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+                // {
+                //         media_file_delete_all(FILE_TYPE_VIDEO,false);
+                //         media_file_delete_all(FILE_TYPE_PHOTO,false);
+                // }
+                media_file_delete_all(FILE_TYPE_FLASH_PHOTO,false);
+
 
         }
         else if (setting_initialize_count == 2)
@@ -50,9 +52,9 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         }
         else
         {
-                // lv_obj_t *btn = (lv_obj_t *)ptimer->user_data;
-                // lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
-                // lv_obj_set_style_bg_color(btn,lv_color_hex(0x00a8ff),LV_PART_MAIN);
+                lv_obj_t *btn = (lv_obj_t *)ptimer->user_data;
+                lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_set_style_bg_color(btn,lv_color_hex(0x00a8ff),LV_PART_MAIN);
                 lv_timer_del(ptimer);
                 return;
         }
@@ -64,7 +66,16 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
 }
 static void setting_initialize_reset_obj_click(lv_event_t *e)
 {
-        lv_obj_t *obj = lv_event_get_current_target(e);
+        setting_initialize_count = 0;
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_call_log_complete);
+        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_saved_video_complete);
+        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_emergency_reocrd_complete);
+        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_initiallization_is_complete_label);
+        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        obj = lv_event_get_current_target(e);
         lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
         lv_obj_set_style_bg_color(obj,lv_color_hex(0x47494A),LV_PART_MAIN);
         lv_timer_reset(lv_sat_timer_create(setting_initialize_reset_timer, 1000, obj));
@@ -81,7 +92,7 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_INITIALIZATION_USER_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_INITIALIZATION_USER_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

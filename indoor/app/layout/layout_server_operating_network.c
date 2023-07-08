@@ -1,6 +1,4 @@
 #include "layout_define.h"
-#include "layout_server_operating_network.h"
-#include "layout_single_operation_network.h"
 enum
 {
         server_operation_network_obj_id_title,

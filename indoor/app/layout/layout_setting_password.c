@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_password.h"
 #include "layout_setting_general.h"
 enum
 {
@@ -111,6 +110,7 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
                 setting_password_msgbox_create(lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH));
         }else
         {
+                strncpy(user_data_get()->etc.password,buffer,4);
                 sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
 
@@ -269,7 +269,6 @@ static void setting_password_modiy_keyboard_click(lv_event_t *ev)
         else
         {
                 const char *text = lv_btnmatrix_get_btn_text(obj, id);
-
                 if (text != NULL)
                 {
 
@@ -399,6 +398,7 @@ static void setting_password_modiy_obj_create(void)
                         setting_password_modiy_confirm_enable(false);
                 }
         }
+        lv_obj_add_flag(parent,LV_OBJ_FLAG_HIDDEN);
 }
 static void setting_password_cancel_obj_click(lv_event_t *ev)
 {

@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_alarm.h"
 enum
 {
          layout_alarm_obj_id_bg,
@@ -159,11 +158,10 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
-        if (((user_data_get()->alarm.away_alarm_enable == false) && (!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))) && ((user_data_get()->alarm.security_alarm_enable == false) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1)))))
+        if((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))&&(!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
         {
                 return;
         }
-
         if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < 100)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
         {
 

@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_wifi.h"
 #include "layout_wifi_info.h"
 #include "layout_wifi_input.h"
 #include "layout_setting_time.h"

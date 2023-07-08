@@ -232,7 +232,7 @@ static bool intercom_talk_call_answer_callback(char *args)
 static void sat_layout_enter(intercom_talk)
 {
         standby_timer_close();
-        intercom_talk_timeout = 30;
+        intercom_talk_timeout = user_data_get()->call_time;
         intercom_talk_status_background_display();
         /***********************************************
          ** 作者: leo.liu
@@ -284,7 +284,7 @@ static void sat_layout_enter(intercom_talk)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 intercom_talk_call_status_label_display();
         }
         /***********************************************

@@ -1,7 +1,6 @@
 #include "layout_define.h"
 #include "layout_ipc_camera.h"
 #include "layout_wifi_input.h"
-#include "layout_setting_password.h"
 /*
  * ipc_camera_input_flag = 0x00: 显示页面密码错误
  * ipc_camera_input_flag = 0x01:输入账号
@@ -102,15 +101,15 @@ static void ipc_camera_password_input_textarea_placeholder_setting(void)
         }
         if (ipc_camera_input_flag & IPC_CAMERA_FLAG_INPUT_PWD)
         {
-                lv_textarea_set_placeholder_text(textarea, layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_INPUT_PASSWORD));
+                lv_textarea_set_placeholder_text(textarea, lang_str_get(WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
         }
         else if (ipc_camera_input_flag & IPC_CAMERA_FLAG_INPUT_USER)
         {
-                lv_textarea_set_placeholder_text(textarea, layout_wifi_input_language_get(WIFI_INPUT_LANG_ID_INPUT_USER));
+                lv_textarea_set_placeholder_text(textarea, lang_str_get(WIFI_INPUT_XLS_LANG_ID_INPUT_USER));
         }
         else if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)
         {
-                lv_textarea_set_placeholder_text(textarea, ipc_camera_password_state == 0 ? layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_OLD_PASSWORD)
+                lv_textarea_set_placeholder_text(textarea, ipc_camera_password_state == 0 ? lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_OLD_PASSWORD)
                                                                                           : lang_str_get(ipc_camera_password_input_password_old[0] == '\0' ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_PASSWORD
                                                                                                                                   : ipc_camera_password_input_password_temp[0] == 0 ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER
                                                                                                                                                                                     : DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD));
@@ -259,7 +258,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         }
 
         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
-                                                layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH),
+                                                lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH),
                                                 ipc_camera_password_input_msgbox_confirm_click);
 
         return true;
@@ -283,14 +282,14 @@ static bool ipc_camera_input_old_password_processing(const char *txt)
         }
 
         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
-                                                layout_setting_password_language_get(SETTING_PASSWORD_LANG_ID_PASSWORD_NOT_MATCH),
+                                                lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH),
                                                 ipc_camera_password_input_msgbox_confirm_click);
 
         return true;
 }
 static bool ipc_camera_input_new_name_processing(void)
 {
-        char input_name[128] = {0};
+        char input_name[64] = {0};
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         strncpy(input_name, lv_textarea_get_text(textarea), sizeof(input_name));
 
@@ -298,13 +297,19 @@ static bool ipc_camera_input_new_name_processing(void)
         {
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
+                        char doorname[128] = {0};
+                        sprintf(doorname,"Door%d(%s)", network_data_get()->door_ch_index[layout_ipc_camera_edit_index_get()] + 1,input_name);
+                        SAT_DEBUG("layout_ipc_camera_edit_index_get is %d\n",layout_ipc_camera_edit_index_get());
+                        SAT_DEBUG("DOORch is %d\n",network_data_get()->door_ch_index[layout_ipc_camera_edit_index_get()]);
                         memset(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name));
-                        strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, input_name);
+                        strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
                 else
                 {
+                        char doorname[128] = {0};
+                        sprintf(doorname,"CCTV%d(%s)", network_data_get()->cctv_ch_index[layout_ipc_camera_edit_index_get()] + 1,input_name);
                         memset(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name));
-                        strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, input_name);
+                        strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
 
                 network_data_save();

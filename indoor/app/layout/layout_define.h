@@ -13,7 +13,6 @@
 #include "common/user_record.h"
 #include "common/user_data.h"
 #include "common/language.h"
-#include "common/language_new.h"
 #include "common/user_monitor.h"
 #include "common/sat_user_time.h"
 #include "common/user_network.h"
@@ -172,4 +171,5 @@ sat_layout_define(close);//语言已完成
 sat_layout_define(frame_show);//语言已完成
 sat_layout_define(always_record);//语言已完成
 sat_layout_define(sensors_test);
+sat_layout_define(buzzer_call);
 #endif

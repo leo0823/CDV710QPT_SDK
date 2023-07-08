@@ -1,6 +1,5 @@
 #include "layout_define.h"
 #include "layout_playback.h"
-#include "layout_setting_storage_space.h"
 #define video_WIDTH (1024)
 #define video_HIGHT (592)
 enum
@@ -302,6 +301,29 @@ static void video_obj_del_click(lv_event_t *e)
                             lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                             video_msgbox_del_cancel_click, video_del_msgbox_confirm_click);
 }
+
+static void video_thumb_left_right_arrow_display(void)
+{
+        lv_obj_t * left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),video_obj_id_left);
+        lv_obj_t * right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),video_obj_id_right);
+        if ((playback_media_total_get() < 2) || (playback_media_total_get() == (playback_pview_item_get() + 1)))
+        {
+
+                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        if ((playback_media_total_get() < 2) ||( playback_pview_item_get() == 0))
+        {
+                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }else
+        {
+                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }
+
+}
 static void video_obj_left_click(lv_event_t *e)
 {
         int item = playback_pview_item_get();
@@ -318,6 +340,7 @@ static void video_obj_left_click(lv_event_t *e)
         }
 
         video_thumb_decode_all_display();
+        video_thumb_left_right_arrow_display();
 }
 static void video_obj_right_click(lv_event_t *e)
 {
@@ -335,6 +358,7 @@ static void video_obj_right_click(lv_event_t *e)
         }
 
         video_thumb_decode_all_display();
+        video_thumb_left_right_arrow_display();
 }
 
 static void video_thumb_duration_callback(unsigned int cur, unsigned int total)

@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_version_information.h"
 #include "layout_setting_general.h"
 #include "common/user_upgrade.h"
 #include "common/sat_ipcamera.h"
@@ -140,7 +139,7 @@ static void sat_layout_enter(setting_version_information)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_VERSION_INFORMATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_VERSION_INFORMATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

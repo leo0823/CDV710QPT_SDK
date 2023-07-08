@@ -1,6 +1,5 @@
 #include "layout_define.h"
 #include "layout_wifi_input.h"
-#include "layout_setting_wifi.h"
 enum
 {
         wifi_input_obj_id_title,
@@ -258,7 +257,7 @@ static void sat_layout_enter(wifi_input)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      wifi_input_user_temp[0] == 0 ? layout_setting_wifi_language_get(WIFI_SETTING_ID_LANG_WIFI) : wifi_input_user_temp, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      wifi_input_user_temp[0] == 0 ? lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI) : wifi_input_user_temp, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu

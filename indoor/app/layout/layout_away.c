@@ -1,6 +1,4 @@
 #include "layout_define.h"
-#include "layout_away.h"
-#include "layout_security.h"
 #include "layout_setting_general.h"
 typedef enum
 {
@@ -339,6 +337,19 @@ static lv_obj_t *layout_away_tableview_obj_create(void)
         return tabview;
 }
 
+static void layout_away_sensor_select_left_btn_click(lv_event_t*e)
+{
+    lv_obj_t * tab = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_tabview);
+    lv_tabview_set_act(tab,0,LV_ANIM_OFF);
+}
+
+static void layout_away_sensor_select_right_btn_click(lv_event_t*e)
+{
+    lv_obj_t * tab = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_tabview);
+    lv_tabview_set_act(tab,1,LV_ANIM_OFF);
+}
+
+
 /************************************************************
 ** 函数说明: 传感器选择创建
 ** 作者: xiaoxiao
@@ -408,25 +419,27 @@ static void layout_away_sensor_select_create(void)
             // },
       };
 
-    /************************************************************
-    ** 函数说明: 左右箭头图标创建
-    ** 作者: xiaoxiao
-    ** 日期: 2023-05-06 08:50:42
-    ** 参数说明: 
-    ** 注意事项: 
-    ************************************************************/
-    {
-        lv_common_img_btn_create(sat_cur_layout_screen_get(),layout_away_obj_id_right_arrow, 466, 282, 48, 48,
-                            NULL,false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                            0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                            0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                            resource_ui_src_get("away_right_arrow.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_away_obj_id_left_arrow, 0, 282, 48, 48,
-                    NULL,false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                    resource_ui_src_get("away_left_arrow.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-    }
+
+        /************************************************************
+        ** 函数说明: 左右箭头图标创建
+        ** 作者: xiaoxiao
+        ** 日期: 2023-05-06 08:50:42
+        ** 参数说明: 
+        ** 注意事项: 
+        ************************************************************/
+        {
+            lv_common_img_btn_create(sat_cur_layout_screen_get(),layout_away_obj_id_right_arrow, 466, 282, 48, 48,
+                                layout_away_sensor_select_right_btn_click,true, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("away_right_arrow.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+            lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_away_obj_id_left_arrow, 0, 282, 48, 48,
+                        layout_away_sensor_select_left_btn_click,true, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        resource_ui_src_get("away_left_arrow.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+
         lv_obj_t * tabview = layout_away_tableview_obj_create();
         lv_obj_t *cont = lv_tabview_get_content(tabview);
         lv_obj_t *page_1 = lv_obj_get_child_form_id(cont, 0);
@@ -437,7 +450,7 @@ static void layout_away_sensor_select_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(security_list_info_t); i++)
         {
 
-            if(((user_data_get()->alarm.alarm_enable[i] == 1) || (user_data_get()->alarm.alarm_enable[i] == 2)) && (user_data_get()->alarm.alarm_enable_always[0][i] == false) && (user_data_get()->alarm.alarm_enable_always[1][i] == false))
+            if(((user_data_get()->alarm.alarm_enable[i]  != 0)) && (user_data_get()->alarm.away_sensor_enable[i] ) && (user_data_get()->alarm.alarm_enable_always[0][i] == false) && (user_data_get()->alarm.alarm_enable_always[1][i] == false))
             {
                 lv_obj_t *parent =   lv_common_img_text_btn_create((j <= 3)?page_1:page_2,  main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w,  main_list_group[j].h,
                                         main_list_group[i].click_cb,  LV_OPA_COVER, 0x242526, LV_OPA_COVER, 0x242526,
@@ -634,7 +647,7 @@ static void layout_away_release_time_display(void)
         return;
     }
 
-    lv_label_set_text(time,lang_str_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + user_data_get()->alarm.away_release_time / 10));
+    lv_label_set_text(time,lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_RELEASE_TIME_SECOND_0 + user_data_get()->alarm.away_release_time / 10));
     
 }
 
@@ -804,7 +817,7 @@ static void layout_away_release_time_msgbox_option_create(lv_obj_t * msgbox, lv_
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 46, 8, 460 - 27 - 16, 32, 0,
-                                lang_str_get(LAYOUT_AWAY_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_RELEASE_TIME_SECOND_0 + i), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                 away_obj_id_t_msgbox_checkbox_img, 8, 32, 32, 1,
                                 i == user_data_get()->alarm.away_release_time / 10 ? (const char *)resource_ui_src_get("btn_radio_s.png") :(const char *)resource_ui_src_get("btn_radio_n.png")\
                                  , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -862,7 +875,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_setting_time_title,
-                                                    lang_str_get(LAYOUT_AWAY_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_FUNCRION_SETTING_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     370, 17, 120, 40, layout_away_obj_id_setting_time_sub,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -877,7 +890,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_release_time_title,
-                                                    lang_str_get(LAYOUT_AWAY_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_FUNCRION_RELEASE_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     370, 17, 120, 40, layout_away_obj_id_release_time_sub,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -891,7 +904,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_save_photo_title,
-                                                    lang_str_get(LAYOUT_AWAY_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SAVE_VISITORS_PHORO), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 17, 120, 40, -1,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
@@ -905,7 +918,7 @@ static void layout_away_func_setting_create()
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43,layout_away_obj_id_bypass_call_title,
-                                                    lang_str_get(LAYOUT_AWAY_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 17, 120, 40, -1,
                                                     "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                     0, 42, 576, 29, -1,
