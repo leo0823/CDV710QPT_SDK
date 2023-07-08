@@ -1,8 +1,5 @@
 #include "layout_define.h"
-#include "layout_setting_frame_display_time.h"
-#include "layout_setting_standby_screen.h"
 #include "layout_setting_general.h"
-#include "layout_setting_screen.h"
 enum
 {
         setting_frame_background_obj_id_title,

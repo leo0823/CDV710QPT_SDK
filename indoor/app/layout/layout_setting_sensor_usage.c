@@ -1,6 +1,12 @@
 #include "layout_define.h"
 #include "layout_setting_sensor_usage.h"
 #include "layout_setting_general.h"
+bool sensor_usage_setting = false;
+
+bool layout_sensor_usage_setting_is_going_out(void)
+{
+        return sensor_usage_setting;
+}
 enum
 {
         setting_sensor_usage_obj_id_title,
@@ -21,10 +27,12 @@ static void setting_sensor_usage_cancel_click(lv_event_t *e)
 }
 static void setting_sensor_usage_going_out_click(lv_event_t *e)
 {
+        sensor_usage_setting = true;
         sat_layout_goto(setting_sensor_switch, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_sensor_usage_security_mode(lv_event_t *e)
 {
+        sensor_usage_setting = false;
         sat_layout_goto(setting_sensor_switch, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void sat_layout_enter(setting_sensor_usage)
@@ -39,7 +47,7 @@ static void sat_layout_enter(setting_sensor_usage)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SENSOR_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

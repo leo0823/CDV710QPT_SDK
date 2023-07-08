@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_home.h"
 
 typedef enum
 {
@@ -114,6 +113,7 @@ find_start:
 		ch = MON_CH_DOOR2;
 		if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x08)
 		{
+			SAT_DEBUG("monitor ch is door2");
 			return ch;
 		}
 	}
@@ -141,6 +141,7 @@ find_start:
 		ch = MON_CH_DOOR1;
 		if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x08 )
 		{
+			SAT_DEBUG("monitor ch is door1");
 			return ch;
 		}
 	}
@@ -516,20 +517,13 @@ static void frame_show_date_obj_display(lv_obj_t *parent)
         else if (lang == LANGUAGE_ID_CHINESE)
         {
                 lv_label_set_text_fmt(label_date, "%04d年%d月%d日,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
-        }
-        else if (lang == LANGUAGE_ID_TUERQI)
+        }else if (lang == LANGUAGE_ID_YUENAN)
         {
-                lv_label_set_text_fmt(label_date, "%d %s %04d,%s", tm.tm_mday, week_str, tm.tm_year, mon_str);
-        }
-        else if (lang == LANGUAGE_ID_BOLAN)
+                lv_label_set_text_fmt(label_date, "%s,%d,%04d,%s", mon_str, tm.tm_mday, tm.tm_year,week_str);
+        }else if (lang == LANGUAGE_ID_ALABOYU)
         {
-                lv_label_set_text_fmt(label_date, "%s,%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_JIEKE)
-        {
-                lv_label_set_text_fmt(label_date, "%s,%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_ALABOYU)
+                lv_label_set_text_fmt(label_date, "%s,%d,%04d,%s", mon_str, tm.tm_mday, tm.tm_year,week_str);
+        }else if (lang == LANGUAGE_ID_ALABOYU)
         {
                 lv_label_set_text_fmt(label_date, "%s, %s %d, %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
         }
@@ -663,7 +657,7 @@ static void frame_show_calendar_label_display(void)
 							NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							layout_home_week_language_get(tm.tm_wday - 1),0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
+							lang_str_get(tm.tm_wday - 1+HOME_XLS_LANG_ID_MON),0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 
 	obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_calendar_mon_label);
@@ -674,7 +668,7 @@ static void frame_show_calendar_label_display(void)
 							NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 							0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							layout_home_month_language_get(tm.tm_mon - 1),0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+							lang_str_get(tm.tm_mon - 1+HOME_XLS_LANG_ID_JAN),0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 	}
 
 	obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_calendar_day_label);
@@ -792,11 +786,11 @@ static void frame_show_monitor_channle_display(void)
 	{
 
 			channel -= 8;
-			lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING),network_data_get()->cctv_device[channel].door_name);
+			lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING),network_data_get()->cctv_device[network_data_get()->cctv_ch_index[channel]].door_name);
 	}
 	else
 	{
-			lv_label_set_text_fmt(obj,  "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[channel].door_name);
+			lv_label_set_text_fmt(obj,  "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[network_data_get()->door_ch_index[channel]].door_name);
 	}
 
 }
@@ -948,14 +942,15 @@ static void frame_show_restart(void)
 		if(num == 0)
 		{
 			frame_show_frame_index = 0x11;
+			return frame_show_restart();
 		}
 		int ch = always_record_channel_get();
-		if(ch == MON_CH_CCTV1 + num)
+		if(ch + 1 == MON_CH_CCTV1 + num)
 		{
 			frame_show_frame_index = 0x11;
 		}
 		sat_linphone_media_thumb_destroy();
-		SAT_DEBUG("CCTV camera\n");
+		SAT_DEBUG("CCTV ch is %d\n",ch);
 		frame_show_cctv_start();
 	}
 	else

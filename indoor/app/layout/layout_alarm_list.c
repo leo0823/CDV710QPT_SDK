@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_alarm_list.h"
 #include "layout_setting_general.h"
 typedef enum
 {

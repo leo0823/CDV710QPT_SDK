@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_installation.h"
 enum
 {
         setting_guard_station_number_obj_id_titile_label,

@@ -1,8 +1,5 @@
 #include "layout_define.h"
-#include "layout_setting_frame_display_time.h"
-#include "layout_setting_standby_screen.h"
 #include "layout_setting_general.h"
-#include "layout_setting_screen.h"
 enum
 {
 
@@ -136,7 +133,7 @@ static void sat_layout_enter(setting_frame_display_time)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SETTING_STANDBY_SCREEN_LANG_ID_DISPLAY_TIME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_DISPLAY_TIME), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

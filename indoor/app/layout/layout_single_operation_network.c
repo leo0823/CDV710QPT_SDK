@@ -1,6 +1,5 @@
 
 #include "layout_define.h"
-#include "layout_single_operation_network.h"
 
 enum
 {

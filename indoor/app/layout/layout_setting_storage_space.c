@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_storage_space.h"
 #include "layout_setting_general.h"
 enum
 {
@@ -67,7 +66,7 @@ static lv_obj_t *setting_storage_space_msgbox_create(const char *title, const ch
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               48, 8, 365 - 94, 32, setting_storage_space_obj_id_msgbox_check_1_text,
-                                              language_common_string_get(LANG_COMMON_ID_PHOTO), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              lang_str_get(RECORDING_XLS_LANG_ID_SAVE_PICTURE), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_storage_space_obj_id_msgbox_check_1_img,
                                               (const char *)resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -76,7 +75,7 @@ static lv_obj_t *setting_storage_space_msgbox_create(const char *title, const ch
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               48, 8, 365 - 94, 32, setting_storage_space_obj_id_msgbox_check_2_text,
-                                              language_common_string_get(LANG_COMMON_ID_VIDEO), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              lang_str_get(RECORDING_XLS_LANG_ID_SAVE_VIDEO), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_storage_space_obj_id_msgbox_check_2_img,
                                               (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
@@ -254,7 +253,7 @@ static void sat_layout_enter(setting_storage_space)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_STORAGE_SPACE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_STORAGE_SPACE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

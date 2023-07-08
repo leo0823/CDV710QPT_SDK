@@ -1,7 +1,5 @@
-#include "layout_setting_installation.h"
 #include "layout_define.h"
 #include "layout_setting_general.h"
-#include "layout_single_operation_network.h"
 #include "layout_ipc_camera.h"
 #include "tuya/tuya_api.h"
 enum
@@ -121,6 +119,9 @@ static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
+
+
+
 static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
@@ -131,6 +132,9 @@ static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
         else if (user_data_get()->system_mode == 1)
         {
                 lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
+        }else
+        {
+                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SLAVE));
         }
 }
 
@@ -182,7 +186,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
             {0, 72 * 6, 622, 72,
              setting_installation_obj_id_sensor_cont, 0, -1,
              INSTALLATION_XLS_LANG_ID_SENSOR, lang_str_get,
-             LANG_COMMON_ID_OFF, language_common_string_get,
+             RECORDING_XLS_LANG_ID_SAVE_OFF, lang_str_get,
              setting_installation_sensor_obj_click, -1},
             {0, 72 * 7, 622, 72,
              setting_installation_obj_id_sensor_test_cont, 0, -1,
@@ -211,11 +215,18 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if(user_data_get()->system_mode == 1)
+                if(user_data_get()->system_mode != 1)
                 {
                         if( i == 1 || i== 3 || i == 4 || i== 5)
                         {
                                 continue;
+                        }
+                        if(user_data_get()->system_mode != 0)
+                        {
+                                if( i == 6 || i == 7)
+                                {
+                                        continue;
+                                }
                         }
                        
                 }
@@ -344,7 +355,6 @@ static void sat_layout_enter(setting_installation)
                                               lang_str_get(INSTALLATION_XLS_LANG_ID_I_HAVE_READ_AND_UNDERSTOOD), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                               0, 0, 32, 32, setting_installation_obj_id_i_have_read_checkbox,
                                               (const char *)resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                SAT_DEBUG("========%s=========\n",lang_str_get(INSTALLATION_XLS_LANG_ID_I_HAVE_READ_AND_UNDERSTOOD));
         }
         /***********************************************
          ** 作者: leo.liu
@@ -356,7 +366,7 @@ static void sat_layout_enter(setting_installation)
                                                       setting_installation_confirm_obj_click, LV_OPA_COVER, 0x47494a, LV_OPA_COVER, 0x47494a,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      language_common_string_get(LANG_COMMON_ID_CONFIRM), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                      lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_CONFIRM), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
 
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);

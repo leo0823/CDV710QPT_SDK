@@ -40,13 +40,78 @@ static void setting_sensor_switch_list_click(lv_event_t *e)
         }
         if (strncmp((const char *)obj->bg_img_src, resource_ui_src_get("btn_switch_off.png"), strlen(resource_ui_src_get("btn_switch_off.png"))))
         {
+                if(layout_sensor_usage_setting_is_going_out())
+                {
+                        user_data_get()->alarm.away_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = false;
+                }else
+                {
+                        user_data_get()->alarm.security_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = false;
+                }
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
         }
         else
         {
+                if(layout_sensor_usage_setting_is_going_out())
+                {
+                        user_data_get()->alarm.away_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = true;
+                }else
+                {
+                        user_data_get()->alarm.security_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = true;
+                }
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
         }
+        user_data_save();
 }
+
+static void layout_sensor_usage_setting_display()
+{
+        lv_obj_t * list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_sensor_switch_obj_id_list);
+        lv_obj_t *sensor_item = NULL;
+        for(int i = 0; i < 7; i++)
+        {
+                sensor_item = lv_obj_get_child_form_id(list,setting_sensor_switch_obj_id_item1_cont+i);
+                if(sensor_item != NULL)
+                {
+                        if(layout_sensor_usage_setting_is_going_out())
+                        {
+                                if(user_data_get()->alarm.away_sensor_enable[i])
+                                {
+                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+                                }else
+                                {
+                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);      
+                                }
+                        }else
+                        {
+                                if(user_data_get()->alarm.security_sensor_enable[i])
+                                {
+                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+                                }else
+                                {
+                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);      
+                                }
+                        }
+
+                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 1);
+                        
+                        if(user_data_get()->alarm.alarm_enable[i] == 1)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NO));
+                        }else if(user_data_get()->alarm.alarm_enable[i] == 2)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC));
+                        }
+                
+                }
+        }
+}
+
+        
+        
 
 static void sat_layout_enter(setting_sensor_switch)
 {
@@ -60,7 +125,7 @@ static void sat_layout_enter(setting_sensor_switch)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      layout_setting_general_language_get(SETTING_GENERAL_LANG_ID_LANG_SENSOR_SETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -124,10 +189,14 @@ static void sat_layout_enter(setting_sensor_switch)
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_sensor_switch_obj_id_list);
                 lv_common_style_set_common(list, setting_sensor_switch_obj_id_list, 48, 88, 928, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
                 
-
+                int j = 0;
                 for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
                 {
-                        lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                        if(user_data_get()->alarm.alarm_enable[i] == 0)
+                        {
+                                continue;
+                        }
+                        lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                         main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -139,7 +208,9 @@ static void sat_layout_enter(setting_sensor_switch)
                                                                         NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                         840, 10, 80, 48, main_list_group[i].img_id,
                                                                         (user_data_get()->alarm.away_alarm_enable_list & (0x01 << i))?resource_ui_src_get("btn_switch_on.png"):resource_ui_src_get("btn_switch_off.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                                                        j ++;
                 }
+                layout_sensor_usage_setting_display();
         }
 }
 static void sat_layout_quit(setting_sensor_switch)

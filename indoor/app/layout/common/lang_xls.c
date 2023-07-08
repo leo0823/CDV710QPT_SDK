@@ -7,7 +7,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include "lang_xls.h"
-#include "language_new.h"
+#include "language.h"
 // #include "user_data.h"
 
 #define LAN_ERR(format, ...) printf("\e[0;1;31m"                             \

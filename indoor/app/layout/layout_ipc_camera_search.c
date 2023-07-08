@@ -1,9 +1,9 @@
 #include "layout_define.h"
 #include "layout_ipc_camera.h"
-#include "layout_home.h"
 enum
 {
         ipc_camera_search_obj_id_title,
+        ipc_camera_search_obj_id_tips,
         ipc_camera_search_obj_id_cancel,
 
         ipc_camera_search_obj_id_searched_door_camera_title,
@@ -40,7 +40,7 @@ static lv_obj_t *ipc_camera_search_list_create(void)
                 return list;
         }
         list = lv_list_create(sat_cur_layout_screen_get());
-        lv_common_style_set_common(list, ipc_camera_search_obj_id_door_camera_list, 48, 136, 928, (600 - 200), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        lv_common_style_set_common(list, ipc_camera_search_obj_id_door_camera_list, 48, layout_ipc_cmeara_is_doorcamera_get()?184:136, 928, (600 - 200), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
         return list;
 }
 
@@ -104,6 +104,19 @@ static void sat_layout_enter(ipc_camera_search)
                                                                                     : lang_str_get(HOME_XLS_LANG_ID_CCTV),
                                       0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
+
+        {
+                if(layout_ipc_cmeara_is_doorcamera_get())
+                {
+                        lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_tips, 0, 88, 1024, 40,
+                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_PRESS),
+                        0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                }
+
+        }
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -123,7 +136,7 @@ static void sat_layout_enter(ipc_camera_search)
          ** 说明: 显示搜索的设备
          ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_searched_door_camera_title, 16, 88, 584, 48,
+                lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_searched_door_camera_title, 16, layout_ipc_cmeara_is_doorcamera_get()?146:88, 584, 48,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -138,6 +151,17 @@ static void sat_layout_enter(ipc_camera_search)
 static void sat_layout_quit(ipc_camera_search)
 {
         ipcamera_state_callback_register(NULL);
+        // for(int i = 0; i < network_data_get()->cctv_device_count; i++)
+        // {
+        //         char ch[5];
+        //         strncpy(ch,network_data_get()->cctv_device[i].door_name,5);
+        //         if(strncmp(ch,"CCTV1",5) == 0)
+        //         {
+        //                 continue;;
+        //         }
+
+        // }
 }
 
 sat_layout_create(ipc_camera_search);
+

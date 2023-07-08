@@ -12,8 +12,8 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
+        // sat_linphone_audio_play_volume_set(100);
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
-        // sat_linphone_audio_play_start("/tmp/nfs/CDV810QPT/indoor/app/layout/resource/rings/sound6.mp3",100);
         return true;
         }
 
@@ -24,6 +24,7 @@ bool ring_touch_play(void)
 ***********************************************/
 bool ring_door_call_play(void)
 {
+        
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
 
@@ -39,6 +40,7 @@ bool ring_door_call_play(void)
 ***********************************************/
 bool ring_unlock_play(void)
 {
+
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
 
@@ -72,4 +74,22 @@ bool ring_alarm_play(void)
         sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
         return true;
 
+}
+
+/************************************************************
+** 函数说明: 播放蜂鸣器报警
+** 作者: xiaoxiao
+** 日期: 2023-07-05 11:19:41
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool ring_buzzer_play(void)
+{
+        char cmd[128] = {0};
+        memset(cmd, 0, sizeof(cmd));
+
+        sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.buzzer_tone);
+        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.door_ring_volume);
+        // sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
+        // return true;
 }

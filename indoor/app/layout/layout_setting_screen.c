@@ -1,5 +1,4 @@
 #include "layout_define.h"
-#include "layout_setting_screen.h"
 #include "layout_setting_general.h"
 enum
 {

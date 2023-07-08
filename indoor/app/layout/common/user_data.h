@@ -35,11 +35,11 @@ typedef struct
         int inter_ring_volume;
         int inter_talk_volume;
 
-        int buzzer;
-        int front_door;
-        int common_entrance;
-        int securirty_office;
-        int extension;
+        int buzzer_tone;
+        int buzzer_volume;
+        int common_entrance_tone;
+        int securirty_office_tone;
+        int extension_tone;
         int entracne_volume;
         int entrancr_voice;
         int common_entrance_volume;
@@ -73,6 +73,8 @@ typedef struct
         /***** 转换为分钟 （hh：mm）*****/
         int frame_time_start;
         int frame_time_end;
+
+        int wait_display_time;
 
         /***** 夜间模式 *****/
         bool night_mode;
@@ -125,6 +127,8 @@ typedef struct
         int emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
 
         int alarm_enable[8];//0不使能，1：NO高电平触发 2：NC低电平触发
+        int away_sensor_enable[8];
+        int security_sensor_enable[8];
 
         int alarm_trigger[8];
 
@@ -181,7 +185,8 @@ typedef struct
         char sip_user[32];
         char ip[32];
         char mask[32];
-
+        int  cctv_ch_index[8];
+        int  door_ch_index[8];
         int door_device_count;
         struct ipcamera_info door_device[DEVICE_MAX];
 
