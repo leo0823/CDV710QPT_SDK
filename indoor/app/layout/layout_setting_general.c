@@ -728,9 +728,14 @@ static lv_obj_t *setting_sub_list_create(void)
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
         lv_common_style_set_common(list, setting_general_obj_id_setting_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
+        int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                if((user_data_get()->system_mode != 0 || user_data_get()->system_mode != 1) && ((j >= 5) && (j <= 8)))
+                {
+                        continue;
+                }
+                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -744,6 +749,7 @@ static lv_obj_t *setting_sub_list_create(void)
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                j++;
         }
         door_open_method_sub_display();
         door1_open_moudle_sub_display();

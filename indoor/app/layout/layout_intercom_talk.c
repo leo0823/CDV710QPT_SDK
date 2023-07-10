@@ -216,7 +216,7 @@ static bool intercom_talk_call_answer_callback(char *args)
 {
         intercom_call_state = 3;
 
-        intercom_talk_timeout = 60;
+        intercom_talk_timeout = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60 : 5 * 60;
         intercom_talk_call_volume_obj_display();
         intercom_talk_answer_obj_display();
         intercom_talk_handup_obj_display();
@@ -232,7 +232,7 @@ static bool intercom_talk_call_answer_callback(char *args)
 static void sat_layout_enter(intercom_talk)
 {
         standby_timer_close();
-        intercom_talk_timeout = user_data_get()->call_time;
+        intercom_talk_timeout = 30;
         intercom_talk_status_background_display();
         /***********************************************
          ** 作者: leo.liu
