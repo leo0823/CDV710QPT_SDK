@@ -590,26 +590,26 @@ static void sat_layout_enter(intercom_call)
                 lv_obj_t *cont = lv_tabview_get_content(tabview);
                 lv_obj_t *page_1 = lv_obj_get_child_form_id(cont, 0);
                 {
-                        lv_obj_t *txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_externsion, 0, 8, 231, 231,
+                        lv_obj_t *exten_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_externsion, 0, 8, 231, 231,
                                                                   intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                   lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-                        lv_obj_set_style_pad_top(txt_obj, 94, LV_PART_MAIN);
-                        lv_obj_set_style_bg_color(txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
-                        lv_obj_set_style_bg_opa(txt_obj, LV_OPA_COVER, LV_STATE_USER_1);
-                        lv_obj_add_state(txt_obj, LV_STATE_USER_1);
+                        lv_obj_set_style_pad_top(exten_txt_obj, 94, LV_PART_MAIN);
+                        lv_obj_set_style_bg_color(exten_txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
+                        lv_obj_set_style_bg_opa(exten_txt_obj, LV_OPA_COVER, LV_STATE_USER_1);
+                        lv_obj_add_state(exten_txt_obj, LV_STATE_USER_1);
 
-                        txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_guard, 0, 231 + 8, 231, 231,
+                        lv_obj_t *guard_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_guard, 0, 231 + 8, 231, 231,
                                                         intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                         lang_str_get(INTERCOM_XLS_LANG_ID_GUARD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-                        lv_obj_set_style_pad_top(txt_obj, 94, LV_PART_MAIN);
-                        lv_obj_set_style_bg_color(txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
-                        lv_obj_set_style_bg_opa(txt_obj, LV_OPA_COVER, LV_STATE_USER_1);
+                        lv_obj_set_style_pad_top(guard_txt_obj, 94, LV_PART_MAIN);
+                        lv_obj_set_style_bg_color(guard_txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
+                        lv_obj_set_style_bg_opa(guard_txt_obj, LV_OPA_COVER, LV_STATE_USER_1);
 
                         lv_obj_t *btnmatrix = lv_common_number_input_keyboard_create(page_1, intercom_call_obj_id_id_base, 231, 8, 793, 384,
                                                                                      intercom_id_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00a8ff,
@@ -617,6 +617,14 @@ static void sat_layout_enter(intercom_call)
                                                                                      0, 3, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                      0, 0);
+                        if(user_data_get()->system_mode != 1)
+                        {
+                                lv_obj_add_flag(exten_txt_obj,LV_OBJ_FLAG_HIDDEN);
+                                lv_obj_add_flag(guard_txt_obj,LV_OBJ_FLAG_HIDDEN);
+                                lv_obj_set_style_x(btnmatrix,0,LV_PART_MAIN);
+                                lv_obj_set_style_width(btnmatrix,1024,LV_PART_MAIN);
+                        }
+
 
                         lv_obj_set_style_bg_color(btnmatrix, lv_color_hex(0x194861), LV_STATE_DISABLED | LV_PART_ITEMS);
                         lv_obj_set_style_bg_opa(btnmatrix, LV_OPA_COVER, LV_STATE_DISABLED | LV_PART_ITEMS);

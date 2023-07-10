@@ -203,17 +203,16 @@ static void setting_building_house_number_item_display(void)
         lv_obj_t * item4_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_extension_number_label);
         lv_obj_t * item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_extension_number_textbox);
 
-        if(user_data_get()->system_mode == 0)
-        {
-                lv_obj_set_style_y(item1_label,250,LV_PART_MAIN);
-                lv_obj_set_style_y(item1_txt,257,LV_PART_MAIN);
-                lv_obj_set_style_y(item3_label,334,LV_PART_MAIN);
-                lv_obj_set_style_y(item3_txt,341,LV_PART_MAIN);
-                lv_obj_add_flag(item2_label,LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(item2_txt,LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(item4_label,LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(item4_txt,LV_OBJ_FLAG_HIDDEN);
-        }
+
+        lv_obj_set_style_y(item1_label,250,LV_PART_MAIN);
+        lv_obj_set_style_y(item1_txt,257,LV_PART_MAIN);
+        lv_obj_set_style_y(item3_label,334,LV_PART_MAIN);
+        lv_obj_set_style_y(item3_txt,341,LV_PART_MAIN);
+        lv_obj_add_flag(item2_label,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item2_txt,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item4_label,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item4_txt,LV_OBJ_FLAG_HIDDEN);
+
 
 }
 static void sat_layout_enter(setting_building_house_number)
