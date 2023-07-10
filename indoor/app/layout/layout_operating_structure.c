@@ -59,8 +59,15 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         {
                 user_data_get()->system_mode = 1;
         }
+        char number[32] = {0};
+        memset(number, 0, sizeof(number));
+        strncpy(number,network_data_get()->sip_user,11);
+        sprintf(&number[11],"%d",1);
+        memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
+        strcpy(network_data_get()->sip_user, number);
+        setenv("SIP", network_data_get()->sip_user, 1);
+        network_data_save();
         user_data_save();
-
         operating_structure_goto_layout_process(LV_SCR_LOAD_ANIM_FADE_IN);
 }
 static void operating_structure_slave_seting_click(lv_event_t *e)

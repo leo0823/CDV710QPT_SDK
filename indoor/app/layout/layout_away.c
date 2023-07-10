@@ -913,7 +913,7 @@ static void layout_away_func_setting_create()
                                                 (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                                                 layout_away_auto_record_enable_display();
 
-    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call,514, 72 * 4, 510, 72,
+    lv_obj_t * by_pass = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call,514, 72 * 4, 510, 72,
                                                     NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -924,7 +924,13 @@ static void layout_away_func_setting_create()
                                                     0, 42, 576, 29, -1,
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     370, 12, 80, 48, layout_away_bypass_call_img_id,
-                                                (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);                                                                                                                                     
+                                                (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+    if(user_data_get()->system_mode != 1)
+    {
+        lv_obj_add_flag(by_pass,LV_OBJ_FLAG_HIDDEN);
+    }
+
+                                                                                                                                         
 }
 
 static void sat_layout_enter(away)
