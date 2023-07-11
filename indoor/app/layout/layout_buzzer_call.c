@@ -90,8 +90,8 @@ static void buzzer_call_status_icon_display(void)
 
 static void buzzer_call_handup_obj_click(lv_event_t *e)
 {
-    ring_door_call_play();
-   // sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+
+   sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         
 }
 
@@ -124,7 +124,7 @@ static bool layout_buzzer_call_ringplay_register_callback(int arg)
         SAT_DEBUG("arg is  %d\n",arg);
         if(arg == 1)
         {
-                //ring_door_call_play();
+                ring_buzzer_play();
         }
         return true;
 }
@@ -132,7 +132,7 @@ static bool layout_buzzer_call_ringplay_register_callback(int arg)
 
 static void sat_layout_enter(buzzer_call)
 {
-        ring_play_event_cmd_register(layout_buzzer_call_ringplay_register_callback);
+ 
         standby_timer_close();
         buzzer_call_timeout = 30;
         buzzer_call_status_background_display();
@@ -177,10 +177,10 @@ static void sat_layout_enter(buzzer_call)
                 }
         }
         {
-            // if(user_data_get()->audio.ring_mute == false)
-            // {
-            //     ring_buzzer_play();
-            // }
+            if(user_data_get()->audio.ring_mute == false)
+            {
+                ring_buzzer_play();
+            }
 
         }
         /***********************************************
@@ -236,6 +236,8 @@ static void sat_layout_enter(buzzer_call)
                                          resource_ui_src_get("btn_call_sound.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 buzzer_call_volume_obj_display();
         }
+
+        ring_play_event_cmd_register(layout_buzzer_call_ringplay_register_callback);
 }
 
 static void sat_layout_quit(buzzer_call)
