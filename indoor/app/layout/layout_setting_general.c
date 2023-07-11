@@ -731,7 +731,7 @@ static lv_obj_t *setting_sub_list_create(void)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if((user_data_get()->system_mode != 0 || user_data_get()->system_mode != 1) && ((j >= 5) && (j <= 8)))
+                if((user_data_get()->system_mode != 0 && user_data_get()->system_mode != 1) && ((i >= 5) && (i <= 8)))
                 {
                         continue;
                 }

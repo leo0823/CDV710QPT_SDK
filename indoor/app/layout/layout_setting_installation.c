@@ -2,6 +2,7 @@
 #include "layout_setting_general.h"
 #include "layout_ipc_camera.h"
 #include "tuya/tuya_api.h"
+#include "layout_setting_ipaddress.h"
 enum
 {
         setting_installation_obj_id_title,
