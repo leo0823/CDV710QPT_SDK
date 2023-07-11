@@ -12,7 +12,7 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
-        // sat_linphone_audio_play_volume_set(100);
+        sat_linphone_audio_play_volume_set(100);
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
         return true;
         }
