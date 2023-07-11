@@ -152,8 +152,8 @@ static void ipc_camera_register_del_msgbox_confirm_click(lv_event_t *e)
                         memmove(&network_data_get()->door_device[device_index], &network_data_get()->door_device[device_index + 1], sizeof(struct ipcamera_info) * (network_data_get()->door_device_count - device_index - 1));
                 }
                 memmove(&network_data_get()->door_ch_index[device_index], &network_data_get()->door_ch_index[device_index + 1], sizeof(int) * (network_data_get()->door_device_count - device_index - 1));
-                network_data_get()->door_ch_index[network_data_get()->door_device_count] = 0;
                 network_data_get()->door_device_count--;
+                network_data_get()->door_ch_index[network_data_get()->door_device_count] = 0;
         }
         else
         {
@@ -166,9 +166,9 @@ static void ipc_camera_register_del_msgbox_confirm_click(lv_event_t *e)
                         memmove(&network_data_get()->cctv_device[device_index], &network_data_get()->cctv_device[device_index + 1], sizeof(struct ipcamera_info) * (network_data_get()->cctv_device_count - device_index - 1));
                 }
                 memmove(&network_data_get()->cctv_ch_index[device_index], &network_data_get()->cctv_ch_index[device_index + 1], sizeof(int) * (network_data_get()->cctv_device_count - device_index - 1));
-                network_data_get()->cctv_ch_index[network_data_get()->cctv_device_count] = 0;
 
                 network_data_get()->cctv_device_count--;
+                network_data_get()->cctv_ch_index[network_data_get()->cctv_device_count] = 0;
         }
 
         network_data_save();

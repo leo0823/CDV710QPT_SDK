@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_ipc_camera.h"
+#include "layout_setting_ipaddress.h"
 
 enum
 {
@@ -32,7 +33,8 @@ static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
 
 static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 {
-
+        enter_layout_setting_ipaddress_ipc_display_set(true);
+        sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
 static bool ipc_camera_search_display_register_func(void)
@@ -168,7 +170,7 @@ static void sat_layout_enter(ipc_camera_display)
          ** 说明: 顶部半透明显示
          ***********************************************/
         {
-                lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont, 0, 0, 1024, layout_ipc_cmeara_is_doorcamera_get() == true ? 160 : 80,
+                lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont, 0, 0, 1024, layout_ipc_cmeara_is_doorcamera_get() == true ? 160 : 130,
                                                             NULL, false, LV_OPA_50, 0, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -207,29 +209,28 @@ static void sat_layout_enter(ipc_camera_display)
                          ** 日期: 2023-2-2 13:42:25
                          ** 说明: ip
                          ***********************************************/
-                        if (layout_ipc_cmeara_is_doorcamera_get() == true)
-                        {
-                                {
-                                        lv_common_img_btn_create(parent, ipc_camera_search_display_obj_id_ip_edit, 952, 15, 48, 48,
-                                                                 ipc_camera_search_display_ip_edit_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                 resource_ui_src_get("btn_title_IPset.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                                }
 
-                                /***********************************************
-                                 ** 作者: leo.liu
-                                 ** 日期: 2023-2-2 13:46:56
-                                 ** 说明: 标题显示
-                                 ***********************************************/
-                                {
-                                        lv_common_text_create(parent, ipc_camera_search_display_obj_id_if_you, 16, 93, 823, 54,
-                                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_SEE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
-                                }
+                        {
+                                lv_common_img_btn_create(parent, ipc_camera_search_display_obj_id_ip_edit, 952, 15, 48, 48,
+                                                                ipc_camera_search_display_ip_edit_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                resource_ui_src_get("btn_title_IPset.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         }
+
+                        /***********************************************
+                         ** 作者: leo.liu
+                                ** 日期: 2023-2-2 13:46:56
+                                ** 说明: 标题显示
+                                ***********************************************/
+                        {
+                                lv_common_text_create(parent, ipc_camera_search_display_obj_id_if_you, 16, 93, 823, 54,
+                                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                        lang_str_get(layout_ipc_cmeara_is_doorcamera_get()?DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_SEE : DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_REGISTER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                        }
+                        
                 }
         }
         /***********************************************

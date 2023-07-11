@@ -30,13 +30,13 @@ static const char *monitor_channel_door_sip_uri_get(int index, bool update)
         {
                 if (sat_ipcamera_device_name_get(index, 100) == true)
                 {
-                        if (strncmp(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
-                        {
-                                memset(&network_data_get()->door_device[index].door_name[6], 0, sizeof(network_data_get()->door_device[index].door_name) - 6);
-                                strncpy(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
-                                strcat(network_data_get()->door_device[index].door_name,")");
-                                network_data_save();
-                        }
+                        // if (strncmp(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
+                        // {
+                        //         memset(&network_data_get()->door_device[index].door_name[6], 0, sizeof(network_data_get()->door_device[index].door_name) - 6);
+                        //         strncpy(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
+                        //         strcat(network_data_get()->door_device[index].door_name,")");
+                        //         network_data_save();
+                        // }
                         return sat_ipcamera_sip_addr_get(index);
                 }
                 return NULL;
@@ -50,13 +50,13 @@ static const char *monitor_channel_cctv_rtsp_uri_get(int index)
 
         if (sat_ipcamera_device_name_get(index, 100) == true)
         {
-                if (strncmp(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
-                {
-                        memset(&network_data_get()->cctv_device[index].door_name[6], 0, sizeof(network_data_get()->cctv_device[index].door_name) - 6);
-                        strncpy(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
-                        strcat(network_data_get()->cctv_device[index].door_name,")");
-                        network_data_save();
-                }
+                // if (strncmp(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
+                // {
+                //         memset(&network_data_get()->cctv_device[index].door_name[6], 0, sizeof(network_data_get()->cctv_device[index].door_name) - 6);
+                //         strncpy(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
+                //         strcat(network_data_get()->cctv_device[index].door_name,")");
+                //         network_data_save();
+                // }
         }
         memset(rtsp_uri, 0, sizeof(rtsp_uri));
         sprintf(rtsp_uri, "%s %s %s", sat_ipcamera_rtsp_addr_get(index, 0), sat_ipcamera_username_get(index), sat_ipcamera_password_get(index));

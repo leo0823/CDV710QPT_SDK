@@ -194,7 +194,12 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
 
 static void setting_common_entrance_volume_slider_display(lv_obj_t * parent)
 {
-        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_common_entrance_cont),setting_volume_obj_id_common_entrance_volume_slider_cont);
+        lv_obj_t * obj_cont = lv_obj_get_child_form_id(parent,setting_volume_obj_id_common_entrance_cont);
+        if(obj_cont  == NULL)
+        {
+                return;
+        }
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(obj_cont,setting_volume_obj_id_common_entrance_volume_slider_cont);
         lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_common_entrance_volume_slider);
         lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_common_entrance_volume_slider_text);
         int cur_volume = user_data_get()->audio.common_entrance_volume;
@@ -237,7 +242,12 @@ static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
 
 static void setting_guard_station_slider_display(lv_obj_t * parent)
 {
-        lv_obj_t * slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_volume_obj_id_guard_station_cont),setting_volume_obj_id_guard_station_volume_slider_cont);
+        lv_obj_t * obj_cont = lv_obj_get_child_form_id(parent,setting_volume_obj_id_guard_station_cont);
+        if(obj_cont  == NULL)
+        {
+                return;
+        }
+        lv_obj_t * slider_cont = lv_obj_get_child_form_id(obj_cont,setting_volume_obj_id_guard_station_volume_slider_cont);
         lv_obj_t * slider_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_guard_station_volume_slider);
         lv_obj_t * value_obj = lv_obj_get_child_form_id(slider_cont,setting_volume_obj_id_guard_station_volume_slider_text);
         int cur_volume = user_data_get()->audio.guard_station_volume;
@@ -442,10 +452,14 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
 
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
-        
+        int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                lv_obj_t *item = lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                if((user_data_get()->system_mode !=1) && (i == 2 || i == 3))
+                {
+                        continue;;
+                }
+                lv_obj_t *item = lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                                  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -500,6 +514,7 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
                                                 360, 9, 0Xffffff, LV_OPA_COVER, NULL,
                                                 0, 100, 50);
                 }
+                j++;
         }
         setting_buzzer_volume_slider_display(list);
         setting_entrance_volume_slider_display(list);
