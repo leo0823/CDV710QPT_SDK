@@ -425,8 +425,10 @@ static bool ipaddr_udhcp_server_get_wait(void)
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
-        system("killall udhcpc");
-        system("udhcpc  -i eth0 -s /etc/init.d/udhcpc.script &");
+        // system("killall udhcpc");
+        sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+
+        system("udhcpc -i eth0 -s /etc/init.d/udhcpc.script &");
         usleep(10 * 1000);
         while (sat_ip_mac_addres_get("eth0", ip, mac) == false)
         {
@@ -554,7 +556,8 @@ static bool automatic_ip_setting(void)
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if (ipaddr_udhcp_server_get_wait() == false)
         {
-                system("killall udhcpc");
+                sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+                // system("killall udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->ip[0] != '\0')
                 {
                         obtain_aipddress_based_on_manual();

@@ -1261,7 +1261,8 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t * ev)
 
 static void sat_layout_enter(monitor)
 {
-        
+
+        lv_obj_pressed_func = NULL;
         standby_timer_close();
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = false;
@@ -1623,7 +1624,7 @@ static void sat_layout_enter(monitor)
 }
 static void sat_layout_quit(monitor)
 {
-        
+        lv_obj_pressed_func = lv_layout_touch_callback;
         MON_ENTER_FLAG flag = monitor_enter_flag_get();
         int ch = monitor_channel_get();
         CALL_LOG_TYPE type;
