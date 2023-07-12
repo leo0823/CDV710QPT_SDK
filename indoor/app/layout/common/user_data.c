@@ -256,7 +256,6 @@ static void user_data_check_valid(void)
          user_data_audio_check_range_out(common_entrance_tone, 1, 6);
          
          user_data_audio_check_range_out(securirty_office_tone, 1, 6);
-         user_data_audio_check_range_out(extension_tone, 1, 6);
 
         user_data_audio_check_range_out(door_ring_volume, 0, 3);
         user_data_audio_check_range_out(inter_ring_volume, 0, 3);

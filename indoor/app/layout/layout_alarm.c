@@ -434,6 +434,7 @@ static bool layout_alarm_ringplay_register_callback(int arg)
 ************************************************************/
 static void sat_layout_enter(alarm)
 {
+        sat_linphone_audio_play_stop();
         alarm_return = false;
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         standby_timer_close();
