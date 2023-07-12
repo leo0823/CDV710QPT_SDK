@@ -6,7 +6,7 @@ enum
         buzzer_call_obj_top,
         buzzer_call_obj_status_label,
         buzzer_call_obj_status_icon,
-        buzzer_call_buttom_cont,
+        buzzer_call_bottom_cont,
         buzzer_call_obj_volume,
         buzzer_call_obj_handup,
         buzzer_obj_id_vol_cont,
@@ -100,12 +100,12 @@ static void buzzer_call_handup_obj_click(lv_event_t *e)
 
 static void buzzer_call_volume_obj_click(lv_event_t *e)
 {
-        lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_call_buttom_cont);
+        lv_obj_t *bottom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_call_bottom_cont);
 
         lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_obj_id_vol_cont);
 
 
-        lv_obj_add_flag(buttom_cont,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(bottom_cont,LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
 
 }
@@ -120,13 +120,26 @@ static bool layout_buzzer_call_ringplay_register_callback(int arg)
         return true;
 }
 
+static void setting_buzzer_call_slider_obj_change_cb(lv_event_t *ev)
+{
+
+        lv_obj_t *parent = lv_event_get_current_target(ev);
+
+        int value = lv_slider_get_value(parent);
+
+        user_data_get()->audio.buzzer_volume = value;
+        user_data_save();
+        sat_linphone_audio_play_volume_set(value);
+        	
+}
+
 static void layout_buzzer_vol_bar_create(lv_obj_t *parent)
 {
 
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
         lv_common_slider_create(parent, buzzer_vol_obj_id_slider_cont, 97, 23, 831, 48,
-                        NULL, LV_OPA_TRANSP, 0X00,
+                        setting_buzzer_call_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         38, 8, 35, 23, 0,
@@ -145,11 +158,11 @@ static void layout_buzzer_vol_bar_create(lv_obj_t *parent)
 
 static void layout_buzzer_call_screen_click(lv_event_t *e)
 {
-        lv_obj_t * buttom_cont =  lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_call_buttom_cont);
+        lv_obj_t * bottom_cont =  lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_call_bottom_cont);
         lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_obj_id_vol_cont);
-        if(lv_obj_has_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN) == true)
+        if(lv_obj_has_flag(bottom_cont, LV_OBJ_FLAG_HIDDEN) == true)
         {
-                lv_obj_clear_flag(buttom_cont,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(bottom_cont,LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
         }
 }
@@ -250,12 +263,12 @@ static void sat_layout_enter(buzzer_call)
         ** 说明:挂断按钮图标显示
         ***********************************************/
         {
-                lv_obj_t * buttom_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_call_buttom_cont, 0, 464, 1024, 120,
+                lv_obj_t * bottom_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_call_bottom_cont, 0, 464, 1024, 120,
                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_common_img_btn_create(buttom_cont, buzzer_call_obj_handup, 460, 0, 104, 104,
+                lv_common_img_btn_create(bottom_cont, buzzer_call_obj_handup, 460, 0, 104, 104,
                                         buzzer_call_handup_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -267,7 +280,7 @@ static void sat_layout_enter(buzzer_call)
                 ** 说明:音量按钮图标显示
                 ***********************************************/
                 {
-                        lv_common_img_btn_create(buttom_cont, buzzer_call_obj_volume, 32, 24, 81, 81,
+                        lv_common_img_btn_create(bottom_cont, buzzer_call_obj_volume, 32, 24, 81, 81,
                                                 buzzer_call_volume_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
