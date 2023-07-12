@@ -167,4 +167,10 @@ int sat_socket_udp_receive(int socket_fd, char *data, size_t data_len, struct so
 ** 说明: 发现IP是否存在
 ***********************************************/
 bool sat_network_ip_pings_check(const char *ip, int pings_count, int one_wait_sec);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-7 14:46:50
+** 说明: 杀死指定的进程
+***********************************************/
+bool sat_kill_task_process(const char *process_name);
 #endif
