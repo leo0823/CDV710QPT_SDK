@@ -77,7 +77,7 @@ static const user_data_info user_data_default =
             .night_mode = false,
             .night_time_start = 0,
             .night_time_end = 0,
-            .frame_list = 0x11,
+            .frame_list = 0x03,
             .frame_background = false,
             .door1 = {.bright = 10, .cont = 10, .color = 10},
             .door2 = {.bright = 10, .cont = 10, .color = 10},
