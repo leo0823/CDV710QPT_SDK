@@ -162,7 +162,7 @@ static void layout_setting_sound_sub_title_display(lv_obj_t *parent)
         {
                 return;
         }
-        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.extension_tone));
+        lv_label_set_text(sub_obj, lang_str_get(SOUND_XLS_LANG_ID_RINGTONE1 - 1 + user_data_get()->audio.inter_tone));
 }
 
 static void setting_sound_ring_msgbox_confirm_click(lv_event_t *e)
@@ -205,7 +205,7 @@ static void setting_sound_ring_msgbox_confirm_click(lv_event_t *e)
                         }
                         else if (id == setting_sound_obj_id_extension_cont)
                         {
-                                user_data_get()->audio.extension_tone = i + 1;
+                                user_data_get()->audio.inter_tone = i + 1;
                         }
                         user_data_save();
                         break;
@@ -286,7 +286,7 @@ static void setting_sound_security_office_obj_click(lv_event_t *ev)
 static void setting_sound_extension_obj_click(lv_event_t *ev)
 {
         layout_setting_sound_select_id_set(setting_sound_obj_id_extension_cont);
-        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_EXTENSION), user_data_get()->audio.extension_tone);
+        setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_EXTENSION), user_data_get()->audio.inter_tone);
 }
 
 /***********************************************
