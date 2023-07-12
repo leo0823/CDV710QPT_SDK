@@ -145,7 +145,16 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
         if(parent != NULL)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
-                lv_label_set_text(obj, network_data_get()->sip_user);   
+                char building[8] = {0};
+                char household[8] = {0};
+                int loacal_number[8] = {0};
+                const char *username = getenv("SIP");
+                loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+                loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
+
+                sprintf(building, "%04d", loacal_number[0]);
+                sprintf(household, "%04d", loacal_number[1]);
+                lv_label_set_text_fmt(obj, "%s-%s",building,household);   
         }
 
 }
@@ -229,7 +238,6 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                         continue;
                                 }
                         }
-                       
                 }
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
