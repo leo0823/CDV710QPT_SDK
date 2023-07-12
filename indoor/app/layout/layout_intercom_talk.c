@@ -8,6 +8,9 @@ enum
         intercom_talk_obj_volume,
         intercom_talk_obj_handup,
         intercom_talk_obj_answer,
+        intercom_talk_obj_id_vol_cont,
+        intercom_talk_screen_obj_id,
+        intercom_talk_vol_obj_id_slider_cont,
 };
 
 static int intercom_talk_timeout = 0;
@@ -179,6 +182,14 @@ static bool intercom_talk_call_end_callback(char *arg)
 }
 static void intercom_talk_call_volume_obj_click(lv_event_t *e)
 {
+        lv_obj_t * volume = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
+        lv_obj_t * answer = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_answer);
+        lv_obj_t * handup = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
+        lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_vol_cont);
+        lv_obj_add_flag(volume,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(answer,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(handup,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
 }
 static void intercom_talk_call_volume_obj_display(void)
 {
@@ -194,7 +205,7 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
 {
         intercom_call_state = 3;
 
-        intercom_talk_timeout = 60;
+        intercom_talk_timeout = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60 : 5 * 60;
         intercom_talk_call_volume_obj_display();
         intercom_talk_answer_obj_display();
         intercom_talk_handup_obj_display();
@@ -229,11 +240,74 @@ static bool intercom_talk_call_answer_callback(char *args)
         SAT_DEBUG("============================");
         return true;
 }
+
+static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
+{
+
+        lv_obj_t *parent = lv_event_get_current_target(ev);
+
+        int value = lv_slider_get_value(parent);
+
+        user_data_get()->audio.inter_ring_volume = value;
+        user_data_save();
+        sat_linphone_audio_play_volume_set(value);
+        	
+}
+
+static void layout_intercom_talk_vol_bar_create(lv_obj_t *parent)
+{
+
+        void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
+        void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
+        lv_common_slider_create(parent, intercom_talk_vol_obj_id_slider_cont, 97, 23, 831, 48,
+                        setting_intercom_talk_call_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        38, 8, 35, 23, 0,
+                        "30", 0Xffffff, LV_TEXT_ALIGN_RIGHT, lv_font_normal,
+                        127, 18, 577, 12, 1, LV_OPA_COVER, 0x666666, LV_OPA_COVER, 0x00a8ff,
+                        74, 3, 42, 42, 2,
+                        left_src, LV_OPA_TRANSP, 0X00, LV_ALIGN_CENTER,
+                        715, 3, 42, 42, 3,
+                        right_src, LV_OPA_TRANSP, 0x00, LV_ALIGN_CENTER,
+                        360, 9, 0Xffffff, LV_OPA_COVER, NULL,
+                        0, 100, user_data_get()->display.lcd_brigtness);
+        
+        resouce_file_src_free(left_src);
+        resouce_file_src_free(right_src);
+}
+
+static void layout_intercom_talk_call_screen_click(lv_event_t *e)
+{
+        lv_obj_t * volume = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
+        lv_obj_t * answer = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_answer);
+        lv_obj_t * handup = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
+        lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_vol_cont);
+        if(lv_obj_has_flag(vol_cont, LV_OBJ_FLAG_HIDDEN) == false)
+        {
+                lv_obj_clear_flag(volume,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(answer,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(handup,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
+        }
+}
+
 static void sat_layout_enter(intercom_talk)
 {
+        lv_obj_pressed_func = NULL;
         standby_timer_close();
         intercom_talk_timeout = 30;
         intercom_talk_status_background_display();
+        //满屏查看
+        {
+                        
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_screen_obj_id, 0, 0, 1024, 600,
+                                layout_intercom_talk_call_screen_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+        
+        }
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -340,7 +414,17 @@ static void sat_layout_enter(intercom_talk)
                                          resource_ui_src_get("btn_call_sound.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 intercom_talk_call_volume_obj_display();
         }
+        {
+                lv_obj_t * vol_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_obj_id_vol_cont, 0, 504, 1024, 96,
+                NULL, true, LV_OPA_50, 0, LV_OPA_50, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                
+                lv_obj_add_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
 
+                layout_intercom_talk_vol_bar_create(vol_cont);
+        }
         if (intercom_call_state == 1)
         {
                 char cmd[128] = {0};
@@ -356,6 +440,7 @@ static void sat_layout_enter(intercom_talk)
 
 static void sat_layout_quit(intercom_talk)
 {
+        lv_obj_pressed_func = lv_layout_touch_callback;
         standby_timer_restart(true);
         intercom_call_state = 0;
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);

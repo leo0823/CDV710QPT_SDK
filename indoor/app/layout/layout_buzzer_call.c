@@ -120,13 +120,26 @@ static bool layout_buzzer_call_ringplay_register_callback(int arg)
         return true;
 }
 
+static void setting_buzzer_call_slider_obj_change_cb(lv_event_t *ev)
+{
+
+        lv_obj_t *parent = lv_event_get_current_target(ev);
+
+        int value = lv_slider_get_value(parent);
+
+        user_data_get()->audio.buzzer_volume = value;
+        user_data_save();
+        sat_linphone_audio_play_volume_set(value);
+        	
+}
+
 static void layout_buzzer_vol_bar_create(lv_obj_t *parent)
 {
 
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
         lv_common_slider_create(parent, buzzer_vol_obj_id_slider_cont, 97, 23, 831, 48,
-                        NULL, LV_OPA_TRANSP, 0X00,
+                        setting_buzzer_call_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         38, 8, 35, 23, 0,
