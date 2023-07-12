@@ -2,14 +2,15 @@
 #include "layout_intercom_call.h"
 enum
 {
+        intercom_talk_screen_obj_id,
         intercom_talk_obj_top,
         intercom_talk_obj_status_label,
         intercom_talk_obj_status_icon,
         intercom_talk_obj_volume,
         intercom_talk_obj_handup,
         intercom_talk_obj_answer,
+        intercom_talk_call_bottom_cont,
         intercom_talk_obj_id_vol_cont,
-        intercom_talk_screen_obj_id,
         intercom_talk_vol_obj_id_slider_cont,
 };
 
@@ -40,7 +41,7 @@ static lv_obj_t *intercom_talk_call_top_obj_item_get(int id)
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_top);
         if (parent == NULL)
         {
-                SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_top);");
+                SAT_DEBUG(" lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_top);");
                 return NULL;
         }
         lv_obj_t *obj = lv_obj_get_child_form_id(parent, id);
@@ -132,7 +133,7 @@ static void intercom_talk_handup_obj_click(lv_event_t *e)
 
 static void intercom_talk_handup_obj_display(void)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_handup);
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_call_bottom_cont), intercom_talk_obj_handup);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_handup);");
@@ -143,7 +144,7 @@ static void intercom_talk_handup_obj_display(void)
 
 static void intercom_talk_answer_obj_display(void)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_answer);
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_call_bottom_cont),intercom_talk_obj_answer);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_handup);");
@@ -182,18 +183,14 @@ static bool intercom_talk_call_end_callback(char *arg)
 }
 static void intercom_talk_call_volume_obj_click(lv_event_t *e)
 {
-        lv_obj_t * volume = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
-        lv_obj_t * answer = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_answer);
-        lv_obj_t * handup = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
+        lv_obj_t * bottom = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_call_bottom_cont);
         lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_vol_cont);
-        lv_obj_add_flag(volume,LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(answer,LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(handup,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(bottom,LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
 }
 static void intercom_talk_call_volume_obj_display(void)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_volume);
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_call_bottom_cont),intercom_talk_obj_volume);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_volume);");
@@ -247,11 +244,16 @@ static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
         lv_obj_t *parent = lv_event_get_current_target(ev);
 
         int value = lv_slider_get_value(parent);
-
-        user_data_get()->audio.inter_ring_volume = value;
+        if(intercom_call_state == 3)
+        {
+                user_data_get()->audio.inter_talk_volume = value;
+                sat_linphone_audio_talk_volume_set(value);
+        }else
+        {
+                user_data_get()->audio.inter_ring_volume = value;
+                sat_linphone_audio_play_volume_set(value);
+        }
         user_data_save();
-        sat_linphone_audio_play_volume_set(value);
-        	
 }
 
 static void layout_intercom_talk_vol_bar_create(lv_obj_t *parent)
@@ -279,15 +281,11 @@ static void layout_intercom_talk_vol_bar_create(lv_obj_t *parent)
 
 static void layout_intercom_talk_call_screen_click(lv_event_t *e)
 {
-        lv_obj_t * volume = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
-        lv_obj_t * answer = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_answer);
-        lv_obj_t * handup = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_handup);
+        lv_obj_t * bottom = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_call_bottom_cont);
         lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_vol_cont);
         if(lv_obj_has_flag(vol_cont, LV_OBJ_FLAG_HIDDEN) == false)
         {
-                lv_obj_clear_flag(volume,LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(answer,LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(handup,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(bottom,LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
         }
 }
@@ -374,45 +372,54 @@ static void sat_layout_enter(intercom_talk)
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 intercom_talk_call_status_icon_display();
         }
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:46:56
-        ** 说明:挂断按钮图标显示
-        ***********************************************/
         {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_obj_handup, 460, 464, 104, 104,
-                                         intercom_talk_handup_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("btn_call_endcall.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                intercom_talk_handup_obj_display();
-        }
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2023-2-2 13:46:56
-         ** 说明:接听按钮图标显示
-         ***********************************************/
-        {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_obj_answer, 384, 464, 104, 104,
-                                         intercom_talk_answer_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("btn_call_call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_obj_t * bottom_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_call_bottom_cont, 0, 464, 1024, 120,
+                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                intercom_talk_answer_obj_display();
-        }
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2023-2-2 13:46:56
-         ** 说明:音量按钮图标显示
-         ***********************************************/
-        {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_obj_volume, 32, 488, 81, 81,
-                                         intercom_talk_call_volume_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("btn_call_sound.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                intercom_talk_call_volume_obj_display();
+        
+                /***********************************************
+                ** 作者: leo.liu
+                ** 日期: 2023-2-2 13:46:56
+                ** 说明:挂断按钮图标显示
+                ***********************************************/
+                {
+                        lv_common_img_btn_create(bottom_cont, intercom_talk_obj_handup, 460, 0, 104, 104,
+                                                intercom_talk_handup_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                resource_ui_src_get("btn_call_endcall.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        intercom_talk_handup_obj_display();
+                }
+                /***********************************************
+                 ** 作者: leo.liu
+                ** 日期: 2023-2-2 13:46:56
+                ** 说明:接听按钮图标显示
+                ***********************************************/
+                {
+                        lv_common_img_btn_create(bottom_cont, intercom_talk_obj_answer, 384, 0, 104, 104,
+                                                intercom_talk_answer_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                resource_ui_src_get("btn_call_call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                        intercom_talk_answer_obj_display();
+                }
+                /***********************************************
+                 ** 作者: leo.liu
+                ** 日期: 2023-2-2 13:46:56
+                ** 说明:音量按钮图标显示
+                ***********************************************/
+                {
+                        lv_common_img_btn_create(bottom_cont, intercom_talk_obj_volume, 32, 24, 81, 81,
+                                                intercom_talk_call_volume_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                resource_ui_src_get("btn_call_sound.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        intercom_talk_call_volume_obj_display();
+                }
         }
         {
                 lv_obj_t * vol_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_obj_id_vol_cont, 0, 504, 1024, 96,
