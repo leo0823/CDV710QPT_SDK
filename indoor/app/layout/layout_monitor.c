@@ -1836,10 +1836,12 @@ static bool tuya_event_cmd_door_open(int arg)
 static bool tuya_event_cmd_ch_channge(int channel)
 {
         int ch = channel - 1 > MON_CH_DOOR2 ? (MON_CH_CCTV1 + channel - 2 - MON_CH_DOOR2) : channel - 1;
-        if (monitor_valid_channel_check(channel) == false)
+
+        if (monitor_valid_channel_check(ch) == false)
         {
                 return false;
         }
+        SAT_DEBUG("ch is %d\n", ch);
         /*****  记录上次的通道 *****/
         tuya_monitor_channel_set(ch);
         if (monitor_channel_get() == ch)
