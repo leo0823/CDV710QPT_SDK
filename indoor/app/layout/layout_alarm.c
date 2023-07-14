@@ -158,21 +158,28 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
-        if((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))&&(!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
+        if((arg1 == 7) && (arg2 < 100))
         {
-                return;
-        }
-        if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < 100)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+                sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }else
         {
+                if((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))&&(!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
+                {
+                        return;
+                }
+                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < 100)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+                {
 
-                user_data_get()->alarm.alarm_trigger[arg1] = true;
-                user_data_get()->alarm.emergency_mode = 1;
-                user_data_save();
-                struct tm tm;
-                user_time_read(&tm);
-   
-                alarm_list_add(security_emergency, arg1, &tm);
+                        user_data_get()->alarm.alarm_trigger[arg1] = true;
+                        user_data_get()->alarm.emergency_mode = 1;
+                        user_data_save();
+                        struct tm tm;
+                        user_time_read(&tm);
+        
+                        alarm_list_add(security_emergency, arg1, &tm);
+                }
         }
+
 }
 
 /************************************************************

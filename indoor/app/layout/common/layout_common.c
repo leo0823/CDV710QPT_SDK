@@ -259,8 +259,8 @@ void layout_alarm_alarm_channel_set(int ch)
 ** 注意事项: 
 ************************************************************/
 void layout_alarm_trigger_default(int arg1,int arg2)
-{  
-        if(arg1 == 7)
+{
+        if((arg1 == 7) && (arg2 < 100))
         {
                 sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }else
@@ -281,7 +281,6 @@ void layout_alarm_trigger_default(int arg1,int arg2)
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
-
 }
 
 /************************************************************

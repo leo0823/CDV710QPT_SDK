@@ -147,7 +147,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(INSTALLATION_XLS_LANG_ID_IP_ADDRES), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_OPERATIONG_SERVER_IP_ADDRES), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************

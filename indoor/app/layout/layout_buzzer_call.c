@@ -227,7 +227,7 @@ static void sat_layout_enter(buzzer_call)
         {
             if(user_data_get()->audio.ring_mute == false)
             {
-                //ring_buzzer_play();
+                ring_buzzer_play();
             }
 
         }
