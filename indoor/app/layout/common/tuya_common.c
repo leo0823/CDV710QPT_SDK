@@ -15,6 +15,24 @@ static bool tuya_event_cmd_video_start(void)
 {
         if (sat_cur_layout_get() != sat_playout_get(monitor))
         {
+                if (monitor_valid_channel_check(tuya_monitor_channel) == true)
+                {
+                        monitor_channel_set(tuya_monitor_channel);
+                }
+                else
+                {
+                        for(int i = 0; i < 8; i++ )
+                        {
+                                if (monitor_valid_channel_check(MON_CH_DOOR1 + i) == true)
+                                {
+                                        monitor_channel_set(MON_CH_DOOR1 + i);
+                                        tuya_monitor_channel_set(MON_CH_DOOR1 + i);
+                                        break;
+                                }
+                                monitor_channel_set(MON_CH_DOOR1);
+                                tuya_monitor_channel_set(MON_CH_DOOR1);
+                        }
+                } 
                 if ((tuya_monitor_channel < 8) && (network_data_get()->door_device_count > 0))
                 {
                         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
