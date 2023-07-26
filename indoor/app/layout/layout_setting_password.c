@@ -43,7 +43,7 @@ static void setting_password_msg_confirm_click(lv_event_t *e)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_msgbox_parent);
         lv_obj_del(obj);
 }
-static lv_obj_t *setting_password_msgbox_create(const char * str)
+static lv_obj_t *setting_password_msgbox_create(const char *str)
 {
         lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_password_obj_id_msgbox_parent, 0, 0, 1024, 600,
                                                     NULL, true, LV_OPA_80, 0, LV_OPA_80, 0,
@@ -94,26 +94,26 @@ static void setting_password_modiy_confirm_enable(bool en)
 
 static void setting_password_modiy_confirm_click(lv_event_t *ev)
 {
-        lv_obj_t * input_cont1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_password_obj_id_modiy_cont),setting_password_obj_id_modiy_inputbox1_cont);
-        lv_obj_t * input_cont2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_password_obj_id_modiy_cont),setting_password_obj_id_modiy_inputbox2_cont);
+        lv_obj_t *input_cont1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_cont), setting_password_obj_id_modiy_inputbox1_cont);
+        lv_obj_t *input_cont2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_cont), setting_password_obj_id_modiy_inputbox2_cont);
         char buffer[5];
-        memset(buffer,0,sizeof(buffer));
+        memset(buffer, 0, sizeof(buffer));
         char verify_buffer[5];
-        memset(verify_buffer,0,sizeof(verify_buffer)); 
-        for(int i = 0; i<4; i++)
+        memset(verify_buffer, 0, sizeof(verify_buffer));
+        for (int i = 0; i < 4; i++)
         {
-                strcat(buffer,lv_textarea_get_text(lv_obj_get_child_form_id(input_cont1, i)));
-                strcat(verify_buffer,lv_textarea_get_text(lv_obj_get_child_form_id(input_cont2,  i)));
+                strcat(buffer, lv_textarea_get_text(lv_obj_get_child_form_id(input_cont1, i)));
+                strcat(verify_buffer, lv_textarea_get_text(lv_obj_get_child_form_id(input_cont2, i)));
         }
-        if(strncmp(buffer,verify_buffer,4) != 0)
+        if (strncmp(buffer, verify_buffer, 4) != 0)
         {
                 setting_password_msgbox_create(lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH));
-        }else
+        }
+        else
         {
-                strncpy(user_data_get()->etc.password,buffer,4);
+                strncpy(user_data_get()->etc.password, buffer, 4);
                 sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
-
 }
 /***********************************************
 ** 作者: leo.liu
@@ -166,7 +166,6 @@ static void setting_password_text_next_foucued(void)
                                                 textarea = lv_obj_get_child_form_id(parent, j + 1);
                                                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                         }
-
                                 }
                                 if ((i == 1 && j == 3))
                                 {
@@ -199,21 +198,22 @@ static void setting_password_text_prev_foucued(void)
                                                 textarea = lv_obj_get_child_form_id(parent, 3);
                                                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                         }
-                                        else if((i == 1) && (j == 3))
+                                        else if ((i == 1) && (j == 3))
                                         {
 
                                                 textarea = lv_obj_get_child_form_id(parent, 3);
-                                                if(lv_textarea_get_cursor_pos(textarea) != 0)
+                                                if (lv_textarea_get_cursor_pos(textarea) != 0)
                                                 {
                                                         textarea = lv_obj_get_child_form_id(parent, 3);
-                                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);              
+                                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                                 }
                                                 else
                                                 {
                                                         textarea = lv_obj_get_child_form_id(parent, j - 1);
                                                         lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                                 }
-                                        }else
+                                        }
+                                        else
                                         {
                                                 textarea = lv_obj_get_child_form_id(parent, j - 1);
                                                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
@@ -398,7 +398,6 @@ static void setting_password_modiy_obj_create(void)
                         setting_password_modiy_confirm_enable(false);
                 }
         }
-
 }
 static void setting_password_cancel_obj_click(lv_event_t *ev)
 {
@@ -437,7 +436,7 @@ static lv_obj_t *setting_password_reset_list_create(lv_obj_t *parent)
 
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if((user_data_get()->system_mode != 1) && (i == 1))
+                if (((user_data_get()->system_mode & 0xF0) != 0x10) && (i == 1))
                 {
                         continue;
                 }

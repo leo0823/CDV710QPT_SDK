@@ -617,7 +617,7 @@ static void sat_layout_enter(intercom_call)
                                                                                      0, 3, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                      0, 0);
-                        if(user_data_get()->system_mode != 1)
+                        if((user_data_get()->system_mode&0xF0) != 0xF0)
                         {
                                 lv_obj_add_flag(exten_txt_obj,LV_OBJ_FLAG_HIDDEN);
                                 lv_obj_add_flag(guard_txt_obj,LV_OBJ_FLAG_HIDDEN);

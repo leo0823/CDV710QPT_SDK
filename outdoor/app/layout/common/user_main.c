@@ -36,8 +36,76 @@
 #include "common/sat_user_time.h"
 #include "common/user_gpio.h"
 #if 0
-dds_inherit_listener
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <time.h>
+#include <unistd.h>
+#include <string.h>
+#include <error.h>
+int main(int argc, char **argv)
+{
+      //  system("umount /etc/config");
+      //  system("mtd_debug erase /dev/mtd7 0x0 0x19000");
+
+        int mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
+        if (mem_fd == -1)
+        {
+                perror("Failed to open /dev/mem");
+                return 1;
+        }
+
+        // 根据具体Flash起始地址计算偏移量
+        off_t flash_offset = 0x4ab000;
+
+        // 读取JFFS2文件系统数据
+        FILE *jffs2_file = fopen("/tmp/nfs/config.jffs2", "rb"); // 以二进制读取方式打开文件
+        if (jffs2_file == NULL)
+        {
+                perror("Failed to open JFFS2 file");
+                close(mem_fd);
+                return 1;
+        }
+
+        // 定位到文件末尾，获取文件大小
+        fseek(jffs2_file, 0, SEEK_END);
+        long jffs2_file_size = ftell(jffs2_file);
+        rewind(jffs2_file);
+
+        // 根据计算的偏移量，使用lseek进行偏移
+        off_t offset = lseek(mem_fd, flash_offset, SEEK_SET);
+        if (offset == -1)
+        {
+                perror("Failed to seek to flash offset");
+                fclose(jffs2_file);
+                close(mem_fd);
+                return 1;
+        }
+
+        // 创建缓冲区，读取JFFS2文件系统的数据
+        unsigned char jffs2_data[jffs2_file_size];
+        fread(jffs2_data, sizeof(unsigned char), jffs2_file_size, jffs2_file);
+
+        // 将JFFS2文件系统的数据写入Flash
+        ssize_t bytes_written = write(mem_fd, jffs2_data, jffs2_file_size);
+        if (bytes_written == -1)
+        {
+                perror("Failed to write JFFS2 data to flash");
+                fclose(jffs2_file);
+                close(mem_fd);
+                return 1;
+        }
+
+        // 关闭文件和/dev/mem设备
+        fclose(jffs2_file);
+        close(mem_fd);
+
+        while (1)
+                ;
+        return 0;
+}
+#else
 
 #include "anyka/ak_common.h"
 #define SIP_CALL_QURY_TIMER 1000
@@ -133,20 +201,11 @@ static void linux_kerner_init(void)
 ***********************************************/
 static void key_call_process(unsigned int code, unsigned int state)
 {
-        char cmd[256] = {0};
-        for (int i = 0; i < user_data_get()->register_device_count; i++)
-        {
-                if (sat_ipcamera_device_name_get(user_data_get()->register_device[i], 100) == true)
-                {
-                        strcat(cmd, user_data_get()->register_device[i]);
-                        strcat(cmd, " ");
-                }
-        }
-        if (cmd[0] != 0)
-        {
-                SAT_DEBUG("CALL:%s", cmd);
-                sat_linphone_call(cmd, true, true, user_linphone_local_multicast_get());
-        }
+        char call[64] = {0};
+        sprintf(call, "sip:100@%s:5066", user_data_get()->server_ip);
+        SAT_DEBUG("CALL:%s", call);
+
+        sat_linphone_call(call, true, true, NULL);
 }
 
 static void sys_timer_callback(void)
@@ -165,13 +224,19 @@ static void sys_timer_callback(void)
         if ((sip_call_status == true) && ((timestamp - sip_call_timestamp) > SIP_CALL_QURY_TIMER * 10))
         {
                 //   SAT_DEBUG("query online timeout");
-                sip_call_status = false;
-                sat_linphone_handup(0xFF);
+                //  sip_call_status = false;
+                //    sat_linphone_handup(0xFF);
                 return;
         }
 
         /*每隔500ms发送一次在线询问*/
-        sat_linphone_calls_cmd_send();
+        //   sat_linphone_calls_cmd_send();
+        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
+        {
+                char domain[32] = {0};
+                sprintf(domain, "%s:5066", user_data_get()->server_ip);
+                sat_linphone_register(user_data_get()->device.number, NULL, domain);
+        }
 }
 /*连接设备发送正在通话的命令*/
 static void sip_call_online_callback(void)
@@ -226,6 +291,7 @@ static void video_stream_status_callback(bool en)
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
+        remove("/tmp/.linphonerc");
         printf("*****************************************************\n");
         printf("*****        project: CDV810QPT(outdoor)        *****\n");
         printf("*****        author:  leo                       *****\n");
@@ -267,6 +333,13 @@ int main(int argc, char *argv[])
         sip_call_status_qury_register(sip_call_status_query_callback);
         video_stream_status_callback_register(video_stream_status_callback);
 
+        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
+        {
+                usleep(100 * 1000);
+                char domain[32] = {0};
+                sprintf(domain, "%s:5066", user_data_get()->server_ip);
+                sat_linphone_register(user_data_get()->device.number, NULL, domain);
+        }
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
         /*
@@ -277,3 +350,4 @@ int main(int argc, char *argv[])
         sat_mian_task_init();
         return 0;
 }
+#endif

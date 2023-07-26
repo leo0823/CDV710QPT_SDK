@@ -2,7 +2,7 @@
 #include "layout_setting_general.h"
 #include "common/user_upgrade.h"
 #include "common/sat_ipcamera.h"
-#include"tuya_uuid_and_key.h"
+#include "tuya_uuid_and_key.h"
 enum
 {
         setting_version_information_obj_id_title,
@@ -103,10 +103,15 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
         char ip[32] = {0};
         char version_buf[128] = {0};
 
-        if (network_data_get()->door_device_count > 0)
+        // if (network_data_get()->door_device_count > 0)
         {
-                for (int i = 0; i < network_data_get()->door_device_count; i++)
+                for (int i = 0; i < DEVICE_MAX; i++)
                 {
+                        if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
+                        {
+                                continue;
+                        }
+
                         memset(user, 0, sizeof(user));
                         memset(ip, 0, sizeof(ip));
                         memset(version_buf, 0, sizeof(version_buf));
@@ -128,7 +133,7 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
 }
 static void sat_layout_enter(setting_version_information)
 {
-        sat_ipcamera_initialization_parameters(network_data_get()->door_device, network_data_get()->door_device_count);
+        sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -188,19 +193,19 @@ static void sat_layout_enter(setting_version_information)
         ** 函数说明: 当前UUID显示
         ** 作者: xiaoxiao
         ** 日期: 2023-06-09 17:11:35
-        ** 参数说明: 
-        ** 注意事项: 
+        ** 参数说明:
+        ** 注意事项:
         ************************************************************/
-       {
+        {
                 char uuid_info[128] = {0};
                 static char serial_num[64] = {0};
-	        if (tuya_serial_number_get(serial_num) == true)
+                if (tuya_serial_number_get(serial_num) == true)
                 {
-                        sprintf(uuid_info,"Serial number:    %s",serial_num);
+                        sprintf(uuid_info, "Serial number:    %s", serial_num);
                 }
 
-
-                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * network_data_get()->door_device_count, 928, 72,
+                int num = 3; /*主要获取有效的门口机数量*/
+                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * num, 928, 72,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -212,7 +217,7 @@ static void sat_layout_enter(setting_version_information)
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-       }
+        }
 
         /***********************************************
          ** 作者: leo.liu
@@ -221,14 +226,18 @@ static void sat_layout_enter(setting_version_information)
          ***********************************************/
         char version_buf[128] = {0};
         bool upgrade = (access(SD_BASE_PATH "/SAT_ANYKA3918OS", F_OK) == 0) ? true : false;
-        if (network_data_get()->door_device_count > 0)
+        //   if (network_data_get()->door_device_count > 0)
         {
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
                 lv_common_style_set_common(list, setting_version_information_obj_id_list, 48, 160, 928, 440, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
-                for (int i = 0; i < network_data_get()->door_device_count; i++)
+                for (int i = 0; i < DEVICE_MAX; i++)
                 {
                         memset(version_buf, 0, sizeof(version_buf));
+                        if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
+                        {
+                                continue;
+                        }
 
                         if (sat_ipcamera_device_name_get(i, 100) == false)
                         {
@@ -265,8 +274,6 @@ static void sat_layout_enter(setting_version_information)
                         }
                 }
         }
-
-        
 
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
 

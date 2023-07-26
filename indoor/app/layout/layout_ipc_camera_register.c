@@ -107,11 +107,11 @@ static void ipc_camera_registered_register_edit_click(lv_event_t *ev)
                 return;
         }
 
-        int total = layout_ipc_cmeara_is_doorcamera_get() == true ? network_data_get()->door_device_count : network_data_get()->cctv_device_count;
-        if (parent->id > total)
-        {
-                return;
-        }
+        //   int total = layout_ipc_cmeara_is_doorcamera_get() == true ? network_data_get()->door_device_count : network_data_get()->cctv_device_count;
+        // if (parent->id > total)
+        // {
+        //         return;
+        // }
 
         if (0) // (layout_ipc_cmeara_is_doorcamera_get() == false)
         {
@@ -143,34 +143,12 @@ static void ipc_camera_register_del_msgbox_confirm_click(lv_event_t *e)
 
         if (layout_ipc_cmeara_is_doorcamera_get() == true)
         {
-                if (device_index == (network_data_get()->door_device_count - 1))
-                {
-                        memset(&(network_data_get()->door_device[device_index]), 0, sizeof(network_data_get()->door_device[device_index]));
-                }
-                else
-                {
-                        memmove(&network_data_get()->door_device[device_index], &network_data_get()->door_device[device_index + 1], sizeof(struct ipcamera_info) * (network_data_get()->door_device_count - device_index - 1));
-                }
-                memmove(&network_data_get()->door_ch_index[device_index], &network_data_get()->door_ch_index[device_index + 1], sizeof(int) * (network_data_get()->door_device_count - device_index - 1));
-                network_data_get()->door_device_count--;
-                network_data_get()->door_ch_index[network_data_get()->door_device_count] = 0;
+                memset(&(network_data_get()->door_device[device_index]), 0, sizeof(network_data_get()->door_device[device_index]));
         }
         else
         {
-                if (device_index == (network_data_get()->cctv_device_count - 1))
-                {
-                        memset(&(network_data_get()->cctv_device[device_index]), 0, sizeof(network_data_get()->cctv_device[device_index]));
-                }
-                else
-                {
-                        memmove(&network_data_get()->cctv_device[device_index], &network_data_get()->cctv_device[device_index + 1], sizeof(struct ipcamera_info) * (network_data_get()->cctv_device_count - device_index - 1));
-                }
-                memmove(&network_data_get()->cctv_ch_index[device_index], &network_data_get()->cctv_ch_index[device_index + 1], sizeof(int) * (network_data_get()->cctv_device_count - device_index - 1));
-
-                network_data_get()->cctv_device_count--;
-                network_data_get()->cctv_ch_index[network_data_get()->cctv_device_count] = 0;
+                memset(&(network_data_get()->cctv_device[device_index]), 0, sizeof(network_data_get()->cctv_device[device_index]));
         }
-
         network_data_save();
         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
@@ -198,7 +176,7 @@ static void ipc_camera_registered_register_del_click(lv_event_t *ev)
         }
 
         lv_obj_t *msgbox = ipc_camera_register_msgbox_create(lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL),
-                                                             lang_str_get(layout_ipc_cmeara_is_doorcamera_get()?DOOR_CAMERA_SEARCH_XLS_LANG_ID_DO_YOU_WANT_DELETE_DOOR_CAMERA:DOOR_CAMERA_SEARCH_XLS_LANG_ID_DO_YOU_WANT_DELETE_CCTV),
+                                                             lang_str_get(layout_ipc_cmeara_is_doorcamera_get() ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_DO_YOU_WANT_DELETE_DOOR_CAMERA : DOOR_CAMERA_SEARCH_XLS_LANG_ID_DO_YOU_WANT_DELETE_CCTV),
                                                              ipc_camera_register_msgbox_del_cancel_click, ipc_camera_register_del_msgbox_confirm_click);
 
         msgbox->user_data = parent;
@@ -277,14 +255,14 @@ static void sat_layout_enter(ipc_camera_register)
          ** 说明: 搜索户外机
          ***********************************************/
         {
-                int camera_count = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device_count : network_data_get()->door_device_count;
+                //   int camera_count = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device_count : network_data_get()->door_device_count;
 
                 /***********************************************
                  ** 作者: leo.liu
                  ** 日期: 2023-2-2 13:42:50
                  ** 说明: 显示注册的设备
                  ***********************************************/
-                if (camera_count > 0)
+                // if (camera_count > 0)
                 {
                         lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_registered_obj_id_registered_door_camera_title, 0, 146, 584, 48,
                                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
@@ -299,8 +277,13 @@ static void sat_layout_enter(ipc_camera_register)
 
                         lv_obj_t *list = ipc_camera_registered_list_create();
                         int item_y = 0;
-                        for (int i = 0; i < camera_count; i++)
+                        for (int i = 0; i < DEVICE_MAX; i++)
                         {
+                                if (p_device[i].rtsp[0].rtsp_url[0] == 0)
+                                {
+                                        continue;
+                                }
+
                                 lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
                                                                                                    ipc_camera_registered_register_list_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
@@ -338,16 +321,15 @@ static void sat_layout_enter(ipc_camera_register)
 
         if (layout_ipc_cmeara_is_doorcamera_get() == true)
         {
-                sat_ipcamera_initialization_parameters(network_data_get()->door_device, network_data_get()->door_device_count);
+                sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
         }
         else
         {
-                sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, network_data_get()->cctv_device_count);
+                sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
         }
 }
 static void sat_layout_quit(ipc_camera_register)
 {
-
 }
 
 sat_layout_create(ipc_camera_register);
