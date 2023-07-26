@@ -22,7 +22,7 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         }
 
         layout_ipc_camera_edit_index_set(parent->id);
-        if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
+        if (layout_ipc_cmeara_is_doorcamera_get() == true)//if(1)
         {
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
         }
@@ -90,6 +90,7 @@ static void ipc_camera_state_func(unsigned int type, unsigned int num)
 }
 static void sat_layout_enter(ipc_camera_search)
 {
+        standby_timer_close();
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
@@ -150,6 +151,7 @@ static void sat_layout_enter(ipc_camera_search)
 }
 static void sat_layout_quit(ipc_camera_search)
 {
+        standby_timer_restart(true);
         ipcamera_state_callback_register(NULL);
         // for(int i = 0; i < network_data_get()->cctv_device_count; i++)
         // {

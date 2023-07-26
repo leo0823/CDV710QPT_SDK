@@ -35,8 +35,6 @@ void always_record_time_set(int sec)
 	always_record_timeout_sec = sec;
 }
 
-
-
 /************************************************************
 ** 函数说明: 获取通道
 ** 作者: xiaoxiao
@@ -78,15 +76,19 @@ static int always_record_channel_get(void)
 	}
 	int find = 0;
 find_start:
-	if (ch == MON_CH_DOOR1)
+	for(int i = 0;i < 7; i ++)
 	{
-		ch = MON_CH_DOOR2;
-		if (monitor_valid_channel_check(ch) == true)
+
+		if ((ch == MON_CH_DOOR1 + i) && (ch != MON_CH_DOOR8))
 		{
-			return ch;
+			ch = MON_CH_DOOR2 + i;
+			if (monitor_valid_channel_check(ch) == true)
+			{
+				return ch;
+			}
 		}
 	}
-	if (ch == MON_CH_DOOR2)
+	if (ch == MON_CH_DOOR8)
 	{
 		ch = MON_CH_CCTV1;
 		if (monitor_valid_channel_check(ch) == true)
@@ -347,6 +349,7 @@ static void montior_obj_top_icon_display(void)
                 }
                 if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
                 {
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
                         lv_obj_set_x(obj, pos_x);
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         pos_x -= 56;
@@ -468,7 +471,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
     	layout_always_record_stop();
         usleep(500 * 1000);
         monitor_close();
-        always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
+        // always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
         lv_timer_del(ptimer);
         lv_sat_timer_create(layout_always_monitor_open_task, 1000, NULL);
 		    
@@ -492,12 +495,12 @@ static void sat_layout_enter(always_record)
 {
         snap_count = 0;
         streams_count = 0;
-    always_record_loop = true;
-    is_always_record_video_ing = false;
-    always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
-    user_linphone_call_streams_running_receive_register(layout_always_record_streams_running_register_callback);
-    monitor_channel_set(MON_CH_NONE);
-    layout_always_monitor_open();
+        always_record_loop = true;
+        is_always_record_video_ing = false;
+        // always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
+        user_linphone_call_streams_running_receive_register(layout_always_record_streams_running_register_callback);
+        monitor_channel_set(MON_CH_NONE);
+        layout_always_monitor_open();
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -530,7 +533,7 @@ static void sat_layout_enter(always_record)
                  ** 说明: 通道显示
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, 1, 0, 23, 324, 42,
+                        lv_common_text_create(parent, 1, 0, 23, 450, 42,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

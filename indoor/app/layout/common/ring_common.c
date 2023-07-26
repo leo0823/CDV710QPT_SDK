@@ -13,7 +13,7 @@
 bool ring_touch_play(void)
 {
         sat_linphone_audio_play_volume_set(100);
-        //sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
         return true;
         }
 
@@ -40,7 +40,7 @@ bool ring_door_call_play(void)
 ***********************************************/
 bool ring_unlock_play(void)
 {
-
+        return true;
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(100);
@@ -56,7 +56,7 @@ bool ring_intercom_play(void)
 {
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
-        sat_linphone_audio_play_volume_set(20);
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.inter_ring_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.inter_tone);
         printf("cmd is %s\n",cmd);
         return sat_linphone_audio_play_start(cmd, 100);
@@ -88,7 +88,7 @@ bool ring_buzzer_play(void)
 {
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
-        sat_linphone_audio_play_volume_set(20);
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.buzzer_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.buzzer_tone);
         return sat_linphone_audio_play_start(cmd, 100);
         // sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav

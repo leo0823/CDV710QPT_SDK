@@ -175,6 +175,35 @@ static void setting_ipaddress_obj_keyboad_click(lv_event_t *e)
         }
         setting_ipaddress_next_obj_display();
 }
+
+static void layout_setting_ipaddress_item_disp(void)
+{
+        lv_obj_t * item1_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_product_ip_label);
+        lv_obj_t * item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_product_ip_textbox);
+
+        lv_obj_t * item2_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_default_gateway_label);
+        
+        lv_obj_t * item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_default_gateway_textbox);
+
+        lv_obj_t * item3_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_subnet_mask_label);
+        lv_obj_t * item3_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_subnet_mask_textbox);
+
+        lv_obj_t * item4_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_dns_label);
+        lv_obj_t * item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_dns_textbox);
+
+
+        lv_obj_set_style_y(item1_label,250,LV_PART_MAIN);
+        lv_obj_set_style_y(item1_txt,257,LV_PART_MAIN);
+        lv_obj_set_style_y(item3_label,334,LV_PART_MAIN);
+        lv_obj_set_style_y(item3_txt,341,LV_PART_MAIN);
+        lv_obj_add_flag(item2_label,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item2_txt,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item4_label,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item4_txt,LV_OBJ_FLAG_HIDDEN);
+
+
+
+}
 static void sat_layout_enter(setting_ipaddress)
 {
         /***********************************************
@@ -329,6 +358,8 @@ static void sat_layout_enter(setting_ipaddress)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_DNS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
+
+        layout_setting_ipaddress_item_disp();
 }
 static void sat_layout_quit(setting_ipaddress)
 {

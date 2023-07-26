@@ -33,6 +33,13 @@ enum
         setting_storage_space_obj_id_msgbox_confirm_img,
         setting_storage_space_obj_id_msgbox_cancel,
         setting_storage_space_obj_id_msgbox_cancel_img,
+
+        setting_storage_space_obj_id_format_msgbox_cont,
+        setting_storage_space_obj_id_format_msgbox,
+        setting_storage_space_obj_id_format_text,
+        setting_storage_space_obj_id_format_process,
+        setting_storage_space_obj_id_format_completed,
+
 };
 static void setting_storage_space_cancel_click(lv_event_t *e)
 {
@@ -137,7 +144,7 @@ static void setting_storage_space_msgbox_external_confirm_click(lv_event_t *e)
         {
                 media_file_delete_all(FILE_TYPE_VIDEO,false);
         }
-        sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+                sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 static void setting_storage_space_msgbox_external_checkbox_click(lv_event_t *e)
 {
@@ -171,17 +178,81 @@ static void setting_storage_space_msgbox_external_checkbox_click(lv_event_t *e)
                 lv_obj_set_style_bg_img_src(discheck_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
 }
+
+static lv_obj_t * setting_storage_space_msgbox_format_process_display(lv_obj_t * parent)
+{
+
+
+        static lv_style_t style_bg;
+        static lv_style_t style_indic;
+
+        lv_style_init(&style_bg);
+        lv_style_set_border_color(&style_bg, lv_palette_main(LV_PALETTE_BLUE));
+        lv_style_set_border_width(&style_bg, 2);
+        lv_style_set_pad_all(&style_bg, 0); /*To make the indicator smaller*/
+        lv_style_set_radius(&style_bg, 0);
+
+        lv_style_init(&style_indic);
+        lv_style_set_bg_opa(&style_indic, LV_OPA_COVER);
+        lv_style_set_bg_color(&style_indic, lv_palette_main(LV_PALETTE_BLUE));
+        lv_style_set_radius(&style_indic, 3);
+
+        lv_obj_t *bar = lv_bar_create(parent);
+        lv_obj_set_id(bar, setting_storage_space_obj_id_format_process);
+        lv_obj_remove_style_all(bar); /*To have a clean start*/
+        lv_obj_add_style(bar, &style_bg, 0);
+        lv_obj_add_style(bar, &style_indic, LV_PART_INDICATOR);
+
+        lv_common_style_set_common(bar, setting_storage_space_obj_id_format_process, 50, 220, 360, 24, LV_ALIGN_DEFAULT, LV_PART_MAIN);
+        lv_bar_set_range(bar, 0, 100);
+        lv_bar_set_value(bar, 20, LV_ANIM_ON);
+        return bar;
+}
+
+static void setting_storage_space_msgbox_external_fmatsd_finish_confirm(lv_event_t * ev)
+{
+        sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+}
+
+static void format_sd_process_timer(lv_timer_t *ptime)
+{
+        lv_obj_t * bar = ptime->user_data;
+        int value = lv_bar_get_value(bar);
+        if (value == 20)//
+        {
+                lv_bar_set_value(bar, value * 3/2, LV_ANIM_OFF);
+        }else if( media_format_sd_state() == false)
+        {
+                value = lv_bar_get_value(bar);
+                lv_bar_set_value(bar, value * 3/2, LV_ANIM_OFF);
+ 
+        }else
+        {
+                lv_bar_set_value(bar,100, LV_ANIM_OFF);
+                lv_timer_del(ptime);
+                lv_obj_t * msgbox = lv_obj_get_parent(bar);
+                lv_obj_clean(msgbox);
+                setting_msgdialog_msg_create(msgbox, setting_storage_space_obj_id_format_text, "Format is complete.", 0, 60, 460, 120);
+                setting_msgdialog_msg_confirm_btn_create(msgbox,setting_storage_space_obj_id_format_completed,setting_storage_space_msgbox_external_fmatsd_finish_confirm);
+
+                
+        }
+}
 static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
 {
-        // lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_storage_space_obj_id_msgbox_cont);
-        // if (obj == NULL)
-        // {
-        //         return;
-        // }
-        // lv_obj_del(obj);
-
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_storage_space_obj_id_msgbox_cont);
+        if (obj == NULL)
+        {
+                return;
+        }
+        lv_obj_del(obj);
+        lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_storage_space_obj_id_format_msgbox_cont, setting_storage_space_obj_id_format_msgbox, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, setting_storage_space_obj_id_format_text, "Formatting SD card... \nDuring formatting,\n never turn off power or romove SD card.\n", 0, 60, 460, 120);
+        lv_obj_t * bar = setting_storage_space_msgbox_format_process_display(masgbox);
+        lv_sat_timer_create(format_sd_process_timer, 500  , bar);
         media_format_sd();
-        sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        
+
 }
 static void setting_storage_space_internal_del_click(lv_event_t *e)
 {
@@ -243,6 +314,7 @@ static void setting_storage_space_sd_status_channge_callback(void)
 
 static void sat_layout_enter(setting_storage_space)
 {
+        SAT_DEBUG("enter setting_storage_space");
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -418,6 +490,7 @@ static void sat_layout_enter(setting_storage_space)
 }
 static void sat_layout_quit(setting_storage_space)
 {
+        sd_state_channge_callback_register(sd_state_change_default_callback);
 }
 
 sat_layout_create(setting_storage_space)

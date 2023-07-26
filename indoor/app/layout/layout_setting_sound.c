@@ -285,8 +285,10 @@ static void setting_sound_security_office_obj_click(lv_event_t *ev)
 }
 static void setting_sound_extension_obj_click(lv_event_t *ev)
 {
+        #if 0
         layout_setting_sound_select_id_set(setting_sound_obj_id_extension_cont);
         setting_sound_ring_msg_box_create(lang_str_get(SOUND_XLS_LANG_ID_EXTENSION), user_data_get()->audio.inter_tone);
+        #endif
 }
 
 /***********************************************

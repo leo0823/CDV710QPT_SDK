@@ -108,16 +108,19 @@ static int always_record_channel_get(void)
 	}
 	int find = 0;
 find_start:
-	if (ch == MON_CH_DOOR1)
+	for(int i = 0;i < 7; i ++)
 	{
-		ch = MON_CH_DOOR2;
-		if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x08)
+
+		if ((ch == MON_CH_DOOR1 + i) && (ch != MON_CH_DOOR8))
 		{
-			SAT_DEBUG("monitor ch is door2");
-			return ch;
+			ch = MON_CH_DOOR2 + i;
+			if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x10 )
+			{
+				return ch;
+			}
 		}
 	}
-	if (ch == MON_CH_DOOR2)
+	if (ch == MON_CH_DOOR8)
 	{
 		ch = MON_CH_CCTV1;
 		if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x10)
@@ -125,17 +128,17 @@ find_start:
 			return ch;
 		}
 	}
-	for (int i = 0; i < 8; i++)
-	{
-		if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
-		{
-			ch = MON_CH_CCTV2 + i;
-			if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x10)
-			{
-				return ch;
-			}
-		}
-	}
+    for(int i = 0; i < 7; i++)
+    {
+        if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
+        {
+            ch = MON_CH_CCTV2 + i;
+            if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x10 )
+            {
+                return ch;
+            }
+        }
+    }
 	if (ch == MON_CH_CCTV8)
 	{
 		ch = MON_CH_DOOR1;

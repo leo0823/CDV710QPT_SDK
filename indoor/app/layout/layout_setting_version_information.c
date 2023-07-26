@@ -281,7 +281,7 @@ static void sat_layout_enter(setting_version_information)
 }
 static void sat_layout_quit(setting_version_information)
 {
-        sd_state_channge_callback_register(NULL);
+        sd_state_channge_callback_register(sd_state_change_default_callback);
 }
 
 sat_layout_create(setting_version_information);

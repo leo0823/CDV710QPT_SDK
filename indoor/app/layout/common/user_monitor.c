@@ -286,9 +286,12 @@ bool monitor_valid_channel_check(int channel)
                 {
                         if (channel > (MON_CH_DOOR1 - 1 + DEVICE_MAX))
                         {
-                                return false;
+                                if((network_data_get()->door_device[channel].sip_url[0] != 0))
+                                {
+                                        return true;
+                                }
                         }
-                        return true;
+                        return false;
                 }
         }
         //    if (network_data_get()->cctv_device_count)
@@ -297,9 +300,12 @@ bool monitor_valid_channel_check(int channel)
                 {
                         if (channel > (MON_CH_CCTV1 - 1 + DEVICE_MAX))
                         {
-                                return false;
+                                if(network_data_get()->cctv_device[channel].sip_url != 0)
+                                {
+                                        return true;
+                                }
                         }
-                        return true;
+                        return false;
                 }
         }
         return false;
