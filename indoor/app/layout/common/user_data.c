@@ -52,16 +52,18 @@ static const user_data_info user_data_default =
             .buzzer_tone = 1,
             .buzzer_volume = 1,
             .common_entrance_tone = 1,
+            .common_entrance_volume = 1,
+            .common_entrance_voice = 1,
+
             .securirty_office_tone = 1,
 
             .entracne_volume = 1,
             .entrancr_voice = 1,
-            .common_entrance_volume = 1,
-            .common_entrance_voice = 1,
+
             .guard_station_volume = 1,
             .guard_station_voice = 1,
             .extension_volume = 1,
-            .extension_voice = 1,
+            .extension_voice = 4,
             .touch_notification_volume = 1,
             .touch_notification_voice = 1,
         },
@@ -161,6 +163,7 @@ static const user_data_info user_data_default =
         
         },
         .system_mode = 0,
+        .master_mode = 0,
         .time_automatically = 1,
         .call_time = 1,
         .always_monitoring = 0,
@@ -248,20 +251,30 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(key_sound, 0, 1);
         user_data_audio_check_range_out(ring_mute, 0, 1);
         user_data_audio_check_range_out(door_tone, 1, 6);
-        user_data_audio_check_range_out(inter_tone, 1, 6);
+        user_data_audio_check_range_out(inter_tone, 4, 4);
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
         user_data_audio_check_range_out(buzzer_volume, 1, 6);
          
-         user_data_audio_check_range_out(common_entrance_tone, 1, 6);
+        user_data_audio_check_range_out(common_entrance_tone, 1, 6);
+        user_data_audio_check_range_out(common_entrance_volume, 0, 100);
+        user_data_audio_check_range_out(common_entrance_voice, 1, 6);
          
-         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
+        user_data_audio_check_range_out(securirty_office_tone, 1, 6);
+        user_data_audio_check_range_out(entracne_volume, 0, 100);
+        user_data_audio_check_range_out(entrancr_voice, 0, 100);
+
+        user_data_audio_check_range_out(guard_station_volume, 0, 100);
+        user_data_audio_check_range_out(guard_station_voice, 0, 100);
+
+        user_data_audio_check_range_out(touch_notification_voice, 0, 100);
+        user_data_audio_check_range_out(touch_notification_volume, 0, 100);
 
         user_data_audio_check_range_out(door_ring_volume, 0, 3);
         user_data_audio_check_range_out(inter_ring_volume, 0, 3);
 
-        user_data_audio_check_range_out(door_talk_volume, 1, 3);
-        user_data_audio_check_range_out(inter_talk_volume, 1, 3);
+        user_data_audio_check_range_out(door_talk_volume, 0, 100);
+        user_data_audio_check_range_out(inter_talk_volume, 0, 100);
 
        
 

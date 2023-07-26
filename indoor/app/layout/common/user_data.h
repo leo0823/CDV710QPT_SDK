@@ -38,11 +38,11 @@ typedef struct
         int buzzer_tone;
         int buzzer_volume;
         int common_entrance_tone;
+        int common_entrance_volume;
+        int common_entrance_voice;
         int securirty_office_tone;
         int entracne_volume;
         int entrancr_voice;
-        int common_entrance_volume;
-        int common_entrance_voice;
         int guard_station_volume;
         int guard_station_voice;
         int extension_volume;
@@ -160,7 +160,9 @@ typedef struct
 
         user_alarm_info alarm;
 
-        char system_mode; // 0:单户型 1:服务器型
+        char system_mode; // 0:单户型（master） 1:服务器型（master）2-8：分机号
+
+        int master_mode;//0:单户型 1:服务器型(此参数只对分机有参考意义)
 
         int call_time;
 

@@ -285,11 +285,14 @@ bool monitor_valid_channel_check(int channel)
         {
                 if((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
                 {
-                        if(channel > (MON_CH_DOOR1 -1 + network_data_get()->door_device_count))
+                        for(int i = 0; i < network_data_get()->door_device_count; i++)
                         {
-                                return false;
+                                if(channel ==  network_data_get()->door_ch_index[i])
+                                {
+                                        return true;
+                                }
                         }
-                        return true;
+                        return false;
                         
                 }
         }
@@ -297,11 +300,14 @@ bool monitor_valid_channel_check(int channel)
         {
                 if((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8)) 
                 {
-                        if(channel > (MON_CH_CCTV1 -1 + network_data_get()->cctv_device_count))
+                        for(int i = 0; i < network_data_get()->cctv_device_count; i++)
                         {
-                                return false;
+                                if(channel ==  network_data_get()->cctv_ch_index[i] + 8)
+                                {
+                                        return true;
+                                }
                         }
-                        return true;
+                        return false;
                         
                 }
                 

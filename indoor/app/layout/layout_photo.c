@@ -347,6 +347,7 @@ static void photo_obj_right_click(lv_event_t *e)
 }
 static void sat_layout_enter(photo)
 {
+        
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -369,6 +370,9 @@ static void sat_layout_enter(photo)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
+
+
+              
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -470,19 +474,23 @@ static void sat_layout_enter(photo)
                                               " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
                 }
         }
+ 
 
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
          ** 说明: 刷新缩略图
          ***********************************************/
+
         photo_thumb_decode_all_display();
+        
+
 }
 static void sat_layout_quit(photo)
 {
         sat_linphone_media_thumb_destroy();
         thumb_display_refresh_register(NULL);
-        sd_state_channge_callback_register(NULL);
+        sd_state_channge_callback_register(sd_state_change_default_callback);
         photo_thumb_img_dse_destroy();
 }
 

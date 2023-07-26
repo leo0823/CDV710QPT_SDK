@@ -203,7 +203,7 @@ static void layout_alarm_alarm_mode_label_display(void)
         else
         {
                 lv_label_set_text_fmt(obj1, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SECURITY_EMERGENCY));
-                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SECURITY_EMERGENCY) + layout_alarm_alarm_channel_get());
+                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SENSOR1) + layout_alarm_alarm_channel_get());
         }
 }
 
@@ -441,6 +441,7 @@ static bool layout_alarm_ringplay_register_callback(int arg)
 ************************************************************/
 static void sat_layout_enter(alarm)
 {
+        alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
         alarm_return = false;
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
@@ -645,6 +646,7 @@ static void sat_layout_enter(alarm)
 }
 static void sat_layout_quit(alarm)
 {
+        alarm_power_out_ctrl(false);
         lv_obj_pressed_func = lv_layout_touch_callback;
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);

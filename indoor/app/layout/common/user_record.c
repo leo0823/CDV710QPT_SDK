@@ -21,7 +21,6 @@
 ***/
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 {
-        printf("=====>>>write size:%d %d\n", size, mode);
         if ((mode & 0x1F))
         {
                 file_type type = FILE_TYPE_FLASH_PHOTO;
