@@ -229,7 +229,7 @@ int main(int argc, char *argv[])
         printf("*****************************************************\n");
         printf("*****        project: CDV810QPT(outdoor)        *****\n");
         printf("*****        author:  leo                       *****\n");
-        printf("*****        date:    2023/03/11                *****\n");
+        printf("*****        date:   %s               *****\n",COMPILE_DATE_TIME());
         printf("*****************************************************\n");
         usleep(1000 * 1000);
         sdk_run_config config = {0};

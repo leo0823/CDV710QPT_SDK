@@ -3,6 +3,8 @@
 #include "tuya_api.h"
 enum
 {
+        home_obj_id_sd_icon,
+
         home_obj_id_topbar,
 
         home_obj_id_setting_icon,
@@ -416,7 +418,7 @@ static void home_away_obj_click(lv_event_t *ev)
 }
 static void home_burglar_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 /***********************************************
@@ -603,9 +605,26 @@ static void home_media_thumb_display(void)
         home_media_thumb_new_display(info->is_new);
 }
 
+static void home_sd_icon_display(void)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),home_obj_id_sd_icon);
+        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
+        }
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+}
+
 static void home_sd_state_change_callback(void)
 {
         home_media_thumb_display();
+        home_sd_icon_display();
+        
 }
 
 static void layout_home_monitor_icon_display(lv_obj_t * obj)
@@ -662,6 +681,19 @@ static void home_network_check_timer(lv_timer_t *ptimer)
 }
 static void sat_layout_enter(home)
 {
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: SD状态图标显示
+         ***********************************************/
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_sd_icon, 787, 72, 48, 48,
+                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("ic_monitoring_sdcard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        home_sd_icon_display();
 
         /***********************************************
          ** 作者: leo.liu
@@ -949,7 +981,7 @@ static void sat_layout_enter(home)
                 ** 参数说明: 
                 ** 注意事项: 
                 ************************************************************/
-                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,842, 75 , 35, 35,
+                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,852, 77 , 35, 35,
                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -965,7 +997,7 @@ static void sat_layout_quit(home)
         sat_linphone_media_thumb_destroy();
 
         thumb_display_refresh_register(NULL);
-        sd_state_channge_callback_register(NULL);
+        sd_state_channge_callback_register(sd_state_change_default_callback);
         lv_img_buf_free(home_thumb_img_dsc);
         home_thumb_img_dsc = NULL;
 }

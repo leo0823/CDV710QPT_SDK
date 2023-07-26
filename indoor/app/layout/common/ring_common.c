@@ -40,7 +40,7 @@ bool ring_door_call_play(void)
 ***********************************************/
 bool ring_unlock_play(void)
 {
-
+        return true;
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(100);

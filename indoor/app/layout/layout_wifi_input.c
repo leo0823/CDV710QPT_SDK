@@ -116,7 +116,14 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
 	if (conneted == true)
 	{
 		wifi_device_tmp_sync();
-                sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, SAT_VOID);
+                if (user_data_get()->is_device_init == false)
+                {
+                        sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                }
+                else
+                {
+                        sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, SAT_VOID);
+                }
 	}else
         {
                 int *ploop = (int *)task->user_data;
@@ -204,6 +211,14 @@ static void wifi_input_msg_dialog_display(void)
 }
 
 
+static void layout_wifi_input_head_display(void)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),0);
+        if(obj != NULL)
+        {
+                lv_label_set_text_fmt(obj,"%s",wifi_input_user_temp[0] == 0 ? lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI) : wifi_input_user_temp);
+        }
+}
 static void wifi_input_keyboard_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_target(ev);
@@ -223,6 +238,7 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
                 lv_textarea_set_text(textarea, "");
                 wifi_input_textarea_placeholder_setting();
                 wifi_input_password_hidden_icon();
+                layout_wifi_input_head_display();
         }
         else
         {
@@ -244,6 +260,7 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
 
         }
 }
+
 static void sat_layout_enter(wifi_input)
 {
         lv_obj_t *textarea;

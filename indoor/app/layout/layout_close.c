@@ -62,6 +62,7 @@ static void motion_obj_top_icon_display(void)
         }
         if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
         {
+            lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
             lv_obj_set_x(obj, pos_x);
             lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
             pos_x -= 56;
@@ -523,7 +524,7 @@ static void sat_layout_quit(close)
     moiton_detection_event_cmd_register(NULL);
 
     /*sd卡状态处理*/
-    sd_state_channge_callback_register(NULL);
+    sd_state_channge_callback_register(sd_state_change_default_callback);
 
     user_linphone_call_streams_running_receive_register(NULL);
 

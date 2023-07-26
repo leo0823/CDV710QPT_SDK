@@ -24,8 +24,15 @@ enum
         logo_obj_id_tuya_register_tips,
         logo_obj_id_tuya_register_textarea,
         logo_obj_id_tuya_register_number_keyboard_btn,
+        sd_state_change_obj_id_format_msgbox_cont = 0xffff,
 };
 
+enum
+{
+        sd_state_change_obj_id_format_msgbox,
+        sd_state_change_obj_id_format_text,
+        sd_state_change_obj_id_msgbox_confirm,
+};
 /************************************************************
 ** 函数说明: 待机检测任务
 ** 作者: xiaoxiao
@@ -38,6 +45,55 @@ void standby_dection_timer(lv_timer_t *t)
         extern bool standby_timeout_check_and_process(void);
         standby_timeout_check_and_process();
 }
+
+static void sd_state_change_msgbox_cancel_click(lv_event_t * ev)
+{
+        setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
+}
+
+static void sd_state_checking_timer(lv_timer_t *timer)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),sd_state_change_obj_id_format_msgbox_cont);
+        if(masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
+        }
+        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        {
+
+        }else if((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG))
+        {
+                masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
+                setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, "SD card is not normal statusor not inserted..", 0, 60, 460, 120);
+                setting_msgdialog_msg_confirm_btn_create(masgbox,sd_state_change_obj_id_msgbox_confirm,sd_state_change_msgbox_cancel_click );
+        }
+        lv_timer_del(timer);
+
+}
+
+/************************************************************
+** 函数说明: SD状态改变默认回调
+** 作者: xiaoxiao
+** 日期: 2023-07-15 11:50:12
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void sd_state_change_default_callback(void)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),sd_state_change_obj_id_format_msgbox_cont);
+        if(masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, "Checking SD card...", 0, 120, 460, 120);
+
+        lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
+
+
+
+}
+
 
 static void logo_enter_system_timer(lv_timer_t *t)
 {
@@ -137,9 +193,9 @@ static void logo_enter_system_timer(lv_timer_t *t)
                 ************************************************************/
                 standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
                 standby_timer_restart(true);
-
                 lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
                 lv_timer_ready(standby_timer);
+                sd_state_channge_callback_register(sd_state_change_default_callback);
                 audio_output_cmd_register(audio_output_event_default_process);
                 user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
                 if (alarm_trigger_check() == false)
@@ -294,18 +350,7 @@ static void sat_layout_enter(logo)
 {
         lv_common_video_mode_enable(false);
 
-        lv_common_text_create(sat_cur_layout_screen_get(), logo_obj_id_model_label, 559, 550, 200, 33,
-                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                              "Model:CIP-70QPT", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, NULL);
-
-        lv_common_text_create(sat_cur_layout_screen_get(), logo_obj_id_version_label, 863, 550, 135, 33,
-                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                              SYSTEM_VERSION, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, NULL);
-
+        
         lv_obj_pressed_func = lv_layout_touch_callback;
 
         if (access("/tmp/tf", F_OK))
@@ -327,8 +372,20 @@ static void sat_layout_enter(logo)
                                          resource_ui_src_get("ic_logo.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                 lv_sat_timer_create(logo_enter_system_timer, 1000, NULL);
         }
-}
 
+        lv_common_text_create(sat_cur_layout_screen_get(), logo_obj_id_model_label, 559, 550, 200, 33,
+                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                              "Model:CIP-70QPT", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, NULL);
+
+        lv_common_text_create(sat_cur_layout_screen_get(), logo_obj_id_version_label, 863, 550, 135, 33,
+                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                              SYSTEM_VERSION, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, NULL);
+}
+        
 static void sat_layout_quit(logo)
 {
 

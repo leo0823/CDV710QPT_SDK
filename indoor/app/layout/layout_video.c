@@ -507,25 +507,18 @@ static void sat_layout_enter(video)
         ** 说明: 左右切换
         ***********************************************/
         {
-                lv_obj_t *obj1 = lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_left, 24, 300, 80, 80,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_left, 24, 300, 80, 80,
                                                           video_obj_left_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           resource_ui_src_get("btn_thumbnail_arrow_left_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                if (playback_media_total_get() < 2)
-                {
-                        lv_obj_add_flag(obj1, LV_OBJ_FLAG_HIDDEN);
-                }
 
-                lv_obj_t *obj2 = lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_right, 919, 300, 80, 80,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_right, 919, 300, 80, 80,
                                                           video_obj_right_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                if (playback_media_total_get() < 2)
-                {
-                        lv_obj_add_flag(obj2, LV_OBJ_FLAG_HIDDEN);
-                }
+                video_thumb_left_right_arrow_display();
         }
         /***********************************************
          ** 作者: leo.liu
@@ -594,7 +587,7 @@ static void sat_layout_quit(video)
         // thumb_display_refresh_register(NULL);
         lv_common_video_mode_enable(false);
         sat_linphone_video_play_stop();
-        sd_state_channge_callback_register(NULL);
+        sd_state_channge_callback_register(sd_state_change_default_callback);
 
         video_play_duration_callback_register(NULL);
         video_play_state_callback_register(NULL);

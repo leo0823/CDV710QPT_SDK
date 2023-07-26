@@ -203,11 +203,16 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
 /*判断密码长度是否符合要求*/
 static bool ipc_camera_determine_password_length_is_valid(const char *txt)
 {
-        if (1) // (layout_ipc_cmeara_is_doorcamera_get() == false)
+
+        if(layout_ipc_cmeara_is_doorcamera_get() == true)
         {
-                return true;
+                if ((ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_PWD | IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9))
+                {
+                        return false;
+                }
         }
-        if ((ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_PWD | IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) != 9))
+
+        if ((ipc_camera_input_flag & (/*IPC_CAMERA_FLAG_INPUT_PWD |*/ IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state = 0x0))//只对新密码做非法校验
         {
                 return false;
         }
@@ -267,7 +272,6 @@ static bool ipc_camera_input_old_password_processing(const char *txt)
 {
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         const char *input_password = lv_textarea_get_text(textarea);
-
         if (strcmp(sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()), input_password) == 0)
         {
                 ipc_camera_password_state = 0x01;
@@ -354,7 +358,7 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
         {
                 lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
 
-                if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
+                if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         strcpy(ipc_camera_password_input_password_old, "admin");
                 }
@@ -368,9 +372,9 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
         {
                 memset(ipc_camera_password_input_password_old, 0, sizeof(ipc_camera_password_input_password_old));
                 strcpy(ipc_camera_password_input_password_old, lv_textarea_get_text(textarea));
-                lv_textarea_set_text(textarea, "");
-                ipc_camera_password_input_textarea_placeholder_setting();
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
+                ipc_camera_password_input_textarea_placeholder_setting();
+                lv_textarea_set_text(textarea, "");
                 return SAT_VOID;
         }
 

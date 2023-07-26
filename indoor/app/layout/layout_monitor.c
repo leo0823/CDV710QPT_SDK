@@ -32,6 +32,7 @@ enum
         monitor_obj_id_cctv_btn,
         monitor_obj_id_rec_video_cont,
         monitor_obj_id_rec_photo_cont,
+        monitor_obj_id_extension_call,
         monitor_obj_id_nor_lock_cont,
         monitor_obj_id_lock_1_cont,
         monitor_obj_id_lock_2_cont,
@@ -67,6 +68,7 @@ static void monitor_obj_normal_lock_display(void);
 static void monitor_obj_lock_1_display(void);
 static void monitor_obj_lock_2_display(void);
 static void monitor_obj_volume_display(void);
+static void monitor_obj_dispaly_display(void);
 
 static int monitor_timeout_sec = 0;
 static int call_duration = 0;
@@ -180,6 +182,9 @@ static void montior_obj_top_icon_display(void)
                 }
                 if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
                 {
+
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
+                        
                         lv_obj_set_x(obj, pos_x);
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         pos_x -= 56;
@@ -309,46 +314,58 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
                                                                       : 30);
         }
 }
-/***********************************************
- ** 作者: leo.liu
- ** 日期: 2023-2-2 13:42:25
- ** 说明: 门口机切换
- ***********************************************/
-static void monitor_obj_channel_switch_click(lv_event_t *e)
-{
-        lv_obj_t *obj = lv_event_get_current_target(e);
-        if (obj == NULL)
-        {
-                return;
-        }
 
-        if (obj->id == monitor_obj_id_channel_switch_left_btn)
+static void layout_monitor_channel_type_switch_btn_display(void)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_channel_switch_CCTTV_monitor);
+        int ch = monitor_channel_get();
+        if(is_channel_ipc_camera(ch))
         {
-                int ch = monitor_channel_prev_get();
-                if (ch >= 0)
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(ch == MON_CH_CCTV1?"btn_call_cam1.png":ch == MON_CH_CCTV2?"btn_call_cam2.png" :ch == MON_CH_CCTV3?"btn_call_cam3.png":"btn_call_cam4.png"), LV_PART_MAIN);
+        }else
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(ch == MON_CH_DOOR1?"btn_call_cctv1.png":ch == MON_CH_DOOR2?"btn_call_cctv2.png" :ch == MON_CH_DOOR3?"btn_call_cctv3.png":"btn_call_cctv4.png"), LV_PART_MAIN);
+
+        }
+}
+
+/************************************************************
+** 函数说明: switch按钮显示
+** 作者: xiaoxiao
+** 日期: 2023-06-15 08:32:55
+** 参数说明:
+** 注意事项:
+************************************************************/
+static void layout_monitor_switch_btn_display(void)
+{
+        lv_obj_t *obj_left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
+        lv_obj_t *obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+        if (is_channel_ipc_camera(monitor_channel_get()) == true)
+        {
+                if (network_data_get()->cctv_device_count <= 1)
                 {
-                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
-                        monitor_channel_set(ch);
-                        monitor_open(true);
-                        layout_monitor_report_vaild_channel();
-                        monitor_timeout_sec_reset(60);
-                        monitior_obj_channel_info_obj_display();
+                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                }else
+                {
+                        lv_obj_clear_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(obj_right, LV_OBJ_FLAG_HIDDEN);   
                 }
         }
-        else if (obj->id == monitor_obj_id_channel_switch_right_btn)
+        else
         {
-                int ch = monitor_channel_next_get();
-                if (ch >= 0)
+                if (network_data_get()->door_device_count <= 1)
                 {
-                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
-                        monitor_channel_set(ch);
-                        monitor_open(true);
-                        layout_monitor_report_vaild_channel();
-                        monitor_timeout_sec_reset(60);
-                        monitior_obj_channel_info_obj_display();
+                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                }else
+                {
+                        lv_obj_clear_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(obj_right, LV_OBJ_FLAG_HIDDEN);   
                 }
         }
 }
+
 
 /***********************************************
  ** 作者: leo.liu
@@ -462,6 +479,19 @@ static void monitor_obj_talk_display(void)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 }
+
+static void layout_monitor_vol_bar_display(void)
+{
+        lv_obj_t * silder_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont),monitor_vol_obj_id_slider_cont);
+        lv_obj_t * slider_obj = lv_obj_get_child_form_id(silder_cont, 1);
+        lv_obj_t * value_obj = lv_obj_get_child_form_id(silder_cont, 0);
+        int cur_volume = is_monitor_door_camera_talk == true? user_data_get()->audio.door_talk_volume : user_data_get()->audio.door_ring_volume;
+        char value_str[32] =  {0};
+        sprintf(value_str,"%02d",cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj,value_str);
+}
+
 static void monitor_obj_talk_click(lv_event_t *e)
 {
         if (is_monitor_door_camera_talk == false)
@@ -481,6 +511,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 monitor_obj_volume_display();
                 monitor_obj_lock_1_display();
                 monitor_obj_lock_2_display();
+                layout_monitor_vol_bar_display();
         }
 }
 /***********************************************
@@ -548,6 +579,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 if (mode == 2)
                 {
+                        SAT_DEBUG("=====%d========\n",en);
                         door1_lock1_pin_ctrl(en);
                 }
                 else
@@ -615,10 +647,10 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
 static void monitor_lock_close(void)
 {
+        monitor_unlock_ctrl(0,1,false);
+        monitor_unlock_ctrl(0,2,false);
         monitor_unlock_ctrl(1,1,false);
         monitor_unlock_ctrl(1,2,false);
-        monitor_unlock_ctrl(2,1,false);
-        monitor_unlock_ctrl(2,1,false);
 
 }
 
@@ -768,6 +800,7 @@ static void monitor_obj_lock_1_display(void)
                         else
                         {
                                 lv_obj_set_x(obj, 402);
+                                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                 }
                 else
@@ -821,6 +854,7 @@ static void monitor_obj_lock_2_display(void)
                         else
                         {
                                 lv_obj_set_x(obj, 518);
+                                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                 }
                 else
@@ -912,6 +946,13 @@ static void monitor_sd_state_change_callback(void)
  ***********************************************/
 static void monitor_snapshot_state_callback(bool snapshot_ing)
 {
+        if(snapshot_ing == false)
+        {
+                SAT_DEBUG("jpeg record finish\n");
+        }else
+        {
+                SAT_DEBUG("jpeg record start\n");
+        }
         is_monitor_snapshot_ing = snapshot_ing;
         monitor_obj_record_photo_display();
 }
@@ -942,7 +983,6 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
                         mode |= REC_MODE_AUTO;
                 }
         }
-        mode |= REC_MODE_MANUAL;
         // SAT_DEBUG("==================\n");
         if (record_jpeg_start(mode) == false)
         {
@@ -1012,34 +1052,7 @@ static void home_use_mobile_app_obj_display(void)
         }
 }
 
-/************************************************************
-** 函数说明: switch按钮显示
-** 作者: xiaoxiao
-** 日期: 2023-06-15 08:32:55
-** 参数说明:
-** 注意事项:
-************************************************************/
-static void layout_monitor_switch_btn_display(void)
-{
-        lv_obj_t *obj_left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
-        lv_obj_t *obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
-        if (is_channel_ipc_camera(monitor_channel_get()) == true)
-        {
-                if (network_data_get()->cctv_device_count <= 1)
-                {
-                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
-                }
-        }
-        else
-        {
-                if (network_data_get()->door_device_count <= 1)
-                {
-                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
-                }
-        }
-}
+
 
 static void layout_monitor_full_screen_display(lv_event_t *e)
 {
@@ -1059,6 +1072,8 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
 
         }
         else  if (is_channel_ipc_camera(monitor_channel_get()) == true)
@@ -1073,6 +1088,8 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 }
@@ -1116,6 +1133,7 @@ static void layout_monitor_contrast_bar_create(lv_obj_t *parent)
 
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
+
         lv_common_slider_create(parent, monitor_obj_id_contrast_slider_cont, 269, 88, 540, 48,
                         NULL, LV_OPA_TRANSP, 0X00,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1129,7 +1147,7 @@ static void layout_monitor_contrast_bar_create(lv_obj_t *parent)
                         right_src, LV_OPA_TRANSP, 0x00, LV_ALIGN_CENTER,
                         360, 9, 0Xffffff, LV_OPA_COVER, NULL,
                         0, 100, user_data_get()->display.lcd_brigtness);
-        
+
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
 }
@@ -1201,32 +1219,31 @@ static void layout_monitor_vol_bar_create(lv_obj_t *parent)
                         715, 3, 42, 42, 3,
                         right_src, LV_OPA_TRANSP, 0x00, LV_ALIGN_CENTER,
                         360, 9, 0Xffffff, LV_OPA_COVER, NULL,
-                        0, 100, user_data_get()->display.lcd_brigtness);
+                        0, 100, 0);
         
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
+        layout_monitor_vol_bar_display();
 }
 
-static void layout_monitor_channel_type_switch_btn_display(void)
-{
-        lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_buttom_cont),monitor_obj_id_channel_switch_CCTTV_monitor);
-        if(is_channel_ipc_camera(monitor_channel_get()))
-        { 
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_cam1.png"), LV_PART_MAIN);
-        }else
-        {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_cctv1.png"), LV_PART_MAIN);
-        } 
-}
+
+
 static void layout_monitor_channel_type_switch_btn_click(lv_event_t * ev)
 {
-        lv_obj_t * obj = lv_event_get_current_target(ev);
-        if(is_channel_ipc_camera(monitor_channel_get()))
+        if (is_monitor_record_video_ing == true)
+        {
+                record_video_stop();
+        }
+        int ch = monitor_channel_get();
+        if(is_channel_ipc_camera(ch))
         {      
                 if((network_data_get()->door_device_count >= 0))
                 {
-                        monitor_channel_set(MON_CH_DOOR1);
-                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_cctv1.png"), LV_PART_MAIN);
+                        if(monitor_valid_channel_check(ch - 8) == false)
+                        {
+                                return;
+                        }
+                        monitor_channel_set(ch - 8);
                 }   
 
         }
@@ -1235,14 +1252,18 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t * ev)
 
               if((network_data_get()->cctv_device_count >= 0))
                 {
-                        monitor_channel_set(MON_CH_CCTV1);
-                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_cam1.png"), LV_PART_MAIN);
+
+                        if(monitor_valid_channel_check(ch + 8) == false)
+                        {
+                               
+                                return;
+                        }
+                        monitor_channel_set(ch + 8);
                 }     
         }           
-
+        layout_monitor_channel_type_switch_btn_display();
         monitor_obj_cctv_cancel_obj_display();
-        montior_obj_top_icon_display();
-        home_use_mobile_app_obj_display();
+
         layout_monitor_switch_btn_display();
         monitor_obj_dispaly_display();
         monitor_obj_volume_display();
@@ -1251,11 +1272,81 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t * ev)
         monitor_obj_normal_lock_display();
         monitor_obj_lock_1_display();
         monitor_obj_lock_2_display();
-        monitor_obj_record_video_display();
-        monitor_obj_record_photo_display();
         monitior_obj_channel_info_obj_display();
+        monitor_timeout_sec_reset(30);
         monitor_open(true);
 
+}
+
+static void layout_monitor_extension_call_click(lv_event_t * e)
+{
+        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+/***********************************************
+ ** 作者: leo.liu
+ ** 日期: 2023-2-2 13:42:25
+ ** 说明: 门口机切换
+ ***********************************************/
+static void monitor_obj_channel_switch_click(lv_event_t *e)
+{
+        if (is_monitor_record_video_ing == true)
+        {
+                record_video_stop();
+        }
+        lv_obj_t *obj = lv_event_get_current_target(e);
+        if (obj == NULL)
+        {
+                return;
+        }
+
+        if (obj->id == monitor_obj_id_channel_switch_left_btn)
+        {
+                int ch = monitor_channel_prev_get();
+                if (ch >= 0)
+                {
+                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
+                        monitor_channel_set(ch);
+                        monitor_open(true);
+                        layout_monitor_channel_type_switch_btn_display();
+                        monitor_obj_cctv_cancel_obj_display();
+
+                        monitor_obj_dispaly_display();
+                        monitor_obj_volume_display();
+                        monitor_obj_talk_display();
+                        monitor_obj_handup_display();
+                        monitor_obj_normal_lock_display();
+                        monitor_obj_lock_1_display();
+                        monitor_obj_lock_2_display();
+
+                        monitior_obj_channel_info_obj_display();
+                        monitor_timeout_sec_reset(30);
+                        layout_monitor_switch_btn_display();
+                }
+        }
+        else if (obj->id == monitor_obj_id_channel_switch_right_btn)
+        {
+                int ch = monitor_channel_next_get();
+                if (ch >= 0)
+                {
+                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
+                        monitor_channel_set(ch);
+                        monitor_open(true);
+                        layout_monitor_channel_type_switch_btn_display();
+                        monitor_obj_cctv_cancel_obj_display();
+
+                        monitor_obj_dispaly_display();
+                        monitor_obj_volume_display();
+                        monitor_obj_talk_display();
+                        monitor_obj_handup_display();
+                        monitor_obj_normal_lock_display();
+                        monitor_obj_lock_1_display();
+                        monitor_obj_lock_2_display();
+
+                        monitior_obj_channel_info_obj_display();
+                        monitor_timeout_sec_reset(30);
+                        layout_monitor_switch_btn_display();
+                }
+        }
 }
 
 
@@ -1267,7 +1358,7 @@ static void sat_layout_enter(monitor)
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = false;
         is_monitor_record_video_ing = false;
-        monitor_timeout_sec_reset(60);
+        monitor_timeout_sec_reset(30);
         call_duration = 0;
         //满屏查看
         {
@@ -1279,6 +1370,8 @@ static void sat_layout_enter(monitor)
                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
         
         }
+
+        
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1383,6 +1476,23 @@ static void sat_layout_enter(monitor)
                         lv_timer_ready(lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL));
                 }
         }
+
+        /************************************************************
+        ** 函数说明: 切换到CCTV
+        ** 作者: xiaoxiao
+        ** 日期: 2023-07-05 18:25:47
+        ** 参数说明: 
+        ** 注意事项: 
+        ************************************************************/
+        {
+                        lv_common_img_btn_create(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor, 912, 384, 80, 80,
+                                                layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                resource_ui_src_get("btn_call_cctv1.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                        layout_monitor_channel_type_switch_btn_display();
+                
+        }
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1416,6 +1526,15 @@ static void sat_layout_enter(monitor)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
                 layout_monitor_switch_btn_display();
+        }
+        //分机call机图标创建
+        {
+                        lv_obj_t * obj = lv_common_img_btn_create(sat_cur_layout_screen_get(), monitor_obj_id_extension_call, 61, 104, 253, 80,
+                                        layout_monitor_extension_call_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
         }
 
 
@@ -1530,22 +1649,6 @@ static void sat_layout_enter(monitor)
                         monitor_obj_lock_2_display();
                 }
 
-                /************************************************************
-                ** 函数说明: 切换到CCTV
-                ** 作者: xiaoxiao
-                ** 日期: 2023-07-05 18:25:47
-                ** 参数说明: 
-                ** 注意事项: 
-                ************************************************************/
-                {
-                                lv_common_img_btn_create(parent, monitor_obj_id_channel_switch_CCTTV_monitor, 704, 24, 80, 80,
-                                                        layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                        resource_ui_src_get("btn_call_cctv1.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-                                layout_monitor_channel_type_switch_btn_display();
-                        
-                }
                 /***********************************************
                  ** 作者: leo.liu
                  ** 日期: 2023-2-2 13:42:25
@@ -1681,7 +1784,7 @@ static void sat_layout_quit(monitor)
 
         user_linphone_call_streams_running_receive_register(NULL);
         /*sd卡状态处理 */
-        sd_state_channge_callback_register(NULL);
+        sd_state_channge_callback_register(sd_state_change_default_callback);
 
         /*抓拍注册*/
         snapshot_state_callback_register(NULL);
@@ -1787,6 +1890,32 @@ bool monitor_doorcamera_call_inside_func(char *arg)
                 }
                 {
                         monitior_obj_channel_info_obj_display();
+                }
+        }else 
+        {
+                char *ptr = strstr(arg, "sip:");
+                if ((ptr != NULL) && (strlen(ptr) > 4))
+                {
+                        char *start = ptr + 4;
+                        char *end = strchr(start, '>');
+                        if (end == NULL)
+                        {
+                                return false;
+                        }
+                        *end = '\0';
+                        if(!user_data_get()->audio.ring_mute)
+                        {
+                                ring_intercom_play();
+                        }
+                        intercom_call_status_setting(2);
+
+                        intercom_call_username_setting(start);
+                        SAT_DEBUG("call :%s", ptr);
+                        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_extension_call);
+                        if(obj != NULL)
+                        {
+                                lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                        }
                 }
         }
         return true;
