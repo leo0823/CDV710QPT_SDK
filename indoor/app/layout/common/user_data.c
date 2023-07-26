@@ -16,8 +16,7 @@
 
 static user_data_info user_data =
     {
-        0
-    };
+        0};
 
 static const user_data_info user_data_default =
     {
@@ -48,7 +47,7 @@ static const user_data_info user_data_default =
             .door_talk_volume = 2,
             .inter_ring_volume = 2,
             .inter_talk_volume = 2,
-            
+
             .buzzer_tone = 1,
             .buzzer_volume = 1,
             .common_entrance_tone = 1,
@@ -95,72 +94,72 @@ static const user_data_info user_data_default =
             .comm_ent_password = {"1234"},
         },
         .alarm = {
-        .auto_record = false,
-        .away_alarm_enable_list = 0x00,//离家设防列表
-        .security_alarm_enable_list = 0x00,//安全设防列表
-        .away_alarm_enable = false,//离家设防使能状态
-        .security_alarm_enable = false,//安全设防状态显示
-        .emergency_mode = 0,//0:手动触发警报 1:安防系统自动触发警报
+            .auto_record = false,
+            .away_alarm_enable_list = 0x00,     // 离家设防列表
+            .security_alarm_enable_list = 0x00, // 安全设防列表
+            .away_alarm_enable = false,         // 离家设防使能状态
+            .security_alarm_enable = false,     // 安全设防状态显示
+            .emergency_mode = 0,                // 0:手动触发警报 1:安防系统自动触发警报
 
-        .alarm_enable[0] = 0,//0不使能，1：NC低电平触发2：NO高电平触发
-        .alarm_enable[1] = 0,
-        .alarm_enable[2] = 0,
-        .alarm_enable[3] = 0,
-        .alarm_enable[4] = 0,
-        .alarm_enable[5] = 0,
-        .alarm_enable[6] = 0,
-        .alarm_enable[7] = 0,
+            .alarm_enable[0] = 0, // 0不使能，1：NC低电平触发2：NO高电平触发
+            .alarm_enable[1] = 0,
+            .alarm_enable[2] = 0,
+            .alarm_enable[3] = 0,
+            .alarm_enable[4] = 0,
+            .alarm_enable[5] = 0,
+            .alarm_enable[6] = 0,
+            .alarm_enable[7] = 0,
 
-        .alarm_trigger[0] = 0,//0非触发状态，1触发状态
-        .alarm_trigger[1] = 0,
-        .alarm_trigger[2] = 0,
-        .alarm_trigger[3] = 0,
-        .alarm_trigger[4] = 0,
-        .alarm_trigger[5] = 0,
-        .alarm_trigger[6] = 0,
-        .alarm_trigger[7] = 0,
-        .alarm_enable_always[0][0] = false,
-        .alarm_enable_always[0][1] = false,
-        .alarm_enable_always[0][2] = false,
-        .alarm_enable_always[0][3] = false,
-        .alarm_enable_always[0][4] = false,
-        .alarm_enable_always[0][5] = false,
-        .alarm_enable_always[0][6] = false,
-        .alarm_enable_always[0][7] = false,
-        .alarm_enable_always[1][0] = false,
-        .alarm_enable_always[1][1] = false,
-        .alarm_enable_always[1][2] = false,
-        .alarm_enable_always[1][3] = false,
-        .alarm_enable_always[1][4] = false,
-        .alarm_enable_always[1][5] = false,
-        .alarm_enable_always[1][6] = false,
-        .alarm_enable_always[1][7] = false,
+            .alarm_trigger[0] = 0, // 0非触发状态，1触发状态
+            .alarm_trigger[1] = 0,
+            .alarm_trigger[2] = 0,
+            .alarm_trigger[3] = 0,
+            .alarm_trigger[4] = 0,
+            .alarm_trigger[5] = 0,
+            .alarm_trigger[6] = 0,
+            .alarm_trigger[7] = 0,
+            .alarm_enable_always[0][0] = false,
+            .alarm_enable_always[0][1] = false,
+            .alarm_enable_always[0][2] = false,
+            .alarm_enable_always[0][3] = false,
+            .alarm_enable_always[0][4] = false,
+            .alarm_enable_always[0][5] = false,
+            .alarm_enable_always[0][6] = false,
+            .alarm_enable_always[0][7] = false,
+            .alarm_enable_always[1][0] = false,
+            .alarm_enable_always[1][1] = false,
+            .alarm_enable_always[1][2] = false,
+            .alarm_enable_always[1][3] = false,
+            .alarm_enable_always[1][4] = false,
+            .alarm_enable_always[1][5] = false,
+            .alarm_enable_always[1][6] = false,
+            .alarm_enable_always[1][7] = false,
 
-        .away_sensor_enable[0] = false,
-        .away_sensor_enable[1] = false,
-        .away_sensor_enable[2] = false,
-        .away_sensor_enable[3] = false,
-        .away_sensor_enable[4] = false,
-        .away_sensor_enable[5] = false,
-        .away_sensor_enable[6] = false,
-        .away_sensor_enable[7] = false,
-        .security_sensor_enable[0] = false,
-        .security_sensor_enable[1] = false,
-        .security_sensor_enable[2] = false,
-        .security_sensor_enable[3] = false,
-        .security_sensor_enable[4] = false,
-        .security_sensor_enable[5] = false,
-        .security_sensor_enable[6] = false,
-        .security_sensor_enable[7] = false,
+            .away_sensor_enable[0] = false,
+            .away_sensor_enable[1] = false,
+            .away_sensor_enable[2] = false,
+            .away_sensor_enable[3] = false,
+            .away_sensor_enable[4] = false,
+            .away_sensor_enable[5] = false,
+            .away_sensor_enable[6] = false,
+            .away_sensor_enable[7] = false,
+            .security_sensor_enable[0] = false,
+            .security_sensor_enable[1] = false,
+            .security_sensor_enable[2] = false,
+            .security_sensor_enable[3] = false,
+            .security_sensor_enable[4] = false,
+            .security_sensor_enable[5] = false,
+            .security_sensor_enable[6] = false,
+            .security_sensor_enable[7] = false,
 
-        .away_setting_time = 1,
-        .away_release_time = 30,
-        
-        .away_auto_record = false,
-        .security_auto_record = false,
-        
+            .away_setting_time = 1,
+            .away_release_time = 30,
+
+            .away_auto_record = false,
+            .security_auto_record = false,
+
         },
-        .system_mode = 0,
+        .system_mode = 0x01,
         .time_automatically = 1,
         .call_time = 1,
         .always_monitoring = 0,
@@ -252,10 +251,10 @@ static void user_data_check_valid(void)
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
         user_data_audio_check_range_out(buzzer_volume, 1, 6);
-         
-         user_data_audio_check_range_out(common_entrance_tone, 1, 6);
-         
-         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
+
+        user_data_audio_check_range_out(common_entrance_tone, 1, 6);
+
+        user_data_audio_check_range_out(securirty_office_tone, 1, 6);
 
         user_data_audio_check_range_out(door_ring_volume, 0, 3);
         user_data_audio_check_range_out(inter_ring_volume, 0, 3);
@@ -263,13 +262,11 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(door_talk_volume, 1, 3);
         user_data_audio_check_range_out(inter_talk_volume, 1, 3);
 
-       
-
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
         user_data_display_check_range_out(lcd_brigtness, 1, 100);
         user_data_display_check_range_out(wait_display_time, 15, 180);
-        
+
         user_data_display_check_range_out(frame_time_en, 0, 1);
         user_data_display_check_range_out(frame_time_start, 0, 1440);
         user_data_display_check_range_out(screen_off_time, 15, 180);
@@ -315,38 +312,37 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(emergency_mode, 0, 1);
 
         user_data_alarm_check_range_out(away_alarm_enable_list, 0, 0x7f);
-        user_data_alarm_check_range_out(security_alarm_enable_list, 0,0x7f);
+        user_data_alarm_check_range_out(security_alarm_enable_list, 0, 0x7f);
 
-        for(int i = 0; i<8 ;i++)
+        for (int i = 0; i < 8; i++)
         {
                 user_data_alarm_check_range_out(alarm_enable[i], 0, 2);
         }
-        for(int i = 0; i<8 ;i++)
+        for (int i = 0; i < 8; i++)
         {
                 user_data_alarm_check_range_out(alarm_trigger[i], 0, 1);
         }
-        for(int i = 0; i<8 ;i++)
+        for (int i = 0; i < 8; i++)
         {
                 user_data_alarm_check_range_out(away_sensor_enable[i], 0, 1);
         }
-        for(int i = 0; i<8 ;i++)
+        for (int i = 0; i < 8; i++)
         {
                 user_data_alarm_check_range_out(security_sensor_enable[i], 0, 1);
         }
-        for(int i = 0; i<8 ;i++)
+        for (int i = 0; i < 8; i++)
         {
-                for(int j = 0; j<2 ;j++)
+                for (int j = 0; j < 2; j++)
                 {
                         user_data_alarm_check_range_out(alarm_enable_always[i][j], 0, 1);
                 }
-
         }
 
         user_data_alarm_check_range_out(away_setting_time, 1, 3);
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
-        user_data_check_range_out(system_mode, 0, 9);
+        user_data_check_range_out(system_mode, 1, 29);
         user_data_check_range_out(time_automatically, 0, 1);
         user_data_check_range_out(call_time, 1, 3);
 }
@@ -391,13 +387,9 @@ void user_data_reset(void)
 static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
-    .sip_user = {"010129001011"},
-    .cctv_ch_index = {0},
-    .door_ch_index = {0},
+    .sip_user = {"010001001011"},
     .ip = {0},
     .mask = {"255.0.0.0"},
-    .door_device_count = 0,
-    .cctv_device_count = 0,
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \
@@ -426,9 +418,9 @@ bool network_data_save(void)
 
 static void printf_register_device(void)
 {
-        SAT_DEBUG("register cont:%d", network_data.door_device_count);
+
         printf("\n\n#############################################\n");
-        for (int i = 0; i < network_data.door_device_count; i++)
+        for (int i = 0; i < DEVICE_MAX; i++)
         {
                 printf("door camera :%d\n", i);
                 printf("accout:%s\n", network_data.door_device[i].username);
@@ -445,7 +437,7 @@ static void printf_register_device(void)
                 }
         }
         printf("\n");
-        for (int i = 0; i < network_data.cctv_device_count; i++)
+        for (int i = 0; i < DEVICE_MAX; i++)
         {
                 printf("CCTV  :%d\n", i);
                 printf("accout:%s\n", network_data.cctv_device[i].username);
@@ -503,27 +495,14 @@ static void network_data_check_valid(void)
                 }
         }
 
-        for (int i = 0; i < sizeof(network_data.cctv_ch_index)/sizeof(int);  i++)
-        {
-
-                network_data_check_range_out(cctv_ch_index[i], 0, 9);
-  
-        }
-        for (int i = 0; i < sizeof(network_data.door_ch_index)/sizeof(int);  i++)
-        {
-
-                network_data_check_range_out(door_ch_index[i], 0, 9);
-  
-        }
-        
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-10 9:40:52
         ** 说明:	 检测分机IP组
         ***********************************************/
-        network_data_check_range_out(door_device_count, 0, DEVICE_MAX);
+     //   network_data_check_range_out(door_device_count, 0, DEVICE_MAX);
 
-        network_data_check_range_out(cctv_device_count, 0, DEVICE_MAX);
+        //network_data_check_range_out(cctv_device_count, 0, DEVICE_MAX);
         printf_register_device();
 }
 

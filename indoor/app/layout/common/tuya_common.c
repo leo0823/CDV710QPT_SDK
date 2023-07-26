@@ -15,11 +15,11 @@ static bool tuya_event_cmd_video_start(void)
 {
         if (sat_cur_layout_get() != sat_playout_get(monitor))
         {
-                if ((tuya_monitor_channel < 8) && (network_data_get()->door_device_count > 0))
+                if ((tuya_monitor_channel < 8) /* && (network_data_get()->door_device_count > 0) */)
                 {
                         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
                 }
-                else if ((tuya_monitor_channel >= 8) && (network_data_get()->cctv_device_count > 0))
+                else if ((tuya_monitor_channel >= 8) /* && (network_data_get()->cctv_device_count > 0) */)
                 {
                         monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
                 }

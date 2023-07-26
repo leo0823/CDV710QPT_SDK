@@ -88,7 +88,7 @@ static void linux_kerner_init(void)
                                    -BYTE2 bit[7]=1
                                                 个位分机ID号
         ***********************************************/
-        setenv("SIP", network_data_get()->sip_user, 1);
+        //   setenv("SIP", network_data_get()->sip_user, 1);
 }
 
 /*
@@ -133,7 +133,6 @@ static void lv_task_scheduling_start(void)
         }
 }
 
-
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -143,6 +142,11 @@ static void lv_task_scheduling_start(void)
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
+
+        /*先干掉asterik服务器*/
+        remove("/tmp/.linphonerc");
+        sat_kill_task_process("{safe_asterisk} /bin/sh /app/asterisk/sbin/safe_asterisk");
+        sat_kill_task_process("/app/asterisk/sbin/asterisk -f -vvvg -c");
 
         user_data_init();
         network_data_init();
