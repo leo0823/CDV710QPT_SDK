@@ -7,7 +7,12 @@
 #define MON_CH_NONE -1
 #define MON_CH_DOOR1 0
 #define MON_CH_DOOR2 1
-
+#define MON_CH_DOOR3 2
+#define MON_CH_DOOR4 3
+#define MON_CH_DOOR5 4
+#define MON_CH_DOOR6 5
+#define MON_CH_DOOR7 6
+#define MON_CH_DOOR8 7
 #define MON_CH_CCTV1 8
 #define MON_CH_CCTV2 9
 #define MON_CH_CCTV3 10

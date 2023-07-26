@@ -38,11 +38,11 @@ typedef struct
         int buzzer_tone;
         int buzzer_volume;
         int common_entrance_tone;
+        int common_entrance_volume;
+        int common_entrance_voice;
         int securirty_office_tone;
         int entracne_volume;
         int entrancr_voice;
-        int common_entrance_volume;
-        int common_entrance_voice;
         int guard_station_volume;
         int guard_station_voice;
         int extension_volume;

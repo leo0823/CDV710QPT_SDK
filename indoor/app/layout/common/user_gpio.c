@@ -54,6 +54,13 @@ bool backlight_brightness_set(int per)
         return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, per);
 }
 
+#define DOOR1_LOCK_1_GPIO_POWER_PIN 6
+void door1_lock1_power_gpio_init(void)
+{
+        gpio_direction_set(DOOR1_LOCK_1_GPIO_POWER_PIN, GPIO_DIR_OUT);
+        gpio_level_set(DOOR1_LOCK_1_GPIO_POWER_PIN, GPIO_LEVEL_LOW);
+}
+
 /************************************************************
 ** 函数说明: door1特殊锁控制使能
 ** 作者: xiaoxiao
@@ -65,7 +72,22 @@ bool backlight_brightness_set(int per)
 static void door1_lock1_gpio_init(void)
 {
         gpio_direction_set(DOOR1_LOCK_1_GPIO_PIN, GPIO_DIR_OUT);
-        gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, GPIO_LEVEL_LOW);
+        gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, GPIO_LEVEL_HIGH);
+        //door1_lock1_power_gpio_init();
+}
+
+
+
+/************************************************************
+** 函数说明: door1电源控制
+** 作者: xiaoxiao
+** 日期: 2023-05-11 14:37:14
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void door1_lock1_power_pin_ctrl(bool en)
+{
+        gpio_level_set(DOOR1_LOCK_1_GPIO_POWER_PIN, en ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
 }
 
 /************************************************************
@@ -77,10 +99,38 @@ static void door1_lock1_gpio_init(void)
 ************************************************************/
 void door1_lock1_pin_ctrl(bool en)
 {
-        gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, en ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
+        printf("door1 lock2 is %d\n",en);
+        gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, en ? GPIO_LEVEL_LOW : GPIO_LEVEL_HIGH);
+        //door1_lock1_power_pin_ctrl(en);
 }
 
 
+
+/************************************************************
+** 函数说明: 警报电源输出使能
+** 作者: xiaoxiao
+** 日期: 2023-07-19 09:05:17
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+#define ALM_POWER_OUTPUT 4
+static void alarm_power_out_gpio_init(void)
+{
+        gpio_direction_set(ALM_POWER_OUTPUT, GPIO_DIR_OUT);
+        gpio_level_set(ALM_POWER_OUTPUT, GPIO_LEVEL_LOW);
+}
+
+/************************************************************
+** 函数说明: 警报电源输出控制
+** 作者: xiaoxiao
+** 日期: 2023-07-19 09:06:16
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void alarm_power_out_ctrl(bool en)
+{
+        gpio_level_set(ALM_POWER_OUTPUT, en ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
+}
 
 /***********************************************
 ** 作者: leo.liu
@@ -209,6 +259,9 @@ bool user_gpio_init(void)
 
         /*door1特殊锁初始化*/
         door1_lock1_gpio_init();
+        
+        /*警报电源输出初始化*/
+        alarm_power_out_gpio_init();
 
         /*开启gpio 任务检测*/
         pthread_t task_id;

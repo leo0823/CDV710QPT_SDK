@@ -159,6 +159,19 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
         }
 }
 
+static void layout_setting_installation_guard_no_display(lv_obj_t *list)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_guard_station_number_cont);
+        if(parent != NULL)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+
+                lv_label_set_text(obj, "1234-1234-1234");   
+        }
+
+}
+
+
 static lv_obj_t *setting_installation_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
@@ -237,7 +250,10 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                         /*分机*/
                         if (((system_mode & 0x0F) != 0x01) && (i == 6 || i == 7))
                         {
-                                continue;
+                                if( i == 6 || i == 7 || i == 8)
+                                {
+                                        continue;
+                                }
                         }
                 }
 
@@ -257,6 +273,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         }
         layout_setting_installation_open_structure_dispaly(list);
         layout_setting_installation_build_house_no_display(list);
+        layout_setting_installation_guard_no_display(list);
         return list;
 }
 
