@@ -1,5 +1,3 @@
-
-
 #include "layout_define.h"
 #include "onvif.h"
 #include "tuya_api.h"
@@ -131,6 +129,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         {
                 wifi_device_close();
         }
+
 #endif
 
         /***********************************************
@@ -146,6 +145,28 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: linphone 初始化
         ***********************************************/
         user_linphone_init();
+
+        /*判断是否为master*/
+        int id = user_data_get()->system_mode & 0x0F;
+
+        if (id == 0x01)
+        {
+                system("/app/asterisk/sbin/safe_asterisk ");
+
+                /*主机的话，将server ip更新*/
+                memset(user_data_get()->mastar_wallpad_ip, 0, sizeof(user_data_get()->mastar_wallpad_ip));
+                sat_ip_mac_addres_get("eth0", user_data_get()->mastar_wallpad_ip, NULL, NULL);
+        }
+
+        /*注册到sip server*/
+        usleep(1000 * 1000);
+        char sip_user_id[16] = {0};
+        char sip_sever[32] = {0};
+        sprintf(sip_user_id, "50%d", id);
+        sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
+
+        SAT_DEBUG("system mode=%02x  sip:%s register:%s", user_data_get()->system_mode, sip_user_id, sip_sever);
+        sat_linphone_register(sip_user_id, NULL, sip_sever);
 
         /**********************************************
          ** 作者: leo.liu
@@ -172,11 +193,10 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ************************************************************/
         call_list_init();
 
-        alarm_sensor_cmd_register(layout_alarm_trigger_default);//警报回调注册
+        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
 
         /***** 设置背光使能亮度 *****/
-	backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
-
+        backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
 
         if (user_data_get()->is_device_init == false)
         {
@@ -186,11 +206,11 @@ static void logo_enter_system_timer(lv_timer_t *t)
         {
                 /************************************************************
                  ** 函数说明: 待机初始化
-                ** 作者: xiaoxiao
-                ** 日期: 2023-05-19 15:21:05
-                ** 参数说明:
-                ** 注意事项:
-                ************************************************************/
+                 ** 作者: xiaoxiao
+                 ** 日期: 2023-05-19 15:21:05
+                 ** 参数说明:
+                 ** 注意事项:
+                 ************************************************************/
                 standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
                 standby_timer_restart(true);
                 lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
@@ -388,7 +408,6 @@ static void sat_layout_enter(logo)
         
 static void sat_layout_quit(logo)
 {
-
 }
 
 sat_layout_create(logo);

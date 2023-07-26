@@ -160,9 +160,8 @@ typedef struct
 
         user_alarm_info alarm;
 
-        char system_mode; // 0:单户型（master） 1:服务器型（master）2-8：分机号
-
-        int master_mode;//0:单户型 1:服务器型(此参数只对分机有参考意义)
+        char system_mode; // 0xFF 高4位 0：单系统，1:服务型。低4位表示ID号
+        char mastar_wallpad_ip[16];//sip server 的IP
 
         int call_time;
 
@@ -186,12 +185,10 @@ typedef struct
         char sip_user[32];
         char ip[32];
         char mask[32];
-        int  cctv_ch_index[8];
-        int  door_ch_index[8];
-        int door_device_count;
+
+
         struct ipcamera_info door_device[DEVICE_MAX];
 
-        int cctv_device_count;
         struct ipcamera_info cctv_device[DEVICE_MAX];
 
 } user_network_info;

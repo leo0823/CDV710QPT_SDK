@@ -126,7 +126,7 @@ static bool indoor_device_discover_processing(struct sockaddr_in *client_addr, c
         }
 
         sprintf(local_uuid, "00010010-0001-1020-8000-%s", local_usernmae);
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
         sprintf(xml_buffer_fmt, xml_buffer, msg_count++, local_uuid, local_uuid, local_uuid, local_usernmae, local_usernmae, local_usernmae, ip);
         //    SAT_DEBUG("%s", xml_buffer_fmt);
         /****************************************************************
@@ -430,7 +430,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
 
         system("udhcpc -i eth0 -s /etc/init.d/udhcpc.script &");
         usleep(10 * 1000);
-        while (sat_ip_mac_addres_get("eth0", ip, mac) == false)
+        while (sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false)
         {
                 usleep(10 * 1000);
                 count++;

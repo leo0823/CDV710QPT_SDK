@@ -61,10 +61,10 @@ static void layout_alarm_monitor_open(void)
         { 
                 int ch = layout_alarm_alarm_channel_get();
                 
-                if(ch >= network_data_get()->cctv_device_count)
+                if(ch >= DEVICE_MAX)
                 {
-                        monitor_channel_set(MON_CH_CCTV1 + network_data_get()->cctv_device_count);
-                        
+                        SAT_DEBUG("===========================");
+                        return ;       
                 }else
                 {
                         monitor_channel_set(MON_CH_CCTV1 + ch);

@@ -29,7 +29,7 @@ enum
 typedef enum
 {
         slave_type_setting_obj_id_checkbox,
-}slave_type_setting_list;
+} slave_type_setting_list;
 
 static void slave_type_setting_cancel_click(lv_event_t *e)
 {
@@ -42,75 +42,76 @@ static void slave_type_setting_master_indoor_click(lv_event_t *e)
 
 static void slave_type_setting_extension_number_display(void)
 {
-        lv_obj_t * extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),slave_type_setting_obj_id_extension_number_cont),slave_type_setting_obj_id_extension_number_sub);
-        if(user_data_get()->system_mode <= 1)
+        lv_obj_t *extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_extension_number_cont), slave_type_setting_obj_id_extension_number_sub);
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                lv_label_set_text(extension_number,lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET));
-        }else
-        {
-                lv_label_set_text_fmt(extension_number,"ID %d",user_data_get()->system_mode);
+                lv_label_set_text(extension_number, lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET));
         }
+        else
+        {
+                lv_label_set_text_fmt(extension_number, "ID %d", user_data_get()->system_mode & 0x0F);
+        }
+
+        extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_master_indor_cont), slave_type_setting_obj_id_master_indoor_sub);
+
+        lv_label_set_text(extension_number, user_data_get()->mastar_wallpad_ip);
 }
 
-
-static void  slave_type_setting_cancel_func(lv_event_t *ev)
+static void slave_type_setting_cancel_func(lv_event_t *ev)
 {
         setting_msgdialog_msg_del(slave_type_setting_obj_id_msgbox_bg_cont);
-        
 }
 
-
-static void  slave_type_setting_confirm_func(lv_event_t *ev)
+static void slave_type_setting_confirm_func(lv_event_t *ev)
 {
         lv_obj_t *parent = lv_obj_get_parent(lv_event_get_current_target(ev));
-        for(int i =0;i < 7; i++)
+        for (int i = 0; i < 7; i++)
         {
-                lv_obj_t * list = lv_obj_get_child_form_id(parent, slave_type_setting_obj_id_list);
+                lv_obj_t *list = lv_obj_get_child_form_id(parent, slave_type_setting_obj_id_list);
 
-                lv_obj_t * checkbox = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,i),1);
+                lv_obj_t *checkbox = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, i), 1);
 
                 if (!strncmp((const char *)checkbox->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
                 {
-                        user_data_get()->system_mode = i + 2;
+                        user_data_get()->system_mode &= 0xF0;
+                        user_data_get()->system_mode |= (i + 2) & 0x0F;
                         char number[32] = {0};
                         memset(number, 0, sizeof(number));
-                        strncpy(number,network_data_get()->sip_user,11);
-                        sprintf(&number[11],"%d",i+2);
+                        strncpy(number, network_data_get()->sip_user, 11);
+                        sprintf(&number[11], "%d", i + 2);
                         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
                         strcpy(network_data_get()->sip_user, number);
-                        setenv("SIP", network_data_get()->sip_user, 1);
+                        // setenv("SIP", network_data_get()->sip_user, 1);
                         network_data_save();
                         user_data_save();
-                break;
-
+                        break;
                 }
         }
         setting_msgdialog_msg_del(slave_type_setting_obj_id_msgbox_bg_cont);
         slave_type_setting_extension_number_display();
 }
 
-static void slave_type_setting_extension_number_list_display(lv_obj_t * parent)
+static void slave_type_setting_extension_number_list_display(lv_obj_t *parent)
 {
-        for(int i = 0; i < 7;i++)
+        for (int i = 0; i < 7; i++)
         {
-                lv_obj_t * obj = lv_obj_get_child_form_id(parent,i);
-                lv_obj_t * numb = lv_obj_get_child_form_id(obj,0);
-                lv_obj_t * checkbox = lv_obj_get_child_form_id(obj,1);
-                if(numb != NULL)
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, i);
+                lv_obj_t *numb = lv_obj_get_child_form_id(obj, 0);
+                lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, 1);
+                if (numb != NULL)
                 {
-                        lv_label_set_text_fmt(numb,"ID %d",i + 2);
+                        lv_label_set_text_fmt(numb, "ID %d", i + 2);
                 }
-                if(obj->id == user_data_get()->system_mode - 2)
+                if (obj->id == ((user_data_get()->system_mode & 0x0F) - 2))
                 {
                         lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                }else
+                }
+                else
                 {
                         lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
                 }
         }
-        
 }
-
 
 static void setting_extension_number_list_click(lv_event_t *ev)
 {
@@ -152,25 +153,23 @@ static void setting_extension_number_list_click(lv_event_t *ev)
 
 static void slave_type_setting_extension_number_click(lv_event_t *e)
 {
-        lv_obj_t * msgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont,slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
+        lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
         lv_obj_t *list = setting_list_create(msgbox, slave_type_setting_obj_id_list);
         lv_common_style_set_common(list, slave_type_setting_obj_id_list, 27, 10, 460 - 27, 273, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-        for(int i =0; i<7; i++)
+        for (int i = 0; i < 7; i++)
         {
                 lv_common_img_text_btn_create(list, i, 0, 0, 366, 55,
-                                        setting_extension_number_list_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        46, 8, 366 - 16, 32, 0,
-                                        "501", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                        0, 8, 32, 32, 1,
-                                        (const char *)resource_ui_src_get("btn_radio_n.png")
-                                        , LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                              setting_extension_number_list_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              46, 8, 366 - 16, 32, 0,
+                                              "501", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              0, 8, 32, 32, 1,
+                                              (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         slave_type_setting_extension_number_list_display(list);
-        setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox,slave_type_setting_obj_id_msgbox_confirm,slave_type_setting_obj_id_msgbox_cancel ,slave_type_setting_confirm_func,slave_type_setting_cancel_func);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox, slave_type_setting_obj_id_msgbox_confirm, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_confirm_func, slave_type_setting_cancel_func);
 }
-
 
 static void sat_layout_enter(slave_type_setting)
 {

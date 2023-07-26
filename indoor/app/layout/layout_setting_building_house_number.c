@@ -73,7 +73,7 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
 
                         //    automatic_number_setting_deault_ip_and_netmask();
 
-                        char local_uri[128] = {0};
+                       /*  char local_uri[128] = {0};
                         sat_sip_local_user_get(local_uri);
                         for (int i = 0; i < network_data_get()->door_device_count; i++)
                         {
@@ -81,11 +81,10 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
                                 {
                                         SAT_DEBUG("delete outdoor failed:%s", network_data_get()->door_device[i].door_name);
                                 }
-                        }
+                        } */
                         memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
-                        network_data_get()->door_device_count = 0;
                         network_data_save();
-                        setenv("SIP", network_data_get()->sip_user, 1);
+                     //   setenv("SIP", network_data_get()->sip_user, 1);
                         usleep(1000 * 1000);
                         exit(0);
                 }

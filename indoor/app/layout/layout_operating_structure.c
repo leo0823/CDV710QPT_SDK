@@ -25,7 +25,7 @@ static void operating_structure_goto_layout_process(lv_scr_load_anim_t anim)
 {
         if (user_data_get()->is_device_init == 0)
         {
-                if (user_data_get()->system_mode == 0)
+                if ((user_data_get()->system_mode & 0xF0) == 0x00)
                 {
                         sat_layout_goto(single_operation_network, anim, SAT_VOID);
                 }
@@ -53,19 +53,19 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         }
         if (strstr((const char *)lv_obj_get_img_src(obj), "btn_radio_s.png"))
         {
-                user_data_get()->system_mode = 0;
+                user_data_get()->system_mode = 0x01;
         }
         else
         {
-                user_data_get()->system_mode = 1;
+                user_data_get()->system_mode = 0x11;
         }
         char number[32] = {0};
         memset(number, 0, sizeof(number));
-        strncpy(number,network_data_get()->sip_user,11);
-        sprintf(&number[11],"%d",1);
+        strncpy(number, network_data_get()->sip_user, 11);
+        sprintf(&number[11], "%d", 1);
         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
         strcpy(network_data_get()->sip_user, number);
-        setenv("SIP", network_data_get()->sip_user, 1);
+        // setenv("SIP", network_data_get()->sip_user, 1);
         network_data_save();
         user_data_save();
         operating_structure_goto_layout_process(LV_SCR_LOAD_ANIM_FADE_IN);
@@ -104,7 +104,8 @@ static void operating_structure_sub_info_display(int is_single)
 {
         lv_obj_t *item = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_slave_setting_cont);
         lv_obj_t *sub_label = lv_obj_get_child_form_id(item, layout_operating_structure_obj_id_slave_setting_sub);
-        lv_label_set_text(sub_label, lang_str_get(is_single == 0 ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO : is_single == 1?SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO_MSTAR : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_ENABLE));
+        lv_label_set_text(sub_label, lang_str_get(is_single == 0 ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO : is_single == 1 ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO_MSTAR
+                                                                                                                                              : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_ENABLE));
 }
 
 static void operating_structure_single_check_click(lv_event_t *e)
@@ -130,27 +131,29 @@ static void operating_structure_server_check_click(lv_event_t *e)
         operating_structrue_next_obj_display();
 }
 
-
 static void opearting_strutrue_single_server_init_display(void)
 {
         lv_obj_t *obj_single = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_check);
         lv_obj_t *obj_server = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_check);
-        
-        if(user_data_get()->system_mode == 0)
-        {
-                lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-        }else if(user_data_get()->system_mode == 1)
-        {
-                lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);    
-        }else
-        {
-                lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);    
-        }
 
-       
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                if ((user_data_get()->system_mode & 0xF0) == 0x00)
+                {
+                        lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                        lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                }
+                else if ((user_data_get()->system_mode & 0xF0) == 0x10)
+                {
+                        lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                        lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                }
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
 }
 
 static void sat_layout_enter(operating_structure)
@@ -207,7 +210,7 @@ static void sat_layout_enter(operating_structure)
                                                                 880, 20, 48, 48, layout_operating_structure_obj_id_slave_setting_img,
                                                                 resource_ui_src_get("ic_list_setting.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
-                operating_structure_sub_info_display(user_data_get()->system_mode);
+                operating_structure_sub_info_display((user_data_get()->system_mode & 0xF0) >> 4);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -216,16 +219,16 @@ static void sat_layout_enter(operating_structure)
         ***********************************************/
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_check, 240, 243, 32, 32,
-                                                                operating_structure_single_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                         operating_structure_single_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_check, 753, 243, 32, 32,
-                                                                operating_structure_server_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                         operating_structure_server_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 opearting_strutrue_single_server_init_display();
         }
