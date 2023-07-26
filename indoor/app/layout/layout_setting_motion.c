@@ -303,7 +303,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                 
 
 
-                for(int i = 0; i < network_data_get()->door_device_count; i++)
+                for(int i = 0; i < DEVICE_MAX; i++)
                 {
                         
                         lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i, 48, 61 + 56 * i, 365, 48,
@@ -318,10 +318,10 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                         
 
                 }
-                for(int i = 0; i < network_data_get()->cctv_device_count; i++)
+                for(int i = 0; i < DEVICE_MAX; i++)
                 {
 
-                        lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i + network_data_get()->door_device_count, 48, 171 + 56 * i, 365, 48,
+                        lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i + DEVICE_MAX, 48, 171 + 56 * i, 365, 48,
                         checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

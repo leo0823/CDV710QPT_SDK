@@ -238,7 +238,7 @@ enum
 
 static void setting_wifi_cancel_click(lv_event_t *e)
 {
-        if (user_data_get()->system_mode == 0)
+        if ((user_data_get()->system_mode & 0xF0) == 0x00)
         {
                 sat_layout_goto(single_operation_network, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
@@ -250,7 +250,7 @@ static void setting_wifi_cancel_click(lv_event_t *e)
 static void setting_wifi_next_click(lv_event_t *e)
 {
         setting_time_first_enter_set_flag(0x00);
-          sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
 static void wifi_setting_wifi_enable_display(lv_obj_t *obj)

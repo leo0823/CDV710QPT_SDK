@@ -298,16 +298,16 @@ static bool ipc_camera_input_new_name_processing(void)
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname,"Door%d(%s)", network_data_get()->door_ch_index[layout_ipc_camera_edit_index_get()] + 1,input_name);
+                     //   sprintf(doorname,"Door%d(%s)", network_data_get()->door_ch_index[layout_ipc_camera_edit_index_get()] + 1,input_name);
                         SAT_DEBUG("layout_ipc_camera_edit_index_get is %d\n",layout_ipc_camera_edit_index_get());
-                        SAT_DEBUG("DOORch is %d\n",network_data_get()->door_ch_index[layout_ipc_camera_edit_index_get()]);
+                    //    SAT_DEBUG("DOORch is %d\n",network_data_get()->door_ch_index[layout_ipc_camera_edit_index_get()]);
                         memset(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
                 else
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname,"CCTV%d(%s)", network_data_get()->cctv_ch_index[layout_ipc_camera_edit_index_get()] + 1,input_name);
+                        //sprintf(doorname,"CCTV%d(%s)", network_data_get()->cctv_ch_index[layout_ipc_camera_edit_index_get()] + 1,input_name);
                         memset(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
