@@ -120,20 +120,21 @@ static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
-
-
-
 static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
-        if (user_data_get()->system_mode == 0)
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE));
+                if ((user_data_get()->system_mode & 0xF0) == 0x00)
+                {
+                        lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE));
+                }
+                else if ((user_data_get()->system_mode & 0xF0) == 0x10)
+                {
+                        lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
+                }
         }
-        else if (user_data_get()->system_mode == 1)
-        {
-                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
-        }else
+        else
         {
                 lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SLAVE));
         }
@@ -142,7 +143,7 @@ static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
 static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_building_house_no_cont);
-        if(parent != NULL)
+        if (parent != NULL)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
                 char building[8] = {0};
@@ -150,13 +151,12 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
                 int loacal_number[8] = {0};
                 const char *username = getenv("SIP");
                 loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-                loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
+                loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
 
                 sprintf(building, "%04d", loacal_number[0]);
                 sprintf(household, "%04d", loacal_number[1]);
-                lv_label_set_text_fmt(obj, "%s-%s",building,household);   
+                lv_label_set_text_fmt(obj, "%s-%s", building, household);
         }
-
 }
 
 static void layout_setting_installation_guard_no_display(lv_obj_t *list)
@@ -236,15 +236,19 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_installation_obj_id_sub_list);
         lv_common_style_set_common(list, setting_installation_obj_id_sub_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
         int j = 0;
+
+        char system_mode = user_data_get()->system_mode;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if(user_data_get()->system_mode != 1)
+                /*单系统*/
+                if ((system_mode & 0xF0) == 0x00)
                 {
-                        if( i == 1 || i== 3 || i == 4 || i== 5)
+                        if (i == 1 || i == 3 || i == 4 || i == 5)
                         {
                                 continue;
                         }
-                        if(user_data_get()->system_mode != 0)
+                        /*分机*/
+                        if (((system_mode & 0x0F) != 0x01) && (i == 6 || i == 7))
                         {
                                 if( i == 6 || i == 7 || i == 8)
                                 {
@@ -252,6 +256,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                 }
                         }
                 }
+
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

@@ -19,12 +19,12 @@ static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 ***/
 static const char *monitor_channel_door_sip_uri_get(int index, bool update)
 {
-        if (index >= network_data_get()->door_device_count)
+        if (index >= DEVICE_MAX)
         {
                 return NULL;
         }
 
-        sat_ipcamera_initialization_parameters(network_data_get()->door_device, network_data_get()->door_device_count);
+        sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
 
         if (update == true)
         {
@@ -46,7 +46,7 @@ static const char *monitor_channel_door_sip_uri_get(int index, bool update)
 static const char *monitor_channel_cctv_rtsp_uri_get(int index)
 {
         static char rtsp_uri[128] = {0};
-        sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, network_data_get()->cctv_device_count);
+        sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
 
         if (sat_ipcamera_device_name_get(index, 100) == true)
         {
@@ -68,28 +68,27 @@ const char *monitor_channel_get_url(int index, bool update)
 {
         if (index < 8)
         {
-                for(int i = 0 ;i < 8; i++)
-                {
-                        if(index == network_data_get()->door_ch_index[i])
-                        {
-                                index = i;
-                                break;
-                        }
-                }
+                /*   for(int i = 0 ;i < 8; i++)
+                  {
+                          if(index == network_data_get()->door_ch_index[i])
+                          {
+                                  index = i;
+                                  break;
+                          }
+                  } */
                 return monitor_channel_door_sip_uri_get(index, update);
         }
-        index -= 8;
-        for(int i = 0 ;i < 8; i++)
-        {
-                if(index == network_data_get()->cctv_ch_index[i])
-                {
-                        index = i;
-                        break;
-                }
-        }
-        SAT_DEBUG("index is %d\n",index);
+        /*     index -= 8;
+            for(int i = 0 ;i < 8; i++)
+            {
+                    if(index == network_data_get()->cctv_ch_index[i])
+                    {
+                            index = i;
+                            break;
+                    }
+            }
+            SAT_DEBUG("index is %d\n",index); */
         return monitor_channel_cctv_rtsp_uri_get(index);
-        
 
         return NULL;
 }
@@ -101,7 +100,7 @@ const char *monitor_channel_get_url(int index, bool update)
 ***/
 int monitor_index_get_by_user(const char *user)
 {
-        for (int i = 0; i < network_data_get()->door_device_count; i++)
+        for (int i = 0; i < DEVICE_MAX; i++)
         {
                 //<sip:010193001011@172.16.0.110>
                 if (strstr(user, network_data_get()->door_device[i].sip_url) != NULL)
@@ -124,7 +123,7 @@ int monitor_channel_prev_get(void)
         {
                 if (monitor_channel == 0)
                 {
-                        return network_data_get()->door_device_count - 1;
+                        return DEVICE_MAX - 1;
                 }
                 return monitor_channel - 1;
         }
@@ -132,7 +131,7 @@ int monitor_channel_prev_get(void)
         {
                 if (monitor_channel == 8)
                 {
-                        return network_data_get()->cctv_device_count - 1 + 8;
+                        return DEVICE_MAX - 1 + 8;
                 }
                 return monitor_channel - 1;
         }
@@ -148,7 +147,7 @@ int monitor_channel_next_get(void)
 {
         if (is_channel_ipc_camera(monitor_channel) == false)
         {
-                if (monitor_channel == (network_data_get()->door_device_count - 1))
+                if (monitor_channel == (DEVICE_MAX - 1))
                 {
                         return 0;
                 }
@@ -156,7 +155,7 @@ int monitor_channel_next_get(void)
         }
         else
         {
-                if ((monitor_channel - 8) == (network_data_get()->cctv_device_count - 1))
+                if ((monitor_channel - 8) == (DEVICE_MAX - 1))
                 {
                         return 8;
                 }
@@ -275,42 +274,39 @@ BYTE1. 010(固定部分).
 ** 函数说明: 判断通道是否有效
 ** 作者: xiaoxiao
 ** 日期: 2023-05-26 08:28:22
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool monitor_valid_channel_check(int channel)
 {
 
-        if(network_data_get()->door_device_count)
+        //  if (network_data_get()->door_device_count)
         {
-                if((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
+                if ((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
                 {
-                        for(int i = 0; i < network_data_get()->door_device_count; i++)
+                        if (channel > (MON_CH_DOOR1 - 1 + DEVICE_MAX))
                         {
-                                if(channel ==  network_data_get()->door_ch_index[i])
+                                if((network_data_get()->door_device[channel].sip_url[0] != 0))
                                 {
                                         return true;
                                 }
                         }
                         return false;
-                        
                 }
         }
-        if(network_data_get()->cctv_device_count)
+        //    if (network_data_get()->cctv_device_count)
         {
-                if((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8)) 
+                if ((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8))
                 {
-                        for(int i = 0; i < network_data_get()->cctv_device_count; i++)
+                        if (channel > (MON_CH_CCTV1 - 1 + DEVICE_MAX))
                         {
-                                if(channel ==  network_data_get()->cctv_ch_index[i] + 8)
+                                if(network_data_get()->cctv_device[channel].sip_url != 0)
                                 {
                                         return true;
                                 }
                         }
                         return false;
-                        
                 }
-                
         }
         return false;
 }
