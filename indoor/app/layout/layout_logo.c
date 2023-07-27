@@ -43,6 +43,19 @@ void standby_dection_timer(lv_timer_t *t)
         extern bool standby_timeout_check_and_process(void);
         standby_timeout_check_and_process();
 }
+static void logo_sip_server_register(void)
+{
+        char sip_user_id[16] = {0};
+        char sip_sever[32] = {0};
+        sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
+        sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
+        sat_linphone_register(sip_user_id, NULL, sip_sever);
+}
+
+static void sip_register_timer(lv_timer_t *t)
+{
+        logo_sip_server_register();
+}
 
 static void sd_state_change_msgbox_cancel_click(lv_event_t * ev)
 {
@@ -145,35 +158,29 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: linphone 初始化
         ***********************************************/
         user_linphone_init();
-
+        usleep(3000 * 1000);
         /*判断是否为master*/
         int id = user_data_get()->system_mode & 0x0F;
 
         if (id == 0x01)
         {
+                system("mkdir /var/lib/asterisk");
                 system("/app/asterisk/sbin/safe_asterisk ");
-
+                // system("/app/asterisk/sbin/asterisk -cvvvvvv ");
                 /*主机的话，将server ip更新*/
                 memset(user_data_get()->mastar_wallpad_ip, 0, sizeof(user_data_get()->mastar_wallpad_ip));
                 sat_ip_mac_addres_get("eth0", user_data_get()->mastar_wallpad_ip, NULL, NULL);
         }
 
         /*注册到sip server*/
-        usleep(1000 * 1000);
-        char sip_user_id[16] = {0};
-        char sip_sever[32] = {0};
-        sprintf(sip_user_id, "50%d", id);
-        sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
 
-        SAT_DEBUG("system mode=%02x  sip:%s register:%s", user_data_get()->system_mode, sip_user_id, sip_sever);
-        sat_linphone_register(sip_user_id, NULL, sip_sever);
+        lv_timer_ready(lv_timer_create(sip_register_timer, 5000, NULL));
 
         /**********************************************
          ** 作者: leo.liu
          ** 日期: 2023-1-5 10:6:36
          ** 说明:暂时放在连接wifi
         ***********************************************/
-
         tuya_event_cmd_register(tuya_event_defalut_handle);
         /************************************************************
         ** 函数说明:警报记录初始化

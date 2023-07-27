@@ -36,7 +36,7 @@ typedef enum
 ** 函数作用：获取监控通道的地址
 ** 返回参数说明：
 ***/
-const char *monitor_channel_get_url(int index,bool update);
+const char *monitor_channel_get_url(int index, bool update);
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -58,6 +58,8 @@ int monitor_channel_prev_get(void);
 ** 返回参数说明：
 ***/
 int monitor_channel_next_get(void);
+/*获取第一个有效的通道*/
+int monitor_door_first_valid_get(void);
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -126,7 +128,7 @@ BYTE1. 010(固定部分).
 ** 函数说明: 判断通道是否有效
 ** 作者: xiaoxiao
 ** 日期: 2023-05-26 08:28:22
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool monitor_valid_channel_check(int channel);

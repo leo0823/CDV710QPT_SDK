@@ -118,7 +118,7 @@ static bool sip_call_status = false;
 ** 说明: 初始化内核
 ***********************************************/
 #define MAC_TXT_PATH "/etc/config/mac.txt"
-static bool network_mac_get(char *buf)
+/* static bool network_mac_get(char *buf)
 {
         int i = 0, j = 0;
         char temp[128] = {0};
@@ -141,7 +141,7 @@ static bool network_mac_get(char *buf)
         buf[j] = '\0';
         SAT_DEBUG("%s->%s\n", temp, buf);
         return true;
-}
+} */
 static void linux_kerner_init(void)
 {
 
@@ -181,17 +181,17 @@ static void linux_kerner_init(void)
                                                 个位分机ID号
         ***********************************************/
         /*读取mac地址*/
-        char mac[128] = {0};
-        if (network_mac_get(mac) == true)
-        {
-                setenv("SIP", mac, 1);
-        }
-        else
-        {
-                SAT_DEBUG("not find mac addres,will restart in 3 seconds\n");
-                sleep(3);
-                system("reboot");
-        }
+        /*     char mac[128] = {0};
+            if (network_mac_get(mac) == true)
+            {
+                    setenv("SIP", mac, 1);
+            }
+            else
+            {
+                    SAT_DEBUG("not find mac addres,will restart in 3 seconds\n");
+                    sleep(3);
+                    system("reboot");
+            } */
 }
 
 /***********************************************
