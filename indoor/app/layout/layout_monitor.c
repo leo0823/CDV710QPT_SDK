@@ -1694,6 +1694,7 @@ static void sat_layout_enter(monitor)
         }
 
         user_linphone_call_streams_running_receive_register(layout_monitor_streams_running_register_callback);
+
         monitor_open(true);
         layout_monitor_report_vaild_channel();
 
@@ -1791,49 +1792,41 @@ sat_layout_create(monitor);
 *************************************************************************************************************************************************/
 //<sip:010193001011@172.16.0.110>
 
+static bool monitor_doorcamera_extern_call(const char *arg)
+{
+        if (!user_data_get()->audio.ring_mute)
+        {
+                ring_door_call_play();
+        }
+        monitor_channel_set(monitor_index_get_by_user(arg));
+        monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
+        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        return true;
+}
+static bool monitor_intercom_extern_call(const char *arg)
+{
+        if (!user_data_get()->audio.ring_mute)
+        {
+                ring_intercom_play();
+        }
+        intercom_call_status_setting(2);
+
+        intercom_call_username_setting(arg);
+        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        return true;
+}
+
 bool monitor_doorcamera_call_extern_func(char *arg)
 {
-        char user[128] = {0};
-        char id[32] = {0};
-        char stream[32] = {0};
-        sscanf(arg, "%s %s %s", user, id, stream);
-        SAT_DEBUG("%s %s %s", user, id, stream);
-
-        int from_channel = 0;
-
-        if (((from_channel = monitor_index_get_by_user(arg)) >= 0) || (strcasecmp(stream, "video") == 0))
+        /*sip:2xxx代表门口机*/
+        if (strstr(arg, "sip:2") != NULL)
         {
-                if (!user_data_get()->audio.ring_mute)
-                {
-                        ring_door_call_play();
-                }
-                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-                monitor_channel_set(from_channel);
-
-                sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
+                return monitor_doorcamera_extern_call(arg);
         }
-        else if (sat_cur_layout_get() != sat_playout_get(intercom_talk))
+        /*sip:5xxx代表室内设备*/
+        if (strstr(arg, "sip:5") != NULL)
         {
-                char *ptr = strstr(arg, "sip:");
-                if ((ptr != NULL) && (strlen(ptr) > 4))
-                {
-                        char *start = ptr + 4;
-                        char *end = strchr(start, '>');
-                        if (end == NULL)
-                        {
-                                return false;
-                        }
-                        *end = '\0';
-                        if (!user_data_get()->audio.ring_mute)
-                        {
-                                ring_intercom_play();
-                        }
-                        intercom_call_status_setting(2);
-
-                        intercom_call_username_setting(start);
-                        SAT_DEBUG("call :%s", ptr);
-                        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
-                }
+                return monitor_intercom_extern_call(arg);
         }
         return true;
 }
