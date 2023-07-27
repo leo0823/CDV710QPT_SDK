@@ -11,86 +11,13 @@
 static int monitor_channel = -1;
 static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 
-/***
-** 日期: 2022-05-12 11:33
-** 作者: leo.liu
-** 函数作用：获取监控通道的地址
-** 返回参数说明：index < 8门口机，>= 8 CCTV
-***/
-static const char *monitor_channel_door_sip_uri_get(int index, bool update)
-{
-        if (index >= DEVICE_MAX)
-        {
-                return NULL;
-        }
-
-        sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
-
-        if (update == true)
-        {
-                if (sat_ipcamera_device_name_get(index, 100) == true)
-                {
-                        // if (strncmp(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
-                        // {
-                        //         memset(&network_data_get()->door_device[index].door_name[6], 0, sizeof(network_data_get()->door_device[index].door_name) - 6);
-                        //         strncpy(&network_data_get()->door_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
-                        //         strcat(network_data_get()->door_device[index].door_name,")");
-                        //         network_data_save();
-                        // }
-                        return sat_ipcamera_sip_addr_get(index);
-                }
-                return NULL;
-        }
-        return sat_ipcamera_sip_addr_get(index);
-}
-static const char *monitor_channel_cctv_rtsp_uri_get(int index)
-{
-        static char rtsp_uri[128] = {0};
-        sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
-
-        if (sat_ipcamera_device_name_get(index, 100) == true)
-        {
-                // if (strncmp(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index))))
-                // {
-                //         memset(&network_data_get()->cctv_device[index].door_name[6], 0, sizeof(network_data_get()->cctv_device[index].door_name) - 6);
-                //         strncpy(&network_data_get()->cctv_device[index].door_name[6], sat_ipcamera_door_name_get(index),strlen(sat_ipcamera_door_name_get(index)));
-                //         strcat(network_data_get()->cctv_device[index].door_name,")");
-                //         network_data_save();
-                // }
-        }
-        memset(rtsp_uri, 0, sizeof(rtsp_uri));
-        sprintf(rtsp_uri, "%s %s %s", sat_ipcamera_rtsp_addr_get(index, 0), sat_ipcamera_username_get(index), sat_ipcamera_password_get(index));
-        SAT_DEBUG("CCTV:%s", rtsp_uri);
-        return rtsp_uri;
-}
-
 const char *monitor_channel_get_url(int index, bool update)
 {
         if (index < 8)
         {
-                /*   for(int i = 0 ;i < 8; i++)
-                  {
-                          if(index == network_data_get()->door_ch_index[i])
-                          {
-                                  index = i;
-                                  break;
-                          }
-                  } */
-                return monitor_channel_door_sip_uri_get(index, update);
+                return network_data_get()->door_device[index].sip_url;
         }
-        /*     index -= 8;
-            for(int i = 0 ;i < 8; i++)
-            {
-                    if(index == network_data_get()->cctv_ch_index[i])
-                    {
-                            index = i;
-                            break;
-                    }
-            }
-            SAT_DEBUG("index is %d\n",index); */
-        return monitor_channel_cctv_rtsp_uri_get(index);
-
-        return NULL;
+        return network_data_get()->door_device[index].rtsp[0].rtsp_url;
 }
 /***
 ** 日期: 2022-05-12 11:33
@@ -163,6 +90,19 @@ int monitor_channel_next_get(void)
         }
         return -1;
 }
+/*获取第一个有效的通道*/
+int monitor_door_first_valid_get(void)
+{
+        for (int i = 0; i < DEVICE_MAX; i++)
+        {
+                if (network_data_get()->door_device[i].sip_url[0] != '\0')
+                {
+                        return i;
+                }
+        }
+        return -1;
+}
+
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -215,7 +155,6 @@ static void monitor_reset(void)
 }
 void monitor_open(bool refresh)
 {
-
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
                 monitor_reset();
@@ -226,7 +165,9 @@ void monitor_open(bool refresh)
                 }
                 else
                 {
-                        sat_linphone_call(monitor_channel_get_url(monitor_channel, true), true, true, user_linphone_local_multicast_get());
+                        char uri[128] = {0};
+                        sprintf(uri, "%s:5066", monitor_channel_get_url(monitor_channel, true));
+                        sat_linphone_call(uri, true, true, NULL);
                 }
         }
         //   char url[128] = {0};
