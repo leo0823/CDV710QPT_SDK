@@ -82,20 +82,9 @@ static int frame_show_refresh_cont = 0;
 static int always_record_channel_get(void)
 {
 
-	if ((monitor_valid_channel_check(MON_CH_DOOR1) == false) && (monitor_valid_channel_check(MON_CH_DOOR2) == false))
+	if(monitor_door_first_valid_get(true) < 0 && monitor_door_first_valid_get(false) < 0)
 	{
-		for (int i = 0; i < 8; i++)
-		{
-			if (monitor_valid_channel_check(MON_CH_CCTV1 + i))
-			{
-				if (i == 7)
-				{
-					return MON_CH_NONE;
-				}
-				break;
-				;
-			}
-		}
+		return MON_CH_NONE;
 	}
 	int ch = monitor_channel_get();
 	if (ch == MON_CH_NONE)
@@ -110,7 +99,6 @@ static int always_record_channel_get(void)
 find_start:
 	for(int i = 0;i < 7; i ++)
 	{
-
 		if ((ch == MON_CH_DOOR1 + i) && (ch != MON_CH_DOOR8))
 		{
 			ch = MON_CH_DOOR2 + i;
@@ -780,12 +768,12 @@ static void frame_show_monitor_channle_display(void)
 	if (is_channel_ipc_camera(channel) == true)
 	{
 
-		//	channel -= 8;
-		//	lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING),network_data_get()->cctv_device[network_data_get()->cctv_ch_index[channel]].door_name);
+			channel -= 8;
+			lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING),network_data_get()->cctv_device[channel].door_name);
 	}
 	else
 	{
-		//	lv_label_set_text_fmt(obj,  "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[network_data_get()->door_ch_index[channel]].door_name);
+			lv_label_set_text_fmt(obj,  "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[channel].door_name);
 	}
 }
 
@@ -916,37 +904,26 @@ static void frame_show_restart(void)
 	}
 	else if ((user_data_get()->display.frame_list & 0x08) && (frame_show_frame_index <= 0x08))
 	{
+		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x08;
-		if (0)//(network_data_get()->door_device_count == 0)
+		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true)))//没有注册或者是已经显示完最后一个Door camera通道
 		{
 			frame_show_frame_index = 0x09;
 			return frame_show_restart();
 		}
-		int ch = always_record_channel_get();
-		if (ch == MON_CH_DOOR2)
-		{
-			frame_show_frame_index = 0x09;
-		}
-		sat_linphone_media_thumb_destroy();
 		SAT_DEBUG("monitor camera\n");
 		frame_show_door1_start();
 	}
 	else if ((user_data_get()->display.frame_list & 0x10) && (frame_show_frame_index <= 0x10))
 	{
+		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x10;
-		int num = 1; // network_data_get()->cctv_device_count;
-		if (num == 0)
+		SAT_DEBUG("last valid ch is %d\n",monitor_door_last_valid_get(false));
+		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false)))//没有注册或者是已经显示完最后一个CCTV通道
 		{
 			frame_show_frame_index = 0x11;
 			return frame_show_restart();
 		}
-		int ch = always_record_channel_get();
-		if (ch + 1 == MON_CH_CCTV1 + num)
-		{
-			frame_show_frame_index = 0x11;
-		}
-		sat_linphone_media_thumb_destroy();
-		SAT_DEBUG("CCTV ch is %d\n", ch);
 		frame_show_cctv_start();
 	}
 	else

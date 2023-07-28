@@ -400,7 +400,7 @@ static void sat_layout_enter(logo)
                 lv_sat_timer_create(logo_enter_system_timer, 1000, NULL);
         }
 
-        lv_common_text_create(sat_cur_layout_screen_get(), logo_obj_id_model_label, 559, 550, 200, 33,
+        lv_common_text_create(sat_cur_layout_screen_get(), logo_obj_id_model_label, 650, 550, 200, 33,
                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

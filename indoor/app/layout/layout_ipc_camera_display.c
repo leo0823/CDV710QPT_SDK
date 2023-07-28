@@ -94,6 +94,13 @@ static bool ipc_camera_search_display_register_func(void)
                                         memcpy(&network_data_get()->door_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
                                         memset(network_data_get()->door_device[i].sip_url, 0, sizeof(network_data_get()->door_device[i].sip_url));
                                         strncpy(network_data_get()->door_device[i].sip_url, number, sizeof(network_data_get()->door_device[i].sip_url));
+
+                                        //door重命名，不会重置设备的名字，只是方便室内机端查看
+                                        char doorname[64] = {0};
+                                        sprintf(doorname,"Door%d(%s)",i + 1,network_data_get()->door_device[i].door_name);
+                                        memset(network_data_get()->door_device[i].door_name,0,sizeof(network_data_get()->door_device[i].door_name));
+                                        strncpy(network_data_get()->door_device[i].door_name,doorname,strlen(doorname));
+
                                         network_data_save();
                                         SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
                                         return true;
@@ -106,10 +113,17 @@ static bool ipc_camera_search_display_register_func(void)
         {
                 for (int i = 0; i < DEVICE_MAX; i++)
                 {
-                        if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
+                        if (network_data_get()->cctv_device[i].rtsp[0].rtsp_url[0] == 0)
                         {
-                                memcpy(&network_data_get()->door_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
+                                memcpy(&network_data_get()->cctv_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
+                                //CCTV重命名，不会重置设备的名字，只是方便室内机端查看
+                                char doorname[64] = {0};
+                                sprintf(doorname,"CCTV%d(%s)",i + 1,network_data_get()->cctv_device[i].door_name);
+                                memset(network_data_get()->cctv_device[i].door_name,0,sizeof(network_data_get()->cctv_device[i].door_name));
+                                strncpy(network_data_get()->cctv_device[i].door_name,doorname,strlen(doorname));
+                                
                                 network_data_save();
+
                                 return true;
                         }
                 }
@@ -154,6 +168,7 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
 }
 static void sat_layout_enter(ipc_camera_display)
 {
+        standby_timer_close();
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -242,6 +257,7 @@ static void sat_layout_enter(ipc_camera_display)
 }
 static void sat_layout_quit(ipc_camera_display)
 {
+        standby_timer_restart(true);
         lv_common_video_mode_enable(false);
         sat_linphone_ipcamera_stop();
         ipcamera_state_callback_register(NULL);

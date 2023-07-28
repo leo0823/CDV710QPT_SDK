@@ -281,9 +281,10 @@ static void sat_layout_enter(ipc_camera_register)
                         {
                                 if (p_device[i].rtsp[0].rtsp_url[0] == 0)
                                 {
+                                        SAT_DEBUG("index %d is no registed\n",i);
                                         continue;
                                 }
-
+                                
                                 lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
                                                                                                    ipc_camera_registered_register_list_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

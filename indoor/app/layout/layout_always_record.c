@@ -16,8 +16,8 @@ typedef enum
 	always_record_head_cont_obj_id_timeout_label
 } always_record_head_cont_obj_id;
 static void monitor_obj_timeout_timer(lv_timer_t *ptimer);
-static int streams_count = 0;
-static int snap_count = 0;
+
+
 /************************************************************
 ** 函数说明: 多通道循环录像还是单通道
 ** 作者: xiaoxiao
@@ -44,25 +44,14 @@ void always_record_time_set(int sec)
 ************************************************************/
 static int always_record_channel_get(void)
 {
-	if ((monitor_valid_channel_check(MON_CH_DOOR1) == false) && (monitor_valid_channel_check(MON_CH_DOOR2) == false))
+	if(monitor_door_first_valid_get(true) < 0 && monitor_door_first_valid_get(false) < 0)
 	{
-		for(int i = 0; i < 8; i++)
-                {
-                        if(monitor_valid_channel_check(MON_CH_CCTV1 + i))
-                        {
-                                printf("i is %d\n",i);
-                                if( i == 7)
-                                {
-                                        return MON_CH_NONE;
-                                } 
-                                break;;
-                        }
-
-                }
+		return MON_CH_NONE;
 	}
+
 	int ch = monitor_channel_get();
 
-	if (always_record_loop == false)
+	if ((always_record_loop == false) && (ch != MON_CH_NONE))
 	{
 		return ch;
 	}
@@ -74,8 +63,8 @@ static int always_record_channel_get(void)
 			return ch;
 		}
 	}
-	int find = 0;
-find_start:
+
+
 	for(int i = 0;i < 7; i ++)
 	{
 
@@ -96,17 +85,17 @@ find_start:
 			return ch;
 		}
 	}
-    for(int i = 0; i < 8; i++)
-    {
-        if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
+        for(int i = 0; i < 8; i++)
         {
-            ch = MON_CH_CCTV2 + i;
-            if (monitor_valid_channel_check(ch) == true)
-            {
-                return ch;
-            }
+                if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
+                {
+                ch = MON_CH_CCTV2 + i;
+                if (monitor_valid_channel_check(ch) == true)
+                {
+                        return ch;
+                }
+                }
         }
-    }
 	if (ch == MON_CH_CCTV8)
 	{
 		ch = MON_CH_DOOR1;
@@ -115,12 +104,9 @@ find_start:
 			return ch;
 		}
 	}
-	find++;
-	if (find == 2)
-	{
-		return MON_CH_NONE;
-	}
-	goto find_start;
+
+	return MON_CH_NONE;
+
 }
 
 
@@ -147,6 +133,7 @@ static void always_record_record_btn_up(lv_event_t *ev)
 static void layout_always_monitor_open(void)
 {
 	int ch = always_record_channel_get();
+        SAT_DEBUG("always ch is %d\n",ch);
 	if (ch != MON_CH_NONE)
 	{
 		monitor_channel_set(ch);
@@ -213,7 +200,7 @@ static void layout_always_record_start(void)
 	}
 	else if((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR))
 	{
-    snap_count ++;
+
         record_jpeg_start(REC_MODE_ALWAYS);
 
 	}
@@ -271,13 +258,15 @@ static void monitior_obj_channel_info_obj_display(void)
         if (is_channel_ipc_camera(channel) == true)
         {
                 lv_obj_set_x(obj, 96);
+                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 channel -= 8;
-               // lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[network_data_get()->cctv_ch_index[channel]].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
                 lv_obj_set_x(obj, 96);
-           //     lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[network_data_get()->door_ch_index[channel]].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 static void layout_always_monitor_open_task(lv_timer_t *task)
@@ -314,8 +303,7 @@ static void always_record_video_state_callback(bool record_ing)
 static void always_record_snapshot_state_callback(bool record_ing)
 {
     is_always_snapshot_ing = record_ing;
-    snap_count ++;
-    SAT_DEBUG("snap callback count is %d\n",snap_count);
+
     always_record_record_btn_display();
 }
 
@@ -471,7 +459,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
     	layout_always_record_stop();
         usleep(500 * 1000);
         monitor_close();
-        // always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
+        always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
         lv_timer_del(ptimer);
         lv_sat_timer_create(layout_always_monitor_open_task, 1000, NULL);
 		    
@@ -481,8 +469,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_always_record_streams_running_register_callback(char *arg)
 {
-        streams_count ++;
-        SAT_DEBUG("streams callback count is %d\n",streams_count);
+
         lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
         return true;
@@ -493,11 +480,10 @@ static bool layout_always_record_streams_running_register_callback(char *arg)
 
 static void sat_layout_enter(always_record)
 {
-        snap_count = 0;
-        streams_count = 0;
+
         always_record_loop = true;
         is_always_record_video_ing = false;
-        // always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
+        always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
         user_linphone_call_streams_running_receive_register(layout_always_record_streams_running_register_callback);
         monitor_channel_set(MON_CH_NONE);
         layout_always_monitor_open();
@@ -612,6 +598,8 @@ static void sat_layout_enter(always_record)
 }
 static void sat_layout_quit(always_record)
 {
+    user_data_get()->always_monitoring = 0;
+    user_data_save();
     record_video_stop();
     monitor_close();
     /*sd卡状态处理 */
