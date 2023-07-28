@@ -488,6 +488,7 @@ static void sat_layout_enter(photo)
 }
 static void sat_layout_quit(photo)
 {
+        //lv_img_cache_invalidate_all();
         sat_linphone_media_thumb_destroy();
         thumb_display_refresh_register(NULL);
         sd_state_channge_callback_register(sd_state_change_default_callback);

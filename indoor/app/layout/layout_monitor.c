@@ -147,14 +147,16 @@ static void monitior_obj_channel_info_obj_display(void)
         {
                 lv_obj_set_x(obj, 60);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                //        channel -= 8;
-                //    lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[network_data_get()->cctv_ch_index[channel]].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                channel -= 8;
+                //lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "CCTV%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                //    lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[network_data_get()->door_ch_index[channel]].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                //lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "Door%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 /***********************************************
@@ -1624,21 +1626,7 @@ static void sat_layout_enter(monitor)
                         monitor_obj_lock_2_display();
                 }
 
-                /************************************************************
-                ** 函数说明: 切换到CCTV
-                ** 作者: xiaoxiao
-                ** 日期: 2023-07-05 18:25:47
-                ** 参数说明:
-                ** 注意事项:
-                ************************************************************/
-                {
-                        lv_common_img_btn_create(parent, monitor_obj_id_channel_switch_CCTTV_monitor, 704, 24, 80, 80,
-                                                 layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get("btn_call_cctv1.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-                        layout_monitor_channel_type_switch_btn_display();
-                }
+
                 /***********************************************
                  ** 作者: leo.liu
                  ** 日期: 2023-2-2 13:42:25

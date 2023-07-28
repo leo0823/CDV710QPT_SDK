@@ -17,7 +17,9 @@ const char *monitor_channel_get_url(int index, bool update)
         {
                 return network_data_get()->door_device[index].sip_url;
         }
-        return network_data_get()->door_device[index].rtsp[0].rtsp_url;
+        static char rtsp_uri[128] = {0};
+        sprintf(rtsp_uri, "%s %s %s",  network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, network_data_get()->cctv_device[index - 8].username, network_data_get()->cctv_device[index - 8].password);
+        return rtsp_uri;
 }
 /***
 ** 日期: 2022-05-12 11:33
@@ -37,7 +39,7 @@ int monitor_index_get_by_user(const char *user)
         }
         return -1;
 }
-
+#if 0
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -64,6 +66,7 @@ int monitor_channel_prev_get(void)
         }
         return -1;
 }
+
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -90,19 +93,138 @@ int monitor_channel_next_get(void)
         }
         return -1;
 }
-/*获取第一个有效的通道*/
-int monitor_door_first_valid_get(void)
+#endif
+/***
+** 日期: 2022-05-12 11:33
+** 作者: leo.liu
+** 函数作用：获取上一个有效通道
+** 返回参数说明：
+***/
+int monitor_channel_prev_get(void)
 {
-        for (int i = 0; i < DEVICE_MAX; i++)
+        if (is_channel_ipc_camera(monitor_channel) == false)
         {
-                if (network_data_get()->door_device[i].sip_url[0] != '\0')
+                for(int i = 1 ; i <= monitor_channel; i ++)
                 {
-                        return i;
+                        int pre_ch = monitor_channel - i < 0? DEVICE_MAX - 1 : monitor_channel - i;
+                        if(monitor_valid_channel_check(pre_ch))
+                        {
+                                return pre_ch;
+                        }
+                }
+                return -1;
+        }
+        else
+        {
+                for(int i = 1 ; i <= monitor_channel; i ++)
+                {
+                        int pre_ch = monitor_channel - i < 8? DEVICE_MAX - 1 : monitor_channel - i;
+                        if(monitor_valid_channel_check(pre_ch))
+                        {
+                                return pre_ch;
+                        }
+                }
+                return -1;
+        }
+        return -1;
+}
+
+/***
+** 日期: 2022-05-12 11:33
+** 作者: leo.liu
+** 函数作用：获取下一个有效通道
+** 返回参数说明：
+***/
+int monitor_channel_next_get(void)
+{
+        if (is_channel_ipc_camera(monitor_channel) == false)
+        {
+                for(int i = 1 ; i <= monitor_channel; i ++)
+                {
+                        int next_ch = monitor_channel + i > 8? 0 : monitor_channel + i;
+                        if(monitor_valid_channel_check(next_ch))
+                        {
+                                return next_ch;
+                        }
+                }
+                return -1;
+        }
+        else
+        {
+                for(int i = 1 ; i <= monitor_channel; i ++)
+                {
+                        int next_ch = monitor_channel + i > 16?  8 : monitor_channel + i;
+                        if(monitor_valid_channel_check(next_ch))
+                        {
+                                return next_ch;
+                        }
+                }
+                return -1;
+        }
+        return -1;
+}
+/*获取第一个有效的通道*/
+int monitor_door_first_valid_get(bool door_camera)
+{
+        if(door_camera)
+        {
+                for (int i = 0; i < DEVICE_MAX; i++)
+                {
+
+                        if (network_data_get()->door_device[i].sip_url[0] != '\0')
+                        {
+                                return i;
+                        }
+                }
+        }
+        else
+        {
+                for (int i = 0; i < DEVICE_MAX; i++)
+                {
+                        if (network_data_get()->cctv_device[i].rtsp[0].rtsp_url[0] != '\0')
+                        {
+                                return i + 8;
+                        }
                 }
         }
         return -1;
 }
 
+/*获取最后一个有效通道*/
+int monitor_door_last_valid_get(bool door_camera)
+{
+        if(door_camera)
+        {
+                for (int i = DEVICE_MAX - 1; i >= 0; i--)
+                {
+                        if (network_data_get()->door_device[i].sip_url[0] != '\0')
+                        {
+                                return i;
+                        }
+                }
+        }
+        else
+        {
+                for (int i = DEVICE_MAX - 1; i >= 0; i--)
+                {
+                        if (network_data_get()->cctv_device[i].rtsp[0].rtsp_url[0] != '\0')
+                        {
+                                return i + 8;
+                        }
+                }
+        }
+        return -1;
+}
+
+//获取门口机和CCTV的注册状态
+bool monitor_door_registered_status_get(void)
+{
+        if(monitor_door_first_valid_get(true) == -1 && monitor_door_first_valid_get(false) == -1 )
+        {
+                return false;
+        }
+        return true;
+}
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -225,13 +347,12 @@ bool monitor_valid_channel_check(int channel)
         {
                 if ((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
                 {
-                        if (channel > (MON_CH_DOOR1 - 1 + DEVICE_MAX))
+
+                        if((network_data_get()->door_device[channel].sip_url[0] != 0))
                         {
-                                if((network_data_get()->door_device[channel].sip_url[0] != 0))
-                                {
-                                        return true;
-                                }
+                                return true;
                         }
+                        
                         return false;
                 }
         }
@@ -239,13 +360,11 @@ bool monitor_valid_channel_check(int channel)
         {
                 if ((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8))
                 {
-                        if (channel > (MON_CH_CCTV1 - 1 + DEVICE_MAX))
-                        {
-                                if(network_data_get()->cctv_device[channel].sip_url != 0)
+                                channel -= 8;
+                                if(network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
                                 {
                                         return true;
                                 }
-                        }
                         return false;
                 }
         }

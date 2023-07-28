@@ -55,7 +55,7 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
         sscanf(foolr_str, "%d", &foolr);
         sscanf(household_str, "%d", &household);
         sscanf(extension_str, "%d", &extension);
-        const char *username = getenv("SIP");
+        const char *username = network_data_get()->sip_user;
         extension = username[11] - 48;
         if((strlen(building_str) != 4) || (strlen(household_str) != 4) || (building > 255) || (household % 100) > 24)
         {
@@ -268,7 +268,7 @@ static void sat_layout_enter(setting_building_house_number)
         char extension[8] = {0};
         int loacal_number[8] = {0};
 
-        const char *username = getenv("SIP");
+        const char *username = network_data_get()->sip_user;
         SAT_DEBUG("username is %s\n",username);
         loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
         loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
