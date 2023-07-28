@@ -181,17 +181,18 @@ static void linux_kerner_init(void)
                                                 个位分机ID号
         ***********************************************/
         /*读取mac地址*/
-        /*     char mac[128] = {0};
-            if (network_mac_get(mac) == true)
-            {
-                    setenv("SIP", mac, 1);
-            }
-            else
-            {
-                    SAT_DEBUG("not find mac addres,will restart in 3 seconds\n");
-                    sleep(3);
-                    system("reboot");
-            } */
+        char mac[128] = {0};
+        if (sat_ip_mac_addres_get("eth0", NULL, mac) == true)
+        { // C0:25:A5:A1:27:F5
+                mac[2] = mac[5] = mac[8] = mac[11] = mac[14] = 'A';
+                setenv("SIP", mac, 1);
+        }
+        else
+        {
+                SAT_DEBUG("not find mac addres,will restart in 3 seconds\n");
+                sleep(3);
+                system("reboot");
+        }
 }
 
 /***********************************************
@@ -295,7 +296,7 @@ int main(int argc, char *argv[])
         printf("*****************************************************\n");
         printf("*****        project: CDV810QPT(outdoor)        *****\n");
         printf("*****        author:  leo                       *****\n");
-        printf("*****        date:   %s               *****\n",COMPILE_DATE_TIME());
+        printf("*****        date:    2023/03/11                *****\n");
         printf("*****************************************************\n");
         usleep(1000 * 1000);
         sdk_run_config config = {0};
