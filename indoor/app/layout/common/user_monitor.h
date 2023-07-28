@@ -59,7 +59,13 @@ int monitor_channel_prev_get(void);
 ***/
 int monitor_channel_next_get(void);
 /*获取第一个有效的通道*/
-int monitor_door_first_valid_get(void);
+int monitor_door_first_valid_get(bool door_camera);
+
+/*获取最后一个有效通道*/
+int monitor_door_last_valid_get(bool door_camera);
+
+//获取门口机和CCTV的注册状态
+bool monitor_door_registered_status_get(void);
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu

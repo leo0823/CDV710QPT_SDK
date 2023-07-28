@@ -462,7 +462,8 @@ static void setting_recording_motion_obj_click(lv_event_t *ev)
 static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
 {
         int mode = setting_recording_checkbox_mode_get();
-        always_record_time_set(mode == 1?10:mode == 2? 30:mode == 3?60:0);
+        user_data_get()->always_monitoring = mode ;
+
         user_data_save();
         if (mode > 0)
         {
@@ -472,6 +473,10 @@ static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
 }
 static void setting_recording_always_obj_click(lv_event_t *ev)
 {
+        if(monitor_door_registered_status_get() == false)
+        {
+                return;
+        }
         const char *item[4] = {0};
 
         item[0] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF);

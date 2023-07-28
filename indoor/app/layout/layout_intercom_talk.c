@@ -313,7 +313,7 @@ static void sat_layout_enter(intercom_talk)
                  ** 说明: 标题显示
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, 0, 32, 25, 700, 42,
+                        lv_common_text_create(parent, 0, 32, 25, 750, 42,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

@@ -372,7 +372,7 @@ static void home_monitor_obj_click(lv_event_t *ev)
         }
         else
         {
-                int channel = monitor_door_first_valid_get();
+                int channel = monitor_door_first_valid_get(true);
                 if (channel < 0)
                 {
                         SAT_DEBUG("Invalid channel");
@@ -395,7 +395,6 @@ static void home_cctv_obj_click(lv_event_t *ev)
 {
         // if (network_data_get()->cctv_device_count > 0)
         {
-                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
 
                 //       int loop, smallest;
 
@@ -409,6 +408,14 @@ static void home_cctv_obj_click(lv_event_t *ev)
                 // }
 
                 //   monitor_channel_set(smallest + 8);
+                int channel = monitor_door_first_valid_get(false);
+                if (channel < 0)
+                {
+                        SAT_DEBUG("Invalid channel");
+                        return;
+                }
+                monitor_channel_set(channel);
+                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
 }
