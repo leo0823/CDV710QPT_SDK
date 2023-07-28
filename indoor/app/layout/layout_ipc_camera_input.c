@@ -204,15 +204,17 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
 static bool ipc_camera_determine_password_length_is_valid(const char *txt)
 {
 
-        if(layout_ipc_cmeara_is_doorcamera_get() == true)
+        if(1/*layout_ipc_cmeara_is_doorcamera_get() == true*/)
         {
-                if ((ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_PWD | IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9))
+                //输入新密码要做非法校验，注册时输入密码或输入旧密码无需校验
+                if ((ipc_camera_input_flag & ( /*IPC_CAMERA_FLAG_INPUT_PWD | */IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state == 0x01))
                 {
                         return false;
                 }
+                return true;
         }
-
-        if ((ipc_camera_input_flag & (/*IPC_CAMERA_FLAG_INPUT_PWD |*/ IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state = 0x0))//只对新密码做非法校验
+        
+        if ((ipc_camera_input_flag & (/*IPC_CAMERA_FLAG_INPUT_PWD |*/ IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state == 0x01))//只对新密码做非法校验
         {
                 return false;
         }
@@ -239,10 +241,13 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         }
 
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
+
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
+
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
+ 
                         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                                 lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_PASSWORD_MODIY_SUCCESS),
                                                                 ipc_camera_password_success_msgbox_confirm_click);
@@ -275,6 +280,7 @@ static bool ipc_camera_input_old_password_processing(const char *txt)
         if (strcmp(sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()), input_password) == 0)
         {
                 ipc_camera_password_state = 0x01;
+                SAT_DEBUG("\n===================\n");
                 memset(ipc_camera_password_input_password_old, 0, sizeof(ipc_camera_password_input_password_old));
                 strcpy(ipc_camera_password_input_password_old, input_password);
 
@@ -443,7 +449,7 @@ static void sat_layout_enter(ipc_camera_input)
                                                      LV_OPA_COVER, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 9 : 64,
+                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 32 : 64,
                                                      30, 500, 0Xffffff);
 
                 lv_obj_set_style_text_color(textarea, lv_color_hex(0x929292), LV_PART_TEXTAREA_PLACEHOLDER);

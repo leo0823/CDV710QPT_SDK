@@ -603,9 +603,9 @@ static void sat_layout_enter(playback)
 
 static void sat_layout_quit(playback)
 {
+        //lv_img_cache_invalidate_all();
         sat_linphone_media_thumb_destroy();
         media_thumb_img_dse_destroy();
-        SAT_DEBUG("QUIT the layout playback");
         thumb_display_refresh_register(NULL);
         sd_state_channge_callback_register(sd_state_change_default_callback);
  

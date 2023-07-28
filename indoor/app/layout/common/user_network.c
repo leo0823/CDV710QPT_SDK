@@ -87,7 +87,7 @@ static bool indoor_device_discover_processing(struct sockaddr_in *client_addr, c
         static long msg_count = 10000;
         char ip[32] = {0};
         char local_uuid[128] = {0};
-        const char *local_usernmae = getenv("SIP");
+        const char *local_usernmae = network_data_get()->sip_user;
 
         /*客户需求即搜索分机，用户为空则直接返回，
         若后续需求所有的室内机，则可以将用户为空作为
@@ -470,7 +470,7 @@ static bool obtain_ipaddress_based_on_username(void)
         buffer[0] = (username[0] - 48) * 100 + (username[1] - 48) * 10 + (username[2] - 48);
         buffer[1] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48));
         buffer[2] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
-        buffer[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10 + (username[11] - 48);
+        buffer[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10 + (user_data_get()->system_mode & 0x0f);
 
         sprintf(ip, "%d.%d.%d.%d", buffer[0], buffer[1], buffer[2], buffer[3]);
 
@@ -595,7 +595,7 @@ char *user_linphone_local_multicast_get(void)
         // ex:室内机:"010001001011" -->>> 225.1.1.10
         int value[4] = {0};
         static char multicase_ip[32] = {0};
-        const char *username = getenv("SIP");
+        const char *username = network_data_get()->sip_user;
         if ((username == NULL) || (strlen(username) < 12))
         {
                 SAT_DEBUG("getenv sip failed");

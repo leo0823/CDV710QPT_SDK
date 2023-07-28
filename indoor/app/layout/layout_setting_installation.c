@@ -146,15 +146,20 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
         if (parent != NULL)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+    
                 char building[8] = {0};
                 char household[8] = {0};
                 int loacal_number[8] = {0};
-                const char *username = getenv("SIP");
+
+                const char *username = network_data_get()->sip_user;
+
                 loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+
                 loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
 
                 sprintf(building, "%04d", loacal_number[0]);
                 sprintf(household, "%04d", loacal_number[1]);
+                   
                 lv_label_set_text_fmt(obj, "%s-%s", building, household);
         }
 }
@@ -238,6 +243,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         int j = 0;
 
         char system_mode = user_data_get()->system_mode;
+        printf("system mode is 0x%x\n",system_mode);
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*单系统*/
@@ -248,9 +254,19 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                 continue;
                         }
                         /*分机*/
-                        if (((system_mode & 0x0F) != 0x01) && (i == 6 || i == 7))
+                        if (((system_mode & 0x0F) != 0x01))
                         {
-                                if( i == 6 || i == 7 || i == 8)
+                                if( i == 6 || i == 7 || i == 8 || i == 9 || i == 10)
+                                {
+                                        continue;
+                                }
+                        }
+                }else
+                {
+                                                /*分机*/
+                        if (((system_mode & 0x1F) != 0x11))
+                        {
+                                if( i == 6 || i == 7 || i == 8 || i == 9 || i == 10)
                                 {
                                         continue;
                                 }
@@ -271,6 +287,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 j++;
         }
+        
         layout_setting_installation_open_structure_dispaly(list);
         layout_setting_installation_build_house_no_display(list);
         layout_setting_installation_guard_no_display(list);
@@ -329,7 +346,7 @@ static void setting_installation_confirm_obj_click(lv_event_t *ev)
         {
                 lv_obj_del(obj);
         }
-
+  
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
