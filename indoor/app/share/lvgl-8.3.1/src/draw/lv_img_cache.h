@@ -69,6 +69,10 @@ void lv_img_cache_set_size(uint16_t new_slot_num);
  * @param src an image source path to a file or pointer to an `lv_img_dsc_t` variable.
  */
 void lv_img_cache_invalidate_src(const void * src);
+
+/*释放所有的缓存文件*/
+void  lv_img_cache_invalidate_all(void);
+
 #if SAT_LV_ADD_CUSTOM
 const lv_img_decoder_dsc_t* lv_img_cache_src_info_get(const void* src);
 bool lv_img_cache_match(const void *src1, const void *src2);
