@@ -1,3 +1,12 @@
+# 2023/07/28
+> 1.添加sip server 功能; \
+> 2.添加sip server 群呼功能; \
+> 3.呼叫失败应用注册函数：
+`void user_linphone_call_busy_register(user_linphone_func callback)` \
+> 4.呼叫用户正忙应用注册函数:
+` void user_linphone_call_busy_register(user_linphone_func callback)` \
+> 5.修复应用莫名其妙段错误;
+
 # 2023/07/12
 > 1.优化缩略图显示异常 \
 > 2.修复wifi热点分配不到IP的问题 \
