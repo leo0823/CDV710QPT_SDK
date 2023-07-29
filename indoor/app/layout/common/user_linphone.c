@@ -9,7 +9,6 @@
 #include <ctype.h>
 #include <stdio.h>
 
-
 typedef struct
 {
 
@@ -36,33 +35,39 @@ static bool linphone_call_online_query_func_defalut(char *args)
 ** 说明: 用户呼入处理
 ***********************************************/
 static user_linphone_func_s user_linphone_func_array[] =
-    {
 	{
-	    LinphoneCallIncomingReceivedStr,
-	    NULL,
-	},
-	{LinphoneCallStreamsRunningStr,
-	 NULL},
-	{LinphoneCallConnectedStr,
-	 NULL},
-	{LinphoneCallPasswordErrorStr,
-	 NULL},
-	{
-	    LinphoneCallOnlineQueryStr,
-	    linphone_call_online_query_func_defalut,
-	},
-	{
-	    LinphoneCallOutgoingInitStr,
-	    NULL,
-	},
-	{
-	    LinphoneCallEndStr,
-	    NULL,
-	},
-	{
-	    LinphoneCallAnswerStr,
-	    NULL,
-	}
+		{
+			LinphoneCallIncomingReceivedStr,
+			NULL,
+		},
+		{LinphoneCallStreamsRunningStr,
+		 NULL},
+		{LinphoneCallConnectedStr,
+		 NULL},
+		{LinphoneCallPasswordErrorStr,
+		 NULL},
+		{
+			LinphoneCallOnlineQueryStr,
+			linphone_call_online_query_func_defalut,
+		},
+		{
+			LinphoneCallOutgoingInitStr,
+			NULL,
+		},
+		{
+			LinphoneCallEndStr,
+			NULL,
+		},
+		{
+			LinphoneCallAnswerStr,
+			NULL,
+		},
+		{LinphoneCallBusyStr,
+		 NULL},
+		{LinphoneCallErrorStr,
+		 NULL},
+		{LinphoneCallOutgoingEarlyMediaStr,
+		 NULL},
 
 };
 
@@ -196,7 +201,33 @@ void user_linphone_call_answer_register(user_linphone_func callback)
 {
 	user_linphone_event_received_register(LinphoneCallAnswerStr, callback);
 }
-
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 通话结束
+***********************************************/
+void user_linphone_call_busy_register(user_linphone_func callback)
+{
+	user_linphone_event_received_register(LinphoneCallBusyStr, callback);
+}
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 呼叫失败
+***********************************************/
+void user_linphone_call_error_register(user_linphone_func callback)
+{
+	user_linphone_event_received_register(LinphoneCallErrorStr, callback);
+}
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 呼叫失败
+***********************************************/
+void user_linphone_call_outgoing_early_media_register(user_linphone_func callback)
+{
+	user_linphone_event_received_register(LinphoneCallOutgoingEarlyMediaStr, callback);
+}
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 9:59:5

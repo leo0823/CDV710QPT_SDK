@@ -62,7 +62,7 @@ bool call_list_init(void)
 /***
 **   日期:2022-06-20 10:01:56
 **   作者: leo.liu
-**   函数作用：添加一个警报信息
+**   函数作用：添加一个呼叫信息
 **   参数说明:
 ***/
 bool call_list_add(int type, int ch,int duration,struct tm *tm)

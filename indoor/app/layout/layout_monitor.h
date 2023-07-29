@@ -3,5 +3,6 @@
 #include <stdbool.h>
  bool monitor_doorcamera_call_extern_func(char* arg);
  bool monitor_doorcamera_call_inside_func(char* arg);
-
+bool monitor_other_call_busy_inside_func(char *arg);
+bool monitor_other_call_busy_extern_func(char *arg);
 #endif

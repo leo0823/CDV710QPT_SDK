@@ -129,14 +129,14 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
         {
 
                 checkbox_s_num++;
-                lv_label_set_text_fmt(del_num, "%d seleced", checkbox_s_num);
+                lv_label_set_text_fmt(del_num,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
 
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
         }
         else
         {
                 checkbox_s_num--;
-                lv_label_set_text_fmt(del_num, "%d seleced", checkbox_s_num);
+                lv_label_set_text_fmt(del_num,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
 }
@@ -175,8 +175,8 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                                                       intercom_call_log_check_obj_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      50, 20, 300, 43, 0,
-                                                      lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_large,
+                                                      50, 25, 300, 43, 0,
+                                                      lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                       0, 15, 80, 48, 1,
                                                       type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
                                                                                                                                                             : (char *)resource_ui_src_get("ic_list_call_receive.png"),
@@ -229,7 +229,7 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
         {
                 if (strncmp(del_obj->bg_img_src, resource_ui_src_get("btn_title_check.png"), strlen(resource_ui_src_get("btn_title_check.png"))) == 0)
                 {
-                        lv_label_set_text_fmt(title, "%d seleced", checkbox_s_num);
+                        lv_label_set_text_fmt(title, "%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                         lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 }
 
@@ -330,7 +330,7 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
         if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_title_delete.png"), strlen(resource_ui_src_get("btn_title_delete.png"))) == 0)
         {
 
-                lv_label_set_text_fmt(title, "%d seleced", checkbox_s_num);
+                lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_title_check.png"), LV_PART_MAIN);
                 lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(del_all, LV_OBJ_FLAG_HIDDEN);
@@ -463,7 +463,7 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
         if (strncmp(obj_img->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))) == 0)
         {
                 checkbox_s_num = 0;
-                lv_label_set_text_fmt(title, "%d seleced", checkbox_s_num);
+                lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(obj_img, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
                 for (int i = total - 1; i >= 0; i--)
                 {
@@ -479,7 +479,7 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
 
                 lv_obj_set_style_bg_img_src(obj_img, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
                 checkbox_s_num = total;
-                lv_label_set_text_fmt(title, "%d seleced", checkbox_s_num);
+                lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(back, LV_OBJ_FLAG_HIDDEN);
                 for (int i = total - 1; i >= 0; i--)
@@ -536,7 +536,7 @@ static void sat_layout_enter(intercom_call)
                                                               90, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               90, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0, 5, 120, 48, 0,
-                                                              "Cancel", 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                              lang_str_get(INSTALLATION_XLS_LANG_ID_CACCEL), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                               3, 10, 77, 77, -1,
                                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -590,7 +590,7 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_set_style_bg_color(btnmatrix, lv_color_hex(0x194861), LV_STATE_DISABLED | LV_PART_ITEMS);
                         lv_obj_set_style_bg_opa(btnmatrix, LV_OPA_COVER, LV_STATE_DISABLED | LV_PART_ITEMS);
 
-                        static const char *btnm_map[] = {
+                        static const char *btnm_map[] = { 
                             "ID\n1", "ID\n2", "ID\n3", "\n",
                             "ID\n4", "ID\n5", "ID\n6", "\n",
                             "ID\n7", "ID\n8", "ID\n9", ""};
@@ -617,7 +617,7 @@ static void sat_layout_enter(intercom_call)
                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                                                   50, 20, 224, 43, intercom_call_obj_id_del_all_label,
-                                                                                  "Del all", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
+                                                                                  lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_DELETED_ALL), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
                                                                                   0, 0, 32, 86, intercom_call_obj_id_del_all_img,
                                                                                   resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                                 lv_obj_add_flag(del_all, LV_OBJ_FLAG_HIDDEN);

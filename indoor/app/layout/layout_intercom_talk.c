@@ -160,8 +160,24 @@ static void intercom_talk_answer_obj_display(void)
         }
 }
 
+//呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
+        sat_linphone_audio_play_stop();
+        if (intercom_call_state == 1)
+        {
+                sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, true);
+        }
+        else
+        {
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
+        }
+}
+
+//呼叫失败事件注册
+static bool intercom_talk_call_failed_callback(char *arg)
+{
+        SAT_DEBUG("receive call failed %s\n",arg);
         sat_linphone_audio_play_stop();
         if (intercom_call_state == 1)
         {
@@ -420,13 +436,14 @@ static void sat_layout_enter(intercom_talk)
 
                 layout_intercom_talk_vol_bar_create(vol_cont);
         }
-
+        user_linphone_call_error_register(intercom_talk_call_failed_callback);
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
         user_linphone_call_end_register(intercom_talk_call_end_callback);
 }
 
 static void sat_layout_quit(intercom_talk)
 {
+        user_linphone_call_error_register(NULL);
         sat_linphone_audio_play_stop();
         lv_obj_pressed_func = lv_layout_touch_callback;
         standby_timer_restart(true);
