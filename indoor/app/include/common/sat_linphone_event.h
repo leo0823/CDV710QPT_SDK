@@ -40,7 +40,7 @@ bool sat_linphone_call(const char *url, bool video, bool early_media, char *mult
  * @功能: 注册到服务器
  * @return:
  */
-bool sat_linphone_register(const char *user, const char *pwd, const char *proxy);
+bool sat_linphone_register(const char *name, const char *user, const char *pwd, const char *proxy);
 
 /*
  * @日期: 2022-09-06

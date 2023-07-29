@@ -108,7 +108,7 @@ int main(int argc, char **argv)
 #else
 
 #include "anyka/ak_common.h"
-#define SIP_CALL_QURY_TIMER 1000
+#define SIP_CALL_QURY_TIMER 5000
 
 static unsigned long long sip_call_timestamp = 0;
 static bool sip_call_status = false;
@@ -236,7 +236,7 @@ static void sys_timer_callback(void)
         {
                 char domain[32] = {0};
                 sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.number, NULL, domain);
+                sat_linphone_register(user_data_get()->device.name,user_data_get()->device.number, NULL, domain);
         }
 }
 /*连接设备发送正在通话的命令*/
@@ -263,7 +263,6 @@ static void sip_call_status_query_callback(bool state)
 
 static void *media_server_task(void *arg)
 {
-
         while (1)
         {
                 extern int live555_media_server_start(const char *username, const char *password);
@@ -339,7 +338,7 @@ int main(int argc, char *argv[])
                 usleep(100 * 1000);
                 char domain[32] = {0};
                 sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.number, NULL, domain);
+                sat_linphone_register(user_data_get()->device.name,user_data_get()->device.number, NULL, domain);
         }
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
