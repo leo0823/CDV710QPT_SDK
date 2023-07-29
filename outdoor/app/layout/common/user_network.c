@@ -190,7 +190,7 @@ static bool doorcamera_device_discover_processing(struct sockaddr_in *client_add
                 reslut = false;
                 goto finish;
         }
-        static long msg_count = 10000;
+        static long msg_count = 1;
         char ip[32] = {0};
         char local_uuid[128] = {0};
         const char *username = getenv("SIP");
@@ -2545,6 +2545,9 @@ static bool add_multicase_routing_addres(void)
         sprintf(cmd, "route add -net %s netmask %s eth0", "224.0.0.0", "255.0.0.0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
+        /*   sprintf(cmd, "route add -net %s netmask %s eth0", "10.0.0.0", "255.0.0.0");
+         system(cmd);
+         SAT_DEBUG("%s ", cmd); */
         return true;
 }
 static bool automatic_ip_setting(void)
