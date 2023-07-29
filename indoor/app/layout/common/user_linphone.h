@@ -14,7 +14,9 @@ typedef bool (*user_linphone_func)(char *args);
 #define LinphoneCallOutgoingInitStr "LinphoneCallOutgoingInit"
 #define LinphoneCallEndStr "LinphoneCallEnd"
 #define LinphoneCallAnswerStr "LinphoneCallAnswer"
-
+#define LinphoneCallBusyStr "LinphoneCallBusy"
+#define LinphoneCallErrorStr "LinphoneCallError"
+#define LinphoneCallOutgoingEarlyMediaStr "LinphoneCallOutgoingEarlyMedia"
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 9:59:5
@@ -71,4 +73,23 @@ void user_linphone_call_end_register(user_linphone_func callback);
 ** 说明: 通话结束
 ***********************************************/
 void user_linphone_call_answer_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 通话结束
+***********************************************/
+void user_linphone_call_busy_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 呼叫失败
+***********************************************/
+void user_linphone_call_error_register(user_linphone_func callback);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 10:46:3
+** 说明: 呼叫前期媒体建立
+***********************************************/
+void user_linphone_call_outgoing_early_media_register(user_linphone_func callback);
+
 #endif

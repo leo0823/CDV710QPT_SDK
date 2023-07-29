@@ -1699,6 +1699,9 @@ static void sat_layout_enter(monitor)
         /*tuya事件注册*/
         tuya_event_cmd_register(layout_monitor_tuya_event_handle);
 
+        /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
+        user_linphone_call_busy_register(monitor_other_call_busy_inside_func);
+
         lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
 }
 static void sat_layout_quit(monitor)
@@ -1769,6 +1772,8 @@ static void sat_layout_quit(monitor)
 
         /*tuya事件注册*/
         tuya_event_cmd_register(tuya_event_defalut_handle);
+
+        user_linphone_call_busy_register(monitor_other_call_busy_extern_func);
 }
 
 sat_layout_create(monitor);
@@ -1877,13 +1882,25 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 
                         intercom_call_username_setting(start);
                         SAT_DEBUG("call :%s", ptr);
-                        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_extension_call);
-                        if(obj != NULL)
-                        {
-                                lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
-                        }
                 }
         }
+        return true;
+}
+
+bool monitor_other_call_busy_inside_func(char *arg)
+{
+        lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
+        if(extension != NULL)
+        {
+                lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+        }
+        SAT_DEBUG("receive call_busy info %s",arg);
+        return true;
+}
+
+bool monitor_other_call_busy_extern_func(char *arg)
+{
+        SAT_DEBUG("receive all_busy");
         return true;
 }
 
@@ -2011,7 +2028,7 @@ static bool truye_event_cmd_audio_start(void)
 ** 函数说明: app退出查看监控
 ** 作者: xiaoxiao
 ** 日期: 2023-05-30 22:12:48
-** 参数说明:
+** 参数说明:        user_linphone_call_error_register(intercom_talk_call_failed_callback);
 ** 注意事项:
 ************************************************************/
 static void tuya_event_cmd_video_stop(void)
