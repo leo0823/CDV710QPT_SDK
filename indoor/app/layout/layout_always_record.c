@@ -603,7 +603,7 @@ static void sat_layout_quit(always_record)
     record_video_stop();
     monitor_close();
     /*sd卡状态处理 */
-    sd_state_channge_callback_register(NULL);
+    sd_state_channge_callback_register(sd_state_change_default_callback);
     record_state_callback_register(NULL);
     snapshot_state_callback_register(NULL);
     

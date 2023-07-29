@@ -91,6 +91,7 @@ static void sd_state_checking_timer(lv_timer_t *timer)
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
+        SAT_DEBUG("=========================================");
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),sd_state_change_obj_id_format_msgbox_cont);
         if(masgbox != NULL)
         {
