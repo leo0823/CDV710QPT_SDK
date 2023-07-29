@@ -49,7 +49,7 @@ static void logo_sip_server_register(void)
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
-        sat_linphone_register(sip_user_id, NULL, sip_sever);
+        sat_linphone_register(NULL,sip_user_id, NULL, sip_sever);
 }
 
 static void sip_register_timer(lv_timer_t *t)
