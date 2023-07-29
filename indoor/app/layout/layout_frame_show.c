@@ -990,13 +990,14 @@ static void sat_layout_quit(frame_show)
 	standby_timer_restart(true);
 	sat_linphone_media_thumb_destroy();
 	thumb_display_refresh_register(NULL);
-	sd_state_channge_callback_register(NULL);
+	sd_state_channge_callback_register(sd_state_change_default_callback);
 	lv_img_buf_free(frame_buffer_cur_a);
 	frame_buffer_cur_a = NULL;
 	lv_img_buf_free(frame_buffer_cur_b);
 	frame_buffer_cur_b = NULL;
 	monitor_close();
 	backlight_brightness_set(user_data_get()->display.lcd_brigtness);
+	lv_img_cache_invalidate_all();
 }
 
 sat_layout_create(frame_show);

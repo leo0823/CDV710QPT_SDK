@@ -909,7 +909,7 @@ static void sat_layout_enter(home)
                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                0, 83, 103, 27, home_obj_id_cctv_label,
                                                                lang_str_get(HOME_XLS_LANG_ID_CCTV), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                                               13, 0, 88, 88, home_obj_id_cctv_img,
+                                                               13, 0, 77, 77, home_obj_id_cctv_img,
                                                                (const char *)resource_ui_src_get("btn_main_cctv_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 layout_home_cctv_icon_display(cctv);
                 sec_x += unit_offset;

@@ -75,6 +75,8 @@ static bool is_monitor_door_camera_talk = false;
 static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
+
+static char extension_name[3];
 static void monitor_obj_cctv_cancel_obj_click(lv_event_t *e)
 {
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -155,8 +157,9 @@ static void monitior_obj_channel_info_obj_display(void)
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+
                 //lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-                lv_label_set_text_fmt(obj, "Door%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name ,tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 /***********************************************
@@ -1259,8 +1262,20 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
 
 static void layout_monitor_extension_call_click(lv_event_t * e)
 {
+        char number[128] = {0};
+        sprintf(number, "sip:%s@%s:5066", extension_name, user_data_get()->mastar_wallpad_ip);
+        sat_linphone_call(number, false, false, NULL);
+        intercom_call_username_setting(number);
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+
 }
+
+static bool layout_monitor_outgoing_arly_media_register(char *arg)
+{
+        return false;
+}
+
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -1699,6 +1714,11 @@ static void sat_layout_enter(monitor)
         /*tuya事件注册*/
         tuya_event_cmd_register(layout_monitor_tuya_event_handle);
 
+        /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
+        user_linphone_call_busy_register(monitor_other_call_busy_inside_func);
+
+        user_linphone_call_outgoing_early_media_register(layout_monitor_outgoing_arly_media_register);
+
         lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
 }
 static void sat_layout_quit(monitor)
@@ -1769,6 +1789,10 @@ static void sat_layout_quit(monitor)
 
         /*tuya事件注册*/
         tuya_event_cmd_register(tuya_event_defalut_handle);
+
+        user_linphone_call_busy_register(monitor_other_call_busy_extern_func);
+
+        user_linphone_call_outgoing_early_media_register(NULL);
 }
 
 sat_layout_create(monitor);
@@ -1779,14 +1803,42 @@ sat_layout_create(monitor);
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
 //<sip:010193001011@172.16.0.110>
+void extractDataInQuotes(const char* inputStr, char* extractedStr, size_t maxLen) 
+{
+    const char* startPos = strstr(inputStr, "user:");
+    if (startPos != NULL) {
+        startPos += strlen("user:\"");
+        const char* endPos = strchr(startPos, '\"');
+        if (endPos != NULL) {
 
+            size_t length = endPos - startPos;
+
+            if (length > maxLen - 1)
+                length = maxLen - 1;
+
+            strncpy(extractedStr, startPos, length);
+            extractedStr[length] = '\0';
+            return;
+        }
+    }
+    extractedStr[0] = '\0';
+}
 static bool monitor_doorcamera_extern_call(const char *arg)
 {
         if (!user_data_get()->audio.ring_mute)
         {
                 ring_door_call_play();
         }
+        char door_name[128];
         monitor_channel_set(monitor_index_get_by_user(arg));
+        extractDataInQuotes(arg,door_name,sizeof(door_name));
+        if(strncmp(door_name,network_data_get()->door_device->door_name,strlen(network_data_get()->door_device->door_name)))
+        {
+                strncpy(network_data_get()->door_device->door_name,door_name,strlen(door_name));
+                network_data_save();
+               
+        }
+        
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
@@ -1877,13 +1929,29 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 
                         intercom_call_username_setting(start);
                         SAT_DEBUG("call :%s", ptr);
-                        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_extension_call);
-                        if(obj != NULL)
-                        {
-                                lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
-                        }
                 }
         }
+        return true;
+}
+
+bool monitor_other_call_busy_inside_func(char *arg)
+{
+
+        lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
+        if(extension != NULL)
+        {
+                lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+        }
+        char exten_name_str[128] = {0};
+        extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
+        strncpy(extension_name,exten_name_str,sizeof(extension_name));
+        SAT_DEBUG("receive call_busy info %s",arg);
+        return true;
+}
+
+bool monitor_other_call_busy_extern_func(char *arg)
+{
+        SAT_DEBUG("receive all_busy");
         return true;
 }
 
@@ -2011,7 +2079,7 @@ static bool truye_event_cmd_audio_start(void)
 ** 函数说明: app退出查看监控
 ** 作者: xiaoxiao
 ** 日期: 2023-05-30 22:12:48
-** 参数说明:
+** 参数说明:        user_linphone_call_error_register(intercom_talk_call_failed_callback);
 ** 注意事项:
 ************************************************************/
 static void tuya_event_cmd_video_stop(void)
