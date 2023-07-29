@@ -104,6 +104,15 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
+        // intercom_call_username_setting(arg);
+        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        return true;
+}
+
+
+
+static bool intercom_linphone_outgoing_arly_media_register(char *arg)
+{
         intercom_call_username_setting(arg);
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
 }
@@ -641,11 +650,14 @@ static void sat_layout_enter(intercom_call)
                 lv_tabview_set_act(tabview, enter_intercom_mode, LV_ANIM_OFF);
         }
         user_linphone_call_outgoing_call_register(intercom_linphone_outgoing_callback);
+
+        user_linphone_call_outgoing_early_media_register(intercom_linphone_outgoing_arly_media_register);
 }
 
 static void sat_layout_quit(intercom_call)
 {
         user_linphone_call_outgoing_call_register(NULL);
+        user_linphone_call_outgoing_early_media_register(NULL);
         standby_timer_restart(true);
         checkbox_s_num = 0;
 }

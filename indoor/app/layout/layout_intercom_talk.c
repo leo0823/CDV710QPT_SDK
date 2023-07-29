@@ -170,6 +170,7 @@ static bool intercom_talk_call_end_callback(char *arg)
         }
         else
         {
+                SAT_DEBUG("=====+++++=====");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
         }
 }
