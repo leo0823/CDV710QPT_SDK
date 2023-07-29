@@ -183,6 +183,14 @@ static void photo_thumb_decode_all_display(void)
         memset(arry[0], 0, sizeof(arry[0]));
         sprintf(arry[0], "%s%s %d %d %d %d", playback_pview_path_get(), pinfo->file_name, photo_thumb_point->x, photo_thumb_point->y, PHOTO_WIDTH, PHOTO_HIGHT);
 
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_thumb);
+
+        if(obj == NULL)
+        {
+                SAT_DEBUG("lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_thumb) failed");
+                return;
+        }
+        lv_img_cache_invalidate_src(obj->bg_img_src);
         sat_linphone_media_thumb_display(arry, 1, photo_thumb_media_display_callback);
 
         if (pinfo->is_new == true)
@@ -488,11 +496,12 @@ static void sat_layout_enter(photo)
 }
 static void sat_layout_quit(photo)
 {
-        //lv_img_cache_invalidate_all();
+
         sat_linphone_media_thumb_destroy();
         thumb_display_refresh_register(NULL);
         sd_state_channge_callback_register(sd_state_change_default_callback);
         photo_thumb_img_dse_destroy();
+        lv_img_cache_invalidate_all();
 }
 
 sat_layout_create(photo);
