@@ -1,35 +1,35 @@
 # 2023/07/29
-> 1.修复照片加载死机问题 \
-> 2.SIP注册和呼叫添加别名显示
+> 1. 修复照片加载死机问题 
+> 2. SIP注册和呼叫添加别名显示 
+> 3. 增加前期媒体建立连接接口函数
 
 # 2023/07/28
-> 1.添加sip server 功能; \
-> 2.添加sip server 群呼功能; \
-> 3.呼叫失败应用注册函数：
-`void user_linphone_call_busy_register(user_linphone_func callback)` \
-> 4.呼叫用户正忙应用注册函数:
-` void user_linphone_call_busy_register(user_linphone_func callback)` \
-> 5.修复应用莫名其妙段错误;
+> 1. 添加sip server 功能; 
+> 2. 添加sip server 群呼功能; 
+> 3. 呼叫失败应用注册函数：
+`void user_linphone_call_busy_register(user_linphone_func callback)` 
+> 4. 呼叫用户正忙应用注册函数:
+` void user_linphone_call_busy_register(user_linphone_func callback)` 
+> 5. 修复应用莫名其妙段错误;
 
 # 2023/07/12
-> 1.优化缩略图显示异常 \
-> 2.修复wifi热点分配不到IP的问题 \
-> 3.优化lvgl解码速度慢的问题 \
-> 4.修复wifi热点无法搜索到涂鸦设备 \
-> 5.增加门口机手动设置IP功能
+> 1. 优化缩略图显示异常 
+> 2. 修复wifi热点分配不到IP的问题 
+> 3. 优化lvgl解码速度慢的问题 
+> 4. 修复wifi热点无法搜索到涂鸦设备 
+> 5. 增加门口机手动设置IP功能
 
 # 2023/07/11
-> 1.修复TF卡升级检测不到tf卡 \
-> 2.修复缩略图显示异常 \
-> 3.修复mp3播放设置铃声之后死机 
+> 1. 修复TF卡升级检测不到tf卡 
+> 2. 修复缩略图显示异常 
+> 3. 修复mp3播放设置铃声之后死机 
 
 # 2023/06/29
->
->1.修复铃声停止播放接口调用后不会立即停止铃声 \
->2.增加铃声音量调节接口:\
-        bool sat_linphone_audio_play_volume_set(int volume);\
->3.增加通话音量调节接口：\
-        bool sat_linphone_audio_talk_volume_set(int volume);\
+>1. 修复铃声停止播放接口调用后不会立即停止铃声 
+>2. 增加铃声音量调节接口:
+       ` bool sat_linphone_audio_play_volume_set(int volume);`
+>3. 增加通话音量调节接口：
+       ` bool sat_linphone_audio_talk_volume_set(int volume);`
 
 # 2023/06/20
 
