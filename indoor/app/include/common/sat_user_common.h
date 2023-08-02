@@ -12,6 +12,13 @@
 
 #define NETWORK_ETH_NAME "eth0"
 
+typedef struct
+{
+	char name[64];
+	char ip[32];
+	unsigned long long timestamp;
+}asterisk_register_info;
+
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -173,4 +180,11 @@ bool sat_network_ip_pings_check(const char *ip, int pings_count, int one_wait_se
 ** 说明: 杀死指定的进程
 ***********************************************/
 bool sat_kill_task_process(const char *process_name);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 15:21:6
+** 说明: 通过连接asterisk 获取注册设备信息
+***********************************************/
+const asterisk_register_info* asterisk_register_info_get(void);
+
 #endif

@@ -23,8 +23,10 @@
 #include <string.h>
 #include <errno.h>
 #include "mxml-3.3.1/mxml.h"
+#include "base64/include/libbase64.h"
 #include "onvif.h"
-#define DOOR_CAMERA_RECEIVE_BUFFER_MAX (100 * 1024)
+#include "sha1/sha1.h"
+#define DOOR_CAMERA_RECEIVE_BUFFER_MAX (1024 * 1024)
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 16:55:3
@@ -39,6 +41,7 @@
 ** 说明: 所有设备的组播IP
 ***********************************************/
 #define S200_OK_REQUEST_PATH ONVIF_XML_PATH "200_ok_requeset.html"
+#define BAD_REQUEST_PATH ONVIF_XML_PATH "bad_requset.html"
 #define DISCONVER_DEVICE_FILE_PATH ONVIF_XML_PATH "device_discovery_feedback.xml"
 /***********************************************
 ** 作者: leo.liu
@@ -87,7 +90,7 @@ static bool indoor_device_discover_processing(struct sockaddr_in *client_addr, c
         static long msg_count = 10000;
         char ip[32] = {0};
         char local_uuid[128] = {0};
-        const char *local_usernmae = network_data_get()->sip_user;
+        const char *local_usernmae = getenv("SIP");
 
         /*客户需求即搜索分机，用户为空则直接返回，
         若后续需求所有的室内机，则可以将用户为空作为
@@ -199,7 +202,6 @@ static void *user_network_common_multicast_task(void *arg)
 
 /*********************************************** 		tcp   		***********************************************/
 #define POST_ONVIF_DEVICE_HTML_TEXT "POST /onvif/device_service"
-
 static bool trcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
 {
         int html_size = sat_file_size_get(S200_OK_REQUEST_PATH);
@@ -266,124 +268,93 @@ static bool trcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const ch
         free(xml_buffer);
         return true;
 }
-static bool tcp_device_servrce_xml_get_device_name(int tcp_socket_fd, const char *xml)
-{
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
-        return true;
-}
-
-static bool tcp_device_serverce_xml_parsing(const char *xml,
-                                            char *username, int username_size,
-                                            char *password_digest, int passowrd_digest_size,
-                                            char *nonce, int nonce_size,
-                                            char *created, int created_size)
+#define SYNC_FILE_DATA_MAX (1 * 1024 * 1024)
+static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_string)
 {
         bool reslut = false;
-        char *pxml = strstr(xml, "<?xml version=\"1.0\"");
-        if (pxml == NULL)
+        /*base64解码*/
+        size_t base64_decode_size = 0;
+        char *base64_decode_buffer = (char *)malloc(SYNC_FILE_DATA_MAX);
+        if (base64_decode_buffer == NULL)
         {
-                printf("%s\n", xml);
+                SAT_DEBUG("malloc fail");
                 return false;
         }
+        base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
 
-        mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
-        if (root != NULL)
+        int send_len = 0;
+        int remain = sizeof(user_data_info);
+        while (remain > 0)
         {
-                mxml_node_t *node = mxmlFindElementSub(root, root, "Username", NULL, NULL, MXML_DESCEND);
-                if (node != NULL)
-                {
-                        const char *text = mxmlGetText(node, NULL);
-                        if (text != NULL)
-                        {
-                                //  SAT_DEBUG("Username:%s\n\n%s\n\n", text,pxml);
-                                strncpy(username, text, username_size);
-                                reslut = true;
-                        }
-                }
-
-                node = mxmlFindElementSub(root, root, "Password", NULL, NULL, MXML_DESCEND);
-                if (node != NULL)
-                {
-                        const char *text = mxmlGetText(node, NULL);
-                        if (text != NULL)
-                        {
-                                //  SAT_DEBUG("Password:%s", text);
-                                strncpy(password_digest, text, passowrd_digest_size);
-                                reslut = true;
-                        }
-                }
-
-                node = mxmlFindElementSub(root, root, "Nonce", NULL, NULL, MXML_DESCEND);
-                if (node != NULL)
-                {
-                        const char *text = mxmlGetText(node, NULL);
-                        if (text != NULL)
-                        {
-                                //   SAT_DEBUG("Nonce:%s", text);
-                                strncpy(nonce, text, nonce_size);
-                                reslut = true;
-                        }
-                }
-
-                node = mxmlFindElementSub(root, root, "Created", NULL, NULL, MXML_DESCEND);
-                if (node != NULL)
-                {
-                        const char *text = mxmlGetText(node, NULL);
-                        if (text != NULL)
-                        {
-                                //  SAT_DEBUG("created:%s", text);
-                                strncpy(created, text, created_size);
-                                reslut = true;
-                        }
-                }
+                int read_len = remain > 1024 ? 1024 : remain;
+                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0x01, &base64_decode_buffer[send_len], read_len, send_len, sizeof(user_data_info));
+                remain -= read_len;
+                send_len += read_len;
         }
-        else
+
+        free(base64_decode_buffer);
+
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
+        return reslut;
+}
+static bool tcp_device_serverce_xml_get_networkdata(int tcp_socket_fd, char *recv_string)
+{
+        bool reslut = false;
+        /*base64解码*/
+        size_t base64_decode_size = 0;
+        char *base64_decode_buffer = (char *)malloc(SYNC_FILE_DATA_MAX);
+        if (base64_decode_buffer == NULL)
         {
-                SAT_DEBUG("mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);")
+                SAT_DEBUG("malloc fail");
+                return false;
         }
-        mxmlDelete(root);
+        base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+
+        int send_len = 0;
+        int remain = sizeof(user_network_info);
+        while (remain > 0)
+        {
+                int read_len = remain > 1024 ? 1024 : remain;
+                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0x02, &base64_decode_buffer[send_len], read_len, send_len, sizeof(user_network_info));
+                send_len += read_len;
+                remain -= read_len;
+        }
+
+        free(base64_decode_buffer);
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
         return reslut;
 }
 static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
-        char username[128] = {0};
-        char password[128] = {0};
-        char nonce[128] = {0};
-        char created[128] = {0};
-        if (tcp_device_serverce_xml_parsing((const char *)recv_data, username, sizeof(username),
-                                            password, sizeof(password),
-                                            nonce, sizeof(nonce),
-                                            created, sizeof(created)) == false)
+        bool reslut = false;
+        char *ptr = strstr((const char *)recv_data, "<");
+        if (ptr == NULL)
         {
-                SAT_DEBUG("tcp_device_serverce_xml_parsing() == false");
+                SAT_DEBUG("%s", recv_data);
                 return false;
         }
-#if 0
-        if (onvif_username_token_check(username, password, nonce, created) == false)
+        char *data = (char *)malloc(SYNC_FILE_DATA_MAX);
+        if (discover_devices_data_parsing(ptr, "SyncUserData", data, SYNC_FILE_DATA_MAX) == true)
         {
-                return tcp_device_serverce_xml_bad_request(tcp_socket_fd);
+                printf("[%s:%d] SyncUserData\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_get_userdata(tcp_socket_fd, data);
         }
-#endif
+        else if (discover_devices_data_parsing(ptr, "SyncNetworkData", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] SyncNetworkData\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_get_networkdata(tcp_socket_fd, data);
+        }
+        else
+        {
+                SAT_DEBUG("%s", recv_data);
+        }
 
-        char *soap_action_start_ptr = strstr((const char *)recv_data, "SOAPAction");
-        if (soap_action_start_ptr == NULL)
+        if (data != NULL)
         {
-                SAT_DEBUG("char* soap_action_start_ptr = strstr(recv_data,\" SOAPAction \")");
-                return false;
+                free(data);
         }
-        char *soap_action_end_str = strstr((const char *)recv_data, "<?xml version=\"1.0\"");
-        if (soap_action_end_str == NULL)
-        {
-                SAT_DEBUG(" char *soap_action_end_str = strstr(recv_data, \"<?xml version=\"1.0\");");
-                return false;
-        }
-        soap_action_end_str[0] = '\0';
-        if (strstr(soap_action_start_ptr, "Get name"))
-        {
-                soap_action_end_str[0] = '<';
-                return tcp_device_servrce_xml_get_device_name(tcp_socket_fd, soap_action_end_str);
-        }
-        return false;
+
+        return reslut;
 }
 static bool tcp_receive_data_parsing_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
@@ -408,10 +379,17 @@ static void *user_network_tcp_task(void *arg)
                 if (client_fd >= 0)
                 {
                         memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
-                        while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 100)) > 0)
+                        int read_len = 0;
+                        int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
+                        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 500)) > 0)
                         {
                                 //  printf("%s\n", receive_data);
-                                tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);
+                                read_len += recv_len;
+                                remain_len -= recv_len;
+                        }
+                        if (read_len > 0)
+                        {
+                                tcp_receive_data_parsing_processing(client_fd, receive_data, read_len);
                         }
                         sat_socket_close(client_fd);
                 }
@@ -470,7 +448,7 @@ static bool obtain_ipaddress_based_on_username(void)
         buffer[0] = (username[0] - 48) * 100 + (username[1] - 48) * 10 + (username[2] - 48);
         buffer[1] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48));
         buffer[2] = (username[6] - 48) * 100 + (username[7] - 48) * 10 + (username[8] - 48);
-        buffer[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10 + (user_data_get()->system_mode & 0x0f);
+        buffer[3] = (username[9] - 48) * 100 + (username[10] - 48) * 10 + (user_data_get()->system_mode & 0x0F);
 
         sprintf(ip, "%d.%d.%d.%d", buffer[0], buffer[1], buffer[2], buffer[3]);
 
@@ -499,6 +477,10 @@ static bool add_multicase_routing_addres(void)
         sprintf(cmd, "route add -net %s netmask %s eth0", "224.0.0.0", "255.0.0.0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
+
+        /*   sprintf(cmd, "route add -net %s netmask %s eth0", "10.0.0.0", "255.0.0.0");
+          system(cmd);
+          SAT_DEBUG("%s ", cmd); */
         return true;
 }
 
@@ -595,7 +577,7 @@ char *user_linphone_local_multicast_get(void)
         // ex:室内机:"010001001011" -->>> 225.1.1.10
         int value[4] = {0};
         static char multicase_ip[32] = {0};
-        const char *username = network_data_get()->sip_user;
+        const char *username = getenv("SIP");
         if ((username == NULL) || (strlen(username) < 12))
         {
                 SAT_DEBUG("getenv sip failed");
