@@ -22,7 +22,7 @@ enum
 
         /****************************************************************
         2022-09-21 author:leo.liu 说明:arg1 1:online,arg2:online num
-                                                                2:rtsp streadm,arg2:avlid num
+                        2:rtsp streadm,arg2:avlid num
         *****************************************************************/
         MSG_EVENT_CMD_IPCAMERA,
 
@@ -45,25 +45,30 @@ enum
         *****************************************************************/
         MSG_EVENT_CMD_THUMB_REFRESH,
         /****************************************************************
-       2022-09-21 author:leo.liu AO开启后者关闭
-       *****************************************************************/
+         2022-09-21 author:leo.liu AO开启后者关闭
+        *****************************************************************/
         MSG_EVENT_CMD_AUDIO_OUTPUT,
         /****************************************************************
          2022-09-21 author:leo.liu ALARM
         *****************************************************************/
         MSG_EVENT_CMD_ALARM,
         /****************************************************************
-       2022-09-21 author:leo.liu tuya
-      *****************************************************************/
+         2022-09-21 author:leo.liu tuya
+        *****************************************************************/
         MSG_EVENT_CMD_TUYA,
         /****************************************************************
          2022-09-21 author:leo.liu motion detection
         *****************************************************************/
         MSG_EVENT_CMD_MOTION_DETECTION,
         /****************************************************************
-       2022-09-21 author:leo.liu ring play:arg1:0,start,1:finish
-      *****************************************************************/
+         2022-09-21 author:leo.liu ring play:arg1:0,start,1:finish
+        *****************************************************************/
         MSG_EVENT_CMD_AUDIO_RING_PLAY,
+        /****************************************************************
+         2022-09-21 author:leo.liu SYNC DATA:
+                flag bit[0:3]:user data= 0x01:netowrk data = 0x02
+        *****************************************************************/
+        MSG_EVENT_CMD_SYNC_DATA,
 };
 typedef enum
 {
@@ -182,6 +187,12 @@ bool sat_msg_send_cmd(unsigned int cmd, unsigned int arg1, unsigned int arg2);
 ** 说明: SIP相关信息命令
 ***********************************************/
 bool sat_msg_send_cmd_str(unsigned int cmd, const char *str, int length);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 9:41:41
+** 说明: SIP相关信息命令
+***********************************************/
+bool sat_msg_send_cmd_data(unsigned int cmd, char flag, const char *data, int size, int pos, int max);
 
 /*
  * @日期: 2022-08-12
@@ -270,4 +281,10 @@ void moiton_detection_event_cmd_register(bool (*callback)(void));
 ** 说明:铃声播放处理
 ***********************************************/
 void ring_play_event_cmd_register(bool (*callback)(int arg));
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 9:53:56
+** 说明:数据同步处理函数
+***********************************************/
+void sync_data_cmd_callback_register(void (*callback)(char flag, char *str, int size, int pos, int max));
 #endif
