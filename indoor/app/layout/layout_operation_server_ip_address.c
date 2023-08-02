@@ -31,13 +31,30 @@ enum
         setting_server_ipaddress_obj_id_subnet_mask_label,
         setting_server_ipaddress_obj_id_dns_label
 };
+static char etting_server_ipaddress_flag = false;
+char layout_setting_setting_server_ipaddress_flag_get()
+{
+        return etting_server_ipaddress_flag;
+}
 
+void layout_setting_setting_server_ipaddress_flag_set(char flag)
+{
+        etting_server_ipaddress_flag = flag;
+}
 static void setting_server_ipaddress_obj_cancel_click(lv_event_t *e)
 {
+        if(layout_setting_setting_server_ipaddress_flag_get() != 0)
+        {
+                sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
         sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 static void setting_server_ipaddress_obj_confirm_click(lv_event_t *e)
 {
+        if(layout_setting_setting_server_ipaddress_flag_get() != 0)
+        {
+                sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
         sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 
@@ -289,6 +306,7 @@ static void sat_layout_enter(setting_server_ipaddress)
 }
 static void sat_layout_quit(setting_server_ipaddress)
 {
+        layout_setting_setting_server_ipaddress_flag_set(0);
 }
 
 sat_layout_create(setting_server_ipaddress);

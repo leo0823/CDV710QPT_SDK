@@ -11,13 +11,18 @@
 static int monitor_channel = -1;
 static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 
-const char *monitor_channel_get_url(int index, bool update)
+const char *monitor_channel_get_url(int index, bool rtsp)
 {
-        if (index < 8)
+        static char rtsp_uri[128] = {0};
+        memset(rtsp_uri,0,sizeof(rtsp_uri));
+        if (index < 8 )
         {
+                if(rtsp)
+                {
+                        return network_data_get()->door_device[index].rtsp[0].rtsp_url;
+                }
                 return network_data_get()->door_device[index].sip_url;
         }
-        static char rtsp_uri[128] = {0};
         sprintf(rtsp_uri, "%s %s %s",  network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, network_data_get()->cctv_device[index - 8].username, network_data_get()->cctv_device[index - 8].password);
         return rtsp_uri;
 }
@@ -32,7 +37,8 @@ int monitor_index_get_by_user(const char *user)
         for (int i = 0; i < DEVICE_MAX; i++)
         {
                 //<sip:010193001011@172.16.0.110>
-                if (strstr(user, network_data_get()->door_device[i].sip_url) != NULL)
+                printf("network_data_get()->door_device[i].sip_url is %s\n",network_data_get()->door_device[i].sip_url);
+                if ((strstr(user, network_data_get()->door_device[i].sip_url) != NULL) &&(network_data_get()->door_device[i].sip_url[0] != '\0'))
                 {
                         return i;
                 }
@@ -268,27 +274,34 @@ MON_ENTER_FLAG monitor_enter_flag_get(void)
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 9:44:13
-** 说明: 开启监控
+** 说明: 开启监控 flag bit0 =1 close sip ,bit1= 1 close rtsp
 ***********************************************/
-static void monitor_reset(void)
-{
-        sat_linphone_ipcamera_stop();
-        sat_linphone_handup(0xFF);
+static void monitor_reset(char flag)
+{ 
+        if(flag & 0x01)
+        {
+               sat_linphone_handup(0xFF);
+        }
+
+        if(flag & 0x02)
+        {
+                sat_linphone_ipcamera_stop();
+        }
 }
-void monitor_open(bool refresh)
+void monitor_open(bool refresh,bool rtsp)
 {
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
-                monitor_reset();
+                monitor_reset(0x03);
                 usleep(10 * 1000);
                 if (is_channel_ipc_camera(monitor_channel_get()) == true)
                 {
-                        sat_linphone_ipcamera_start(monitor_channel_get_url(monitor_channel, true));
+                        sat_linphone_ipcamera_start(monitor_channel_get_url(monitor_channel, rtsp));
                 }
                 else
                 {
                         char uri[128] = {0};
-                        sprintf(uri, "%s:5066", monitor_channel_get_url(monitor_channel, true));
+                        sprintf(uri, "%s:5066", monitor_channel_get_url(monitor_channel, rtsp));
                         sat_linphone_call(uri, true, true, NULL);
                 }
         }
@@ -302,9 +315,9 @@ void monitor_open(bool refresh)
 ** 日期: 2022-12-28 9:44:13
 ** 说明:关闭监控
 ***********************************************/
-void monitor_close(void)
+void monitor_close(char flag)
 {
-        monitor_reset();
+        monitor_reset(flag);
         lv_common_video_mode_enable(false);
 }
 /***********************************************

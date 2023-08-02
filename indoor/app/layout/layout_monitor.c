@@ -76,7 +76,9 @@ static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
 
-static char extension_name[3];
+static char extension_name[4];
+static bool monitor_talk_call_end_callback(char *arg);
+
 static void monitor_obj_cctv_cancel_obj_click(lv_event_t *e)
 {
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -1257,13 +1259,14 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
         monitor_obj_lock_2_display();
         monitior_obj_channel_info_obj_display();
         monitor_timeout_sec_reset(30);
-        monitor_open(true);
+        monitor_open(true,false);
 }
 
 static void layout_monitor_extension_call_click(lv_event_t * e)
 {
         char number[128] = {0};
         sprintf(number, "sip:%s@%s:5066", extension_name, user_data_get()->mastar_wallpad_ip);
+        monitor_close(0x03);
         sat_linphone_call(number, false, false, NULL);
         intercom_call_username_setting(number);
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -1300,7 +1303,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                 {
                         monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
-                        monitor_open(true);
+                        monitor_open(true,false);
                         layout_monitor_channel_type_switch_btn_display();
                         monitor_obj_cctv_cancel_obj_display();
 
@@ -1324,7 +1327,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                 {
                         monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
-                        monitor_open(true);
+                        monitor_open(true,false);
                         layout_monitor_channel_type_switch_btn_display();
                         monitor_obj_cctv_cancel_obj_display();
 
@@ -1698,7 +1701,7 @@ static void sat_layout_enter(monitor)
 
         user_linphone_call_streams_running_receive_register(layout_monitor_streams_running_register_callback);
 
-        monitor_open(true);
+        monitor_open(true,is_channel_ipc_camera(monitor_channel_get())?true:false);
         layout_monitor_report_vaild_channel();
 
         /*門口機内部呼叫*/
@@ -1719,7 +1722,11 @@ static void sat_layout_enter(monitor)
 
         user_linphone_call_outgoing_early_media_register(layout_monitor_outgoing_arly_media_register);
 
+        user_linphone_call_end_register(monitor_talk_call_end_callback);
+
         lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
+
+
 }
 static void sat_layout_quit(monitor)
 {
@@ -1772,7 +1779,10 @@ static void sat_layout_quit(monitor)
                 call_list_add(type, ch, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
-        monitor_close();
+        if(sat_next_layout_get() != sat_playout_get(intercom_talk))
+        {
+                monitor_close(0x03);
+        }
 
         standby_timer_restart(true);
 
@@ -1793,6 +1803,8 @@ static void sat_layout_quit(monitor)
         user_linphone_call_busy_register(monitor_other_call_busy_extern_func);
 
         user_linphone_call_outgoing_early_media_register(NULL);
+
+        user_linphone_call_end_register(NULL);
 }
 
 sat_layout_create(monitor);
@@ -1829,16 +1841,23 @@ static bool monitor_doorcamera_extern_call(const char *arg)
         {
                 ring_door_call_play();
         }
-        char door_name[128];
-        monitor_channel_set(monitor_index_get_by_user(arg));
-        extractDataInQuotes(arg,door_name,sizeof(door_name));
-        if(strncmp(door_name,network_data_get()->door_device->door_name,strlen(network_data_get()->door_device->door_name)))
+
+        char doorname[128];
+        strncpy(doorname,&network_data_get()->door_device->door_name[6],strlen(network_data_get()->door_device->door_name) - 7);//剔除doorx()字符
+        SAT_DEBUG("doorname is %s",doorname);
+        int ch = monitor_index_get_by_user(arg);
+        monitor_channel_set(ch);
+        char door_call_name[64];
+        extractDataInQuotes(arg,door_call_name,sizeof(door_call_name));
+                SAT_DEBUG("door_call_name is %s",door_call_name);
+        if(strncmp(door_call_name,doorname,strlen(doorname)))
         {
-                strncpy(network_data_get()->door_device->door_name,door_name,strlen(door_name));
+                sprintf(doorname,"Door%d(%s)" ,ch + 1,door_call_name);
+                memset(network_data_get()->door_device[ch].door_name,0,sizeof(network_data_get()->door_device[ch].door_name));
+                strncpy(network_data_get()->door_device[ch].door_name,doorname,strlen(doorname));
                 network_data_save();
                
         }
-        
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
@@ -1870,8 +1889,20 @@ bool monitor_doorcamera_call_extern_func(char *arg)
         }
         return true;
 }
+
+//呼叫结束事件注册
+static bool monitor_talk_call_end_callback(char *arg)
+{
+        SAT_DEBUG("arg is %s\n",arg);
+        sat_linphone_audio_play_stop();
+
+        sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
+        
+}
+
 bool monitor_doorcamera_call_inside_func(char *arg)
 {
+
         char user[128] = {0};
         char id[32] = {0};
         char stream[32] = {0};
@@ -1882,6 +1913,7 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         int cur_channel = monitor_channel_get();
         if (((from_channel = monitor_index_get_by_user(arg)) >= 0) || (strcasecmp(stream, "video") == 0))
         {
+                SAT_DEBUG("from_channel is %d\n",from_channel);
                 if (!user_data_get()->audio.ring_mute)
                 {
                         ring_door_call_play();
@@ -1937,15 +1969,17 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 bool monitor_other_call_busy_inside_func(char *arg)
 {
 
-        lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
-        if(extension != NULL)
-        {
-                lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
-        }
-        char exten_name_str[128] = {0};
-        extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
-        strncpy(extension_name,exten_name_str,sizeof(extension_name));
-        SAT_DEBUG("receive call_busy info %s",arg);
+        // lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
+        // if(extension != NULL)
+        // {
+        //         lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+        // }
+        // char exten_name_str[128] = {0};
+        // extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
+
+        // memset(extension_name,0,sizeof(extension_name));
+        // strncpy(extension_name,exten_name_str,sizeof(extension_name));
+        // SAT_DEBUG("receive call_busy info %s",arg);
         return true;
 }
 
@@ -2016,7 +2050,7 @@ static bool tuya_event_cmd_ch_channge(int channel)
         monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
         monitor_channel_set(ch);
 
-        monitor_open(true);
+        monitor_open(true,false);
         monitor_obj_talk_display();
         monitor_obj_handup_display();
         monitor_obj_normal_lock_display();

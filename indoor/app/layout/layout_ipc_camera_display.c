@@ -33,8 +33,9 @@ static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
 
 static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 {
-        enter_layout_setting_ipaddress_ipc_display_set(true);
-        sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        extern void layout_setting_setting_server_ipaddress_flag_set(char flag);
+        layout_setting_setting_server_ipaddress_flag_set(layout_ipc_cmeara_is_doorcamera_get()?0x01:0x02);
+        sat_layout_goto(setting_server_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
 static bool ipc_camera_search_display_register_func(void)
