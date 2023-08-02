@@ -3,22 +3,22 @@
 #include <stdbool.h>
 
 #define IPCAMERA_NUM_MAX 8
-#define IPCAMERA_PROFILE_MAX 8
+#define IPCAMERA_PROFILE_MAX 4
 typedef struct
 {
-        char profile_token[64];
-        char rtsp_url[128];
+        char profile_token[32];
+        char rtsp_url[64];
 } ipcamera_rtsp_info;
 struct ipcamera_info
 {
-        char username[64];
-        char password[64];
-        char ipaddr[32];
+        char username[32];
+        char password[32];
+        char ipaddr[24];
+        char sip_url[64];
+        char door_name[64];
         int port;
         ipcamera_rtsp_info rtsp[IPCAMERA_PROFILE_MAX];
-        char sip_url[128];
         int profile_token_num;
-        char door_name[64];
 };
 /****************************************************************
 **@日期: 2022-09-21
@@ -112,7 +112,7 @@ bool sat_ipcamera_device_register(char *loc_sip_uri, int index, int timeout);
 **@作者: leo.liu
 **@功能:向doorcamera 注册一个设备
 *****************************************************************/
-bool sat_ipcamera_device_delete( char *loc_sip_uri, int index, int timeout);
+bool sat_ipcamera_device_delete(char *loc_sip_uri, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -130,13 +130,13 @@ bool sat_ipcamera_device_name_get(int index, int timeout);
 **@作者: leo.liu
 **@功能:向doorcamera 用户名设置
 *****************************************************************/
-bool sat_ipcamera_device_name_set( char *name, int index, int timeout);
+bool sat_ipcamera_device_name_set(char *name, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
 **@功能:向doorcamera 修改密码
 *****************************************************************/
-bool sat_ipcamera_device_password_set( char *new_pwd, int index, int timeout);
+bool sat_ipcamera_device_password_set(char *new_pwd, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -149,4 +149,16 @@ bool sat_ipcamera_device_version_get(char *version, int index, int timeout);
 **@功能:获取节点信息
 *****************************************************************/
 struct ipcamera_info *sat_ipcamera_node_data_get(int index);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 15:21:6
+** 说明: 数据同步处理.注意：此接口只有ID1处理
+** type: 0:user_data,1:network_data
+** flag: bit0:1发送到室内分机，bit1:1发送到门口机
+** data:需要同步的数据
+** size:同步数据的大小
+** inline_t:最后刷新注册的时间戳到现在的时间差判定是否在线
+** timeout：发送超时
+***********************************************/
+bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout);
 #endif
