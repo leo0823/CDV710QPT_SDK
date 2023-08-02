@@ -1,3 +1,35 @@
+# 2023/08/02
+> 1.    增加获取注册服务器在线设备接口:
+ ```c
+const asterisk_register_info* asterisk_register_info_get(void) 
+```
+> 2.    增加同步数据接口: 
+
+```c
+/**********************************************
+** 作者: leo.liu 
+** 日期: 2023-1-5 15:21:6
+** 说明: 数据同步处理.注意：此接口只有ID1处理
+** type: 0:user_data,1:network_data
+** flag: bit0:1发送到室内分机，bit1:1发送到门口机
+** data:需要同步的数据
+** size:同步数据的大小
+** inline_t:最后刷新注册的时间戳到现在的时间差判定是否在线
+** timeout：发送超时
+***********************************************/
+bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout);
+```
+> 3.    增加接收到同步事件后的处理接口
+```c
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 9:53:56
+** 说明:数据同步处理函数
+***********************************************/
+void sync_data_cmd_callback_register(void (*callback)(char flag,  char *str, int size, int pos, int max));
+
+```
+
 # 2023/07/29
 > 1. 修复照片加载死机问题 
 > 2. SIP注册和呼叫添加别名显示 
