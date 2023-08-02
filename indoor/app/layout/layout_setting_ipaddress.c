@@ -33,26 +33,12 @@ enum
         setting_ipaddress_obj_id_dns_label
 };
 
-static bool enter_ip_setting_ipc_display = false;
-bool enter_layout_setting_ipaddress_is_ipc_display()
-{
-        return enter_ip_setting_ipc_display;
-}
 
-void enter_layout_setting_ipaddress_ipc_display_set(bool is)
-{
-        enter_ip_setting_ipc_display = is;
-}
 static void setting_ipaddress_obj_cancel_click(lv_event_t *e)
 {
-        if (enter_layout_setting_ipaddress_is_ipc_display())
-        {
-                sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
-        else
-        {
-                sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
+
+        sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        
 }
 
 static void setting_ipaddress_next_obj_display(void)
@@ -117,14 +103,9 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 
         network_data_save();
 
-        if (enter_layout_setting_ipaddress_is_ipc_display())
-        {
-                sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
-        else
-        {
-                sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
+
+        sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        
 }
 static bool setting_ipaddress_textbox_del(void)
 {
@@ -363,7 +344,7 @@ static void sat_layout_enter(setting_ipaddress)
 }
 static void sat_layout_quit(setting_ipaddress)
 {
-        enter_layout_setting_ipaddress_ipc_display_set(false);
+
 }
 
 sat_layout_create(setting_ipaddress);

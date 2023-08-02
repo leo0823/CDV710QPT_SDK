@@ -80,7 +80,7 @@ static void layout_alarm_monitor_open(void)
 
                 monitor_channel_set(MON_CH_CCTV1);
         }
-        monitor_open(false);         
+        monitor_open(false,true);         
 }
 
 static void alarm_stop_obj_click(lv_event_t *ev)
@@ -652,7 +652,7 @@ static void sat_layout_quit(alarm)
         user_linphone_call_streams_running_receive_register(NULL);
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
         record_video_stop();
-        monitor_close();
+        monitor_close(0x02);
         standby_timer_restart(true);
 
 }
