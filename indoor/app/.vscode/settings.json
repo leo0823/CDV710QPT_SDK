@@ -8,6 +8,7 @@
                 "layout_setting_language.h": "c",
                 "language_new.h": "c",
                 "lang_xls.h": "c",
-                "user_data.h": "c"
+                "user_data.h": "c",
+                "sat_user_common.h": "c"
         }
 }

@@ -93,11 +93,13 @@ static bool ipc_camera_search_display_register_func(void)
                                 if (sat_ipcamera_device_register(number, layout_ipc_camera_edit_index_get(), 5000) == true)
                                 {
                                         memcpy(&network_data_get()->door_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
+  
                                         memset(network_data_get()->door_device[i].sip_url, 0, sizeof(network_data_get()->door_device[i].sip_url));
                                         strncpy(network_data_get()->door_device[i].sip_url, number, sizeof(network_data_get()->door_device[i].sip_url));
 
                                         //door重命名，不会重置设备的名字，只是方便室内机端查看
                                         char doorname[64] = {0};
+
                                         sprintf(doorname,"Door%d(%s)",i + 1,network_data_get()->door_device[i].door_name);
                                         memset(network_data_get()->door_device[i].door_name,0,sizeof(network_data_get()->door_device[i].door_name));
                                         strncpy(network_data_get()->door_device[i].door_name,doorname,strlen(doorname));
