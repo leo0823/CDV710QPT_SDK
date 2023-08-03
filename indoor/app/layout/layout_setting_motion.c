@@ -27,7 +27,7 @@ enum
         setting_motion_obj_id_msgbox_check_2,
         setting_motion_obj_id_msgbox_check_3,
         setting_motion_obj_id_msgbox_check_4,
-        setting_motion_obj_id_msgbox_confirm = setting_motion_obj_id_msgbox_check_4 + 10,
+        setting_motion_obj_id_msgbox_confirm = setting_motion_obj_id_msgbox_check_4 + 12,
         setting_motion_obj_id_msgbox_confirm_img,
         setting_motion_obj_id_msgbox_cancel,
         setting_motion_obj_id_msgbox_cancel_img
@@ -91,7 +91,7 @@ static bool setting_motion_select_camera_display(void)
                 return false;
         }
         char name[64] = {0};
-        if(user_data_get()->motion.select_camera > MON_CH_DOOR2)
+        if(user_data_get()->motion.select_camera > MON_CH_DOOR8)
         {
                 sprintf(name,network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
         }else
@@ -166,17 +166,7 @@ static void setting_motion_msgbox_del(void)
 
 static int setting_motion_msgbox_item_select_index_get(int max_item)
 {
-        int img_obj_id_group[][2] = {
-            {setting_motion_obj_id_msgbox_check_1, setting_motion_obj_id_msgbox_check_img},
-            {setting_motion_obj_id_msgbox_check_2, setting_motion_obj_id_msgbox_check_img},
-            {setting_motion_obj_id_msgbox_check_3, setting_motion_obj_id_msgbox_check_img},
-            {setting_motion_obj_id_msgbox_check_4, setting_motion_obj_id_msgbox_check_img}};
 
-        if (sizeof(img_obj_id_group) / (2 * sizeof(int)) < max_item)
-        {
-                SAT_DEBUG("sizeof(img_obj_id_group)/sizeof(int) < max_item");
-                return -1;
-        }
 
         lv_obj_t *msgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_motion_obj_id_msgbox_cont);
         if (msgbox == NULL)
@@ -201,14 +191,14 @@ static int setting_motion_msgbox_item_select_index_get(int max_item)
 
         for (int i = 0; i < max_item; i++)
         {
-                lv_obj_t *checkbox = lv_obj_get_child_form_id(list, img_obj_id_group[i][0]);
+                printf(" i is %d\n",i);
+                lv_obj_t *checkbox = lv_obj_get_child_form_id(list, setting_motion_obj_id_msgbox_check_1 + i);
                 if (checkbox == NULL)
                 {
-                        SAT_DEBUG(" lv_obj_t* checkbox = lv_obj_get_child_form_id(parent,img_obj_id_group[i]);");
-                        return -1;
+                        continue;
                 }
 
-                lv_obj_t *img = lv_obj_get_child_form_id(checkbox, img_obj_id_group[i][1]);
+                lv_obj_t *img = lv_obj_get_child_form_id(checkbox, setting_motion_obj_id_msgbox_check_img );
                 if (img == NULL)
                 {
                         SAT_DEBUG("  lv_obj_t* img =  lv_obj_get_child_form_id(checkbox, img_obj_id_group[i][1]);");
@@ -302,33 +292,43 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
         {
                 
 
-
+                int j = 0;
                 for(int i = 0; i < DEVICE_MAX; i++)
                 {
+                        if(monitor_valid_channel_check(i) == true)
+                        {
+                                
+                                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i, 48, 61 + 56 * j, 365, 48,
+                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
+                                network_data_get()->door_device[i].door_name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
+                                (const char *)resource_ui_src_get(select_item == i? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                j ++;
+                        }
                         
-                        lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i, 48, 61 + 56 * i, 365, 48,
-                        checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
-                        network_data_get()->door_device[i].door_name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                        0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
-                        (const char *)resource_ui_src_get(select_item == i? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
                         
                         
 
                 }
                 for(int i = 0; i < DEVICE_MAX; i++)
                 {
+                        if(monitor_valid_channel_check(i + DEVICE_MAX) == true)
+                        {
+                                lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i + DEVICE_MAX, 48, 171 + 56 * j, 365, 48,
+                                checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
+                                network_data_get()->cctv_device[i].door_name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
+                                (const char *)resource_ui_src_get((select_item - MON_CH_CCTV1) == i ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                j ++;   
+                        }
 
-                        lv_common_img_text_btn_create(list, setting_motion_obj_id_msgbox_check_1 + i + DEVICE_MAX, 48, 171 + 56 * i, 365, 48,
-                        checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        48, 8, 365 - 94, 32, setting_motion_obj_id_msgbox_check_text,
-                        network_data_get()->cctv_device[i].door_name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                        0, 8, 32, 32, setting_motion_obj_id_msgbox_check_img,
-                        (const char *)resource_ui_src_get((select_item - MON_CH_CCTV1) == i ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         
                         
                 }
@@ -373,7 +373,7 @@ static void setting_motion_msgbox_item_click(lv_event_t *ev)
         if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
         {
                 lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 16; i++)
                 {
                         lv_obj_t *n_item = lv_obj_get_child_form_id(parent, setting_motion_obj_id_msgbox_check_1 + i);
                         if ((n_item == NULL) || (n_item == item))
@@ -396,20 +396,23 @@ static void setting_motion_msgbox_cancel_obj_click(lv_event_t *e)
 }
 static void setting_motion_select_camera_msgbox_confim_click(lv_event_t *e)
 {
-        int item_n = setting_motion_msgbox_item_select_index_get(4);
+        int item_n = setting_motion_msgbox_item_select_index_get(16);
+
         if (item_n < 0)
         {
                 return;
         }
-        char u_camera_data = item_n == 0 ? MON_CH_DOOR1 : item_n == 1 ? MON_CH_DOOR2
-                                                      : item_n == 2   ? MON_CH_CCTV1
-                                                                      : MON_CH_CCTV2;
-
-        if (u_camera_data != user_data_get()->motion.select_camera)
+        // char u_camera_data = item_n == 0 ? MON_CH_DOOR1 : item_n == 1 ? MON_CH_DOOR2
+        //                                               : item_n == 2   ? MON_CH_CCTV1
+        //                                                               : MON_CH_CCTV2;
+        printf("item_n is %d\n",item_n);
+        printf("user_data_get()->motion.select_camera is %d\n",user_data_get()->motion.select_camera);
+        if (item_n != user_data_get()->motion.select_camera)
         {
-                user_data_get()->motion.select_camera = u_camera_data;
+                user_data_get()->motion.select_camera = item_n;
                 user_data_save();
                 setting_motion_select_camera_display();
+               
         }
 
         setting_motion_msgbox_del();

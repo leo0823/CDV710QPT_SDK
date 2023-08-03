@@ -153,7 +153,8 @@ static void monitior_obj_channel_info_obj_display(void)
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 channel -= 8;
                 //lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-                lv_label_set_text_fmt(obj, "CCTV%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                //lv_label_set_text_fmt(obj, "CCTV%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name ,tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
@@ -1837,16 +1838,23 @@ void extractDataInQuotes(const char* inputStr, char* extractedStr, size_t maxLen
 }
 static bool monitor_doorcamera_extern_call(const char *arg)
 {
+        SAT_DEBUG("==============================================\n");
+        int ch = monitor_index_get_by_user(arg);
+        monitor_channel_set(ch);
+        if(ch == -1)
+        {
+                SAT_DEBUG("receive outdoor call ch is valid\n");
+                return false;
+        }
         if (!user_data_get()->audio.ring_mute)
         {
                 ring_door_call_play();
         }
 
         char doorname[128];
-        strncpy(doorname,&network_data_get()->door_device->door_name[6],strlen(network_data_get()->door_device->door_name) - 7);//剔除doorx()字符
-        SAT_DEBUG("doorname is %s",doorname);
-        int ch = monitor_index_get_by_user(arg);
-        monitor_channel_set(ch);
+        strncpy(doorname,&network_data_get()->door_device[ch].door_name[6],sizeof((network_data_get()->door_device[ch].door_name)) - 7);//剔除doorx()字符
+
+
         char door_call_name[64];
         extractDataInQuotes(arg,door_call_name,sizeof(door_call_name));
                 SAT_DEBUG("door_call_name is %s",door_call_name);
