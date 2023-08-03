@@ -115,23 +115,24 @@ typedef struct
 {
         bool auto_record;
 
-        int away_alarm_enable_list;//以前需求离家和居家是可以同时设置安防，现在只能同时存在一种
+        int away_alarm_enable_list;//离家警报模式：被监测的传感器列表
+        int security_alarm_enable_list;//安全警报模式：被监测的传感器列表
 
-        int security_alarm_enable_list;
+        bool security_alarm_enable;//安全警报模式；0：关闭；1：开启
 
-        bool security_alarm_enable;
-
-        bool away_alarm_enable;
+        bool away_alarm_enable;//离家警报模式；0：关闭；1：开启
 
         int emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
 
         int alarm_enable[8];//0不使能，1：NO高电平触发 2：NC低电平触发
-        int away_sensor_enable[8];
-        int security_sensor_enable[8];
 
-        int alarm_trigger[8];
+        int away_sensor_enable[8];//离家模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
-        bool alarm_enable_always[2][8];
+        int security_sensor_enable[8];//安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
+
+        int alarm_trigger[8];//传感器触发列表
+
+        bool alarm_enable_always[2][8];//传感器总是使能：设置了使能，对应模式下的传感器总是能被检测
 
         int away_setting_time;
         int away_release_time;
