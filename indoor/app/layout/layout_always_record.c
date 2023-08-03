@@ -137,7 +137,7 @@ static void layout_always_monitor_open(void)
 	if (ch != MON_CH_NONE)
 	{
 		monitor_channel_set(ch);
-		monitor_open(true);
+		monitor_open(true,true);
 	}
 }
 static void always_record_record_btn_display(void)
@@ -458,7 +458,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
     {
     	layout_always_record_stop();
         usleep(500 * 1000);
-        monitor_close();
+        monitor_close(0x02);
         always_record_time_set(user_data_get()->always_monitoring == 1 ? 10 : user_data_get()->always_monitoring == 2? 30 : 60);
         lv_timer_del(ptimer);
         lv_sat_timer_create(layout_always_monitor_open_task, 1000, NULL);
@@ -601,7 +601,7 @@ static void sat_layout_quit(always_record)
     user_data_get()->always_monitoring = 0;
     user_data_save();
     record_video_stop();
-    monitor_close();
+    monitor_close(0x02);
     /*sd卡状态处理 */
     sd_state_channge_callback_register(sd_state_change_default_callback);
     record_state_callback_register(NULL);

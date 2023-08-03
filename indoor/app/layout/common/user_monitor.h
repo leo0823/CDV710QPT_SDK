@@ -90,13 +90,13 @@ void monitor_enter_flag_set(MON_ENTER_FLAG flag);
 ** 日期: 2022-12-28 9:44:13
 ** 说明:关闭监控
 ***********************************************/
-void monitor_close(void);
+void monitor_close(char flag);
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 9:44:13
 ** 说明: 开启监控
 ***********************************************/
-void monitor_open(bool refresh);
+void monitor_open(bool refresh,bool rtsp);
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 9:44:13

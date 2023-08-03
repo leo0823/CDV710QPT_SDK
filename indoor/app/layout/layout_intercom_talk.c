@@ -78,6 +78,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
 {
         if (intercom_talk_timeout == 0)
         {
+                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
         intercom_talk_call_info_display();
@@ -127,6 +128,7 @@ static void intercom_talk_handup_obj_click(lv_event_t *e)
         }
         else
         {
+                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 }
@@ -163,6 +165,7 @@ static void intercom_talk_answer_obj_display(void)
 //呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
+        SAT_DEBUG("receive call failed %s\n",arg);
         sat_linphone_audio_play_stop();
         if (intercom_call_state == 1)
         {
@@ -170,7 +173,7 @@ static bool intercom_talk_call_end_callback(char *arg)
         }
         else
         {
-                SAT_DEBUG("=====+++++=====");
+                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
         }
 }
@@ -186,6 +189,7 @@ static bool intercom_talk_call_failed_callback(char *arg)
         }
         else
         {
+                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
         }
 }
@@ -330,7 +334,7 @@ static void sat_layout_enter(intercom_talk)
                  ** 说明: 标题显示
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, 0, 32, 25, 750, 42,
+                        lv_common_text_create(parent, 0, 32, 25, 850, 42,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -438,7 +442,7 @@ static void sat_layout_enter(intercom_talk)
                 layout_intercom_talk_vol_bar_create(vol_cont);
         }
         user_linphone_call_error_register(intercom_talk_call_failed_callback);
-        user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
+        user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback); 
         user_linphone_call_end_register(intercom_talk_call_end_callback);
 }
 

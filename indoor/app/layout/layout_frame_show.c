@@ -252,7 +252,7 @@ static void frame_show_media_thumb_display(const char *path)
 }
 static void frame_show_delay_close_monitor_timer(lv_timer_t *ptimer)
 {
-	monitor_close();
+	monitor_close(0x02);
 	lv_timer_del(ptimer);
 	frame_show_restart();
 }
@@ -291,7 +291,7 @@ static void frame_show_animation_effect_timer(lv_timer_t *ptimer)
 
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
-			monitor_open(true);
+			monitor_open(true,true);
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
 		lv_timer_del(ptimer);
@@ -302,13 +302,17 @@ static void frame_show_thumb_refresh_display_callback(void)
 {
 	lv_obj_t *frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
 	lv_obj_t *frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
+	lv_obj_t * obj = frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1;
 	if (frame_show_frame_index == 0x01 || frame_show_frame_index == 0x02 || frame_show_frame_index == 0x04)
 	{
-		lv_obj_set_style_bg_img_src(frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1, frame_show_pbuffer == frame_buffer_cur_a ? frame_buffer_cur_b : frame_buffer_cur_a, LV_PART_MAIN);
+
+	    lv_img_cache_invalidate_src(obj->bg_img_src);
+		lv_obj_set_style_bg_img_src(obj, frame_show_pbuffer == frame_buffer_cur_a ? frame_buffer_cur_b : frame_buffer_cur_a, LV_PART_MAIN);
+
 	}
 	else
 	{
-		lv_obj_set_style_bg_img_src(frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1, NULL, LV_PART_MAIN);
+		lv_obj_set_style_bg_img_src(obj, NULL, LV_PART_MAIN);
 	}
 }
 
@@ -337,7 +341,7 @@ static void frame_show_refresh_wait_task(lv_timer_t *ptimer)
 	{
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
-			monitor_open(true);
+			monitor_open(true,true);
 			sat_linphone_calls_cmd_send();
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
@@ -995,7 +999,7 @@ static void sat_layout_quit(frame_show)
 	frame_buffer_cur_a = NULL;
 	lv_img_buf_free(frame_buffer_cur_b);
 	frame_buffer_cur_b = NULL;
-	monitor_close();
+	monitor_close(0x02);
 	backlight_brightness_set(user_data_get()->display.lcd_brigtness);
 	lv_img_cache_invalidate_all();
 }

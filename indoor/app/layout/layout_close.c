@@ -177,7 +177,7 @@ static bool motion_timer_timeout_check(void)
 static void layout_motion_monitor_open(void)
 {
     monitor_channel_set(user_data_get()->motion.select_camera);
-    monitor_open(true);
+    monitor_open(true,true);
 }
 
 /***
@@ -189,7 +189,7 @@ static void layout_motion_monitor_open(void)
 static void layout_motion_restart_motion_detection(void)
 {
     backlight_enable(false);
-    monitor_close();
+    monitor_close(0x01);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
 
@@ -511,7 +511,7 @@ static void sat_layout_quit(close)
 
     record_video_stop();
 
-    monitor_close();
+    monitor_close(0x01);
     extern bool tuya_api_time_sync(void);
     tuya_api_time_sync();
     lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_close_click);
