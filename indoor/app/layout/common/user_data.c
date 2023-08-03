@@ -184,6 +184,10 @@ bool user_data_save(void)
 
         close(fd);
         system("sync");
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1000);
+        }
         return true;
 }
 
@@ -425,6 +429,12 @@ bool network_data_save(void)
 
         close(fd);
         system("sync");
+
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1000);
+        }
+                
         return true;
 }
 

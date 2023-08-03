@@ -91,7 +91,7 @@ static void sd_state_checking_timer(lv_timer_t *timer)
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
-        SAT_DEBUG("=========================================");
+
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),sd_state_change_obj_id_format_msgbox_cont);
         if(masgbox != NULL)
         {
@@ -104,6 +104,73 @@ void sd_state_change_default_callback(void)
 
 
 
+}
+void master_file_send_to_slave(lv_timer_t *t)
+{
+        return;
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1000);
+                sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_data_info), 10, 1000);
+        }
+}
+//文件同步回调注册
+static void slave_sysn_data_file_callback(char flag, char *data, int size, int pos, int max)
+{
+
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                return ;
+        }
+        static user_network_info *network_data = NULL;
+        static user_data_info *user_data = NULL;
+        if (flag == 0x01)
+        {
+                if (user_data == NULL)
+                {
+                        user_data = lv_mem_alloc(sizeof(user_network_info));
+                }
+                char *p = (char *)user_data;
+                memcpy(&p[pos], data, size);
+
+                if ((size + pos) == max)
+                {
+                        //memcpy((char *)&(user_data_get()->alarm), (char *)&(user_data->alarm),sizeof(user_alarm_info));
+                        user_data_get()->alarm = user_data->alarm;
+                        user_data_get()->call_time = user_data->call_time;
+                        user_data_get()->etc.door1_open_door_mode = user_data->etc.door1_open_door_mode;
+                        user_data_get()->etc.door2_lock_num = user_data->etc.door2_lock_num;
+                        user_data_get()->alarm.security_alarm_enable =  user_data->alarm.security_alarm_enable;
+                        user_data_get()->alarm.away_alarm_enable = user_data->alarm.away_alarm_enable;
+                        user_data_save();
+                        lv_mem_free(user_data);
+                        user_data = NULL;
+                }
+
+        }
+        else if (flag == 0x02)
+        {
+                if (network_data == NULL)
+                {
+                        network_data = lv_mem_alloc(sizeof(user_network_info));
+                }
+
+                char *p = (char *)network_data;
+                memcpy(&p[pos], data, size);
+
+                if ((size + pos) == max)
+                {
+                        for(int i = 0; i < 8; i++)
+                        {
+                                network_data_get()->door_device[i] = network_data->door_device[i];
+                                network_data_get()->cctv_device[i] = network_data->cctv_device[i];
+                        }
+                        printf("==sync master networkdata===\n");
+                        network_data_save();
+                        lv_mem_free(network_data);
+                        network_data = NULL;
+                }
+        }
 }
 
 
@@ -202,6 +269,12 @@ static void logo_enter_system_timer(lv_timer_t *t)
         call_list_init();
 
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+
+
+        sync_data_cmd_callback_register(slave_sysn_data_file_callback);
+
+        lv_timer_create(master_file_send_to_slave, 10000, NULL);
+        
 
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
@@ -303,6 +376,7 @@ static void layout_logo_ok_btn_up(lv_obj_t *obj)
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          resource_ui_src_get("ic_logo.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                system("rm -rf /app/tuya/tuya_key_backup");
                                 lv_sat_timer_create(logo_enter_system_timer, 1000, NULL);
                         }
                 }
@@ -384,6 +458,14 @@ static void sat_layout_enter(logo)
         if (access("/tmp/tf", F_OK))
         {
                 system("mkdir /tmp/tf");
+	        system("mount -t vfat /dev/mmcblk0 /tmp/tf");
+        }
+        if(access("/tmp/tf/tuya_key", F_OK) == 0)
+        {
+                system("mv /app/tuya/tuya_key /app/tuya/tuya_key_backup");
+        }else if(access("/app/tuya/tuya_key_backup", F_OK) == 0)
+        {
+                system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
         }
         if (tuya_key_and_uuid_init() == false)
         {
@@ -416,6 +498,7 @@ static void sat_layout_enter(logo)
         
 static void sat_layout_quit(logo)
 {
+
 }
 
 sat_layout_create(logo);

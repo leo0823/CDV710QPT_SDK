@@ -68,6 +68,8 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         // setenv("SIP", network_data_get()->sip_user, 1);
         network_data_save();
         user_data_save();
+        sleep(10 * 1000);
+        system("reboot");
         operating_structure_goto_layout_process(LV_SCR_LOAD_ANIM_FADE_IN);
 }
 static void operating_structure_slave_seting_click(lv_event_t *e)

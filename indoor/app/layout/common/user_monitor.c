@@ -290,6 +290,7 @@ static void monitor_reset(char flag)
 }
 void monitor_open(bool refresh,bool rtsp)
 {
+        printf("monitor_enter_flag is %d\n",monitor_enter_flag);
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
                 monitor_reset(0x03);
