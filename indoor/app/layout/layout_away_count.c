@@ -137,8 +137,8 @@ static void layout_alarm_count_param_init(void)
 
 static void sat_layout_enter(away_count)
 {
-    SAT_DEBUG("away_alarm_enable_list is 0x%x\n",user_data_get()->alarm.away_alarm_enable_list);
-
+   
+    standby_timer_close();
     /************************************************************
     ** 函数说明:离家设防缓冲页面参数初始化
     ** 作者: xiaoxiao
@@ -224,6 +224,7 @@ static void sat_layout_enter(away_count)
 
 static void sat_layout_quit(away_count)
 {
+    standby_timer_restart(true);
     
 }
 

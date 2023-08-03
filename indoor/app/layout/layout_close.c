@@ -188,7 +188,7 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    backlight_enable(false);
+    backlight_enable(true);
     monitor_close(0x01);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -336,7 +336,7 @@ static void layout_motion_head_cont_create(void)
      ** 说明: 通道显示
      ***********************************************/
     {
-        lv_common_text_create(parent, 1, 0, 23, 324, 42,
+        lv_common_text_create(parent, 1, 0, 23, 456, 36,
                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -472,7 +472,7 @@ static void sat_layout_enter(close)
 {
     standby_timer_close();
     backlight_enable(true);
-    backlight_enable(false);
+    backlight_enable(true);
     close_cancel_btn_create();
     if (user_data_get()->motion.enable)
     {

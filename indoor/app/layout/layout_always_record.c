@@ -133,7 +133,7 @@ static void always_record_record_btn_up(lv_event_t *ev)
 static void layout_always_monitor_open(void)
 {
 	int ch = always_record_channel_get();
-        SAT_DEBUG("always ch is %d\n",ch);
+
 	if (ch != MON_CH_NONE)
 	{
 		monitor_channel_set(ch);
@@ -469,7 +469,10 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_always_record_streams_running_register_callback(char *arg)
 {
-
+        SAT_DEBUG("========================================\n");
+        SAT_DEBUG("========================================\n");
+        SAT_DEBUG("========================================\n");
+        SAT_DEBUG("========================================\n");
         lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
         return true;
