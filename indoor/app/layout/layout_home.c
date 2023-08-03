@@ -664,6 +664,7 @@ static void layout_home_cctv_icon_display(lv_obj_t *obj)
         }
 }
 
+
 static void home_network_check_timer(lv_timer_t *ptimer)
 {
         lv_obj_t *obj = ptimer->user_data;
@@ -681,6 +682,56 @@ static void home_network_check_timer(lv_timer_t *ptimer)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
+        }
+
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                printf("security_alarm_enable_list:0x%x\n", user_data_get()->alarm.security_alarm_enable_list);
+                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1000);
+                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1000);
+        }
+}
+static user_network_info *network_data = NULL;
+static user_data_info *user_data = NULL;
+static void home_sysn_data_file_callback(char flag, char *data, int size, int pos, int max)
+{
+
+        if (flag == 0x01)
+        {
+                if (user_data == NULL)
+                {
+                        user_data = lv_mem_alloc(sizeof(user_network_info));
+                }
+                char *p = (char *)user_data;
+                memcpy(&p[pos], data, size);
+
+                if ((size + pos) == max)
+                {
+                        //memcpy((char *)&(user_data_get()->alarm), (char *)&(user_data->alarm),sizeof(user_alarm_info));
+                        user_data_get()->alarm = user_data->alarm;
+                        lv_mem_free(user_data);
+                        user_data = NULL;
+                }
+
+;
+        }
+        else if (flag == 0x02)
+        {
+                if (network_data == NULL)
+                {
+                        network_data = lv_mem_alloc(sizeof(user_network_info));
+                }
+
+                char *p = (char *)network_data;
+                memcpy(&p[pos], data, size);
+
+                if ((size + pos) == max)
+                {
+
+
+                        lv_mem_free(network_data);
+                        network_data = NULL;
+                }
         }
 }
 static void sat_layout_enter(home)
@@ -989,9 +1040,14 @@ static void sat_layout_enter(home)
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_timer_ready(lv_sat_timer_create(home_network_check_timer, 1000, network));
+                lv_timer_ready(lv_sat_timer_create(home_network_check_timer, 5000, network));
         }
 
+
+        if ((user_data_get()->system_mode & 0x0F) != 0x01)
+        {
+                sync_data_cmd_callback_register(home_sysn_data_file_callback);
+        }
         home_media_thumb_display();
 }
 
