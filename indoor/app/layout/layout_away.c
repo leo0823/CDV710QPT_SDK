@@ -14,6 +14,8 @@ typedef enum
     layout_away_obj_id_save_photo,
     layout_away_obj_id_bypass_call,
 
+    layout_away_obj_id_audto_record,
+
     layout_away_obj_id_execution_btn,
 
     layout_away_obj_id_main_bg,
@@ -79,6 +81,13 @@ typedef enum
     layout_away_obj_id_bypass_call_sub,
     layout_away_bypass_call_img_id,
 } layout_away_bypass_call_obj_id;
+
+typedef enum
+{
+    layout_away_obj_id_auto_record_title,
+    layout_away_obj_id_auto_record_sub,
+    layout_away_auto_record_img_id,
+} layout_away_auto_record_obj_id;
 
 typedef enum
 {
@@ -838,7 +847,7 @@ static void layout_away_auto_record_enable_display(void)
 {
     lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo);
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_save_photo_switch_id);
-    if (user_data_get()->alarm.away_auto_record == true)
+    if (user_data_get()->alarm.away_save_photo == true)
     {
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
     }
@@ -854,14 +863,37 @@ static void layout_away_auto_record_enable_display(void)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-static void away_alarm_auro_record_click(lv_event_t *ev)
+static void away_alarm_save_photo_click(lv_event_t *ev)
 {
 
-    user_data_get()->alarm.away_auto_record = user_data_get()->alarm.away_auto_record ? false : true;
+    user_data_get()->alarm.away_save_photo = user_data_get()->alarm.away_save_photo ? false : true;
     user_data_save();
     layout_away_auto_record_enable_display();
 }
 
+static void layout_away_cctv_record_enable_display(void)
+{
+        lv_obj_t * parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_audto_record);
+        lv_obj_t * obj = lv_obj_get_child_form_id(parent,layout_away_auto_record_img_id);
+        if (user_data_get()->alarm.away_auto_record == true)
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+        }
+}
+static void layout_away_auto_record_click(lv_event_t *ev)
+{
+  
+
+    user_data_get()->alarm.away_auto_record = user_data_get()->alarm.away_auto_record ? false : true;
+    user_data_save();
+    layout_away_cctv_record_enable_display();
+
+   
+}
 static void layout_away_func_setting_create()
 {
     lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_setting_time, 514, 80, 510, 72,
@@ -893,7 +925,7 @@ static void layout_away_func_setting_create()
     layout_away_release_time_display();
 
     lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo, 514, 72 * 3, 510, 72,
-                                                    away_alarm_auro_record_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                    away_alarm_save_photo_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43, layout_away_obj_id_save_photo_title,
@@ -918,9 +950,27 @@ static void layout_away_func_setting_create()
                                                                         NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                         370, 12, 80, 48, layout_away_bypass_call_img_id,
                                                                         (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+    lv_obj_t *auto_record = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 72 * 4, 510, 72,
+                                                                        layout_away_auto_record_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                        0, 17, 300, 43, layout_away_obj_id_auto_record_title,
+                                                                        lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_AUTO_RECORD), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                        0, 17, 120, 40, -1,
+                                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                        0, 42, 576, 29, -1,
+                                                                        NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                        370, 12, 80, 48, layout_away_auto_record_img_id,
+                                                                        (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+
     if ((user_data_get()->system_mode & 0xF0) != 0x10)
     {
         lv_obj_add_flag(by_pass, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(auto_record, LV_OBJ_FLAG_HIDDEN);
+    }else
+    {
+        lv_obj_add_flag(auto_record, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(by_pass, LV_OBJ_FLAG_HIDDEN);
     }
 }
 

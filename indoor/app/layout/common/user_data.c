@@ -10,7 +10,7 @@
 #include "stdlib.h"
 
 #include "common/sat_user_common.h"
-
+#include "layout_common.h"
 #define USER_DATA_PATH "/app/data/user_data.cfg"
 #define NETWORK_DATA_PATH "/app/data/network_data.cfg"
 
@@ -186,7 +186,7 @@ bool user_data_save(void)
         system("sync");
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1000);
+                file_info_modified_status_set(0x00,true);
         }
         return true;
 }
@@ -322,6 +322,7 @@ static void user_data_check_valid(void)
         user_data_etc_check_range_out(password[3], '0', '9');
 
         /*****	alarm *****/
+        user_data_alarm_check_range_out(away_save_photo, 0, 1);
         user_data_alarm_check_range_out(auto_record, 0, 1);
         user_data_alarm_check_range_out(away_alarm_enable, 0, 1);
         user_data_alarm_check_range_out(security_alarm_enable, 0, 1);
@@ -358,6 +359,7 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
+
         user_data_check_range_out(system_mode, 1, 29);
         user_data_check_range_out(time_automatically, 0, 1);
         user_data_check_range_out(call_time, 1, 3);
@@ -432,7 +434,7 @@ bool network_data_save(void)
 
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1000);
+                file_info_modified_status_set(0x01,true);
         }
                 
         return true;

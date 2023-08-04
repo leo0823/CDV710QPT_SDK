@@ -281,7 +281,6 @@ static void sat_layout_enter(ipc_camera_register)
                         {
                                 if (p_device[i].rtsp[0].rtsp_url[0] == 0)
                                 {
-                                        SAT_DEBUG("index %d is no registed\n",i);
                                         continue;
                                 }
                                 
