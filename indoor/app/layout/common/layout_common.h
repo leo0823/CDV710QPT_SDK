@@ -76,6 +76,6 @@ void sd_state_change_default_callback(void);
 ** 参数说明: flag : 0x00:user_data 0x01:network_data
 ** 注意事项: 
 ************************************************************/
-void file_info_modified_status_set(char flag ,bool modified);
+void asterisk_server_sync_data_force(bool is_sync);
 
 #endif

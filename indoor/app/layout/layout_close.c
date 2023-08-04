@@ -511,7 +511,7 @@ static void sat_layout_quit(close)
 
     record_video_stop();
 
-    monitor_close(0x01);
+    monitor_close(0x02);
     extern bool tuya_api_time_sync(void);
     tuya_api_time_sync();
     lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_close_click);
