@@ -184,9 +184,10 @@ bool user_data_save(void)
 
         close(fd);
         system("sync");
+
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                file_info_modified_status_set(0x00,true);
+                asterisk_server_sync_data_force(true);
         }
         return true;
 }
@@ -257,11 +258,11 @@ static void user_data_check_valid(void)
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
         user_data_audio_check_range_out(buzzer_volume, 1, 6);
-         
+
         user_data_audio_check_range_out(common_entrance_tone, 1, 6);
         user_data_audio_check_range_out(common_entrance_volume, 0, 100);
         user_data_audio_check_range_out(common_entrance_voice, 1, 6);
-         
+
         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
         user_data_audio_check_range_out(entracne_volume, 0, 100);
         user_data_audio_check_range_out(entrancr_voice, 0, 100);
@@ -434,9 +435,9 @@ bool network_data_save(void)
 
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                file_info_modified_status_set(0x01,true);
+                asterisk_server_sync_data_force(true);
         }
-                
+
         return true;
 }
 
@@ -524,9 +525,9 @@ static void network_data_check_valid(void)
         ** 日期: 2023-1-10 9:40:52
         ** 说明:	 检测分机IP组
         ***********************************************/
-     //   network_data_check_range_out(door_device_count, 0, DEVICE_MAX);
+        //   network_data_check_range_out(door_device_count, 0, DEVICE_MAX);
 
-        //network_data_check_range_out(cctv_device_count, 0, DEVICE_MAX);
+        // network_data_check_range_out(cctv_device_count, 0, DEVICE_MAX);
         printf_register_device();
 }
 

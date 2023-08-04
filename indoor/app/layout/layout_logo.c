@@ -50,7 +50,7 @@ static void logo_sip_server_register(void)
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
-        sat_linphone_register(NULL,sip_user_id, NULL, sip_sever);
+        sat_linphone_register(NULL, sip_user_id, NULL, sip_sever);
 }
 
 static void sip_register_timer(lv_timer_t *t)
@@ -58,43 +58,41 @@ static void sip_register_timer(lv_timer_t *t)
         logo_sip_server_register();
 }
 
-static void sd_state_change_msgbox_cancel_click(lv_event_t * ev)
+static void sd_state_change_msgbox_cancel_click(lv_event_t *ev)
 {
         setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
 }
 
 static void sd_state_checking_timer(lv_timer_t *timer)
 {
-        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),sd_state_change_obj_id_format_msgbox_cont);
-        if(masgbox != NULL)
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
+        if (masgbox != NULL)
         {
                 setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
         }
         if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
         {
-
-        }else if((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG))
+        }
+        else if ((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG))
         {
                 masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
                 setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, "SD card is not normal statusor not inserted..", 0, 60, 460, 120);
-                setting_msgdialog_msg_confirm_btn_create(masgbox,sd_state_change_obj_id_msgbox_confirm,sd_state_change_msgbox_cancel_click );
+                setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
         }
         lv_timer_del(timer);
-
 }
 
 /************************************************************
 ** 函数说明: SD状态改变默认回调
 ** 作者: xiaoxiao
 ** 日期: 2023-07-15 11:50:12
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
-
-        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),sd_state_change_obj_id_format_msgbox_cont);
-        if(masgbox != NULL)
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
+        if (masgbox != NULL)
         {
                 setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
         }
@@ -102,135 +100,49 @@ void sd_state_change_default_callback(void)
         setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, "Checking SD card...", 0, 120, 460, 120);
 
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
-
 }
 
-static bool user_file_modified = false;//用户数据更改标志
-static bool network_file_modified = false;//网络数据更改标志
-/************************************************************
-** 函数说明: 设置文件改变标记状态
-** 作者: xiaoxiao
-** 日期: 2023-08-04 08:33:44
-** 参数说明: flag : 0x00:user_data 0x01:network_data
-** 注意事项: 
-************************************************************/
-void file_info_modified_status_set(char flag ,bool modified)
+
+
+// 文件同步回调注册
+static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
-        if(flag == 0x00)
-        {
-                user_file_modified = modified;
-        }else if(flag == 0x01)
-        {
-                network_file_modified = modified;
-        }
-
-}
-
-void master_file_send_to_slave(lv_timer_t *t)
-{
-        static bool registered[20] = {0};//室内机注册状态
-        const asterisk_register_info* register_info = asterisk_register_info_get();
-        unsigned long long timestamp = user_timestamp_get();
-        for(int i = 0;i < 20 ; i++)
-        {
-                if((strncmp(register_info[i].name,"501",3) == 0) || (strncmp(register_info[i].name,"20",2) == 0))//
-                {
-                        continue;
-                }
-
-                //注册过的室内机掉线，把状态复位
-                if(register_info[i].name[0] == '\0')
-                {
-                        if(registered[i] == true)
-                        {
-                                registered[i] = false;
-                        }
-                        continue;
-                              
-                }
-
-                if((timestamp - register_info[i].timestamp < 1000 * 10) && (registered[i] == false))//室内分机从未注册变成注册状态
-                {
-                        registered[i] = true;
-                        user_file_modified = true;
-                        network_file_modified = true;
-                }
-    
-                if(user_file_modified || network_file_modified)
-                {
-                        if ((user_data_get()->system_mode & 0x0F) == 0x01)//是否为主机
-                        {
-                                if(user_file_modified)
-                                {
-                                        sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
-                                        user_file_modified = false;
-                                }
-                                if(network_file_modified)
-                                {
-                                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
-                                        network_file_modified = false;
-                                }                     
-                        }
-                }
-        }
-}
-//文件同步回调注册
-static void slave_sysn_data_file_callback(char flag, char *data, int size, int pos, int max)
-{
-
+        /*master本身不接受回调处理*/
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                return ;
+                return;
         }
-        static user_network_info *network_data = NULL;
-        static user_data_info *user_data = NULL;
-        if (flag == 0x01)
-        {
-                if (user_data == NULL)
-                {
-                        user_data = lv_mem_alloc(sizeof(user_network_info));
-                }
-                char *p = (char *)user_data;
-                memcpy(&p[pos], data, size);
 
+        static user_network_info network_data_temp = {0};
+        static user_data_info user_data_temp = {0};
+
+        if ((flag == 0x01) && (max == sizeof(user_data_info)))
+        {
+                char *p = (char *)&user_data_temp;
+                memcpy(&p[pos], data, size);
                 if ((size + pos) == max)
                 {
-                        user_data_get()->alarm = user_data->alarm;
-                        user_data_get()->call_time = user_data->call_time;
-                        user_data_get()->etc.door1_open_door_mode = user_data->etc.door1_open_door_mode;
-                        user_data_get()->etc.door2_lock_num = user_data->etc.door2_lock_num;
-                        user_data_get()->alarm.security_alarm_enable =  user_data->alarm.security_alarm_enable;
-                        user_data_get()->alarm.away_alarm_enable = user_data->alarm.away_alarm_enable;
+                        user_data_get()->alarm = user_data_temp.alarm;
+                        user_data_get()->call_time = user_data_temp.call_time;
+                        user_data_get()->etc.door1_open_door_mode = user_data_temp.etc.door1_open_door_mode;
+                        user_data_get()->etc.door2_lock_num = user_data_temp.etc.door2_lock_num;
+                        user_data_get()->alarm.security_alarm_enable = user_data_temp.alarm.security_alarm_enable;
+                        user_data_get()->alarm.away_alarm_enable = user_data_temp.alarm.away_alarm_enable;
                         user_data_save();
-                        lv_mem_free(user_data);
-                        user_data = NULL;
                 }
-
         }
-        else if (flag == 0x02)
+        else if ((flag == 0x02) && (max == sizeof(user_network_info)))
         {
-                if (network_data == NULL)
-                {
-                        network_data = lv_mem_alloc(sizeof(user_network_info));
-                }
-
-                char *p = (char *)network_data;
+                char *p = (char *)&network_data_temp;
                 memcpy(&p[pos], data, size);
-
                 if ((size + pos) == max)
                 {
-                        for(int i = 0; i < 8; i++)
-                        {
-                                network_data_get()->door_device[i] = network_data->door_device[i];
-                                network_data_get()->cctv_device[i] = network_data->cctv_device[i];
-                        }
+                        memcpy(network_data_get()->door_device, network_data_temp.door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
+                        memcpy(network_data_get()->cctv_device, network_data_temp.cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         network_data_save();
-                        lv_mem_free(network_data);
-                        network_data = NULL;
                 }
         }
 }
-
 
 static void logo_enter_system_timer(lv_timer_t *t)
 {
@@ -257,19 +169,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
          ** 说明: GPIO 初始化
          ***********************************************/
         user_gpio_init();
-
-#if 1
-        wifi_device_conneting();
-        if (user_data_get()->wifi_enable)
-        {
-                wifi_device_open();
-        }
-        else
-        {
-                wifi_device_close();
-        }
-
-#endif
 
         /***********************************************
         ** 作者: leo.liu
@@ -327,12 +226,26 @@ static void logo_enter_system_timer(lv_timer_t *t)
         call_list_init();
 
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+#if 1
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                wifi_device_conneting();
+                if (user_data_get()->wifi_enable)
+                {
+                        wifi_device_open();
+                }
+                else
+                {
+                        wifi_device_close();
+                }
+        }
+        else
+        {
+                wifi_device_close();
+                sync_data_cmd_callback_register(asterisk_server_sync_data_callback);
+        }
 
-
-        sync_data_cmd_callback_register(slave_sysn_data_file_callback);
-
-        lv_timer_create(master_file_send_to_slave, 5000, NULL);
-        
+#endif
 
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
@@ -510,18 +423,18 @@ static void sat_layout_enter(logo)
 {
         lv_common_video_mode_enable(false);
 
-        
         lv_obj_pressed_func = lv_layout_touch_callback;
 
         if (access("/tmp/tf", F_OK))
         {
                 system("mkdir /tmp/tf");
-	        system("mount -t vfat /dev/mmcblk0 /tmp/tf");
+                system("mount -t vfat /dev/mmcblk0 /tmp/tf");
         }
-        if(access("/tmp/tf/tuya_key", F_OK) == 0)
+        if (access("/tmp/tf/tuya_key", F_OK) == 0)
         {
                 system("mv /app/tuya/tuya_key /app/tuya/tuya_key_backup");
-        }else if(access("/app/tuya/tuya_key_backup", F_OK) == 0)
+        }
+        else if (access("/app/tuya/tuya_key_backup", F_OK) == 0)
         {
                 system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
         }
@@ -553,10 +466,9 @@ static void sat_layout_enter(logo)
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                               SYSTEM_VERSION, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, NULL);
 }
-        
+
 static void sat_layout_quit(logo)
 {
-
 }
 
 sat_layout_create(logo);
