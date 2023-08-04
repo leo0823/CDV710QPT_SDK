@@ -69,4 +69,13 @@ bool layout_last_call_new_flag_get(void);
 ************************************************************/
 void sd_state_change_default_callback(void);
 
+/************************************************************
+** 函数说明: 设置文件改变标记状态
+** 作者: xiaoxiao
+** 日期: 2023-08-04 08:33:44
+** 参数说明: flag : 0x00:user_data 0x01:network_data
+** 注意事项: 
+************************************************************/
+void file_info_modified_status_set(char flag ,bool modified);
+
 #endif

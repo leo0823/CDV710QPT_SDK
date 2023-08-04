@@ -139,8 +139,11 @@ typedef struct
 
         int away_setting_time;//离家设置时间；在进入离家警报检测以后（离家释放时间过后），在此期间内，检测无效
 
-        bool away_auto_record;
-        bool security_auto_record;
+        bool away_save_photo;//离家模式报警是否拍照
+
+        bool away_auto_record;//离家模式报警是否启动CCTV录像
+
+        bool security_auto_record;//安全模式报警是否启动CCTV录像
 
 } user_alarm_info;
 
