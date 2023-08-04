@@ -133,22 +133,29 @@ void master_file_send_to_slave(lv_timer_t *t)
         unsigned long long timestamp = user_timestamp_get();
         for(int i = 0;i < 20 ; i++)
         {
-                if((register_info[i].name[0] == '\0') || (strncmp(register_info[i].name,"501",3) == 0) || (strncmp(register_info[i].name,"20",2) == 0))
+                if((strncmp(register_info[i].name,"501",3) == 0) || (strncmp(register_info[i].name,"20",2) == 0))//
                 {
                         continue;
                 }
 
-                if((timestamp - register_info[i].timestamp > 1000 * 10) && (registered[i] == true))//室内分机从注册状态掉线
+                //注册过的室内机掉线，把状态复位
+                if(register_info[i].name[0] == '\0')
                 {
-                        registered[i] = false;
-                        user_file_modified = true;
-                        network_file_modified = true;
-                }else if((timestamp - register_info[i].timestamp < 1000 * 10) && (registered[i] == false))//室内分机从未注册变成注册
+                        if(registered[i] == true)
+                        {
+                                registered[i] = false;
+                        }
+                        continue;
+                              
+                }
+
+                if((timestamp - register_info[i].timestamp < 1000 * 10) && (registered[i] == false))//室内分机从未注册变成注册状态
                 {
                         registered[i] = true;
                         user_file_modified = true;
                         network_file_modified = true;
                 }
+    
                 if(user_file_modified || network_file_modified)
                 {
                         if ((user_data_get()->system_mode & 0x0F) == 0x01)//是否为主机
