@@ -128,7 +128,7 @@ void file_info_modified_status_set(char flag ,bool modified)
 
 void master_file_send_to_slave(lv_timer_t *t)
 {
-        static bool registered = false;//室内机注册状态
+        static bool registered[20] = {0};//室内机注册状态
         const asterisk_register_info* register_info = asterisk_register_info_get();
         unsigned long long timestamp = user_timestamp_get();
         for(int i = 0;i < 20 ; i++)
@@ -138,14 +138,14 @@ void master_file_send_to_slave(lv_timer_t *t)
                         continue;
                 }
 
-                if((timestamp - register_info[i].timestamp > 1000 * 10) && (registered == true))//室内分机从注册状态掉线
+                if((timestamp - register_info[i].timestamp > 1000 * 10) && (registered[i] == true))//室内分机从注册状态掉线
                 {
-                        registered = false;
+                        registered[i] = false;
                         user_file_modified = true;
                         network_file_modified = true;
-                }else if((timestamp - register_info[i].timestamp < 1000 * 10) && (registered == false))//室内分机从未注册变成注册
+                }else if((timestamp - register_info[i].timestamp < 1000 * 10) && (registered[i] == false))//室内分机从未注册变成注册
                 {
-                        registered = true;
+                        registered[i] = true;
                         user_file_modified = true;
                         network_file_modified = true;
                 }
@@ -163,13 +163,9 @@ void master_file_send_to_slave(lv_timer_t *t)
                                         sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
                                         network_file_modified = false;
                                 }                     
-
                         }
                 }
-
         }
-
-
 }
 //文件同步回调注册
 static void slave_sysn_data_file_callback(char flag, char *data, int size, int pos, int max)
