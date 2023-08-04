@@ -133,12 +133,13 @@ void master_file_send_to_slave(lv_timer_t *t)
         unsigned long long timestamp = user_timestamp_get();
         for(int i = 0;i < 20 ; i++)
         {
+
                 if((strncmp(register_info[i].name,"501",3) == 0) || (strncmp(register_info[i].name,"20",2) == 0))//
                 {
                         continue;
                 }
 
-                //注册过的室内机掉线，把状态复位
+                //注册过的室内机掉线，把注册状态复位
                 if(register_info[i].name[0] == '\0')
                 {
                         if(registered[i] == true)
@@ -155,7 +156,7 @@ void master_file_send_to_slave(lv_timer_t *t)
                         user_file_modified = true;
                         network_file_modified = true;
                 }
-    
+                
                 if(user_file_modified || network_file_modified)
                 {
                         if ((user_data_get()->system_mode & 0x0F) == 0x01)//是否为主机

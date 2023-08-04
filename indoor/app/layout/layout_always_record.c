@@ -137,7 +137,7 @@ static void layout_always_monitor_open(void)
 	if (ch != MON_CH_NONE)
 	{
 		monitor_channel_set(ch);
-		monitor_open(true,true);
+		monitor_open(true,false);
 	}
 }
 static void always_record_record_btn_display(void)
@@ -522,7 +522,7 @@ static void sat_layout_enter(always_record)
                  ** 说明: 通道显示
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, 1, 0, 23, 450, 42,
+                        lv_common_text_create(parent, 1, 0, 23, 950, 42,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
