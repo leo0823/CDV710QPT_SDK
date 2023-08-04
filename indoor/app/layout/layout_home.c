@@ -997,7 +997,6 @@ static void sat_layout_enter(home)
         }
 
 
-
         home_media_thumb_display();
 }
 
