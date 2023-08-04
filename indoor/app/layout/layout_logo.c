@@ -149,26 +149,27 @@ void master_file_send_to_slave(lv_timer_t *t)
                         user_file_modified = true;
                         network_file_modified = true;
                 }
-                break;
-        }
-
-        if(user_file_modified || network_file_modified)
-        {
-                if ((user_data_get()->system_mode & 0x0F) == 0x01)//是否为主机
+                if(user_file_modified || network_file_modified)
                 {
-                        if(user_file_modified)
+                        if ((user_data_get()->system_mode & 0x0F) == 0x01)//是否为主机
                         {
-                                sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
-                                user_file_modified = false;
-                        }
-                        if(network_file_modified)
-                        {
-                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
-                                network_file_modified = false;
-                        }                     
+                                if(user_file_modified)
+                                {
+                                        sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
+                                        user_file_modified = false;
+                                }
+                                if(network_file_modified)
+                                {
+                                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
+                                        network_file_modified = false;
+                                }                     
 
+                        }
                 }
+
         }
+
+
 }
 //文件同步回调注册
 static void slave_sysn_data_file_callback(char flag, char *data, int size, int pos, int max)
