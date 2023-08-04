@@ -19,7 +19,8 @@ const char *monitor_channel_get_url(int index, bool rtsp)
         {
                 if(rtsp)
                 {
-                        return network_data_get()->door_device[index].rtsp[0].rtsp_url;
+                        sprintf(rtsp_uri, "%s %s %s",  network_data_get()->door_device[index].rtsp[0].rtsp_url, network_data_get()->door_device[index].username, network_data_get()->door_device[index].password);
+                        return rtsp_uri;
                 }
                 return network_data_get()->door_device[index].sip_url;
         }
@@ -290,7 +291,6 @@ static void monitor_reset(char flag)
 }
 void monitor_open(bool refresh,bool rtsp)
 {
-        printf("monitor_enter_flag is %d\n",monitor_enter_flag);
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
                 monitor_reset(0x03);
@@ -306,6 +306,7 @@ void monitor_open(bool refresh,bool rtsp)
                         sat_linphone_call(uri, true, true, NULL);
                 }
         }
+        SAT_DEBUG(" monitor_channel_get_url(monitor_channel, rtsp) is %s", monitor_channel_get_url(monitor_channel, rtsp));
         //   char url[128] = {0};
         //  sprintf(url, "sip:%s", "172.16.0.131@172.16.0.131")       ;
         //  sat_linphone_call(url, true, true, NULL);

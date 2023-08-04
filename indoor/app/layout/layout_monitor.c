@@ -683,14 +683,14 @@ static void monitor_obj_normal_lock_display(void)
                 return;
         }
         int ch = monitor_channel_get();
-        int lock_num = user_data_get()->etc.door2_lock_num;
+
 
         if (is_channel_ipc_camera(ch) == false)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 if (user_data_get()->etc.open_the_door == 0)
                 {
-                        if ((ch == MON_CH_DOOR1) || (lock_num == 1))
+                        if ((ch != MON_CH_DOOR2))
                         {
                                 lv_obj_set_x(obj, 402);
                                 if (is_monitor_door_camera_talk == false)
@@ -698,14 +698,14 @@ static void monitor_obj_normal_lock_display(void)
                                         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                                 }
                         }
-                        else if ((ch == MON_CH_DOOR2) && (lock_num == 2))
+                        else
                         {
                                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                 }
                 else
                 {
-                        if ((ch == MON_CH_DOOR1) || (lock_num == 1))
+                        if ((ch != MON_CH_DOOR2))
                         {
                                 if (is_monitor_door_camera_talk)
                                 {
@@ -716,8 +716,7 @@ static void monitor_obj_normal_lock_display(void)
                                         lv_obj_set_x(obj, 460);
                                 }
                         }
-                        else if ((ch == MON_CH_DOOR2) && (lock_num == 2))
-                        {
+                        else{
                                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                         }
                 }
