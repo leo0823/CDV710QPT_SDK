@@ -14,36 +14,48 @@ static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 const char *monitor_channel_get_url(int index, bool rtsp)
 {
         static char rtsp_uri[128] = {0};
-        memset(rtsp_uri,0,sizeof(rtsp_uri));
-        if (index < 8 )
+        memset(rtsp_uri, 0, sizeof(rtsp_uri));
+        if (index < 8)
         {
-                if(rtsp)
+                if (rtsp)
                 {
-                        return network_data_get()->door_device[index].rtsp[0].rtsp_url;
+                        sprintf(rtsp_uri, "%s %s %s", network_data_get()->door_device[index].rtsp[0].rtsp_url, network_data_get()->door_device[index].username, network_data_get()->door_device[index].password);
                 }
-                return network_data_get()->door_device[index].sip_url;
+                else
+                {
+                        return network_data_get()->door_device[index].sip_url;
+                }
         }
-        sprintf(rtsp_uri, "%s %s %s",  network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, network_data_get()->cctv_device[index - 8].username, network_data_get()->cctv_device[index - 8].password);
+        else
+        {
+                sprintf(rtsp_uri, "%s %s %s", network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, network_data_get()->cctv_device[index - 8].username, network_data_get()->cctv_device[index - 8].password);
+        }
         return rtsp_uri;
 }
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
-** 函数作用：依据房号获取通道
+** 函数作用：依据房号获取通道(用户door camera)
 ** 返回参数说明：
 ***/
 int monitor_index_get_by_user(const char *user)
 {
-        for (int i = 0; i < DEVICE_MAX; i++)
+        /*格式："CIP-D20YS" <sip:202@10.1.1.11:5066>,*/
+        char *s = strstr(user, "sip:20");
+        if (s == NULL)
         {
-                //<sip:010193001011@172.16.0.110>
-                printf("network_data_get()->door_device[i].sip_url is %s\n",network_data_get()->door_device[i].sip_url);
-                if ((strstr(user, network_data_get()->door_device[i].sip_url) != NULL) &&(network_data_get()->door_device[i].sip_url[0] != '\0'))
-                {
-                        return i;
-                }
+                printf("[%s:%d] user string parse failed(%s)\n", __func__, __LINE__, user);
+                return -1;
         }
-        return -1;
+
+        s += 6;
+        if (((*s) < '1') || ((*s) > '9'))
+        {
+                printf("[%s:%d] user string aprse failed(%s)\n", __func__, __LINE__, user);
+                return -1;
+        }
+
+        return ((*s) - '0');
 }
 #if 0
 /***
@@ -110,10 +122,10 @@ int monitor_channel_prev_get(void)
 {
         if (is_channel_ipc_camera(monitor_channel) == false)
         {
-                for(int i = 1 ; i <= monitor_channel; i ++)
+                for (int i = 1; i <= monitor_channel; i++)
                 {
-                        int pre_ch = monitor_channel - i < 0? DEVICE_MAX - 1 : monitor_channel - i;
-                        if(monitor_valid_channel_check(pre_ch))
+                        int pre_ch = monitor_channel - i < 0 ? DEVICE_MAX - 1 : monitor_channel - i;
+                        if (monitor_valid_channel_check(pre_ch))
                         {
                                 return pre_ch;
                         }
@@ -122,10 +134,10 @@ int monitor_channel_prev_get(void)
         }
         else
         {
-                for(int i = 1 ; i <= monitor_channel; i ++)
+                for (int i = 1; i <= monitor_channel; i++)
                 {
-                        int pre_ch = monitor_channel - i < 8? DEVICE_MAX - 1 : monitor_channel - i;
-                        if(monitor_valid_channel_check(pre_ch))
+                        int pre_ch = monitor_channel - i < 8 ? DEVICE_MAX - 1 : monitor_channel - i;
+                        if (monitor_valid_channel_check(pre_ch))
                         {
                                 return pre_ch;
                         }
@@ -145,10 +157,10 @@ int monitor_channel_next_get(void)
 {
         if (is_channel_ipc_camera(monitor_channel) == false)
         {
-                for(int i = 1 ; i <= monitor_channel; i ++)
+                for (int i = 1; i <= monitor_channel; i++)
                 {
-                        int next_ch = monitor_channel + i > 8? 0 : monitor_channel + i;
-                        if(monitor_valid_channel_check(next_ch))
+                        int next_ch = monitor_channel + i > 8 ? 0 : monitor_channel + i;
+                        if (monitor_valid_channel_check(next_ch))
                         {
                                 return next_ch;
                         }
@@ -157,10 +169,10 @@ int monitor_channel_next_get(void)
         }
         else
         {
-                for(int i = 1 ; i <= monitor_channel; i ++)
+                for (int i = 1; i <= monitor_channel; i++)
                 {
-                        int next_ch = monitor_channel + i > 16?  8 : monitor_channel + i;
-                        if(monitor_valid_channel_check(next_ch))
+                        int next_ch = monitor_channel + i > 16 ? 8 : monitor_channel + i;
+                        if (monitor_valid_channel_check(next_ch))
                         {
                                 return next_ch;
                         }
@@ -172,7 +184,7 @@ int monitor_channel_next_get(void)
 /*获取第一个有效的通道*/
 int monitor_door_first_valid_get(bool door_camera)
 {
-        if(door_camera)
+        if (door_camera)
         {
                 for (int i = 0; i < DEVICE_MAX; i++)
                 {
@@ -199,7 +211,7 @@ int monitor_door_first_valid_get(bool door_camera)
 /*获取最后一个有效通道*/
 int monitor_door_last_valid_get(bool door_camera)
 {
-        if(door_camera)
+        if (door_camera)
         {
                 for (int i = DEVICE_MAX - 1; i >= 0; i--)
                 {
@@ -222,10 +234,10 @@ int monitor_door_last_valid_get(bool door_camera)
         return -1;
 }
 
-//获取门口机和CCTV的注册状态
+// 获取门口机和CCTV的注册状态
 bool monitor_door_registered_status_get(void)
 {
-        if(monitor_door_first_valid_get(true) == -1 && monitor_door_first_valid_get(false) == -1 )
+        if (monitor_door_first_valid_get(true) == -1 && monitor_door_first_valid_get(false) == -1)
         {
                 return false;
         }
@@ -277,18 +289,18 @@ MON_ENTER_FLAG monitor_enter_flag_get(void)
 ** 说明: 开启监控 flag bit0 =1 close sip ,bit1= 1 close rtsp
 ***********************************************/
 static void monitor_reset(char flag)
-{ 
-        if(flag & 0x01)
+{
+        if (flag & 0x01)
         {
-               sat_linphone_handup(0xFF);
+                sat_linphone_handup(0xFF);
         }
 
-        if(flag & 0x02)
+        if (flag & 0x02)
         {
                 sat_linphone_ipcamera_stop();
         }
 }
-void monitor_open(bool refresh,bool rtsp)
+void monitor_open(bool refresh, bool rtsp)
 {
         printf("monitor_enter_flag is %d\n",monitor_enter_flag);
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
@@ -362,11 +374,11 @@ bool monitor_valid_channel_check(int channel)
                 if ((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
                 {
 
-                        if((network_data_get()->door_device[channel].sip_url[0] != 0))
+                        if ((network_data_get()->door_device[channel].sip_url[0] != 0))
                         {
                                 return true;
                         }
-                        
+
                         return false;
                 }
         }
@@ -374,14 +386,13 @@ bool monitor_valid_channel_check(int channel)
         {
                 if ((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8))
                 {
-                                channel -= 8;
-                                if(network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
-                                {
-                                        return true;
-                                }
+                        channel -= 8;
+                        if (network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
+                        {
+                                return true;
+                        }
                         return false;
                 }
         }
         return false;
 }
-
