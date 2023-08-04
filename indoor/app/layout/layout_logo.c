@@ -45,6 +45,7 @@ void standby_dection_timer(lv_timer_t *t)
 }
 static void logo_sip_server_register(void)
 {
+
         char sip_user_id[16] = {0};
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
@@ -102,17 +103,73 @@ void sd_state_change_default_callback(void)
 
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 
+}
 
+static bool user_file_modified = false;//用户数据更改标志
+static bool network_file_modified = false;//网络数据更改标志
+/************************************************************
+** 函数说明: 设置文件改变标记状态
+** 作者: xiaoxiao
+** 日期: 2023-08-04 08:33:44
+** 参数说明: flag : 0x00:user_data 0x01:network_data
+** 注意事项: 
+************************************************************/
+void file_info_modified_status_set(char flag ,bool modified)
+{
+        if(flag == 0x00)
+        {
+                user_file_modified = modified;
+        }else if(flag == 0x01)
+        {
+                network_file_modified = modified;
+        }
 
 }
+
 void master_file_send_to_slave(lv_timer_t *t)
 {
-        return;
-        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        static bool registered = false;//室内机注册状态
+        const asterisk_register_info* register_info = asterisk_register_info_get();
+        unsigned long long timestamp = user_timestamp_get();
+        for(int i = 0;i < 20 ; i++)
         {
-                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1000);
-                sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_data_info), 10, 1000);
+                if((register_info[i].name[0] == '\0') || (strncmp(register_info[i].name,"501",3) == 0) || (strncmp(register_info[i].name,"20",2) == 0))
+                {
+                        continue;
+                }
+
+                if((timestamp - register_info[i].timestamp > 1000 * 10) && (registered == true))//室内分机从注册状态掉线
+                {
+                        registered = false;
+                        user_file_modified = true;
+                        network_file_modified = true;
+                }else if((timestamp - register_info[i].timestamp < 1000 * 10) && (registered == false))//室内分机从未注册变成注册
+                {
+                        registered = true;
+                        user_file_modified = true;
+                        network_file_modified = true;
+                }
+                if(user_file_modified || network_file_modified)
+                {
+                        if ((user_data_get()->system_mode & 0x0F) == 0x01)//是否为主机
+                        {
+                                if(user_file_modified)
+                                {
+                                        sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
+                                        user_file_modified = false;
+                                }
+                                if(network_file_modified)
+                                {
+                                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 500);
+                                        network_file_modified = false;
+                                }                     
+
+                        }
+                }
+
         }
+
+
 }
 //文件同步回调注册
 static void slave_sysn_data_file_callback(char flag, char *data, int size, int pos, int max)
@@ -135,7 +192,6 @@ static void slave_sysn_data_file_callback(char flag, char *data, int size, int p
 
                 if ((size + pos) == max)
                 {
-                        //memcpy((char *)&(user_data_get()->alarm), (char *)&(user_data->alarm),sizeof(user_alarm_info));
                         user_data_get()->alarm = user_data->alarm;
                         user_data_get()->call_time = user_data->call_time;
                         user_data_get()->etc.door1_open_door_mode = user_data->etc.door1_open_door_mode;
@@ -165,7 +221,6 @@ static void slave_sysn_data_file_callback(char flag, char *data, int size, int p
                                 network_data_get()->door_device[i] = network_data->door_device[i];
                                 network_data_get()->cctv_device[i] = network_data->cctv_device[i];
                         }
-                        printf("==sync master networkdata===\n");
                         network_data_save();
                         lv_mem_free(network_data);
                         network_data = NULL;
@@ -273,7 +328,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         sync_data_cmd_callback_register(slave_sysn_data_file_callback);
 
-        lv_timer_create(master_file_send_to_slave, 10000, NULL);
+        lv_timer_create(master_file_send_to_slave, 5000, NULL);
         
 
         /***** 设置背光使能亮度 *****/
