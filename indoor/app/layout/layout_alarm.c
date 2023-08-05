@@ -203,7 +203,7 @@ static void layout_alarm_alarm_mode_label_display(void)
         else
         {
                 lv_label_set_text_fmt(obj1, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SECURITY_EMERGENCY));
-                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SENSOR1) + layout_alarm_alarm_channel_get());
+                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SENSOR1 + layout_alarm_alarm_channel_get()));
         }
 }
 

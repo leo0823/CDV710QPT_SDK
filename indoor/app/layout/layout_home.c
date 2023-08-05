@@ -476,7 +476,7 @@ static void home_elevator_obj_click(lv_event_t *ev)
 }
 static void home_emergency_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(emergency_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void home_call_list_item_create(lv_obj_t *parent)
 {
@@ -995,7 +995,6 @@ static void sat_layout_enter(home)
                 resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_timer_ready(lv_sat_timer_create(home_network_check_timer, 5000, network));
         }
-
 
 
         home_media_thumb_display();

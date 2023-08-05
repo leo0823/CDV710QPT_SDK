@@ -804,7 +804,7 @@ static void frame_show_playback_start(void)
 	media_file_total_get(type, &total, &new_total);
 	if (total <= 0)
 	{
-		return;
+		return frame_show_restart();
 	}
 	const file_info *info = media_file_info_get(type, total - 1);
 	char frame_show_frame_path[128] = {0};

@@ -23,6 +23,8 @@ typedef enum
 
     layout_away_obj_id_msgbox_bg_cont,
 
+    layout_away_obj_id_passwd_cont,
+
 } layout_away_scr_act_obj_id;
 
 typedef enum
@@ -229,9 +231,16 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
     }
     else
     {
-        user_data_get()->alarm.away_alarm_enable = user_data_get()->alarm.away_alarm_enable ? false : true;
-        user_data_save();
-        sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+
+        if(user_data_get()->alarm.away_alarm_enable == true)
+        {
+            lv_obj_t * cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_passwd_cont);
+            if(cont != NULL)
+            {
+                lv_obj_clear_flag(cont,LV_OBJ_FLAG_HIDDEN);
+            }
+            
+        }
     }
 }
 
@@ -974,6 +983,16 @@ static void layout_away_func_setting_create()
     }
 }
 
+xiaoxiao
+static void layout_away_passwd_check_success_cb(void)
+{
+        user_data_get()->alarm.away_alarm_enable = false;
+        unsigned char list = layout_away_sensor_enable_flag();
+        user_data_get()->alarm.away_alarm_enable_list &= (~list);
+        user_data_save();
+        sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+
 static void sat_layout_enter(away)
 {
     if (user_data_get()->alarm.away_alarm_enable == false)
@@ -1095,6 +1114,8 @@ static void sat_layout_enter(away)
         if (!user_data_get()->alarm.away_alarm_enable)
             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
     }
+
+    common_passwd_check_func_create(layout_away_obj_id_passwd_cont,layout_away_passwd_check_success_cb);
 }
 
 static void sat_layout_quit(away)

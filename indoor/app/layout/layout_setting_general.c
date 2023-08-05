@@ -672,9 +672,15 @@ lv_obj_t *setting_main_list_create(int id)
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_main_list);
         lv_common_style_set_common(list, setting_general_obj_id_main_list, 16, 88, 272, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                lv_common_img_text_btn_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                if ((user_data_get()->system_mode & 0x0F) != 0X01 && i == 1)
+                {
+                        continue;
+                }
+        
+                lv_common_img_text_btn_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                               id == i ? NULL : main_list_group[i].click_cb, id == i ? LV_OPA_COVER : LV_OPA_TRANSP, 0x00A8FF, id == i ? LV_OPA_COVER : LV_OPA_TRANSP, 0x00A8FF,
                                               20, 8, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0,
                                               20, 8, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0,
@@ -682,6 +688,7 @@ lv_obj_t *setting_main_list_create(int id)
                                               main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xffffff, id == i ? 0xffffff : 0x00A8FF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, -1,
                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                j ++;
         }
 
         return list;

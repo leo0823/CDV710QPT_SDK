@@ -153,6 +153,11 @@ static void setting_wifi_disable_obj_hidden(void)
 }
 static void setting_wifi_setting_click(lv_event_t *e)
 {
+        if ((user_data_get()->system_mode & 0x0F) != 0x01)
+        {
+                return;
+        }
+
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_cont);
         lv_obj_t *img = lv_obj_get_child_form_id(parent, setting_wifi_obj_id_wifi_img);
 
@@ -254,7 +259,7 @@ static void setting_wifi_delete_connected_wifi_info(lv_event_t *e)
         wifi_device_conneting();
         wifi_device_close();
         wifi_device_open();
-        
+
         sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 static bool wifi_connected_status = false;
@@ -291,15 +296,15 @@ static void setting_wifi_discovered_network_display(void)
                                               wifi_connected_info.name, 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 48, 48, 2,
                                               wifi_setting_wifi_icon_get(&wifi_connected_info), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_connected_user_delete,920, 216 + 12, 48, 48,
-                                                setting_wifi_delete_connected_wifi_info, true, LV_OPA_TRANSP, 0x0096FF, LV_OPA_TRANSP, 0x0096FF,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                resource_ui_src_get("btn_list_delete.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_connected_user_delete, 920, 216 + 12, 48, 48,
+                                         setting_wifi_delete_connected_wifi_info, true, LV_OPA_TRANSP, 0x0096FF, LV_OPA_TRANSP, 0x0096FF,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_list_delete.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
                 list_item_y += 72;
         }
-  
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
