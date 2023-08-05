@@ -30,8 +30,9 @@ static void wifi_info_cancel_click(lv_event_t *ev)
         {
                 sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
-        else{
-                  sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        else
+        {
+                sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 }
 static void sat_layout_enter(wifi_info)
@@ -86,6 +87,9 @@ static void sat_layout_enter(wifi_info)
          ** 说明: ipaddres
          ***********************************************/
         {
+                char ip[32] = {0};
+                sat_ip_mac_addres_get("wlan0", ip, NULL, NULL);
+
                 lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), wifi_info_obj_id_ipaddr_cont, 48, 168, 928, 88,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
@@ -93,7 +97,7 @@ static void sat_layout_enter(wifi_info)
                                                                 0, 8, 838, 50, wifi_info_obj_id_ipaddr_title,
                                                                 lang_str_get(WIFI_INFO_XLS_LANG_ID_IP_ADDRES), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, wifi_info_obj_id_ipaddr_sub,
-                                                                "192.168.0.2", 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 840, 20, 80, 48, -1,

@@ -40,7 +40,7 @@ static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 
 static bool ipc_camera_search_display_register_func(void)
 {
-
+#if 0
         int total = 0;
         if (layout_ipc_cmeara_is_doorcamera_get())
         {
@@ -54,6 +54,7 @@ static bool ipc_camera_search_display_register_func(void)
         /**
          * 判断 预览的SIP是否已经注册过了
          *  如果sip账号完全相同，说明该账号已经被注册过了。
+         * 无需判断，如果用户预将通道都设置为同一个ipcamera
          **/
 
         for (int i = 0; i < total; i++)
@@ -79,7 +80,7 @@ static bool ipc_camera_search_display_register_func(void)
                         }
                 }
         }
-
+#endif
         if (layout_ipc_cmeara_is_doorcamera_get() == true)
         {
                 for (int i = 0; i < DEVICE_MAX; i++)
@@ -93,7 +94,6 @@ static bool ipc_camera_search_display_register_func(void)
                                 if (sat_ipcamera_device_register(number, layout_ipc_camera_edit_index_get(), 5000) == true)
                                 {
                                         memcpy(&network_data_get()->door_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
-
                                         memset(network_data_get()->door_device[i].sip_url, 0, sizeof(network_data_get()->door_device[i].sip_url));
                                         strncpy(network_data_get()->door_device[i].sip_url, number, sizeof(network_data_get()->door_device[i].sip_url));
 

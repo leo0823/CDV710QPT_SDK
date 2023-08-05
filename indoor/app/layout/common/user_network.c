@@ -478,9 +478,9 @@ static bool add_multicase_routing_addres(void)
         system(cmd);
         SAT_DEBUG("%s ", cmd);
 
-        /*   sprintf(cmd, "route add -net %s netmask %s eth0", "10.0.0.0", "255.0.0.0");
-          system(cmd);
-          SAT_DEBUG("%s ", cmd); */
+        sprintf(cmd, "ip route add 10.0.0.0/8 via 10.0.0.1 dev eth0");
+        system(cmd);
+        SAT_DEBUG("%s ", cmd); 
         return true;
 }
 
