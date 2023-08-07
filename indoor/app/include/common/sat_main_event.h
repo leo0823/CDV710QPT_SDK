@@ -69,7 +69,12 @@ enum
                 flag bit[0:3]:user data= 0x01:netowrk data = 0x02
         *****************************************************************/
         MSG_EVENT_CMD_SYNC_DATA,
+        /****************************************************************
+         2022-09-21 author:leo.liu 获取到第一帧视频流渲染到LCD上面
+        *****************************************************************/
+        MSG_EVENT_CMD_FRIST_REFRESH_LCD,
 };
+
 typedef enum
 {
         TUYA_EVENT_CMD_VIDEO_START,
@@ -287,4 +292,10 @@ void ring_play_event_cmd_register(bool (*callback)(int arg));
 ** 说明:数据同步处理函数
 ***********************************************/
 void sync_data_cmd_callback_register(void (*callback)(char flag, char *str, int size, int pos, int max));
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 9:53:56
+** 说明:第一帧画面渲染到lcd上面的注册汉书
+***********************************************/
+void frist_refresh_lcd_cmd_callback_register(void (*callback)(int arg1, int arg2));
 #endif
