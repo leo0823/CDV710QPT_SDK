@@ -295,7 +295,7 @@ void sync_data_cmd_callback_register(void (*callback)(char flag, char *str, int 
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 9:53:56
-** 说明:第一帧画面渲染到lcd上面的注册汉书
+** 说明:第一帧画面渲染到lcd上面的注册函数
 ***********************************************/
-void frist_refresh_lcd_cmd_callback_register(void (*callback)(int arg1, int arg2));
+void first_refresh_lcd_cmd_callback_register(void (*callback)(int arg1, int arg2));
 #endif
