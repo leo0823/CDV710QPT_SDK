@@ -983,7 +983,7 @@ static void layout_away_func_setting_create()
     }
 }
 
-xiaoxiao
+
 static void layout_away_passwd_check_success_cb(void)
 {
         user_data_get()->alarm.away_alarm_enable = false;

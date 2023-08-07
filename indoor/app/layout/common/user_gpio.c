@@ -223,14 +223,16 @@ static void *user_gpio_detect_task(void *arg)
                 for (int i = 0; i < 8; i++)
                 {
                         float value = cd4051_drive_read(i);
+                        SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
                         if (abs(value -  cd4051_value_group[channel_to_sensor[i]]) > 1.0)
                         {
                                 cd4051_value_group[channel_to_sensor[i]] = value;
                                 SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
                                 sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
                         }
+                         usleep(1000 * 100);
                 }
-                usleep(1000 * 100);
+               // usleep(1000 * 100);
         }
         sarad_close();
         cd4051_drive_enable_set(false);

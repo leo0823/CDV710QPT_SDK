@@ -314,10 +314,16 @@ void monitor_open(bool refresh, bool rtsp)
                 {
                         char uri[128] = {0};
                         sprintf(uri, "%s:5066", monitor_channel_get_url(monitor_channel, rtsp));
-                        sat_linphone_call(uri, true, true, NULL);
+                        if(rtsp == true)
+                        {
+                                sat_linphone_ipcamera_start(monitor_channel_get_url(monitor_channel, rtsp));
+                        }else
+                        {
+                                sat_linphone_call(uri, true, true, NULL);
+                        }
+                        
                 }
         }
-        SAT_DEBUG(" monitor_channel_get_url(monitor_channel, rtsp) is %s", monitor_channel_get_url(monitor_channel, rtsp));
         //   char url[128] = {0};
         //  sprintf(url, "sip:%s", "172.16.0.131@172.16.0.131")       ;
         //  sat_linphone_call(url, true, true, NULL);
