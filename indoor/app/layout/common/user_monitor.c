@@ -302,7 +302,7 @@ static void monitor_reset(char flag)
 }
 void monitor_open(bool refresh, bool rtsp)
 {
-        printf("monitor_enter_flag is %d\n",monitor_enter_flag);
+        printf("monitor_enter_flag is %d\n", monitor_enter_flag);
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
                 monitor_reset(0x03);
@@ -315,7 +315,14 @@ void monitor_open(bool refresh, bool rtsp)
                 {
                         char uri[128] = {0};
                         sprintf(uri, "%s:5066", monitor_channel_get_url(monitor_channel, rtsp));
-                        sat_linphone_call(uri, true, true, NULL);
+                        if (rtsp == true)
+                        {
+                                sat_linphone_ipcamera_start(uri);
+                        }
+                        else
+                        {
+                                sat_linphone_call(uri, true, true, NULL);
+                        }
                 }
         }
         //   char url[128] = {0};
