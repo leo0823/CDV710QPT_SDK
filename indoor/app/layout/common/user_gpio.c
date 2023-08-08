@@ -37,7 +37,7 @@ void amp_enable_set(bool en)
 ***/
 bool backlight_enable(bool en)
 {
-        SAT_DEBUG(" backlight_enable is %d \n",en);
+       // SAT_DEBUG(" backlight_enable is %d \n",en);
         return pwm_enable(BL_PWM_NO, BL_PWM_CH, en);
 }
 
@@ -227,7 +227,7 @@ static void *user_gpio_detect_task(void *arg)
                         if (abs(value -  cd4051_value_group[channel_to_sensor[i]]) > 1.0)
                         {
                                 cd4051_value_group[channel_to_sensor[i]] = value;
-                                SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
+                                //SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
                                 sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
                         }
                         //usleep(1000 * 100);

@@ -408,7 +408,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
 
         system("udhcpc -i eth0 -s /etc/init.d/udhcpc.script &");
         usleep(10 * 1000);
-        while (sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false)
+        while ((sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false)||(ip[0] == '\0'))
         {
                 usleep(10 * 1000);
                 count++;
@@ -590,6 +590,6 @@ char *user_linphone_local_multicast_get(void)
         memset(multicase_ip, 0, sizeof(multicase_ip));
         sprintf(multicase_ip, "%d.%d.%d.%d", value[0], value[1], value[2], value[3]);
 
-        SAT_DEBUG("sip:%s,multicase ip:%s", username, multicase_ip);
+      //  SAT_DEBUG("sip:%s,multicase ip:%s", username, multicase_ip);
         return multicase_ip;
 }
