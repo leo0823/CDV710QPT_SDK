@@ -292,7 +292,7 @@ static void frame_show_animation_effect_timer(lv_timer_t *ptimer)
 		{
 			monitor_open(true, true);
 		}
-		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
+		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 15000, NULL);
 		lv_timer_del(ptimer);
 	}
 }
@@ -342,7 +342,7 @@ static void frame_show_refresh_wait_task(lv_timer_t *ptimer)
 			monitor_open(true, true);
 			//sat_linphone_calls_cmd_send();
 		}
-		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
+		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 15000, NULL);
 	}
 	lv_timer_del(ptimer);
 }
