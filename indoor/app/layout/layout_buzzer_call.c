@@ -112,7 +112,6 @@ static void buzzer_call_volume_obj_click(lv_event_t *e)
 
 static bool layout_buzzer_call_ringplay_register_callback(int arg)
 {
-        SAT_DEBUG("arg is  %d\n",arg);
         if(arg == 1)
         {
                 ring_buzzer_play();

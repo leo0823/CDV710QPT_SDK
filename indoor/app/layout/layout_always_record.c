@@ -206,7 +206,7 @@ static void layout_always_record_start(void)
 	}
 	else
 	{
-        SAT_DEBUG("record_video_start\n");
+       // SAT_DEBUG("record_video_start\n");
 		record_video_start(true,REC_MODE_ALWAYS);
 	}
 	always_record_record_btn_display();
@@ -469,10 +469,6 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_always_record_streams_running_register_callback(char *arg)
 {
-        SAT_DEBUG("========================================\n");
-        SAT_DEBUG("========================================\n");
-        SAT_DEBUG("========================================\n");
-        SAT_DEBUG("========================================\n");
         lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
         return true;

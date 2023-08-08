@@ -216,7 +216,7 @@ static bool frame2_show_thumb_media_display_callback(const char *data, int x, in
 				return false;
 			}
 			lv_memcpy_small((uint8_t *)frame_buffer_cur_a->data, data, w * h * 3);
-			SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
+			//SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
 		}
 	}
 	else
@@ -234,7 +234,7 @@ static bool frame2_show_thumb_media_display_callback(const char *data, int x, in
 				return false;
 			}
 			lv_memcpy_small((uint8_t *)frame_buffer_cur_b->data, data, w * h * 3);
-			SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
+			//SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
 		}
 	}
 
@@ -341,7 +341,7 @@ static void frame_show_refresh_wait_task(lv_timer_t *ptimer)
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
 			monitor_open(true, true);
-			sat_linphone_calls_cmd_send();
+			//sat_linphone_calls_cmd_send();
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
 	}
@@ -914,14 +914,14 @@ static void frame_show_restart(void)
 			frame_show_frame_index = 0x09;
 			return frame_show_restart();
 		}
-		SAT_DEBUG("monitor camera\n");
+	//	SAT_DEBUG("monitor camera\n");
 		frame_show_door1_start();
 	}
 	else if ((user_data_get()->display.frame_list & 0x10) && (frame_show_frame_index <= 0x10))
 	{
 		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x10;
-		SAT_DEBUG("last valid ch is %d\n", monitor_door_last_valid_get(false));
+	//	SAT_DEBUG("last valid ch is %d\n", monitor_door_last_valid_get(false));
 		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false))) //没有注册或者是已经显示完最后一个CCTV通道
 		{
 			frame_show_frame_index = 0x11;
