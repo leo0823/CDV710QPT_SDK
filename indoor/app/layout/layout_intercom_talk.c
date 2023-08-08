@@ -78,7 +78,6 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
 {
         if (intercom_talk_timeout == 0)
         {
-                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
         intercom_talk_call_info_display();
@@ -128,7 +127,6 @@ static void intercom_talk_handup_obj_click(lv_event_t *e)
         }
         else
         {
-                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 }
@@ -165,7 +163,6 @@ static void intercom_talk_answer_obj_display(void)
 //呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
-        SAT_DEBUG("receive call failed %s\n",arg);
         sat_linphone_audio_play_stop();
         if (intercom_call_state == 1)
         {
@@ -173,7 +170,6 @@ static bool intercom_talk_call_end_callback(char *arg)
         }
         else
         {
-                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
         }
 }
@@ -181,7 +177,6 @@ static bool intercom_talk_call_end_callback(char *arg)
 //呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
-        SAT_DEBUG("receive call failed %s\n",arg);
         sat_linphone_audio_play_stop();
         if (intercom_call_state == 1)
         {
@@ -189,7 +184,6 @@ static bool intercom_talk_call_failed_callback(char *arg)
         }
         else
         {
-                SAT_DEBUG("===========================+++++++++++++++=========================");
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
         }
 }

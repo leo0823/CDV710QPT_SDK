@@ -74,10 +74,8 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
                 extern bool tuya_api_time_sync(void);
                 if(tuya_api_time_sync() == true)
                 {
-                        SAT_DEBUG("setting nerwork time success\n");
                         sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
                 }
-                SAT_DEBUG("setting nerwork time failed\n");
         }
         setting_time_set_date_automatically_enable_display(img);
 }

@@ -315,7 +315,6 @@ void monitor_open(bool refresh, bool rtsp)
                         if (rtsp == true)
                         {
                                 sat_linphone_ipcamera_start(monitor_channel_get_url(monitor_channel, rtsp));
-                                
                         }
                         else
                         {

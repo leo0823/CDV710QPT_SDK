@@ -81,11 +81,11 @@ static void ipc_camera_state_func(unsigned int type, unsigned int num)
         if ((type == 1) && (num > 0))
         {
                 cctv_search_list_display();
-                //    if (p_ipc_camera_search_timer != NULL)
-                //    {
-                //             lv_timer_del(p_ipc_camera_search_timer);
-                //             p_ipc_camera_search_timer = NULL;
-                //     }
+                if (p_ipc_camera_search_timer != NULL)
+                {
+                        lv_timer_set_period(p_ipc_camera_search_timer, 5 * 1000);
+                        lv_timer_reset(p_ipc_camera_search_timer);
+                }
         }
 }
 static void sat_layout_enter(ipc_camera_search)
