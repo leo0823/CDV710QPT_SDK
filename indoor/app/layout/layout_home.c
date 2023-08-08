@@ -595,7 +595,7 @@ static void home_media_thumb_display(void)
         {
                 type = FILE_TYPE_VIDEO;
         }
-        SAT_DEBUG("file type is %d\n", type);
+       // SAT_DEBUG("file type is %d\n", type);
         media_file_total_get(type, &total, &new_total);
         if (total <= 0)
         {
