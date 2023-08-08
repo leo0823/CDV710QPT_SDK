@@ -137,7 +137,7 @@ static void layout_always_monitor_open(void)
 	if (ch != MON_CH_NONE)
 	{
 		monitor_channel_set(ch);
-		monitor_open(true,false);
+		monitor_open(true,true);
 	}
 }
 static void always_record_record_btn_display(void)

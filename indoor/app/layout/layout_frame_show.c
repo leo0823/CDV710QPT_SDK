@@ -82,7 +82,7 @@ static int frame_show_refresh_cont = 0;
 static int always_record_channel_get(void)
 {
 
-	if(monitor_door_first_valid_get(true) < 0 && monitor_door_first_valid_get(false) < 0)
+	if (monitor_door_first_valid_get(true) < 0 && monitor_door_first_valid_get(false) < 0)
 	{
 		return MON_CH_NONE;
 	}
@@ -97,12 +97,12 @@ static int always_record_channel_get(void)
 	}
 	int find = 0;
 find_start:
-	for(int i = 0;i < 7; i ++)
+	for (int i = 0; i < 7; i++)
 	{
 		if ((ch == MON_CH_DOOR1 + i) && (ch != MON_CH_DOOR8))
 		{
 			ch = MON_CH_DOOR2 + i;
-			if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x10 )
+			if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x10)
 			{
 				return ch;
 			}
@@ -116,17 +116,17 @@ find_start:
 			return ch;
 		}
 	}
-    for(int i = 0; i < 7; i++)
-    {
-        if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
-        {
-            ch = MON_CH_CCTV2 + i;
-            if (monitor_valid_channel_check(ch) == true  && user_data_get()->display.frame_list & 0x10 )
-            {
-                return ch;
-            }
-        }
-    }
+	for (int i = 0; i < 7; i++)
+	{
+		if ((ch == MON_CH_CCTV1 + i) && (ch != MON_CH_CCTV8))
+		{
+			ch = MON_CH_CCTV2 + i;
+			if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x10)
+			{
+				return ch;
+			}
+		}
+	}
 	if (ch == MON_CH_CCTV8)
 	{
 		ch = MON_CH_DOOR1;
@@ -291,7 +291,7 @@ static void frame_show_animation_effect_timer(lv_timer_t *ptimer)
 
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
-			monitor_open(true,true);
+			monitor_open(true, true);
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
 		lv_timer_del(ptimer);
@@ -302,13 +302,12 @@ static void frame_show_thumb_refresh_display_callback(void)
 {
 	lv_obj_t *frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
 	lv_obj_t *frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
-	lv_obj_t * obj = frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1;
+	lv_obj_t *obj = frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1;
 	if (frame_show_frame_index == 0x01 || frame_show_frame_index == 0x02 || frame_show_frame_index == 0x04)
 	{
 
-	    lv_img_cache_invalidate_src(obj->bg_img_src);
+		lv_img_cache_invalidate_src(obj->bg_img_src);
 		lv_obj_set_style_bg_img_src(obj, frame_show_pbuffer == frame_buffer_cur_a ? frame_buffer_cur_b : frame_buffer_cur_a, LV_PART_MAIN);
-
 	}
 	else
 	{
@@ -341,7 +340,7 @@ static void frame_show_refresh_wait_task(lv_timer_t *ptimer)
 	{
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
-			monitor_open(true,true);
+			monitor_open(true, true);
 			sat_linphone_calls_cmd_send();
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
@@ -772,12 +771,12 @@ static void frame_show_monitor_channle_display(void)
 	if (is_channel_ipc_camera(channel) == true)
 	{
 
-			channel -= 8;
-			lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING),network_data_get()->cctv_device[channel].door_name);
+		channel -= 8;
+		lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->cctv_device[channel].door_name);
 	}
 	else
 	{
-			lv_label_set_text_fmt(obj,  "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[channel].door_name);
+		lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->door_device[channel].door_name);
 	}
 }
 
@@ -910,7 +909,7 @@ static void frame_show_restart(void)
 	{
 		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x08;
-		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true)))//没有注册或者是已经显示完最后一个Door camera通道
+		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true))) //没有注册或者是已经显示完最后一个Door camera通道
 		{
 			frame_show_frame_index = 0x09;
 			return frame_show_restart();
@@ -922,8 +921,8 @@ static void frame_show_restart(void)
 	{
 		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x10;
-		SAT_DEBUG("last valid ch is %d\n",monitor_door_last_valid_get(false));
-		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false)))//没有注册或者是已经显示完最后一个CCTV通道
+		SAT_DEBUG("last valid ch is %d\n", monitor_door_last_valid_get(false));
+		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false))) //没有注册或者是已经显示完最后一个CCTV通道
 		{
 			frame_show_frame_index = 0x11;
 			return frame_show_restart();
@@ -950,7 +949,17 @@ static void frame_show_restart(void)
 static void frame_show_layer_init(void)
 {
 	frame_buffer_cur_a = lv_img_buf_alloc(THUMB_WIDTH, THUMB_HIGHT, LV_IMG_CF_TRUE_COLOR);
+	if (frame_buffer_cur_a == NULL)
+	{
+		printf("[%s:%d] frame show frame buffer a is nullpter\n", __func__, __LINE__);
+		return;
+	}
 	frame_buffer_cur_b = lv_img_buf_alloc(THUMB_WIDTH, THUMB_HIGHT, LV_IMG_CF_TRUE_COLOR);
+	if (frame_buffer_cur_b == NULL)
+	{
+		printf("[%s:%d]frame show buffer b is nullper\n", __func__, __LINE__);
+		return;
+	}
 	frame_buffer_cur_a->header.reserved = 0x03;
 	frame_buffer_cur_b->header.reserved = 0x03;
 	frame_show_frame_index = 0x00;
@@ -995,10 +1004,16 @@ static void sat_layout_quit(frame_show)
 	sat_linphone_media_thumb_destroy();
 	thumb_display_refresh_register(NULL);
 	sd_state_channge_callback_register(sd_state_change_default_callback);
-	lv_img_buf_free(frame_buffer_cur_a);
-	frame_buffer_cur_a = NULL;
-	lv_img_buf_free(frame_buffer_cur_b);
-	frame_buffer_cur_b = NULL;
+	if (frame_buffer_cur_a)
+	{
+		lv_img_buf_free(frame_buffer_cur_a);
+		frame_buffer_cur_a = NULL;
+	}
+	if (frame_buffer_cur_b)
+	{
+		lv_img_buf_free(frame_buffer_cur_b);
+		frame_buffer_cur_b = NULL;
+	}
 	monitor_close(0x02);
 	backlight_brightness_set(user_data_get()->display.lcd_brigtness);
 	lv_img_cache_invalidate_all();

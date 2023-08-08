@@ -218,15 +218,7 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
 {
     if (user_data_get()->alarm.away_alarm_enable == false)
     {
-        // user_data_get()->alarm.away_alarm_enable_list = layout_away_sensor_enable_flag();
-        // for(int i = 0; i < 8; i++)
-        // {
-        //     // if((user_data_get()->alarm.alarm_enable_always[0][i]) || (user_data_get()->alarm.alarm_enable_always[1][i]))
-        //     // {
-        //     //     user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
-        //     // }
-        // }
-        // user_data_save();
+
         sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
     }
     else
@@ -253,16 +245,14 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_away_sensor_select_obj_click(lv_event_t *ev)
 {
-    lv_obj_t *obj = lv_event_get_current_target(ev);
-
-    lv_obj_t *tableview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_tabview);
-    lv_obj_t *page1 = lv_obj_get_child_form_id(lv_tabview_get_content(tableview), 0);
-    lv_obj_t *page2 = lv_obj_get_child_form_id(lv_tabview_get_content(tableview), 1);
     if ((user_data_get()->alarm.away_alarm_enable) || (user_data_get()->alarm.security_alarm_enable))
     {
         return;
     }
-
+    lv_obj_t *obj = lv_event_get_current_target(ev);
+    lv_obj_t *tableview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_tabview);
+    lv_obj_t *page1 = lv_obj_get_child_form_id(lv_tabview_get_content(tableview), 0);
+    lv_obj_t *page2 = lv_obj_get_child_form_id(lv_tabview_get_content(tableview), 1);
     for (int i = 0; i < 8; i++)
     {
         lv_obj_t *cont = NULL;
@@ -282,7 +272,7 @@ static void layout_away_sensor_select_obj_click(lv_event_t *ev)
         {
             float value = user_sensor_value_get(i);
             lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_away_sensor_select_cont_checkbox_id);
-            if ((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < 1.0) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > 2.5)))
+            if ((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < ALM_LOW) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_HIGHT)))
             {
 
                 layout_away_alarm_enable_list |= 0x01 << i;
@@ -986,11 +976,13 @@ static void layout_away_func_setting_create()
 
 static void layout_away_passwd_check_success_cb(void)
 {
-        user_data_get()->alarm.away_alarm_enable = false;
-        unsigned char list = layout_away_sensor_enable_flag();
-        user_data_get()->alarm.away_alarm_enable_list &= (~list);
-        user_data_save();
-        sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+    unsigned char list = layout_away_sensor_enable_flag();
+    user_data_get()->alarm.away_alarm_enable = false;
+    user_data_get()->alarm.away_alarm_enable_list &= (~list);
+    user_data_save();
+    extern bool away_alarm_release_det_timer_del(void);
+    away_alarm_release_det_timer_del();
+    sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(away)
