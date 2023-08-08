@@ -424,7 +424,7 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
 ************************************************************/
 static bool layout_alarm_ringplay_register_callback(int arg)
 {
-        SAT_DEBUG("arg is  %d\n",arg);
+     //   SAT_DEBUG("arg is  %d\n",arg);
         if(arg == 1)
         {
                 ring_alarm_play();

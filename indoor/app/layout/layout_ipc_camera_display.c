@@ -34,7 +34,7 @@ static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
 static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 {
         extern void layout_setting_setting_server_ipaddress_flag_set(char flag);
-        layout_setting_setting_server_ipaddress_flag_set(layout_ipc_cmeara_is_doorcamera_get()?0x01:0x02);
+        layout_setting_setting_server_ipaddress_flag_set(layout_ipc_cmeara_is_doorcamera_get() ? 0x01 : 0x02);
         sat_layout_goto(setting_server_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
@@ -97,15 +97,15 @@ static bool ipc_camera_search_display_register_func(void)
                                         memset(network_data_get()->door_device[i].sip_url, 0, sizeof(network_data_get()->door_device[i].sip_url));
                                         strncpy(network_data_get()->door_device[i].sip_url, number, sizeof(network_data_get()->door_device[i].sip_url));
 
-                                        //door重命名，不会重置设备的名字，只是方便室内机端查看
+                                        // door重命名，不会重置设备的名字，只是方便室内机端查看
                                         char doorname[64] = {0};
 
-                                        sprintf(doorname,"Door%d(%s)",i + 1,network_data_get()->door_device[i].door_name);
-                                        memset(network_data_get()->door_device[i].door_name,0,sizeof(network_data_get()->door_device[i].door_name));
-                                        strncpy(network_data_get()->door_device[i].door_name,doorname,strlen(doorname));
+                                        sprintf(doorname, "Door%d(%s)", i + 1, network_data_get()->door_device[i].door_name);
+                                        memset(network_data_get()->door_device[i].door_name, 0, sizeof(network_data_get()->door_device[i].door_name));
+                                        strncpy(network_data_get()->door_device[i].door_name, doorname, strlen(doorname));
 
                                         network_data_save();
-                                        SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
+                                       // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
                                         return true;
                                 }
                                 return false;
@@ -120,12 +120,12 @@ static bool ipc_camera_search_display_register_func(void)
                         {
                                 memcpy(&network_data_get()->cctv_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
 
-                                //CCTV重命名，不会重置设备的名字，只是方便室内机端查看
+                                // CCTV重命名，不会重置设备的名字，只是方便室内机端查看
                                 char doorname[64] = {0};
-                                sprintf(doorname,"CCTV%d(%s)",i + 1,network_data_get()->cctv_device[i].door_name);
-                                memset(network_data_get()->cctv_device[i].door_name,0,sizeof(network_data_get()->cctv_device[i].door_name));
-                                strncpy(network_data_get()->cctv_device[i].door_name,doorname,strlen(doorname));
-                                
+                                sprintf(doorname, "CCTV%d(%s)", i + 1, network_data_get()->cctv_device[i].door_name);
+                                memset(network_data_get()->cctv_device[i].door_name, 0, sizeof(network_data_get()->cctv_device[i].door_name));
+                                strncpy(network_data_get()->cctv_device[i].door_name, doorname, strlen(doorname));
+
                                 network_data_save();
 
                                 return true;
@@ -164,7 +164,7 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
                 if ((rtsp != NULL) && (strstr(rtsp, "rtsp://")))
                 {
                         sprintf(buffer, "%s %s %s", rtsp, sat_ipcamera_username_get(layout_ipc_camera_edit_index_get()), sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()));
-                        SAT_DEBUG("%s", buffer);
+                       // SAT_DEBUG("%s", buffer);
                         sat_linphone_ipcamera_start(buffer);
                         lv_common_video_mode_enable(true);
                 }

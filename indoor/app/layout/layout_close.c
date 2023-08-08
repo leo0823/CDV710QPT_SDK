@@ -244,7 +244,6 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_close_motion_dectection_callback(void)
 {
-    SAT_DEBUG("tigger motion event");
     if (is_motion_snapshot_ing || is_motion_record_video_ing)
     {
         return false;
@@ -257,12 +256,10 @@ static bool layout_close_motion_dectection_callback(void)
 
     if ((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR) || (user_data_get()->motion.saving_fmt == 1))
     {
-        SAT_DEBUG("record jpg\n");
         record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
     }
     else
     {
-        SAT_DEBUG("record video\n");
         record_video_start(true, REC_MODE_MOTION);
         record_jpeg_start(REC_MODE_TUYA_MOTION);
     }
@@ -450,7 +447,6 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
     {
         if (is_motion_snapshot_ing == true)
         {
-            SAT_DEBUG("jpg record success\n");
             layout_motion_rec_icon_hidden(false);
         }
         else
@@ -460,13 +456,11 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
     }
 }
 
-static bool layout_motion_streams_running_register_callback(char *arg)
+static void layout_motion_streams_running_register_callback(int arg1,int arg2)
 {
     int level = user_data_get()->motion.sensivity;
-    SAT_DEBUG("sensitify level is %d", level);
     sat_linphone_motion_detection_start(80, level == 2 ? 1000 : level == 1 ? 500
                                                                            : 40);
-    return true;
 }
 
 static void sat_layout_enter(close)
@@ -480,7 +474,7 @@ static void sat_layout_enter(close)
         motion_timeout_sec = 10;
         is_motion_snapshot_ing = false;
         is_motion_record_video_ing = false;
-        user_linphone_call_streams_running_receive_register(layout_motion_streams_running_register_callback);
+        first_refresh_lcd_cmd_callback_register(layout_motion_streams_running_register_callback);
         /*记录注册*/
         record_state_callback_register(layout_motion_video_state_callback);
         /*抓拍注册*/

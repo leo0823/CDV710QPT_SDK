@@ -65,7 +65,6 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
         {
                 char number[64] = {0};
                 sprintf(number, "010%03d%03d%03d", building | 0x80, household /100 , (household % 100) * 10 + extension);
-                SAT_DEBUG("channge number:%s", number);
                 if (strcmp(number, network_data_get()->sip_user))
                 {
                         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
@@ -269,7 +268,6 @@ static void sat_layout_enter(setting_building_house_number)
         int loacal_number[8] = {0};
 
         const char *username = network_data_get()->sip_user;
-        SAT_DEBUG("username is %s\n",username);
         loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
         loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
 

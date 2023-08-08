@@ -516,10 +516,10 @@ static bool home_thumb_media_display_callback(const char *data, int x, int y, in
                         return false;
                 }
                 lv_memcpy_small((uint8_t *)home_thumb_img_dsc->data, data, w * h * 3);
-                SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
+               // SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
                 return true;
         }
-        SAT_DEBUG("thumb display failed(%p,%p)\n", home_thumb_img_dsc, home_thumb_img_dsc->data);
+    //    SAT_DEBUG("thumb display failed(%p,%p)\n", home_thumb_img_dsc, home_thumb_img_dsc->data);
         return false;
 }
 static void home_thumb_refresh_display_callback(void)
