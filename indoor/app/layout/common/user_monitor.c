@@ -403,3 +403,37 @@ bool monitor_valid_channel_check(int channel)
         }
         return false;
 }
+
+/************************************************************
+** 函数说明: 门口机注册数量获取
+** 作者: xiaoxiao
+** 日期: 2023-08-08 14:27:13
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+int door_camera_register_num_get()
+{
+        int num = 0;
+        for(int i = 0 ;i < 8; i++)
+        {
+                if(monitor_valid_channel_check(MON_CH_DOOR1 + i) == true ) num ++ ;
+        }
+        return num;
+}
+
+/************************************************************
+** 函数说明: CCTV注册数量获取
+** 作者: xiaoxiao
+** 日期: 2023-08-08 14:29:29
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+int cctv_register_num_get()
+{
+        int num = 0;
+        for(int i = 0 ;i < 8; i++)
+        {
+                if(monitor_valid_channel_check(MON_CH_CCTV1 + i) == true ) num ++ ;
+        }
+        return num;
+}
