@@ -405,10 +405,13 @@ static bool ipaddr_udhcp_server_get_wait(void)
         char mac[128] = {0};
         // system("killall udhcpc");
         sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
-
+        system("ifconfig eth0 down");
+        usleep(10 * 1000);
+        system("ifconfig eth0 up");
+        usleep(10 * 1000);
         system("udhcpc -i eth0 -s /etc/init.d/udhcpc.script &");
         usleep(10 * 1000);
-        while ((sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false)||(ip[0] == '\0'))
+        while ((sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false) || (ip[0] == '\0'))
         {
                 usleep(10 * 1000);
                 count++;
@@ -422,7 +425,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         {
                 if (strcmp(ip, "10.0.0.2"))
                 {
-                        SAT_DEBUG("udhcp ip get successs ! ");
+                        SAT_DEBUG("udhcp ip get successs !(%s)", ip);
                         return true;
                 }
         }
@@ -480,7 +483,7 @@ static bool add_multicase_routing_addres(void)
 
         sprintf(cmd, "ip route add 10.0.0.0/8 via 10.0.0.1 dev eth0");
         system(cmd);
-        SAT_DEBUG("%s ", cmd); 
+        SAT_DEBUG("%s ", cmd);
         return true;
 }
 
@@ -590,6 +593,6 @@ char *user_linphone_local_multicast_get(void)
         memset(multicase_ip, 0, sizeof(multicase_ip));
         sprintf(multicase_ip, "%d.%d.%d.%d", value[0], value[1], value[2], value[3]);
 
-      //  SAT_DEBUG("sip:%s,multicase ip:%s", username, multicase_ip);
+        //  SAT_DEBUG("sip:%s,multicase ip:%s", username, multicase_ip);
         return multicase_ip;
 }
