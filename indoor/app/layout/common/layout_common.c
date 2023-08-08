@@ -260,7 +260,7 @@ void layout_alarm_alarm_channel_set(int ch)
 ************************************************************/
 void layout_alarm_trigger_default(int arg1,int arg2)
 {
-        if((arg1 == 7) && (arg2 < 100))
+        if((arg1 == 7) && (arg2 < ALM_LOW * 100))
         {
                 sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }else
@@ -269,7 +269,7 @@ void layout_alarm_trigger_default(int arg1,int arg2)
                 {
                         return;
                 }
-                if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < 100))
+                if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < ALM_LOW * 100))
                 {
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1]  = true;
@@ -352,3 +352,304 @@ bool layout_last_call_new_flag_get(void)
 
 /***********************************************************************/
 
+//警报界面输入安全密码公共函数
+/***********************************************************************/
+
+enum
+{
+        common_obj_id_number_keyboard_btn,
+        common_password_input_obj_id_tips,
+        common_obj_id_passwd_input_tx1,
+        common_obj_id_passwd_input_tx2,
+        common_obj_id_passwd_input_tx3,
+        common_obj_id_passwd_input_tx4,
+        common_password_input_obj_id_cancel,
+};
+
+
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-2-1 8:51:49
+** 说明: 输入数字键盘
+***********************************************/
+static lv_obj_t *common_password_input_textarea_focused_get(lv_obj_t * parent)
+{
+        lv_obj_t *textarea = NULL;
+
+        for (int i = 0; i < 2; i++)
+        {
+               
+                for (int j = 0; j < 4; j++)
+                {
+                        textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + j);
+                        if (lv_obj_get_state(textarea) == LV_STATE_FOCUSED)
+                        {
+                            return textarea;
+                        }
+                }
+        }
+        return textarea;
+}
+
+/************************************************************
+** 函数说明: 密码输入错误屏幕闪烁
+** 作者: xiaoxiao
+** 日期: 2023-08-05 14:28:11
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void passwd_incorrect_timer(lv_timer_t *ptimer)
+{
+        lv_obj_t *parent = ptimer->user_data;
+        lv_obj_set_style_bg_color(parent, lv_color_hex(0x0), LV_PART_MAIN);
+        lv_timer_del(ptimer);
+
+}
+
+//密码校验成功回调指针
+static void( *corrrect_passwd_cb ) (void) = NULL;
+
+/************************************************************
+** 函数说明: 字符删除动画
+** 作者: xiaoxiao
+** 日期: 2023-08-05 14:29:54
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void common_passwd_input_text_prev_foucued(lv_obj_t * parent)
+{
+        lv_obj_t *textarea = NULL;
+
+
+        for (int j = 0; j < 4; j++)
+        {
+                textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + j);
+                if ((lv_obj_get_state(textarea) == LV_STATE_FOCUSED) && (j != 0))
+                {
+                    lv_obj_clear_state(textarea, LV_STATE_FOCUSED);
+                    textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + j - 1);
+                    lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                    return;
+                }
+        }   
+}
+
+/************************************************************
+** 函数说明: 字符输入完成回调
+** 作者: xiaoxiao
+** 日期: 2023-08-05 14:27:10
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void common_passwd_input_text_next_foucued(lv_obj_t * parent)
+{
+        lv_obj_t *textarea = NULL;
+
+        for (int j = 0; j < 4; j++)
+        {
+                textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + j);
+                if (lv_obj_get_state(textarea) == LV_STATE_FOCUSED)
+                {
+                        if(j == 3)
+                        {
+                                char buffer[4];
+                                memset(buffer,0,sizeof(buffer));
+                                
+                                for(int k =0;k<4;k++)
+                                {
+                                        strcat(buffer,lv_textarea_get_text(lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + k)));
+                                }
+                                if(strncmp(user_data_get()->etc.password,buffer,4) == 0)
+                                {
+                                        if(corrrect_passwd_cb != NULL)
+                                        {
+                                                corrrect_passwd_cb();
+                                                return;
+                                        }
+                                                
+                                }
+                                lv_obj_set_style_bg_color(parent, lv_color_hex(0x5E0000), LV_PART_MAIN);
+                                lv_sat_timer_create(passwd_incorrect_timer, 500, parent);
+                                for(int k = 0;k < 4;k++)
+                                {
+                                        textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + k);
+                                        lv_textarea_del_char(textarea);
+                                        lv_obj_clear_state(textarea, LV_STATE_FOCUSED);
+                                }
+                                textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1);
+                                lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                                return ;                              
+                        }
+                        lv_obj_clear_state(textarea, LV_STATE_FOCUSED);
+                        textarea = lv_obj_get_child_form_id(parent, common_obj_id_passwd_input_tx1 + j + 1);
+                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                        return;
+                }             
+        }       
+}
+
+//输入一个字符
+static bool common_passwd_inpu_textbox_add(lv_obj_t * parent,const char *string)
+{
+        lv_obj_t *textarea = common_password_input_textarea_focused_get(parent);
+
+        if (textarea == NULL)
+        {
+                return false;
+        }
+
+        lv_textarea_add_text(textarea, string);
+        common_passwd_input_text_next_foucued(parent);
+        return true;
+}
+
+//删除一个字符
+static bool common_password_input_textbox_del(lv_obj_t * parernt)
+{
+        common_passwd_input_text_prev_foucued(parernt);
+        lv_obj_t *textarea = common_password_input_textarea_focused_get(parernt);
+
+        if (textarea == NULL)
+        {
+                return false;
+        }
+        lv_textarea_del_char(textarea);
+
+        return true;
+}
+
+/************************************************************
+** 函数说明: 密码键盘输入
+** 作者: xiaoxiao
+** 日期: 2023-08-05 14:26:00
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void password_input_keyboard_click(lv_event_t *ev)
+{
+        lv_obj_t *obj = lv_event_get_target(ev);
+        uint32_t id = lv_btnmatrix_get_selected_btn(obj);
+
+        if (id == 11)
+        {
+                common_password_input_textbox_del(lv_obj_get_parent(obj));
+        }
+        else
+        {
+                const char *text = lv_btnmatrix_get_btn_text(obj, id);
+
+                if (text != NULL)
+                {
+
+                        common_passwd_inpu_textbox_add(lv_obj_get_parent(obj),text);
+                }
+        }
+}
+
+/************************************************************
+** 函数说明: 隐藏键盘
+** 作者: xiaoxiao
+** 日期: 2023-05-16 21:31:30
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void common_passwd_check_close_click(lv_event_t *ev)
+{
+        lv_obj_t *obj = lv_event_get_target(ev);
+        lv_obj_add_flag(lv_obj_get_parent(obj),LV_OBJ_FLAG_HIDDEN);
+}
+
+
+/************************************************************
+** 函数说明: 密码输入检验公共函数创建
+** 作者: xiaoxiao
+** 日期: 2023-08-05 10:50:25
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void common_passwd_check_func_create(int cont_id,void (*callback)(void))
+{
+        corrrect_passwd_cb =  callback;
+
+        {
+            lv_obj_t * parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), cont_id, 0, 0, 1024, 600,
+                                        NULL, false, LV_OPA_90, 0, LV_OPA_90, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+            
+            lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN);
+
+            /************************************************************
+            ** 函数说明: 数字键盘创建
+            ** 作者: xiaoxiao
+            ** 日期: 2023-04-27 16:40:03
+            ** 参数说明: 
+            ** 注意事项: 
+            ************************************************************/
+            {
+                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, common_obj_id_number_keyboard_btn, 128, 90, 312, 500,
+                                                    password_input_keyboard_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                                                    360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                    360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                    0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                                    18, 24);
+                lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN);
+            }
+
+            /************************************************************
+            ** 函数说明: 密码提示
+            ** 作者: xiaoxiao
+            ** 日期: 2023-04-27 17:50:33
+            ** 参数说明: 
+            ** 注意事项: 
+            ************************************************************/
+            {
+                    lv_common_text_create(parent, common_password_input_obj_id_tips, 644, 198, 217, 43,
+                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                       lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_ENTER_PASSSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+            }
+
+            /************************************************************
+            ** 函数说明: 密码文本输入框创建
+            ** 作者: xiaoxiao
+            ** 日期: 2023-04-27 17:30:01
+            ** 参数说明: 
+            ** 注意事项: 
+            ************************************************************/
+            for (int j = 0; j < 4; j++)
+            {
+
+                lv_obj_t *obj = lv_common_textarea_create(parent, common_obj_id_passwd_input_tx1+j, 596 + 84 * j, 262, 60, 76,
+                                                            NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0X101010,
+                                                            LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0X101010,
+                                                            0, 4, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0Xffffff,
+                                                            0, 4, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                            NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large, 1,
+                                                            20, 500, 0Xffffff);
+
+                lv_textarea_set_password_mode(obj, true);
+                lv_textarea_set_password_show_time(obj, 500);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+                if (j == 0)
+                {
+                        lv_obj_add_state(obj, LV_STATE_FOCUSED);
+                }
+            }
+
+            /***********************************************
+            ** 作者: leo.liu
+            ** 日期: 2023-2-3 14:13:25
+            ** 说明: 返回按钮
+            ***********************************************/
+            {
+                    lv_common_img_btn_create(parent, common_password_input_obj_id_cancel, 35, 15, 48, 48,
+                                            common_passwd_check_close_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                            0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                            0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                            resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+            }
+        }
+}

@@ -109,7 +109,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 {
                         int ch = layout_alarm_alarm_channel_get();
   
-                        if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch)> 2.5)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < 1.0)))
+                        if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch)> ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
                         {
                                 user_data_get()->alarm.alarm_trigger[ch] = false;
                                 user_data_save();
@@ -158,7 +158,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
-        if((arg1 == 7) && (arg2 < 100))
+        if((arg1 == 7) && (arg2 < ALM_LOW * 100))
         {
                 sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }else
@@ -167,7 +167,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 {
                         return;
                 }
-                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < 100)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW * 100)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
                 {
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
@@ -203,7 +203,7 @@ static void layout_alarm_alarm_mode_label_display(void)
         else
         {
                 lv_label_set_text_fmt(obj1, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SECURITY_EMERGENCY));
-                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SENSOR1) + layout_alarm_alarm_channel_get());
+                lv_label_set_text_fmt(obj2, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_SENSOR1 + layout_alarm_alarm_channel_get()));
         }
 }
 

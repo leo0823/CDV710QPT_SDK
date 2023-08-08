@@ -117,7 +117,7 @@ static void layout_sensor_list_create(void)
     for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
     {       if(user_data_get()->alarm.alarm_enable[i] == 0)
             {
-                return;
+                continue;;
             }
             lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                             main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,

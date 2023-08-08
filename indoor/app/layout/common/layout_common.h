@@ -78,4 +78,14 @@ void sd_state_change_default_callback(void);
 ************************************************************/
 void asterisk_server_sync_data_force(bool is_sync);
 
+/************************************************************
+** 函数说明: 密码输入检验公共函数创建
+** 作者: xiaoxiao
+** 日期: 2023-08-05 10:50:25
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+
+void common_passwd_check_func_create(int cont_id,void (*callback)(void));
+
 #endif
