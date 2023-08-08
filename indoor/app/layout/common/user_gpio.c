@@ -37,7 +37,7 @@ void amp_enable_set(bool en)
 ***/
 bool backlight_enable(bool en)
 {
-        SAT_DEBUG(" backlight_enable is %d \n",en);
+       // SAT_DEBUG(" backlight_enable is %d \n",en);
         return pwm_enable(BL_PWM_NO, BL_PWM_CH, en);
 }
 

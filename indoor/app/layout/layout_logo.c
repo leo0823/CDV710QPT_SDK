@@ -50,6 +50,7 @@ static void logo_sip_server_register(void)
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
+       // printf("%s register to :%s\n",sip_user_id,sip_sever);
         sat_linphone_register(NULL, sip_user_id, NULL, sip_sever);
 }
 
@@ -101,8 +102,6 @@ void sd_state_change_default_callback(void)
 
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
-
-
 
 // 文件同步回调注册
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
@@ -183,18 +182,31 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: linphone 初始化
         ***********************************************/
         user_linphone_init();
-        usleep(3000 * 1000);
+        //  usleep(3000 * 1000);
         /*判断是否为master*/
         int id = user_data_get()->system_mode & 0x0F;
 
         if (id == 0x01)
         {
+                /*主机的话，将server ip更新*/
+                memset(user_data_get()->mastar_wallpad_ip, 0, sizeof(user_data_get()->mastar_wallpad_ip));
+
+                int timeout = 0;
+                do
+                {
+                        memset(user_data_get()->mastar_wallpad_ip, 0, sizeof(user_data_get()->mastar_wallpad_ip));
+                        sat_ip_mac_addres_get("eth0", user_data_get()->mastar_wallpad_ip, NULL, NULL);
+                        if (timeout++ > 30)
+                        {
+                                printf("get local sip server ip fail\n");
+                                break;
+                        }
+                        usleep(100 * 1000);
+                } while (user_data_get()->mastar_wallpad_ip[0] == 0);
+
                 system("mkdir /var/lib/asterisk");
                 system("/app/asterisk/sbin/safe_asterisk ");
                 // system("/app/asterisk/sbin/asterisk -cvvvvvv ");
-                /*主机的话，将server ip更新*/
-                memset(user_data_get()->mastar_wallpad_ip, 0, sizeof(user_data_get()->mastar_wallpad_ip));
-                sat_ip_mac_addres_get("eth0", user_data_get()->mastar_wallpad_ip, NULL, NULL);
         }
 
         /*注册到sip server*/

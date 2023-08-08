@@ -341,7 +341,7 @@ static void frame_show_refresh_wait_task(lv_timer_t *ptimer)
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
 			monitor_open(true, true);
-			sat_linphone_calls_cmd_send();
+			//sat_linphone_calls_cmd_send();
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 8000, NULL);
 	}
