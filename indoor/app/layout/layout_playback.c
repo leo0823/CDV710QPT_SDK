@@ -171,7 +171,6 @@ static void playback_obj_cancel_click(lv_event_t *e)
 }
 static bool playback_thumb_media_display_callback(const char *data, int x, int y, int w, int h)
 {
-        SAT_DEBUG("medie thumb display\n");
         for (int i = 0; i < 6; i++)
         {
                 if ((media_thumb_img_dsc_group[i] != NULL) && (media_thumb_point_gorup[i] != NULL) && (media_thumb_point_gorup[i]->x == x) && (media_thumb_point_gorup[i]->y == y))
@@ -181,7 +180,7 @@ static bool playback_thumb_media_display_callback(const char *data, int x, int y
                         return true;
                 }
         }
-        SAT_DEBUG("thumb display failed(%d,%d,%d,%d)\n", x, y, w, h);
+       // SAT_DEBUG("thumb display failed(%d,%d,%d,%d)\n", x, y, w, h);
         return false;
 }
 static void playback_thumb_total_display(void)
@@ -264,7 +263,6 @@ static void playback_media_thumb_obj_click(lv_event_t *e)
                         return;
                 }
         }
-        SAT_DEBUG("not find");
 }
 static void playabck_media_new_obj_display(lv_obj_t *parent, bool new)
 {

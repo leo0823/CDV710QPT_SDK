@@ -314,7 +314,6 @@ static void setting_storage_space_sd_status_channge_callback(void)
 
 static void sat_layout_enter(setting_storage_space)
 {
-        SAT_DEBUG("enter setting_storage_space");
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56

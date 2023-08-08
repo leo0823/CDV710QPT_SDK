@@ -188,7 +188,7 @@ static void alarm_list_info_create(void)
 		{
 			break;
 		}
-                SAT_DEBUG("===========\n");
+                //("===========\n");
                 // char tm_buf[128];
                 // sprintf(tm_buf, "%04d.%02d.%02d %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday,tm.tm_hour, tm.tm_min, tm.tm_sec);
                 lv_obj_t * parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, 96 * i, 918, 96,
