@@ -260,7 +260,7 @@ void layout_alarm_alarm_channel_set(int ch)
 ************************************************************/
 void layout_alarm_trigger_default(int arg1,int arg2)
 {
-        if((arg1 == 7) && (arg2 < 100))
+        if((arg1 == 7) && (arg2 < ALM_LOW * 100))
         {
                 sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }else
@@ -269,7 +269,7 @@ void layout_alarm_trigger_default(int arg1,int arg2)
                 {
                         return;
                 }
-                if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > 250) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < 100))
+                if((user_data_get()->alarm.alarm_enable[arg1] == 1  && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2  && arg2 < ALM_LOW * 100))
                 {
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1]  = true;
@@ -352,6 +352,7 @@ bool layout_last_call_new_flag_get(void)
 
 /***********************************************************************/
 
+//警报界面输入安全密码公共函数
 /***********************************************************************/
 
 enum
