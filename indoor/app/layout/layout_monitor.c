@@ -323,20 +323,18 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static void layout_monitor_channel_type_switch_btn_display(void)
 {
+        char * door_ch_png[8] = {"btn_call_cam1.png","btn_call_cam2.png","btn_call_cam3.png","btn_call_cam4.png","btn_call_cam5.png","btn_call_cam6.png","btn_call_cam7.png","btn_call_cam8.png"};
+        char * cctv_ch_png[8] = {"btn_call_cctv1.png","btn_call_cctv2.png","btn_call_cctv3.png","btn_call_cctv4.png","btn_call_cctv5.png","btn_call_cctv6.png","btn_call_cctv7.png","btn_call_cctv8.png"};
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(ch == MON_CH_CCTV1 ? "btn_call_cam1.png" : ch == MON_CH_CCTV2 ? "btn_call_cam2.png"
-                                                                                                            : ch == MON_CH_CCTV3   ? "btn_call_cam3.png"
-                                                                                                                                   : "btn_call_cam4.png"),
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(door_ch_png[ch - 8]),
                                             LV_PART_MAIN);
         }
         else
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(ch == MON_CH_DOOR1 ? "btn_call_cctv1.png" : ch == MON_CH_DOOR2 ? "btn_call_cctv2.png"
-                                                                                                             : ch == MON_CH_DOOR3   ? "btn_call_cctv3.png"
-                                                                                                                                    : "btn_call_cctv4.png"),
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(cctv_ch_png[ch]),
                                             LV_PART_MAIN);
         }
 }

@@ -188,7 +188,7 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    backlight_enable(false);
+    backlight_enable(true);
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -456,25 +456,34 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
     }
 }
 
-static void layout_motion_streams_running_register_callback(int arg1,int arg2)
+static void motion_detection_start_timer(lv_timer_t * timer)
 {
     int level = user_data_get()->motion.sensivity;
-    sat_linphone_motion_detection_start(80, level == 2 ? 1000 : level == 1 ? 500
-                                                                           : 40);
+    sat_linphone_motion_detection_start(100, level == 0 ? 150 : level == 1 ? 400 : 800);
+    lv_timer_del(timer);
+                                                                    
+}
+
+static bool layout_motion_streams_running_register_callback(char *arg)
+{
+
+    lv_timer_reset(lv_sat_timer_create(motion_detection_start_timer, 1000, NULL));
+
+    return true;                                                                      
 }
 
 static void sat_layout_enter(close)
 {
     standby_timer_close();
     backlight_enable(true);
-    backlight_enable(false);
+    backlight_enable(true);
     close_cancel_btn_create();
     if (user_data_get()->motion.enable)
     {
         motion_timeout_sec = 10;
         is_motion_snapshot_ing = false;
         is_motion_record_video_ing = false;
-        first_refresh_lcd_cmd_callback_register(layout_motion_streams_running_register_callback);
+        user_linphone_call_streams_running_receive_register(layout_motion_streams_running_register_callback);
         /*记录注册*/
         record_state_callback_register(layout_motion_video_state_callback);
         /*抓拍注册*/
