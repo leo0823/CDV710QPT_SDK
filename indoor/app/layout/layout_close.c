@@ -188,7 +188,7 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    backlight_enable(true);
+    backlight_enable(false);
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -463,7 +463,7 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
 static bool layout_motion_streams_running_register_callback(char *arg)
 {
     int level = user_data_get()->motion.sensivity;
-    SAT_DEBUG("sensitify level is %d", level);
+    SAT_DEBUG("sensitify level is %d\n", level);
     sat_linphone_motion_detection_start(80, level == 2 ? 1000 : level == 1 ? 500
                                                                            : 40);
     return true;
@@ -473,7 +473,7 @@ static void sat_layout_enter(close)
 {
     standby_timer_close();
     backlight_enable(true);
-    backlight_enable(true);
+    backlight_enable(false);
     close_cancel_btn_create();
     if (user_data_get()->motion.enable)
     {

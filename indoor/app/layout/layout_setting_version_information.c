@@ -204,7 +204,7 @@ static void sat_layout_enter(setting_version_information)
                         sprintf(uuid_info, "Serial number:    %s", serial_num);
                 }
 
-                int num = 3; /*主要获取有效的门口机数量*/
+                int num = door_camera_register_num_get(); /*主要获取有效的门口机数量*/
                 lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * num, 928, 72,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
