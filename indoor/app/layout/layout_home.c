@@ -210,7 +210,7 @@ static void home_date_timer(lv_timer_t *ptimer)
  ***********************************************/
 static void home_latest_video_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(playback, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 /***********************************************
  ** 作者: leo.liu
@@ -476,7 +476,7 @@ static void home_elevator_obj_click(lv_event_t *ev)
 }
 static void home_emergency_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(emergency_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void home_call_list_item_create(lv_obj_t *parent)
 {

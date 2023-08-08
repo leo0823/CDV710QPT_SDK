@@ -189,7 +189,7 @@ static void layout_motion_monitor_open(void)
 static void layout_motion_restart_motion_detection(void)
 {
     backlight_enable(true);
-    monitor_close(0x01);
+    monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
 
@@ -244,6 +244,7 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_close_motion_dectection_callback(void)
 {
+    SAT_DEBUG("tigger motion event");
     if (is_motion_snapshot_ing || is_motion_record_video_ing)
     {
         return false;
@@ -336,7 +337,7 @@ static void layout_motion_head_cont_create(void)
      ** 说明: 通道显示
      ***********************************************/
     {
-        lv_common_text_create(parent, 1, 0, 23, 456, 36,
+        lv_common_text_create(parent, 1, 0, 23, 950, 42,
                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -462,7 +463,7 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
 static bool layout_motion_streams_running_register_callback(char *arg)
 {
     int level = user_data_get()->motion.sensivity;
-    SAT_DEBUG("sensitify level is %d\n", level);
+    SAT_DEBUG("sensitify level is %d", level);
     sat_linphone_motion_detection_start(80, level == 2 ? 1000 : level == 1 ? 500
                                                                            : 40);
     return true;

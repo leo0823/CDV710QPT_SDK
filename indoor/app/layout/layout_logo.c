@@ -252,10 +252,16 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         if (user_data_get()->is_device_init == false)
         {
+                user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
+                language_id_set(LANGUAGE_ID_ENGLISH);
+                user_data_save();
                 sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
         else
         {
+
+                language_id_set(user_data_get()->etc.language);
+                user_data_save();
                 /************************************************************
                  ** 函数说明: 待机初始化
                  ** 作者: xiaoxiao

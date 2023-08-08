@@ -17,7 +17,7 @@ layout_away_count_obj_id_main_bg_tips,
 
 static int away_count_sec = 0;//离家设防生效缓冲时间（在缓冲时间过后，离家设防开始）
 
- lv_timer_t * away_alarm_release_det = NULL;
+static lv_timer_t * away_alarm_release_det_timer = NULL;
 /************************************************************
 ** 函数说明: 离家模式设防倒计时结束按键事件
 ** 作者: xiaoxiao
@@ -49,10 +49,35 @@ static void layout_away_count_timer_obj_display(void)
         
 }
 
-static void away_alarm_release_det_timer(lv_timer_t *ptimer)
+
+/************************************************************
+** 函数说明: 离家释时间警报检测任务取消
+** 作者: xiaoxiao
+** 日期: 2023-08-08 09:58:42
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool away_alarm_release_det_timer_del(void)
 {
-    lv_timer_del(away_alarm_release_det);
-    away_alarm_release_det = NULL;
+    if(away_alarm_release_det_timer != NULL)
+    {
+        lv_timer_del(away_alarm_release_det_timer);
+        away_alarm_release_det_timer = NULL;
+        return true;
+    }
+    return false;
+}
+
+/************************************************************
+** 函数说明: 离家释时间警报检测任务创建
+** 作者: xiaoxiao
+** 日期: 2023-08-08 09:58:42
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
+{
+
     if(user_data_get()->alarm.away_alarm_enable == false)
     {
         return;
@@ -66,13 +91,12 @@ static void away_alarm_release_det_timer(lv_timer_t *ptimer)
             continue;
         }
         float value = user_sensor_value_get(i);
-        if((user_data_get()->alarm.alarm_enable[i] == 1 && value > 2.5) || (user_data_get()->alarm.alarm_enable[i] == 2  && value < 1.0))
+        if((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2  && value < ALM_LOW))
         {
             if(alarm_occur == false)
             {
                 layout_alarm_alarm_channel_set(i);
                 alarm_occur = true;
-
             }
             user_data_get()->alarm.alarm_trigger[i]  = true;
             struct tm tm;
@@ -109,8 +133,8 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
         user_data_save();
         
         
-        away_alarm_release_det = lv_sat_timer_create(away_alarm_release_det_timer, 1000 * user_data_get()->alarm.away_release_time  , NULL);
-        away_alarm_release_det->lock = true;
+        away_alarm_release_det_timer = lv_sat_timer_create(layout_away_alarm_release_det_timer,  user_data_get()->alarm.away_release_time  , NULL);
+        away_alarm_release_det_timer->lock = true;//退出界面，定时器不关闭
         sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);    
 
     }
@@ -126,12 +150,12 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
 ************************************************************/
 static void layout_alarm_count_param_init(void)
 {
-    if(away_alarm_release_det != NULL)
+    if(away_alarm_release_det_timer != NULL)
     {
-        lv_timer_del(away_alarm_release_det);
-        away_alarm_release_det = NULL;
+        lv_timer_del(away_alarm_release_det_timer);
+        away_alarm_release_det_timer = NULL;
     }
-    away_count_sec =user_data_get()->alarm.away_setting_time * 60;
+    away_count_sec = 1;
 
 }
 

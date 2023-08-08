@@ -42,6 +42,10 @@ static void power_setting_run_btn_client(lv_event_t *ev)
 ***********************************************/
 static void power_setting_skip_btn_client(lv_event_t *ev)
 {
+	user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
+	language_id_set(LANGUAGE_ID_ENGLISH);
+	user_data_save();
+	power_setting_run_btn_client(NULL);
 }
 
 static void sat_layout_enter(power_setting)
@@ -78,13 +82,13 @@ static void sat_layout_enter(power_setting)
 	** 说明: 语言设置
 	***********************************************/
 	{
-		lv_common_img_text_btn_create(sat_cur_layout_screen_get(), power_setting_obj_id_languge_btn, 418, 302, 188, 72,
+		lv_common_img_text_btn_create(sat_cur_layout_screen_get(), power_setting_obj_id_languge_btn, 318, 302, 388, 72,
 									  power_setting_language_btn_client, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
 									  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 									  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									  0, 19, 107, 33, power_setting_obj_id_languge_label,
+									  0, 19, 207, 33, power_setting_obj_id_languge_label,
 									  lang_str_get(XLS_LANG_ID_LANGUAGE_TYPE), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_RIGHT, lv_font_normal,
-									  108, 12, 48, 48, power_setting_obj_id_languge_icon,
+									  208, 12, 48, 48, power_setting_obj_id_languge_icon,
 									  (const char *)resource_ui_src_get("btn_list_right.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
 
