@@ -111,8 +111,8 @@ static void ipc_camera_password_input_textarea_placeholder_setting(void)
         {
                 lv_textarea_set_placeholder_text(textarea, ipc_camera_password_state == 0 ? lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_OLD_PASSWORD)
                                                                                           : lang_str_get(ipc_camera_password_input_password_old[0] == '\0' ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_PASSWORD
-                                                                                                                                  : ipc_camera_password_input_password_temp[0] == 0 ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER
-                                                                                                                                                                                    : DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD));
+                                                                                                         : ipc_camera_password_input_password_temp[0] == 0 ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_ENTER_AT_LEAST_9_DIGITS_OF_NUMBER
+                                                                                                                                                           : DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD));
         }
         else if (ipc_camera_input_flag & (IPC_CAMERA_FLAG_INPUT_USER | IPC_CAMERA_FLAG_INPUT_PWD))
         {
@@ -204,17 +204,17 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
 static bool ipc_camera_determine_password_length_is_valid(const char *txt)
 {
 
-        if(1/*layout_ipc_cmeara_is_doorcamera_get() == true*/)
+        if (1 /*layout_ipc_cmeara_is_doorcamera_get() == true*/)
         {
-                //输入新密码要做非法校验，注册时输入密码或输入旧密码无需校验
-                if ((ipc_camera_input_flag & ( /*IPC_CAMERA_FLAG_INPUT_PWD | */IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state == 0x01))
+                // 输入新密码要做非法校验，注册时输入密码或输入旧密码无需校验
+                if ((ipc_camera_input_flag & (/*IPC_CAMERA_FLAG_INPUT_PWD | */ IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state == 0x01))
                 {
                         return false;
                 }
                 return true;
         }
-        
-        if ((ipc_camera_input_flag & (/*IPC_CAMERA_FLAG_INPUT_PWD |*/ IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state == 0x01))//只对新密码做非法校验
+
+        if ((ipc_camera_input_flag & (/*IPC_CAMERA_FLAG_INPUT_PWD |*/ IPC_CAMERA_FLAG_CHANGE_PWD)) && (strlen(txt) < 9) && (ipc_camera_password_state == 0x01)) // 只对新密码做非法校验
         {
                 return false;
         }
@@ -247,7 +247,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
 
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
- 
+
                         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                                 lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_PASSWORD_MODIY_SUCCESS),
                                                                 ipc_camera_password_success_msgbox_confirm_click);
@@ -280,7 +280,6 @@ static bool ipc_camera_input_old_password_processing(const char *txt)
         if (strcmp(sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()), input_password) == 0)
         {
                 ipc_camera_password_state = 0x01;
-                SAT_DEBUG("\n===================\n");
                 memset(ipc_camera_password_input_password_old, 0, sizeof(ipc_camera_password_input_password_old));
                 strcpy(ipc_camera_password_input_password_old, input_password);
 
@@ -308,7 +307,7 @@ static bool ipc_camera_input_new_name_processing(void)
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname,"Door%d(%s)",layout_ipc_camera_edit_index_get() + 1,input_name);
+                        sprintf(doorname, "Door%d(%s)", layout_ipc_camera_edit_index_get() + 1, input_name);
 
                         memset(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
@@ -316,7 +315,7 @@ static bool ipc_camera_input_new_name_processing(void)
                 else
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname,"Door%d(%s)",layout_ipc_camera_edit_index_get() + 1,input_name);
+                        sprintf(doorname, "Door%d(%s)", layout_ipc_camera_edit_index_get() + 1, input_name);
                         memset(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
@@ -491,6 +490,7 @@ static void sat_layout_enter(ipc_camera_input)
 }
 static void sat_layout_quit(ipc_camera_input)
 {
+       
 }
 
 sat_layout_create(ipc_camera_input);

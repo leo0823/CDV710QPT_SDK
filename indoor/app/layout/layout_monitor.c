@@ -553,7 +553,6 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 if (mode == 2)
                 {
-                        SAT_DEBUG("=====%d========\n", en);
                         door1_lock1_pin_ctrl(en);
                 }
                 else
@@ -571,7 +570,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
                         for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                         {
-                                SAT_DEBUG("monitor_unlock_ctrl");
+                              
                                 sat_linphone_message_cmd_send(user, cmd[i]);
                         }
                 }
@@ -580,7 +579,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 if (mode == 1)
                 {
-                        SAT_DEBUG("monitor_unlock1_ctrl");
+                       
                         const char *user = monitor_channel_get_url(ch, false);
                         char *cmd[3] = {
                             "SAT_SHELL echo 33 > /sys/class/gpio/export",
@@ -599,7 +598,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
                 }
                 else
                 {
-                        SAT_DEBUG("monitor_unlock2_ctrl");
+                        
                         const char *user = monitor_channel_get_url(ch, false);
                         char *cmd[3] = {
                             "SAT_SHELL echo 32 > /sys/class/gpio/export",
@@ -943,7 +942,6 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
         int mode = REC_MODE_TUYA_CALL;
         if (user_data_get()->auto_record_mode != 0)
         {
-                SAT_DEBUG("user_data_get()->auto_record_mode %d\n", user_data_get()->auto_record_mode);
                 if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 2))
                 {
                         if (is_monitor_record_video_ing == false)
@@ -957,10 +955,8 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
                         mode |= REC_MODE_AUTO;
                 }
         }
-        // SAT_DEBUG("==================\n");
         if (record_jpeg_start(mode) == false)
         {
-                // SAT_DEBUG("=======record_jpeg_failed==========\n");
                 return;
         }
         lv_timer_del(ptimer);
@@ -968,11 +964,8 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 
 static bool layout_monitor_streams_running_register_callback(char *arg)
 {
-
-        // SAT_DEBUG("==================\n");
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
-                // SAT_DEBUG("==================\n");
                 lv_sat_timer_create(monitor_call_record_delay_task, 3000, NULL);
         }
         return true;
@@ -1838,7 +1831,6 @@ void extractDataInQuotes(const char *inputStr, char *extractedStr, size_t maxLen
 /* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容*/
 static bool monitor_doorcamera_extern_call(const char *arg)
 {
-        SAT_DEBUG("==============================================\n");
         int ch = monitor_index_get_by_user(arg);
         monitor_channel_set(ch);
         if(ch == -1)
@@ -1923,7 +1915,6 @@ bool monitor_doorcamera_call_extern_func(char *arg)
 // 呼叫结束事件注册
 static bool monitor_talk_call_end_callback(char *arg)
 {
-        SAT_DEBUG("arg is %s\n", arg);
         sat_linphone_audio_play_stop();
 
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
@@ -1936,13 +1927,11 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         char id[32] = {0};
         char stream[32] = {0};
         sscanf(arg, "%s %s %s", user, id, stream);
-        SAT_DEBUG("%s %s %s", user, id, stream);
 
         int from_channel = 0;
         int cur_channel = monitor_channel_get();
         if (((from_channel = monitor_index_get_by_user(arg)) >= 0) || (strcasecmp(stream, "video") == 0))
         {
-                SAT_DEBUG("from_channel is %d\n", from_channel);
                 if (!user_data_get()->audio.ring_mute)
                 {
                         ring_door_call_play();
@@ -1990,7 +1979,6 @@ bool monitor_doorcamera_call_inside_func(char *arg)
                         intercom_call_status_setting(2);
 
                         intercom_call_username_setting(start);
-                        SAT_DEBUG("call :%s", ptr);
                 }
         }
         return true;
@@ -2009,13 +1997,12 @@ bool monitor_other_call_busy_inside_func(char *arg)
 
         // memset(extension_name,0,sizeof(extension_name));
         // strncpy(extension_name,exten_name_str,sizeof(extension_name));
-        // SAT_DEBUG("receive call_busy info %s",arg);
+
         return true;
 }
 
 bool monitor_other_call_busy_extern_func(char *arg)
 {
-        SAT_DEBUG("receive all_busy");
         return true;
 }
 
@@ -2069,14 +2056,12 @@ static bool tuya_event_cmd_ch_channge(int channel)
         {
                 return false;
         }
-        SAT_DEBUG("ch is %d\n", ch);
         /*****  记录上次的通道 *****/
         tuya_monitor_channel_set(ch);
         if (monitor_channel_get() == ch)
         {
                 return layout_monitor_report_vaild_channel();
         }
-        SAT_DEBUG("ch is %d\n", ch);
         monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
         monitor_channel_set(ch);
 
@@ -2161,8 +2146,6 @@ static void tuya_event_cmd_video_stop(void)
 ************************************************************/
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
 {
-        SAT_DEBUG("cmd is %d\n", cmd);
-        SAT_DEBUG("arg is %d\n", arg);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:

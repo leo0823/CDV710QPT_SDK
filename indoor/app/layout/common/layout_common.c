@@ -224,7 +224,7 @@ bool sip_user_get_number_and_ip(const char *user, char *ip, char *number)
 ***********************************************/
 void audio_output_event_default_process(int arg)
 {
-        SAT_DEBUG("AMP %s", arg ? "enable" : "disable");
+       // SAT_DEBUG("AMP %s", arg ? "enable" : "disable");
         amp_enable_set(arg ? true : false);
 }
 static int alarm_ch;

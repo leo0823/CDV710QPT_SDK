@@ -119,13 +119,12 @@ static int always_record_channel_get(void)
 ************************************************************/
 static void always_record_record_btn_up(lv_event_t *ev)
 {
-//     SAT_DEBUG("===========\n");
 //     if (is_always_record_video_ing == true)
-//     {    SAT_DEBUG("===========\n");
+//     {    
 //         record_video_stop();
 //     }
 //     else if((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
-//     {    SAT_DEBUG("===========\n");
+//     {    
 //         record_video_start(true, REC_MODE_MANUAL);
 //     }
 }
@@ -206,7 +205,7 @@ static void layout_always_record_start(void)
 	}
 	else
 	{
-        SAT_DEBUG("record_video_start\n");
+
 		record_video_start(true,REC_MODE_ALWAYS);
 	}
 	always_record_record_btn_display();
@@ -469,10 +468,6 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_always_record_streams_running_register_callback(char *arg)
 {
-        SAT_DEBUG("========================================\n");
-        SAT_DEBUG("========================================\n");
-        SAT_DEBUG("========================================\n");
-        SAT_DEBUG("========================================\n");
         lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
         return true;
