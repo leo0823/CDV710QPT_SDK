@@ -102,8 +102,8 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
         strncpy(network_data_get()->mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->mask));
 
         network_data_save();
-
-
+        usleep(10*1000);
+        system("reboot");
         sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         
 }

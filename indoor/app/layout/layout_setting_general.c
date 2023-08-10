@@ -723,13 +723,13 @@ static lv_obj_t *setting_sub_list_create(void)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                /*
+                
                 //此处请重新判断
-                if ((((user_data_get()->system_mode & 0xF0) != 0) && ((user_data_get()->system_mode & 0xF0) != 0x10)) && ((i >= 5) && (i <= 8)))
+                if (((user_data_get()->system_mode & 0x0f) != 0x01) && ((i >= 5) && (i <= 8)))
                 {
                         continue;
                 }
-                */
+                
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

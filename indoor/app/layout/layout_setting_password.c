@@ -92,6 +92,24 @@ static void setting_password_modiy_confirm_enable(bool en)
         }
 }
 
+static bool setting_password_check_passowrd_easy(char * passwd)
+{
+	char easy_password[3][4] = {{"0000"}, {"1234"}, {"4321"}};
+
+        if(passwd == NULL)
+        {
+                return true;
+        }
+	for (int i = 0; i < 3; i++)
+	{
+		if (strncmp(easy_password[i], passwd, 4) == 0)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
 static void setting_password_modiy_confirm_click(lv_event_t *ev)
 {
         lv_obj_t *input_cont1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_cont), setting_password_obj_id_modiy_inputbox1_cont);
@@ -111,8 +129,15 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
         }
         else
         {
-                strncpy(user_data_get()->etc.password, buffer, 4);
-                sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                if(setting_password_check_passowrd_easy(verify_buffer) == true)
+                {
+                        return;
+                }else
+                {
+                        strncpy(user_data_get()->etc.password, buffer, 4);
+                        sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                }
+
         }
 }
 /***********************************************

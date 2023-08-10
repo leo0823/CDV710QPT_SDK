@@ -26,7 +26,7 @@ enum
 };
 static void setting_screen_slider_obj_change_cb(lv_event_t *ev)
 {
-        // SAT_DEBUG("=========\n");
+
         lv_obj_t *parent = lv_event_get_current_target(ev);
         // lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_screen_obj_id_lcd_screen_title);
         int value = lv_slider_get_value(parent);
