@@ -495,7 +495,6 @@ static void monitor_obj_handup_click(lv_event_t *e)
 {
         if (tuya_api_client_num() > 0)
         {
-                SAT_DEBUG("tuya_api_monitor_handup\n");
                 tuya_api_preview_quit();
                 tuya_api_monitor_handup();
         }
@@ -946,7 +945,6 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
                 {
                         if (is_monitor_record_video_ing == false)
                         {
-                                SAT_DEBUG("start record video\n");
                                 record_video_start(true, REC_MODE_AUTO);
                         }
                 }
@@ -991,7 +989,6 @@ static void layout_monitor_timer_task(lv_timer_t *ptimer)
  ***********************************************/
 static void monitor_record_video_state_callback(bool record_ing)
 {
-        SAT_DEBUG("monitor recoord\n");
         is_monitor_record_video_ing = record_ing;
         monitor_obj_record_video_display();
 }
@@ -1264,8 +1261,8 @@ static void layout_monitor_extension_call_click(lv_event_t *e)
 {
         char number[128] = {0};
         sprintf(number, "sip:%s@%s:5066", extension_name, user_data_get()->mastar_wallpad_ip);
-        monitor_close(0x03);
-        sat_linphone_call(number, false, false, NULL);
+
+        intercom_call_status_setting(1);
         intercom_call_username_setting(number);
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
@@ -1769,11 +1766,9 @@ static void sat_layout_quit(monitor)
                 call_list_add(type, ch, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
-        if (sat_next_layout_get() != sat_playout_get(intercom_talk))
-        {
-                monitor_close(0x03);
-        }
 
+        monitor_close(0x03);
+        
         standby_timer_restart(true);
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
@@ -1804,7 +1799,7 @@ sat_layout_create(monitor);
 *******************************					                               楚河汉界		                                         *******************************
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
-//<sip:010193001011@172.16.0.110>
+//格式：user"50x" <sip:010193001011@172.16.0.110>
 void extractDataInQuotes(const char *inputStr, char *extractedStr, size_t maxLen)
 {
         const char *startPos = strstr(inputStr, "user:");
@@ -1871,10 +1866,10 @@ static bool monitor_doorcamera_extern_call(const char *arg)
         snprintf(fulll_name, sizeof(fulll_name) - 1, "Door%d(%s)", index, s);
 
         /*door camera 名称被修改*/
-        if (strcmp(fulll_name, network_data_get()->door_device[index].door_name) != 0)
+        if (strcmp(fulll_name, network_data_get()->door_device[index - 1].door_name) != 0)
         {
-                memset(network_data_get()->door_device[index].door_name, 0, sizeof(network_data_get()->door_device[index].door_name));
-                strncpy(network_data_get()->door_device[index].door_name, fulll_name, sizeof(network_data_get()->door_device[index].door_name) - 1);
+                memset(network_data_get()->door_device[index - 1].door_name, 0, sizeof(network_data_get()->door_device[index - 1].door_name));
+                strncpy(network_data_get()->door_device[index - 1].door_name, fulll_name, sizeof(network_data_get()->door_device[index - 1].door_name) - 1);
                 network_data_save();
         }
 
@@ -1915,16 +1910,14 @@ bool monitor_doorcamera_call_extern_func(char *arg)
 // 呼叫结束事件注册
 static bool monitor_talk_call_end_callback(char *arg)
 {
-        char user_name[64] = {0};
-        char *ptr = strstr(arg, "user:");
-        ptr += strlen("user:(");
-        const char *endPos = strchr(ptr, ')');
-        size_t length = endPos - ptr;
-        strncpy(user_name, ptr, length > sizeof(user_name) ? sizeof(user_name) : length);
-        if(strcmp(user_name,"null") == 0)
+
+        char *ptr = strstr(arg, "msg:");
+        ptr += strlen("msg:");
+        if(strcmp(ptr,"Call ended"))
         {
                 return false;
         }
+
         sat_linphone_audio_play_stop();
 
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
@@ -1996,16 +1989,53 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 
 bool monitor_other_call_busy_inside_func(char *arg)
 {
-        lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
-        if(extension != NULL)
+        if((monitor_index_get_by_user(arg) == -1) && (extern_index_get_by_user(arg) == -1))
         {
-                lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+                return false;
         }
-        char exten_name_str[128] = {0};
-        extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
 
-        memset(extension_name,0,sizeof(extension_name));
-        strncpy(extension_name,exten_name_str,sizeof(extension_name));
+        if(monitor_index_get_by_user(arg) != -1)
+        {
+                // int ch = monitor_index_get_by_user(arg) - 1;
+                // if (monitor_valid_channel_check(ch) == false)
+                // {
+                //         return false;
+                // }
+                // monitor_channel_set(ch);
+                // monitor_open(true, false);
+                // layout_monitor_channel_type_switch_btn_display();
+                // monitor_obj_cctv_cancel_obj_display();
+
+                // monitor_obj_dispaly_display();
+                // monitor_obj_volume_display();
+                // monitor_obj_talk_display();
+                // monitor_obj_handup_display();
+                // monitor_obj_normal_lock_display();
+                // monitor_obj_lock_1_display();
+                // monitor_obj_lock_2_display();
+
+                // monitior_obj_channel_info_obj_display();
+                // monitor_timeout_sec_reset(30);
+                // layout_monitor_switch_btn_display();
+                // if(is_monitor_door_camera_talk)
+                // {
+                //         sat_linphone_answer(-1);
+                // }
+                // return true;
+                
+        }else if(extern_index_get_by_user(arg))
+        {
+                lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
+                if(extension != NULL)
+                {
+                        lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+                }
+                char exten_name_str[128] = {0};
+                extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
+
+                memset(extension_name,0,sizeof(extension_name));
+                strncpy(extension_name,exten_name_str,sizeof(extension_name));
+        }
 
         return true;
 }
