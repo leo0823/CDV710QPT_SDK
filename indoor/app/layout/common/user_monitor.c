@@ -62,8 +62,8 @@ int monitor_index_get_by_user(const char *user)
 ** 函数说明: 依据sip消息获取分机号
 ** 作者: xiaoxiao
 ** 日期: 2023-08-10 10:51:32
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 int extern_index_get_by_user(const char *user)
 {
@@ -84,61 +84,7 @@ int extern_index_get_by_user(const char *user)
 
         return ((*s) - '0');
 }
-#if 0
-/***
-** 日期: 2022-05-12 11:33
-** 作者: leo.liu
-** 函数作用：获取上一个通道
-** 返回参数说明：
-***/
-int monitor_channel_prev_get(void)
-{
-        if (is_channel_ipc_camera(monitor_channel) == false)
-        {
-                if (monitor_channel == 0)
-                {
-                        return DEVICE_MAX - 1;
-                }
-                return monitor_channel - 1;
-        }
-        else
-        {
-                if (monitor_channel == 8)
-                {
-                        return DEVICE_MAX - 1 + 8;
-                }
-                return monitor_channel - 1;
-        }
-        return -1;
-}
 
-/***
-** 日期: 2022-05-12 11:33
-** 作者: leo.liu
-** 函数作用：获取下一个通道
-** 返回参数说明：
-***/
-int monitor_channel_next_get(void)
-{
-        if (is_channel_ipc_camera(monitor_channel) == false)
-        {
-                if (monitor_channel == (DEVICE_MAX - 1))
-                {
-                        return 0;
-                }
-                return monitor_channel + 1;
-        }
-        else
-        {
-                if ((monitor_channel - 8) == (DEVICE_MAX - 1))
-                {
-                        return 8;
-                }
-                return monitor_channel + 1;
-        }
-        return -1;
-}
-#endif
 /***
 ** 日期: 2022-05-12 11:33
 ** 作者: leo.liu
@@ -147,30 +93,31 @@ int monitor_channel_next_get(void)
 ***/
 int monitor_channel_prev_get(void)
 {
-        if (is_channel_ipc_camera(monitor_channel) == false)
+        /* 往下获取当前通道的上一个有效通道*/
+        int ch = monitor_channel - 1;
+        int min = is_channel_ipc_camera(monitor_channel) == false ? 0 : 8;
+        while (ch >= min)
         {
-                for (int i = 1; i <= monitor_channel; i++)
+                if (monitor_valid_channel_check(ch) == true)
                 {
-                        int pre_ch = monitor_channel - i < 0 ? DEVICE_MAX - 1 : monitor_channel - i;
-                        if (monitor_valid_channel_check(pre_ch))
-                        {
-                                return pre_ch;
-                        }
+                        return ch;
                 }
-                return -1;
+
+                ch--;
         }
-        else
+
+        /*往上获取有效通道*/
+        ch = is_channel_ipc_camera(monitor_channel) == false ? (DEVICE_MAX - 1) : (DEVICE_MAX * 2 - 1);
+        while (ch != monitor_channel)
         {
-                for (int i = 1; i <= monitor_channel; i++)
+                if (monitor_valid_channel_check(ch) == true)
                 {
-                        int pre_ch = monitor_channel - i < 8 ? DEVICE_MAX - 1 : monitor_channel - i;
-                        if (monitor_valid_channel_check(pre_ch))
-                        {
-                                return pre_ch;
-                        }
+                        return ch;
                 }
-                return -1;
+
+                ch--;
         }
+
         return -1;
 }
 
@@ -182,36 +129,36 @@ int monitor_channel_prev_get(void)
 ***/
 int monitor_channel_next_get(void)
 {
-        if (is_channel_ipc_camera(monitor_channel) == false)
+        /* 往下获取当前通道的上一个有效通道*/
+        int ch = monitor_channel + 1;
+        int total = is_channel_ipc_camera(monitor_channel) == false ? (DEVICE_MAX - 1) : (DEVICE_MAX * 2 - 1);
+        while (ch <= total)
         {
-                for (int i = 1; i <= monitor_channel; i++)
+                if (monitor_valid_channel_check(ch) == true)
                 {
-                        int next_ch = monitor_channel + i > 8 ? 0 : monitor_channel + i;
-                        if (monitor_valid_channel_check(next_ch))
-                        {
-                                return next_ch;
-                        }
+                        return ch;
                 }
-                return -1;
+
+                ch++;
         }
-        else
+
+        /*往上获取有效通道*/
+        ch = is_channel_ipc_camera(monitor_channel) == false ? 0 : 8;
+        while (ch != monitor_channel)
         {
-                for (int i = 1; i <= monitor_channel; i++)
+                if (monitor_valid_channel_check(ch) == true)
                 {
-                        int next_ch = monitor_channel + i > 16 ? 8 : monitor_channel + i;
-                        if (monitor_valid_channel_check(next_ch))
-                        {
-                                return next_ch;
-                        }
+                        return ch;
                 }
-                return -1;
+
+                ch++;
         }
         return -1;
 }
 /*获取第一个有效的通道*/
-int monitor_door_first_valid_get(bool door_camera)
+int monitor_door_first_valid_get(bool is_door_camera)
 {
-        if (door_camera)
+        if (is_door_camera)
         {
                 for (int i = 0; i < DEVICE_MAX; i++)
                 {
@@ -236,9 +183,9 @@ int monitor_door_first_valid_get(bool door_camera)
 }
 
 /*获取最后一个有效通道*/
-int monitor_door_last_valid_get(bool door_camera)
+int monitor_door_last_valid_get(bool is_door_camera)
 {
-        if (door_camera)
+        if (is_door_camera)
         {
                 for (int i = DEVICE_MAX - 1; i >= 0; i--)
                 {
@@ -402,26 +349,24 @@ BYTE1. 010(固定部分).
 bool monitor_valid_channel_check(int channel)
 {
 
-        if ((channel >= MON_CH_DOOR1) && (channel <= MON_CH_DOOR8))
+        if (channel < 8)
         {
 
                 if ((network_data_get()->door_device[channel].sip_url[0] != 0))
                 {
                         return true;
                 }
-
-                return false;
         }
-        else if ((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8))
+
+        else if ((channel >= 8) && (channel < 16))
+
         {
                 channel -= 8;
                 if (network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
                 {
                         return true;
                 }
-                return false;
         }
-        
         return false;
 }
 
@@ -429,15 +374,18 @@ bool monitor_valid_channel_check(int channel)
 ** 函数说明: 门口机注册数量获取
 ** 作者: xiaoxiao
 ** 日期: 2023-08-08 14:27:13
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 int door_camera_register_num_get()
 {
         int num = 0;
-        for(int i = 0 ;i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
-                if(monitor_valid_channel_check(MON_CH_DOOR1 + i) == true ) num ++ ;
+                if (monitor_valid_channel_check(i) == true)
+                {
+                        num++;
+                }
         }
         return num;
 }
@@ -446,15 +394,18 @@ int door_camera_register_num_get()
 ** 函数说明: CCTV注册数量获取
 ** 作者: xiaoxiao
 ** 日期: 2023-08-08 14:29:29
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 int cctv_register_num_get()
 {
         int num = 0;
-        for(int i = 0 ;i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
-                if(monitor_valid_channel_check(MON_CH_CCTV1 + i) == true ) num ++ ;
+                if (monitor_valid_channel_check(8 + i) == true)
+                {
+                        num++;
+                }
         }
         return num;
 }
