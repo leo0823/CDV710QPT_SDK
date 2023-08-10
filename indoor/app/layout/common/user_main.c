@@ -173,9 +173,9 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_registers_online[i] = true;
                                 is_asterisk_server_sync_data_force = false;
 
-                                sat_ipcamera_data_sync(0x00, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 100);
+                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 100);
                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 100);
-                                printf("%s %s inline \n", p_register_info[i].name, p_register_info[i].name);
+
                         }
                         else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
                         {
