@@ -68,8 +68,6 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
         }
         if (mode & REC_MODE_TUYA_MOTION)
         {
-                printf("ch is %d\n",ch);
-                printf("======tuya_api_motion_event=====\n");
                 tuya_api_motion_event(0, (const char *)data, size);
         }
         system("sync");

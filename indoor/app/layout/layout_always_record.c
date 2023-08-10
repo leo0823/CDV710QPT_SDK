@@ -119,13 +119,12 @@ static int always_record_channel_get(void)
 ************************************************************/
 static void always_record_record_btn_up(lv_event_t *ev)
 {
-//     SAT_DEBUG("===========\n");
 //     if (is_always_record_video_ing == true)
-//     {    SAT_DEBUG("===========\n");
+//     {    
 //         record_video_stop();
 //     }
 //     else if((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
-//     {    SAT_DEBUG("===========\n");
+//     {    
 //         record_video_start(true, REC_MODE_MANUAL);
 //     }
 }
@@ -206,7 +205,7 @@ static void layout_always_record_start(void)
 	}
 	else
 	{
-       // SAT_DEBUG("record_video_start\n");
+
 		record_video_start(true,REC_MODE_ALWAYS);
 	}
 	always_record_record_btn_display();
