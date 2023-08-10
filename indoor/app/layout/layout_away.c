@@ -271,6 +271,8 @@ static void layout_away_sensor_select_obj_click(lv_event_t *ev)
         if (cont == obj)
         {
             float value = user_sensor_value_get(i);
+
+
             lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_away_sensor_select_cont_checkbox_id);
             if ((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < ALM_LOW) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_HIGHT)))
             {

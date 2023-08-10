@@ -685,15 +685,16 @@ static void monitor_obj_normal_lock_display(void)
         }
         int ch = monitor_channel_get();
 
-
         if (is_channel_ipc_camera(ch) == false)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 if (user_data_get()->etc.open_the_door == 0)
                 {
+
                         if ((ch != MON_CH_DOOR2) || (user_data_get()->etc.door2_lock_num == 1))
                         {
                                 lv_obj_set_x(obj, 402);
+
                                 if (is_monitor_door_camera_talk == false)
                                 {
                                         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -715,6 +716,7 @@ static void monitor_obj_normal_lock_display(void)
                                 else
                                 {
                                         lv_obj_set_x(obj, 460);
+     
                                 }
                         }
                         else if ((ch == MON_CH_DOOR2) && (user_data_get()->etc.door2_lock_num == 2))
@@ -1877,7 +1879,7 @@ static bool monitor_doorcamera_extern_call(const char *arg)
         }
 
         /*监控参数设置，准备进入监控页面*/
-        monitor_channel_set(index);
+        monitor_channel_set(index - 1);
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
@@ -1913,6 +1915,16 @@ bool monitor_doorcamera_call_extern_func(char *arg)
 // 呼叫结束事件注册
 static bool monitor_talk_call_end_callback(char *arg)
 {
+        char user_name[64] = {0};
+        char *ptr = strstr(arg, "user:");
+        ptr += strlen("user:(");
+        const char *endPos = strchr(ptr, ')');
+        size_t length = endPos - ptr;
+        strncpy(user_name, ptr, length > sizeof(user_name) ? sizeof(user_name) : length);
+        if(strcmp(user_name,"null") == 0)
+        {
+                return false;
+        }
         sat_linphone_audio_play_stop();
 
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
@@ -1984,17 +1996,16 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 
 bool monitor_other_call_busy_inside_func(char *arg)
 {
+        lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
+        if(extension != NULL)
+        {
+                lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+        }
+        char exten_name_str[128] = {0};
+        extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
 
-        // lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
-        // if(extension != NULL)
-        // {
-        //         lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
-        // }
-        // char exten_name_str[128] = {0};
-        // extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
-
-        // memset(extension_name,0,sizeof(extension_name));
-        // strncpy(extension_name,exten_name_str,sizeof(extension_name));
+        memset(extension_name,0,sizeof(extension_name));
+        strncpy(extension_name,exten_name_str,sizeof(extension_name));
 
         return true;
 }

@@ -65,22 +65,18 @@ static void layout_alarm_monitor_open(void)
                 {
                         SAT_DEBUG("===========================");
                         return ;       
-                }else
+                }else if(monitor_valid_channel_check(MON_CH_CCTV1 + ch))
                 {
                         monitor_channel_set(MON_CH_CCTV1 + ch);
+                        monitor_open(false,true);
                 }    
                
         }else 
         {       
 
-                // if(strlen(network_data_get()->cctv_device[7].door_name) == 0)
-                // {
-                //         return;
-                // }
 
-                monitor_channel_set(MON_CH_CCTV1);
         }
-        monitor_open(false,true);         
+                 
 }
 
 static void alarm_stop_obj_click(lv_event_t *ev)
