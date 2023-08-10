@@ -152,9 +152,9 @@ static void monitior_obj_channel_info_obj_display(void)
                 lv_obj_set_x(obj, 60);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 channel -= 8;
-                //lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-                //lv_label_set_text_fmt(obj, "CCTV%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name ,tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                // lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                // lv_label_set_text_fmt(obj, "CCTV%d  %04d-%02d-%02d  %02d:%02d", channel + 1, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else
         {
@@ -323,8 +323,8 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static void layout_monitor_channel_type_switch_btn_display(void)
 {
-        char * door_ch_png[8] = {"btn_call_cam1.png","btn_call_cam2.png","btn_call_cam3.png","btn_call_cam4.png","btn_call_cam5.png","btn_call_cam6.png","btn_call_cam7.png","btn_call_cam8.png"};
-        char * cctv_ch_png[8] = {"btn_call_cctv1.png","btn_call_cctv2.png","btn_call_cctv3.png","btn_call_cctv4.png","btn_call_cctv5.png","btn_call_cctv6.png","btn_call_cctv7.png","btn_call_cctv8.png"};
+        char *door_ch_png[8] = {"btn_call_cam1.png", "btn_call_cam2.png", "btn_call_cam3.png", "btn_call_cam4.png", "btn_call_cam5.png", "btn_call_cam6.png", "btn_call_cam7.png", "btn_call_cam8.png"};
+        char *cctv_ch_png[8] = {"btn_call_cctv1.png", "btn_call_cctv2.png", "btn_call_cctv3.png", "btn_call_cctv4.png", "btn_call_cctv5.png", "btn_call_cctv6.png", "btn_call_cctv7.png", "btn_call_cctv8.png"};
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
@@ -567,7 +567,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
                         for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                         {
-                              
+
                                 sat_linphone_message_cmd_send(user, cmd[i]);
                         }
                 }
@@ -576,7 +576,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 if (mode == 1)
                 {
-                       
+
                         const char *user = monitor_channel_get_url(ch, false);
                         char *cmd[3] = {
                             "SAT_SHELL echo 33 > /sys/class/gpio/export",
@@ -595,7 +595,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
                 }
                 else
                 {
-                        
+
                         const char *user = monitor_channel_get_url(ch, false);
                         char *cmd[3] = {
                             "SAT_SHELL echo 32 > /sys/class/gpio/export",
@@ -715,7 +715,6 @@ static void monitor_obj_normal_lock_display(void)
                                 else
                                 {
                                         lv_obj_set_x(obj, 460);
-     
                                 }
                         }
                         else if ((ch == MON_CH_DOOR2) && (user_data_get()->etc.door2_lock_num == 2))
@@ -1768,7 +1767,7 @@ static void sat_layout_quit(monitor)
         }
 
         monitor_close(0x03);
-        
+
         standby_timer_restart(true);
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
@@ -1799,7 +1798,7 @@ sat_layout_create(monitor);
 *******************************					                               楚河汉界		                                         *******************************
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
-//格式：user"50x" <sip:010193001011@172.16.0.110>
+// 格式：user"50x" <sip:010193001011@172.16.0.110>
 void extractDataInQuotes(const char *inputStr, char *extractedStr, size_t maxLen)
 {
         const char *startPos = strstr(inputStr, "user:");
@@ -1828,7 +1827,7 @@ static bool monitor_doorcamera_extern_call(const char *arg)
 {
         int ch = monitor_index_get_by_user(arg);
         monitor_channel_set(ch);
-        if(ch == -1)
+        if (ch == -1)
         {
                 SAT_DEBUG("receive outdoor call ch is valid\n");
                 return false;
@@ -1910,17 +1909,18 @@ bool monitor_doorcamera_call_extern_func(char *arg)
 // 呼叫结束事件注册
 static bool monitor_talk_call_end_callback(char *arg)
 {
-
-        char *ptr = strstr(arg, "msg:");
-        ptr += strlen("msg:");
-        if(strcmp(ptr,"Call ended"))
+        /*sip:2xxx代表门口机*/
+        if (strstr(arg, "sip:20") != NULL)
         {
-                return false;
+                sat_linphone_audio_play_stop();
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
         }
-
-        sat_linphone_audio_play_stop();
-
-        sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
+        /*sip:5xxx代表室内设备*/
+        if (strstr(arg, "sip:50") != NULL)
+        {
+                return true;
+        }
+        return true;
 }
 
 bool monitor_doorcamera_call_inside_func(char *arg)
@@ -1989,12 +1989,12 @@ bool monitor_doorcamera_call_inside_func(char *arg)
 
 bool monitor_other_call_busy_inside_func(char *arg)
 {
-        if((monitor_index_get_by_user(arg) == -1) && (extern_index_get_by_user(arg) == -1))
+        if ((monitor_index_get_by_user(arg) == -1) && (extern_index_get_by_user(arg) == -1))
         {
                 return false;
         }
 
-        if(monitor_index_get_by_user(arg) != -1)
+        if (monitor_index_get_by_user(arg) != -1)
         {
                 // int ch = monitor_index_get_by_user(arg) - 1;
                 // if (monitor_valid_channel_check(ch) == false)
@@ -2022,19 +2022,19 @@ bool monitor_other_call_busy_inside_func(char *arg)
                 //         sat_linphone_answer(-1);
                 // }
                 // return true;
-                
-        }else if(extern_index_get_by_user(arg))
+        }
+        else if (extern_index_get_by_user(arg))
         {
-                lv_obj_t * extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
-                if(extension != NULL)
+                lv_obj_t *extension = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_extension_call);
+                if (extension != NULL)
                 {
-                        lv_obj_clear_flag(extension,LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(extension, LV_OBJ_FLAG_HIDDEN);
                 }
                 char exten_name_str[128] = {0};
-                extractDataInQuotes(arg,exten_name_str,sizeof(exten_name_str));
+                extractDataInQuotes(arg, exten_name_str, sizeof(exten_name_str));
 
-                memset(extension_name,0,sizeof(extension_name));
-                strncpy(extension_name,exten_name_str,sizeof(extension_name));
+                memset(extension_name, 0, sizeof(extension_name));
+                strncpy(extension_name, exten_name_str, sizeof(extension_name));
         }
 
         return true;
