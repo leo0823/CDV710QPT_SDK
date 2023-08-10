@@ -405,7 +405,8 @@ static bool ipaddr_udhcp_server_get_wait(void)
         char mac[128] = {0};
         // system("killall udhcpc");
         sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
-        system("ifconfig eth0 down");
+        system("ifconfig eth0 0.0.0.0");
+         system("ifconfig eth0 down");
         usleep(10 * 1000);
         system("ifconfig eth0 up");
         usleep(10 * 1000);
