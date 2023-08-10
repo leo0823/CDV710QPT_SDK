@@ -11,7 +11,7 @@
 #define SD_BASE_PATH "/tmp/tf"
 #define SD_MEDIA_PATH SD_BASE_PATH "/media/"
 #define FLASH_PHOTO_PATH "/app/data/photo/"
-
+#define FLASH_MEDIA_BCAKUP_PATH SD_BASE_PATH "/backup/"
 #define VIDEO_DOT ".AVI"
 #define PHOTO_DOT ".JPG"
 

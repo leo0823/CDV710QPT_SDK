@@ -163,6 +163,13 @@ static void intercom_talk_answer_obj_display(void)
 //呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
+
+        char *ptr = strstr(arg, "msg:");
+        ptr += strlen("msg:");
+        if(strcmp(ptr,"Call ended"))
+        {
+                return false;
+        }
         sat_linphone_audio_play_stop();
         if (intercom_call_state == 1)
         {
@@ -238,7 +245,7 @@ static bool intercom_talk_call_answer_callback(char *args)
         intercom_talk_call_status_icon_display();
         intercom_talk_status_background_display();
         intercom_talk_answer_obj_display();
-
+        sat_linphone_answer(-1);
         return true;
 }
 
