@@ -57,6 +57,33 @@ int monitor_index_get_by_user(const char *user)
 
         return ((*s) - '0');
 }
+
+/************************************************************
+** 函数说明: 依据sip消息获取分机号
+** 作者: xiaoxiao
+** 日期: 2023-08-10 10:51:32
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+int extern_index_get_by_user(const char *user)
+{
+        /*格式："user:"50x" <sip:502@10.1.1.11:5066>,*/
+        char *s = strstr(user, "sip:50");
+        if (s == NULL)
+        {
+                printf("[%s:%d] user string parse failed(%s)\n", __func__, __LINE__, user);
+                return -1;
+        }
+
+        s += 6;
+        if (((*s) < '1') || ((*s) > '9'))
+        {
+                printf("[%s:%d] user string aprse failed(%s)\n", __func__, __LINE__, user);
+                return -1;
+        }
+
+        return ((*s) - '0');
+}
 #if 0
 /***
 ** 日期: 2022-05-12 11:33
@@ -375,31 +402,26 @@ BYTE1. 010(固定部分).
 bool monitor_valid_channel_check(int channel)
 {
 
-        //  if (network_data_get()->door_device_count)
+        if ((channel >= MON_CH_DOOR1) && (channel <= MON_CH_DOOR8))
         {
-                if ((channel == MON_CH_DOOR1) || (channel == MON_CH_DOOR2))
+
+                if ((network_data_get()->door_device[channel].sip_url[0] != 0))
                 {
-
-                        if ((network_data_get()->door_device[channel].sip_url[0] != 0))
-                        {
-                                return true;
-                        }
-
-                        return false;
+                        return true;
                 }
+
+                return false;
         }
-        //    if (network_data_get()->cctv_device_count)
+        else if ((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8))
         {
-                if ((channel >= MON_CH_CCTV1) && (channel <= MON_CH_CCTV8))
+                channel -= 8;
+                if (network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
                 {
-                        channel -= 8;
-                        if (network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
-                        {
-                                return true;
-                        }
-                        return false;
+                        return true;
                 }
+                return false;
         }
+        
         return false;
 }
 

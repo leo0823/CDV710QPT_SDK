@@ -161,9 +161,9 @@ static void intercom_talk_answer_obj_display(void)
 }
 
 //呼叫结束事件注册
-static bool intercom_talk_call_end_callback(char *arg)
+bool intercom_talk_call_end_callback(char *arg)
 {
-
+        SAT_DEBUG("arg is %s",arg);
         char *ptr = strstr(arg, "msg:");
         ptr += strlen("msg:");
         if(strcmp(ptr,"Call ended"))
@@ -184,6 +184,7 @@ static bool intercom_talk_call_end_callback(char *arg)
 //呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
+        SAT_DEBUG("arg is %s",arg);
         sat_linphone_audio_play_stop();
         if (intercom_call_state == 1)
         {
@@ -304,6 +305,11 @@ static void layout_intercom_talk_call_screen_click(lv_event_t *e)
 
 static void sat_layout_enter(intercom_talk)
 {
+        if (sat_pre_layout_get() == sat_playout_get(monitor) && (intercom_call_state == 0x01))
+        {
+                sat_linphone_call(intercom_call_user, false, false, NULL);
+        }
+
         lv_obj_pressed_func = NULL;
         standby_timer_close();
         intercom_talk_timeout = 30;
@@ -444,7 +450,7 @@ static void sat_layout_enter(intercom_talk)
         }
         user_linphone_call_error_register(intercom_talk_call_failed_callback);
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback); 
-        user_linphone_call_end_register(intercom_talk_call_end_callback);
+     //   user_linphone_call_end_register(intercom_talk_call_end_callback);
 }
 
 static void sat_layout_quit(intercom_talk)
