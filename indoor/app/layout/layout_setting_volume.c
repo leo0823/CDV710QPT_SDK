@@ -91,6 +91,9 @@ enum
         setting_volume_obj_id_touch_notification_voice_slider_right_btn,
         setting_volume_obj_id_touch_notification_voice_slider,
 };
+
+static bool is_setting_volume_ring_play_runing = false;
+
 static void setting_volume_cancel_obj_click(lv_event_t *e)
 {
         sat_layout_goto(setting_sound, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -106,6 +109,14 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.buzzer_volume = value;
                 user_data_save();
+
+                if(is_setting_volume_ring_play_runing == false)
+                {
+                        ring_door_call_play();
+                }
+
+                sat_linphone_audio_play_volume_set(value);
+                //printf("setting valume is %d\n",value);
         }
         else if (y == 78) // 调通话声音
         {
@@ -514,6 +525,12 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
         return list;
 }
 
+static bool setting_volume_ring_play_callback(int arg)
+{
+        is_setting_volume_ring_play_runing = arg == 0 ? true : false;
+        return true;
+}
+
 static void sat_layout_enter(setting_volume)
 {
         /***********************************************
@@ -543,9 +560,12 @@ static void sat_layout_enter(setting_volume)
         }
 
         setting_volume_slider_obj_create();
+
+        ring_play_event_cmd_register(setting_volume_ring_play_callback);
 }
 static void sat_layout_quit(setting_volume)
 {
+        ring_play_event_cmd_register(NULL);
 }
 
 sat_layout_create(setting_volume);
