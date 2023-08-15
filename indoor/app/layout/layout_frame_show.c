@@ -102,7 +102,7 @@ find_start:
 		if ((ch == MON_CH_DOOR1 + i) && (ch != MON_CH_DOOR8))
 		{
 			ch = MON_CH_DOOR2 + i;
-			if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x10)
+			if (monitor_valid_channel_check(ch) == true && user_data_get()->display.frame_list & 0x08)
 			{
 				return ch;
 			}
@@ -836,7 +836,9 @@ static void frame_show_door_display(void)
 static void frame_show_door1_start(void)
 {
 	monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
-	monitor_channel_set(always_record_channel_get());
+	int ch = always_record_channel_get();
+
+	monitor_channel_set(ch);
 	frame_show_door_display();
 	frame_show_thumb_refresh_display_callback();
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
@@ -911,6 +913,7 @@ static void frame_show_restart(void)
 		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true))) //没有注册或者是已经显示完最后一个Door camera通道
 		{
 			frame_show_frame_index = 0x09;
+
 			return frame_show_restart();
 		}
 		frame_show_door1_start();
@@ -932,6 +935,7 @@ static void frame_show_restart(void)
 		{
 			sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 		}
+		monitor_channel_set(MON_CH_NONE);
 		frame_show_frame_index = 0x00;
 		frame_show_restart();
 	}

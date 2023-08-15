@@ -42,10 +42,10 @@ static void power_setting_run_btn_client(lv_event_t *ev)
 ***********************************************/
 static void power_setting_skip_btn_client(lv_event_t *ev)
 {
-	user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
-	language_id_set(LANGUAGE_ID_ENGLISH);
+	standby_timer_restart(true);
+	user_data_get()->is_device_init = 1;
 	user_data_save();
-	power_setting_run_btn_client(NULL);
+	sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(power_setting)
