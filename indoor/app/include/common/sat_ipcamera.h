@@ -7,7 +7,7 @@
 typedef struct
 {
         char profile_token[32];
-        char rtsp_url[64];
+        char rtsp_url[128];
 } ipcamera_rtsp_info;
 struct ipcamera_info
 {
