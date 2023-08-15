@@ -229,7 +229,7 @@ static void video_media_thumb_obj_click(lv_event_t *e)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_buttom);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_buttom);
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 }

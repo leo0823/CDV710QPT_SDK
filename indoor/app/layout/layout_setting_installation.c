@@ -40,6 +40,8 @@ enum
 
         setting_installation_obj_id_factory_reset_msg_bg,
 
+        setting_installation_obj_id_slave_register_cont,
+
 };
 typedef enum
 {
@@ -120,6 +122,11 @@ static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
+static void setting_installation_slave_indoor_register_display(lv_event_t *ev)
+{
+        sat_layout_goto(indoor_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
 static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
@@ -176,7 +183,17 @@ static void layout_setting_installation_guard_no_display(lv_obj_t *list)
 
 }
 
+static void layout_setting_installation_slave_display(lv_obj_t *list)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_slave_register_cont);
+        if(parent != NULL)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
 
+                lv_label_set_text(obj, "Slave registerd display");   
+        }
+
+}
 static lv_obj_t *setting_installation_sub_list_create(void)
 {
         setting_list_info_t main_list_group[] = {
@@ -236,6 +253,13 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
              -1, NULL,
              setting_installation_factory_reset_obj_click, -1},
+
+
+             {0, 72 * 11, 622, 72,
+             setting_installation_obj_id_slave_register_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
+             -1, NULL,
+             setting_installation_slave_indoor_register_display, -1},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_installation_obj_id_sub_list);
@@ -243,7 +267,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         int j = 0;
 
         char system_mode = user_data_get()->system_mode;
-        printf("system mode is 0x%x\n",system_mode);
+
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*单系统*/
@@ -291,6 +315,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         layout_setting_installation_open_structure_dispaly(list);
         layout_setting_installation_build_house_no_display(list);
         layout_setting_installation_guard_no_display(list);
+        layout_setting_installation_slave_display(list);
         return list;
 }
 

@@ -20,16 +20,10 @@ static void setting_complete_confirm_click(lv_event_t *ev)
         ** 参数说明:
         ** 注意事项:
         ************************************************************/
-        standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
-        standby_timer_restart(true);
-        extern void standby_dection_timer(lv_timer_t *t);
-        lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
-        lv_timer_ready(standby_timer);
+
         user_data_get()->is_device_init = 1;
         user_data_save();
-
-        audio_output_cmd_register(audio_output_event_default_process);
-        user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
+        standby_timer_restart(true);
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
