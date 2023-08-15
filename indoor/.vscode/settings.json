@@ -3,5 +3,6 @@
         "array": "c",
         "string": "c",
         "string_view": "c"
-    }
+},
+"cmake.sourceDirectory": "/home/leo/workspace/CDV810QPT_LIB/indoor/app/build"
 }
