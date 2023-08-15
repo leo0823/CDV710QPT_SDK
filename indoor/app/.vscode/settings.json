@@ -1,0 +1,20 @@
+{
+        "files.associations": {
+                "ssd20x_sarad.h": "c",
+                "user_standby.h": "c",
+                "user_alarm_list.h": "c",
+                "layout_setting_screen.h": "c",
+                "layout_define.h": "c",
+                "layout_setting_language.h": "c",
+                "language_new.h": "c",
+                "lang_xls.h": "c",
+<<<<<<< HEAD
+                "user_data.h": "c",
+                "sat_user_common.h": "c"
+        }
+=======
+                "user_data.h": "c"
+        },
+        "cmake.sourceDirectory": "/home/leo/workspace/CDV810QPT_LIB/indoor/app/build"
+>>>>>>> 54451fa (文件共享)
+}

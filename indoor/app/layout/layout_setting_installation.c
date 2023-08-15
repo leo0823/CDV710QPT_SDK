@@ -1,0 +1,436 @@
+#include "layout_define.h"
+#include "layout_setting_general.h"
+#include "layout_ipc_camera.h"
+#include "tuya/tuya_api.h"
+#include "layout_setting_ipaddress.h"
+enum
+{
+        setting_installation_obj_id_title,
+        setting_installation_obj_id_cancel,
+        setting_installation_obj_id_main_list,
+        setting_installation_obj_id_this_menu_label,
+        setting_installation_obj_id_we_are_not_label,
+        setting_installation_obj_id_i_have_read_label,
+        setting_installation_obj_id_i_have_read_checkbox,
+        setting_installation_obj_id_confirm_btn,
+
+        setting_installation_obj_id_sub_list,
+
+        setting_installation_obj_id_operating_structure_cont,
+
+        setting_installation_obj_id_building_house_no_cont,
+
+        setting_installation_obj_id_ipaddres_cont,
+
+        setting_installation_obj_id_operation_server_ip_addres_cont,
+
+        setting_installation_obj_id_common_entrance_ip_cont,
+
+        setting_installation_obj_id_guard_station_number_cont,
+
+        setting_installation_obj_id_sensor_cont,
+
+        setting_installation_obj_id_sensor_test_cont,
+
+        setting_installation_obj_id_front_door_camera_cont,
+
+        setting_installation_obj_id_front_cctv_cont,
+
+        setting_installation_obj_id_factory_reset_cont,
+
+        setting_installation_obj_id_factory_reset_msg_bg,
+
+};
+typedef enum
+{
+        factory_reset_obj_id_msgbox,
+        factory_reset_obj_id_title,
+        factory_reset_obj_id_conrfirm,
+        factory_reset_obj_id_cancel,
+
+} factory_reset_msg_bg_obj_id;
+
+static void setting_installation_operating_structure_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void setting_installation_building_house_no_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(setting_building_house_number, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_installation_ipaddres_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_installation_operation_server_ip_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(setting_server_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_installation_common_entrance_ip_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(setting_common_entrance_ip, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_installation_guard_station_number_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(setting_guard_station_number, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_installation_sensor_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(sensor_settings, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void setting_installation_front_door_camera_obj_click(lv_event_t *ev)
+{
+        layout_ipc_cmeara_is_doorcamera_set(true);
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_installation_front_cctv_obj_click(lv_event_t *ev)
+{
+        layout_ipc_cmeara_is_doorcamera_set(false);
+        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void setting_installation_sensor_test_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(sensors_test, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void setting_installation_factory_reset_confirm_func(lv_event_t *ev)
+{
+        user_data_reset();
+        network_data_reset();
+        tuay_api_data_reset();
+        alarm_list_del_all();
+        call_list_del_all();
+        wifi_api_reset_default();
+        usleep(1000 * 1000);
+        system("reboot");
+        // setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
+}
+
+static void setting_installation_factory_reset_cancel_func(lv_event_t *ev)
+{
+        setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
+}
+static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
+{
+        lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
+        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, "Do you want to process initiatialization?", 0, 110, 460, 120);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
+}
+
+static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                if ((user_data_get()->system_mode & 0xF0) == 0x00)
+                {
+                        lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE));
+                }
+                else if ((user_data_get()->system_mode & 0xF0) == 0x10)
+                {
+                        lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
+                }
+        }
+        else
+        {
+                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SLAVE));
+        }
+}
+
+static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_building_house_no_cont);
+        if (parent != NULL)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+    
+                char building[8] = {0};
+                char household[8] = {0};
+                int loacal_number[8] = {0};
+
+                const char *username = network_data_get()->sip_user;
+
+                loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+
+                loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
+
+                sprintf(building, "%04d", loacal_number[0]);
+                sprintf(household, "%04d", loacal_number[1]);
+                   
+                lv_label_set_text_fmt(obj, "%s-%s", building, household);
+        }
+}
+
+static void layout_setting_installation_guard_no_display(lv_obj_t *list)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_guard_station_number_cont);
+        if(parent != NULL)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+
+                lv_label_set_text(obj, "1234-1234-1234");   
+        }
+
+}
+
+
+static lv_obj_t *setting_installation_sub_list_create(void)
+{
+        setting_list_info_t main_list_group[] = {
+
+            {0, 0, 622, 72,
+             setting_installation_obj_id_operating_structure_cont, 0, 1,
+             SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_OPERATION_STRCUUTRE, lang_str_get,
+             SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE, lang_str_get,
+             setting_installation_operating_structure_obj_click, -1},
+            {0, 72, 622, 72,
+             setting_installation_obj_id_building_house_no_cont, 0, 1,
+             INSTALLATION_XLS_LANG_ID_BUILDING_HOUSE_NO, lang_str_get,
+             -1, NULL,
+             setting_installation_building_house_no_obj_click, -1},
+            {0, 72 * 2, 622, 72,
+             setting_installation_obj_id_ipaddres_cont, 0, 1,
+             INSTALLATION_XLS_LANG_ID_IP_ADDRES, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_IP_ADDRES_GATEWAY_DNS_SETTING, lang_str_get,
+             setting_installation_ipaddres_obj_click, -1},
+            {0, 72 * 3, 622, 72,
+             setting_installation_obj_id_operation_server_ip_addres_cont, 0, 1,
+             INSTALLATION_XLS_LANG_ID_OPERATIONG_SERVER_IP_ADDRES, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_LOCAL_SERVER_SIP_SERVER_UPDATE, lang_str_get,
+             setting_installation_operation_server_ip_obj_click, -1},
+            {0, 72 * 4, 622, 72,
+             setting_installation_obj_id_common_entrance_ip_cont, 0, 1,
+             INSTALLATION_XLS_LANG_ID_COMMON_ENTRANCE_IP, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_COMMON_ENTRANCE_IP_FOR_INTERLOCKING, lang_str_get,
+             setting_installation_common_entrance_ip_obj_click, -1},
+            {0, 72 * 5, 622, 72,
+             setting_installation_obj_id_guard_station_number_cont, 0, 1,
+             INSTALLATION_XLS_LANG_ID_GUARD_STATION_NUMBER, lang_str_get,
+             -1, NULL,
+             setting_installation_guard_station_number_obj_click, -1},
+            {0, 72 * 6, 622, 72,
+             setting_installation_obj_id_sensor_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_SENSOR, lang_str_get,
+             RECORDING_XLS_LANG_ID_SAVE_OFF, lang_str_get,
+             setting_installation_sensor_obj_click, -1},
+            {0, 72 * 7, 622, 72,
+             setting_installation_obj_id_sensor_test_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_SENSOR_TEST, lang_str_get,
+             -1, NULL,
+             setting_installation_sensor_test_obj_click, -1},
+            {0, 72 * 8, 622, 72,
+             setting_installation_obj_id_front_door_camera_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_FRONT_DOOR_CAMERA, lang_str_get,
+             -1, NULL,
+             setting_installation_front_door_camera_obj_click, -1},
+            {0, 72 * 9, 622, 72,
+             setting_installation_obj_id_front_cctv_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_FRONT_CCTV, lang_str_get,
+             -1, NULL,
+             setting_installation_front_cctv_obj_click, -1},
+            {0, 72 * 10, 622, 72,
+             setting_installation_obj_id_factory_reset_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
+             -1, NULL,
+             setting_installation_factory_reset_obj_click, -1},
+        };
+
+        lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_installation_obj_id_sub_list);
+        lv_common_style_set_common(list, setting_installation_obj_id_sub_list, 354, 88, 622, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        int j = 0;
+
+        char system_mode = user_data_get()->system_mode;
+        printf("system mode is 0x%x\n",system_mode);
+        for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
+        {
+                /*单系统*/
+                if ((system_mode & 0xF0) == 0x00)
+                {
+                        if (i == 1 || i == 3 || i == 4 || i == 5)
+                        {
+                                continue;
+                        }
+                        /*分机*/
+                        if (((system_mode & 0x0F) != 0x01))
+                        {
+                                if( i == 6 || i == 7 || i == 8 || i == 9 || i == 10)
+                                {
+                                        continue;
+                                }
+                        }
+                }else
+                {
+                                                /*分机*/
+                        if (((system_mode & 0x1F) != 0x11))
+                        {
+                                if( i == 6 || i == 7 || i == 8 || i == 9 || i == 10)
+                                {
+                                        continue;
+                                }
+                        }
+                }
+
+                lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
+                                                                main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                0, 17, 576, 43, main_list_group[i].title_id,
+                                                                main_list_group[i].title_language_id == -1 ? NULL : main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 42, 576, 29, main_list_group[i].sub_id,
+                                                                main_list_group[i].sub_language_id == -1 ? NULL : main_list_group[i].sub_language_cb(main_list_group[i].sub_language_id), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                j++;
+        }
+        
+        layout_setting_installation_open_structure_dispaly(list);
+        layout_setting_installation_build_house_no_display(list);
+        layout_setting_installation_guard_no_display(list);
+        return list;
+}
+
+static void setting_installation_i_heave_read_obj_click(lv_event_t *ev)
+{
+        lv_obj_t *parent = lv_event_get_current_target(ev);
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_installation_obj_id_i_have_read_checkbox);
+        if (obj == NULL)
+        {
+                printf("not find obj \n");
+                return;
+        }
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_confirm_btn);
+                lv_obj_set_style_bg_color(obj, lv_color_hex(0x00a8ff), LV_PART_MAIN);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_confirm_btn);
+                lv_obj_set_style_bg_color(obj, lv_color_hex(0x47494a), LV_PART_MAIN);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+        }
+}
+
+static void setting_installation_confirm_obj_click(lv_event_t *ev)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_this_menu_label);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+        }
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_we_are_not_label);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+        }
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_i_have_read_label);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+        }
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_i_have_read_checkbox);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+        }
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_installation_obj_id_confirm_btn);
+        if (obj != NULL)
+        {
+                lv_obj_del(obj);
+        }
+  
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: 右边副列表
+         ***********************************************/
+        setting_installation_sub_list_create();
+}
+static void sat_layout_enter(setting_installation)
+{
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 13:42:25
+        ** 说明: 左边主列表
+        ***********************************************/
+        setting_main_list_create(5);
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: themenu
+         ***********************************************/
+        {
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_installation_obj_id_this_menu_label, 327, 196, 675, 70,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_THE_MENU_IS_TO_OPERATE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+        }
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 13:42:25
+        ** 说明: themenu
+        ***********************************************/
+        {
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_installation_obj_id_we_are_not_label, 327, 290, 675, 29,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_WE_ARE_NOT_RESPONSIBLE), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_small);
+        }
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 14:16:18
+        ** 说明: check
+        ***********************************************/
+        {
+                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_installation_obj_id_i_have_read_label, 433, 408, 463, 32,
+                                              setting_installation_i_heave_read_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              48, 3, 415, 32, setting_installation_obj_id_i_have_read_label,
+                                              lang_str_get(INSTALLATION_XLS_LANG_ID_I_HAVE_READ_AND_UNDERSTOOD), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                              0, 0, 32, 32, setting_installation_obj_id_i_have_read_checkbox,
+                                              (const char *)resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: cofirm
+         ***********************************************/
+        {
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_installation_obj_id_confirm_btn, 304, 528, 720, 72,
+                                                      setting_installation_confirm_obj_click, LV_OPA_COVER, 0x47494a, LV_OPA_COVER, 0x47494a,
+                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_CONFIRM), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
+
+                lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+        }
+
+        if ((sat_pre_layout_get() == sat_playout_get(operating_structure)) ||
+            (sat_pre_layout_get() == sat_playout_get(setting_building_house_number)) ||
+            (sat_pre_layout_get() == sat_playout_get(setting_ipaddress)) ||
+            (sat_pre_layout_get() == sat_playout_get(setting_server_ipaddress)) ||
+            (sat_pre_layout_get() == sat_playout_get(setting_common_entrance_ip)) ||
+            (sat_pre_layout_get() == sat_playout_get(setting_guard_station_number)) ||
+            (sat_pre_layout_get() == sat_playout_get(setting_sensor_settings)) ||
+            (sat_pre_layout_get() == sat_playout_get(ipc_camera_register)) ||
+            (sat_pre_layout_get() == sat_playout_get(ipc_camera_register)))
+        {
+                setting_installation_confirm_obj_click(NULL);
+        }
+}
+static void sat_layout_quit(setting_installation)
+{
+}
+sat_layout_create(setting_installation);
