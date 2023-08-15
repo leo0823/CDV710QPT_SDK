@@ -1,0 +1,8 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory '/home/leo/workspace/ssd20x/project'
+cd build ; cmake .;make
+cp build/SAT_SSD20X.BIN ./
+tar -cvf SAT_SSD20XOS SAT_SSD20X.BIN
+rm -rf SAT_SSD20X.BIN
+make: Leaving directory '/home/leo/workspace/ssd20x/project'
+ 

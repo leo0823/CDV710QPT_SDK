@@ -1,0 +1,7 @@
+indoor/gcc
+indoor/app/rootfs
+indoor/app/build
+outdoor/gcc
+outdoor/tools
+outdoor/app/build
+outdoor/app/rootfs
