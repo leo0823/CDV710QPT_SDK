@@ -12,8 +12,9 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
-        sat_linphone_audio_play_volume_set(100);
+
         return true;
         }
 
@@ -93,4 +94,39 @@ bool ring_buzzer_play(void)
         return sat_linphone_audio_play_start(cmd, 100);
         // sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
         // return true;
+}
+
+
+/************************************************************
+** 函数说明: 播放公共入口铃声
+** 作者: xiaoxiao
+** 日期: 2023-07-05 11:19:41
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool ring_common_door_play(void)
+{
+        char cmd[128] = {0};
+        memset(cmd, 0, sizeof(cmd));
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
+        sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.common_entrance_tone);
+        return sat_linphone_audio_play_start(cmd, 100);
+
+}
+
+/************************************************************
+** 函数说明: 播放警卫室call机铃声
+** 作者: xiaoxiao
+** 日期: 2023-07-05 11:19:41
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool ring_guard_play(void)
+{
+        char cmd[128] = {0};
+        memset(cmd, 0, sizeof(cmd));
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.guard_station_volume);
+        sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.securirty_office_tone);
+        return sat_linphone_audio_play_start(cmd, 100);
+
 }

@@ -241,7 +241,7 @@ static void sat_layout_enter(setting_version_information)
 
                         if (sat_ipcamera_device_name_get(i, 100) == false)
                         {
-                                SAT_DEBUG("get nanme failed");
+                                SAT_DEBUG("get device[%d] nanme failed",i);
                         }
 
                         if (sat_ipcamera_device_version_get(version_buf, i, 100) == false)

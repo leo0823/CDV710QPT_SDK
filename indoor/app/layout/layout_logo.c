@@ -97,6 +97,10 @@ static void sd_state_checking_timer(lv_timer_t *timer)
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
+        if (user_data_get()->is_device_init == false)
+        {
+                return;
+        }
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
         if (masgbox != NULL)
         {
@@ -394,6 +398,16 @@ static void logo_enter_system_timer(lv_timer_t *t)
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
 
+        /***** 音频输出初始化 *****/
+        audio_output_cmd_register(audio_output_event_default_process);
+
+        sd_state_channge_callback_register(sd_state_change_default_callback);
+
+        standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
+        lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
+        lv_timer_ready(standby_timer);
+
+        standby_timer_restart(false);
         if (user_data_get()->is_device_init == false)
         {
                 user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
@@ -413,12 +427,8 @@ static void logo_enter_system_timer(lv_timer_t *t)
                  ** 参数说明:
                  ** 注意事项:
                  ************************************************************/
-                standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
+                
                 standby_timer_restart(true);
-                lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
-                lv_timer_ready(standby_timer);
-                sd_state_channge_callback_register(sd_state_change_default_callback);
-                audio_output_cmd_register(audio_output_event_default_process);
                 user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
                 if (alarm_trigger_check() == false)
                 {
