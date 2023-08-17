@@ -7,6 +7,14 @@
 typedef bool (*snapshot_write_callback)(unsigned char *data, int size, int ch, int mode);
 typedef bool (*record_video_write_callback)(const char *path, int ch, int mode);
 typedef bool (*media_thumb_disp_callback)(const char *data, int x, int y, int w, int h);
+
+typedef struct
+{
+        bool enable;
+        int channel;
+        long call_id;
+} linphone_incomming_info;
+
 /*
  * @日期: 2022-09-05
  * @作者: leo.liu
@@ -14,8 +22,8 @@ typedef bool (*media_thumb_disp_callback)(const char *data, int x, int y, int w,
  */
 typedef struct
 {
-	long size;
-	char msg[1024];
+        long size;
+        char msg[1024];
 } linphone_queue_msg;
 
 /*
@@ -55,7 +63,12 @@ bool sat_linphone_answer(int id);
 ** 说明: 挂断sip通话
 ***********************************************/
 bool sat_linphone_handup(int id);
-
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 9:0:4
+** 说明: 重新渲染下一个接入的call
+***********************************************/
+bool sat_linphone_incomming_refresh(long id);
 /*
  * @日期: 2022-09-08
  * @作者: leo.liu
@@ -192,4 +205,34 @@ bool sat_linphone_audio_play_volume_set(int volume);
 ** 说明: 通话音量
 ***********************************************/
 bool sat_linphone_audio_talk_volume_set(int volume);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 获取一个已经存入的节点
+***********************************************/
+linphone_incomming_info *linphone_incomming_used_node_get(bool is_doorcamera);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 获取一个已经存入的节点
+***********************************************/
+linphone_incomming_info *linphone_incomming_used_node_get_by_call_id(long call_id);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 获取一个没有存入的节点
+***********************************************/
+linphone_incomming_info *linphone_incomming_unused_node_get(bool is_doorcamera);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 释放其中的节点
+***********************************************/
+bool linphone_incomming_node_release(const linphone_incomming_info *node);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 释放所有的节点
+***********************************************/
+bool linphone_incomming_node_release_all(void);
 #endif
