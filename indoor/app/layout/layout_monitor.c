@@ -960,7 +960,6 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 
 static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
-        SAT_DEBUG("Cs %d",monitor_enter_flag_get());
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
                 lv_sat_timer_create(monitor_call_record_delay_task, 500, NULL);
@@ -1968,6 +1967,8 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         char id[32] = {0};
         char stream[32] = {0};
         sscanf(arg, "%s %s %s", user, id, stream);
+
+
 
         int from_channel = 0;
         int cur_channel = monitor_channel_get();
