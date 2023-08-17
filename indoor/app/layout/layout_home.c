@@ -1035,6 +1035,8 @@ static void sat_layout_enter(home)
         }
 
         home_media_thumb_display();
+        
+        linphone_incomming_node_release_all();
 }
 
 static void sat_layout_quit(home)
