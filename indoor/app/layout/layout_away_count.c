@@ -155,7 +155,7 @@ static void layout_alarm_count_param_init(void)
         lv_timer_del(away_alarm_release_det_timer);
         away_alarm_release_det_timer = NULL;
     }
-    away_count_sec = user_data_get()->alarm.away_setting_time * 10;
+    away_count_sec = user_data_get()->alarm.away_setting_time * 60;
 
 }
 

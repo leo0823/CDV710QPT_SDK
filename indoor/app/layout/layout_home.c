@@ -10,6 +10,8 @@ enum
         home_obj_id_setting_icon,
         home_obj_id_mute_icon,
 
+        home_obj_id_door_icon,
+
         home_obj_id_network_icon,
 
         home_obj_id_user_app_label,
@@ -686,6 +688,27 @@ static void home_network_check_timer(lv_timer_t *ptimer)
 
 }
 
+static void home_door_online_check_timer(lv_timer_t *ptimer)
+{
+        lv_obj_t *obj = ptimer->user_data;
+        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        
+        for (int i = 0; i < DEVICE_MAX; i++)
+        {
+                
+                if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
+                {
+                        continue;
+                }
+
+                if (sat_ipcamera_device_name_get(i, 100) == false)
+                {
+                        printf("door device %d is not online\n",i + 1);
+                        lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                }
+        }
+
+}
 
 static void sat_layout_enter(home)
 {
@@ -995,7 +1018,21 @@ static void sat_layout_enter(home)
                 resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_timer_ready(lv_sat_timer_create(home_network_check_timer, 5000, network));
         }
-
+        {
+                /************************************************************
+                ** 函数说明: 门口机状态图标创建
+                ** 作者: xiaoxiao
+                ** 日期: 2023-06-28 10:45:40
+                ** 参数说明:
+                ** 注意事项:
+                ************************************************************/
+                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_door_icon,736, 77 , 35, 35,
+                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                resource_ui_src_get("ic_system_callcam_no.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_timer_ready(lv_sat_timer_create(home_door_online_check_timer, 5000, network));
+        }
 
         home_media_thumb_display();
 }

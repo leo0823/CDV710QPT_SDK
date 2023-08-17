@@ -124,7 +124,7 @@ typedef struct
 
         int emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
 
-        int alarm_enable[8];//0不使能，1：NO高电平触发 2：NC低电平触发
+        int alarm_enable[8];//设置触发方式; 0:不触发，1：NO高电平触发 2：NC低电平触发
 
         int away_sensor_enable[8];//离家模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 

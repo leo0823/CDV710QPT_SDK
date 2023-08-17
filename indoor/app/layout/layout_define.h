@@ -29,7 +29,7 @@
 #include "common/user_standby.h"
 #include "common/user_alarm_list.h"
 #include "common/user_call_list.h"
-#define SYSTEM_VERSION "Ver:0.0.4.1"
+#define SYSTEM_VERSION "Ver:0.0.4.2"
 
 #define TUYA_PID "nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
 
@@ -175,4 +175,9 @@ sat_layout_define(frame_show);//语言已完成
 sat_layout_define(always_record);//语言已完成
 sat_layout_define(sensors_test);
 sat_layout_define(buzzer_call);
+
+sat_layout_define(indoor_register);
+
+
+
 #endif

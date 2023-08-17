@@ -188,7 +188,7 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    backlight_enable(true);
+    backlight_enable(false);
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -201,6 +201,7 @@ static void layout_motion_restart_motion_detection(void)
 ***/
 static void motion_timer_check_task(lv_timer_t *ptimer)
 {
+    
     if ((motion_timer_timeout_check() == true))
     {
         layout_motion_monitor_open();
@@ -476,7 +477,7 @@ static void sat_layout_enter(close)
 {
     standby_timer_close();
     backlight_enable(true);
-    backlight_enable(true);
+    backlight_enable(false);
     close_cancel_btn_create();
     if (user_data_get()->motion.enable)
     {
