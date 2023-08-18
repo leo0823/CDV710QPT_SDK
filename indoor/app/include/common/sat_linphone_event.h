@@ -235,4 +235,10 @@ bool linphone_incomming_node_release(const linphone_incomming_info *node);
 ** 说明: 释放所有的节点
 ***********************************************/
 bool linphone_incomming_node_release_all(void);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 获取所有的有效通道号
+***********************************************/
+bool linphone_incomming_vaild_channel_get(bool is_doorcamera, linphone_incomming_info valid_group[8], int *total);
 #endif
