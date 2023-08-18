@@ -8,9 +8,6 @@
 #include "stdlib.h"
 #include "unistd.h"
 #include "common/sat_ipcamera.h"
-
-
-
 static int monitor_channel = -1;
 static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 
@@ -269,7 +266,7 @@ static void monitor_reset(char flag)
 {
         if (flag & 0x01)
         {
-                sat_linphone_handup(-1);
+                sat_linphone_handup(0xFF);
         }
 
         if (flag & 0x02)

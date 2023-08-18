@@ -97,7 +97,7 @@ static void layout_monitor_goto_layout_process(void)
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
         SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
         linphone_incomming_node_release(node);
-        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        // sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void monitor_obj_cctv_cancel_obj_click(lv_event_t *e)
@@ -981,6 +981,7 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 
 static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
+        SAT_DEBUG("Cs %d", monitor_enter_flag_get());
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
                 lv_sat_timer_create(monitor_call_record_delay_task, 500, NULL);
