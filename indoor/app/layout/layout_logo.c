@@ -123,7 +123,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
         static user_network_info network_data_temp = {0};
         static user_data_info user_data_temp = {0};
-
+        const asterisk_register_info p_register_info[20] = {0};
         if ((flag == 0x01) && (max == sizeof(user_data_info)))
         {
                 char *p = (char *)&user_data_temp;
@@ -140,8 +140,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                         user_data_save();
                 }
-        }
-        else if ((flag == 0x02) && (max == sizeof(user_network_info)))
+        } else if ((flag == 0x02) && (max == sizeof(user_network_info)))
         {
                 char *p = (char *)&network_data_temp;
                 memcpy(&p[pos], data, size);
@@ -151,7 +150,18 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         memcpy(network_data_get()->cctv_device, network_data_temp.cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         network_data_save();
                 }
-        }
+        }else if ((flag == 0x03) && (max == sizeof(asterisk_register_info) * 20))
+        {
+                char *p = (char *)&p_register_info;
+                memcpy(&p[pos], data, size);
+                if ((size + pos) == max)
+                {
+                        printf("p_register_info[0].name is %s\n",p_register_info[0].name);
+                        printf("p_register_info[1].name is %s\n",p_register_info[1].name);
+                        printf("p_register_info[2].name is %s\n",p_register_info[2].name);
+                        
+                }
+        }       
 }
 
 static void flash_backup_to_sd_timer(lv_timer_t *t)

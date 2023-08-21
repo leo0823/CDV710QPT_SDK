@@ -93,6 +93,8 @@ static void intercom_extension_obj_click(lv_event_t *e)
 static int intercom_call_id_index = 0;
 static void intercom_id_obj_click(lv_event_t *e)
 {
+
+        
         lv_obj_t *obj = lv_event_get_target(e);
         intercom_call_id_index = lv_btnmatrix_get_selected_btn(obj) + 1;
 
@@ -104,8 +106,8 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
-        // intercom_call_username_setting(arg);
-        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        intercom_call_username_setting(arg);
+        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
@@ -113,8 +115,9 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
-        intercom_call_username_setting(arg);
-        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        // intercom_call_username_setting(arg);
+        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        return true;
 }
 
 /************************************************************
