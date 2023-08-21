@@ -152,7 +152,7 @@ static void *asterisk_server_sync_task(void *arg)
         while (1)
         {
 
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
                 {
 
                         /*主机或者门口机过滤*/
@@ -174,7 +174,8 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_asterisk_server_sync_data_force = false;
 
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 100);
-                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 100);
+                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 100);                               
+                                sat_ipcamera_data_sync(0x02, 0x01, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info)*ASTERISK_REIGSTER_DEVICE_MAX, 10, 100);
 
                         }
                         else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
