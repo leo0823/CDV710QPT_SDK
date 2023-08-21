@@ -186,6 +186,6 @@ bool sat_kill_task_process(const char *process_name);
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/
 #define ASTERISK_REIGSTER_DEVICE_MAX (20)
-const asterisk_register_info* asterisk_register_info_get(void);
+asterisk_register_info* asterisk_register_info_get(void);
 
 #endif
