@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <signal.h>
 
+#include "common/sat_user_common.h"
 #include "common/ssd20x_common.h"
 #include "common/sat_main_event.h"
 #include "common/user_key.h"
@@ -31,7 +32,6 @@
 #include "common/sat_main_event.h"
 #include "common/user_data.h"
 #include "common/user_linphone.h"
-#include "common/sat_user_common.h"
 #include "common/user_network.h"
 #include "common/sat_user_time.h"
 #include "common/user_gpio.h"
@@ -195,6 +195,27 @@ static void linux_kerner_init(void)
         }
 }
 
+static bool asterisk_register_online_check(const char *user)
+{
+        if (user == NULL)
+        {
+                return false;
+        }
+
+        asterisk_register_info *p_register_info = asterisk_register_info_get();
+        for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
+        {
+
+                if (strncmp(p_register_info[i].name, user, strlen(user)) != NULL)
+                {
+                        /*分机收到的时间戳为0,代表已经离线*/
+                        return p_register_info[i].timestamp == 0 ? false : true;
+                }
+        }
+
+        return false;
+}
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 13:47:49
@@ -202,11 +223,20 @@ static void linux_kerner_init(void)
 ***********************************************/
 static void key_call_process(unsigned int code, unsigned int state)
 {
-        char call[64] = {0};
-        sprintf(call, "sip:100@%s:5066", user_data_get()->server_ip);
-        SAT_DEBUG("CALL:%s", call);
-
-        sat_linphone_call(call, true, true, NULL);
+        char user[8] = {0};
+        for (int i = 1; i < 9; i++)
+        {
+                memset(user, 0, sizeof(user));
+                sprintf(user, "50%d", i);
+                /*只要存在一个在线，则呼叫*/
+                if (asterisk_register_online_check(user) == true)
+                {
+                        char call[64] = {0};
+                        sprintf(call, "sip:100@%s:5066", user_data_get()->server_ip);
+                        sat_linphone_call(call, true, true, NULL);
+                        break;
+                }
+        }
 }
 
 static void sys_timer_callback(void)
@@ -224,9 +254,6 @@ static void sys_timer_callback(void)
         /*如果5秒内 sip_call_timestamp还是没有更新，则判断sip无连接， 需要主动挂断设备了*/
         if ((sip_call_status == true) && ((timestamp - sip_call_timestamp) > SIP_CALL_QURY_TIMER * 10))
         {
-                //   SAT_DEBUG("query online timeout");
-                //  sip_call_status = false;
-                //    sat_linphone_handup(0xFF);
                 return;
         }
 
@@ -236,29 +263,8 @@ static void sys_timer_callback(void)
         {
                 char domain[32] = {0};
                 sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.name,user_data_get()->device.number, NULL, domain);
+                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
         }
-}
-/*连接设备发送正在通话的命令*/
-static void sip_call_online_callback(void)
-{
-        sip_call_status = true;
-        sip_call_timestamp = user_timestamp_get();
-}
-
-/*通过sat_linphone_call_status_query查询后返回状态的回调函数*/
-static void sip_call_status_query_callback(bool state)
-{
-        //  SAT_DEBUG("-----------call status:%d", state);
-        if (state == sip_call_status)
-        {
-                return;
-        }
-        if (state == true)
-        {
-                sip_call_timestamp = user_timestamp_get();
-        }
-        sip_call_status = state;
 }
 
 static void *media_server_task(void *arg)
@@ -275,8 +281,6 @@ static void *media_server_task(void *arg)
 /*视频流状态显示*/
 static void video_stream_status_callback(bool en)
 {
-        SAT_DEBUG("==========>>en=%d", en);
-
         led_ctrl_enable(((en == false) || (ir_feed_read() == GPIO_LEVEL_LOW)) ? false : true);
         return;
 }
@@ -329,8 +333,6 @@ int main(int argc, char *argv[])
         ***********************************************/
         key_call_callback_register(key_call_process);
         system_timer_callback_register(sys_timer_callback);
-        sip_call_online_func_register(sip_call_online_callback);
-        sip_call_status_qury_register(sip_call_status_query_callback);
         video_stream_status_callback_register(video_stream_status_callback);
 
         if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
@@ -338,7 +340,7 @@ int main(int argc, char *argv[])
                 usleep(100 * 1000);
                 char domain[32] = {0};
                 sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.name,user_data_get()->device.number, NULL, domain);
+                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
         }
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
