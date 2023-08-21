@@ -185,6 +185,7 @@ bool sat_kill_task_process(const char *process_name);
 ** 日期: 2023-1-5 15:21:6
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/
-const asterisk_register_info* asterisk_register_info_get(void);
+#define ASTERISK_REIGSTER_DEVICE_MAX (20)
+asterisk_register_info* asterisk_register_info_get(void);
 
 #endif
