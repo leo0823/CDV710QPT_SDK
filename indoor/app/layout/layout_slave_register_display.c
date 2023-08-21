@@ -135,15 +135,6 @@ static void sat_layout_enter(indoor_register)
                         }
                 }
         }
-
-        if (layout_ipc_cmeara_is_doorcamera_get() == true)
-        {
-                sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
-        }
-        else
-        {
-                sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
-        }
 }
 static void sat_layout_quit(indoor_register)
 {
