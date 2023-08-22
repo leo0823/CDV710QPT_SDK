@@ -14,7 +14,9 @@ struct ipcamera_info
         char username[32];
         char password[32];
         char ipaddr[24];
-        char sip_url[64];
+        /*注意此处：因为判断sizeof长度使sip，与rtsp一致，故
+        rtsp url与 sip url的数组长度要一致，否则会出现越界处理*/
+        char sip_url[128];
         char door_name[64];
         int port;
         ipcamera_rtsp_info rtsp[IPCAMERA_PROFILE_MAX];
@@ -161,5 +163,5 @@ struct ipcamera_info *sat_ipcamera_node_data_get(int index);
 ** timeout：发送超时
 ** param: 预留参数，如果需要发送给门口机，则需要传送绑定的设备信息
 ***********************************************/
-bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout,void* param);
+bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout, void *param);
 #endif
