@@ -55,7 +55,7 @@ bool sat_linphone_register(const char *name, const char *user, const char *pwd, 
  * @作者: leo.liu
  * @注释: 同意通话
  */
-bool sat_linphone_answer(int id);
+bool sat_linphone_answer(long id);
 
 /***********************************************
 ** 作者: leo.liu
