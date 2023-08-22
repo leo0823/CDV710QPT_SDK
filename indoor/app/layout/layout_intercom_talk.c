@@ -41,14 +41,11 @@ bool intercom_call_username_setting(const char *user)
 
 static void layout_intercom_goto_layout_process(void)
 {
-        printf("======%s========%d======\n",__func__,__LINE__);
         sat_linphone_handup(-1);
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
 
         if (node == NULL)
         { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
-
-               
                 node = linphone_incomming_used_node_get(false);
                 if (node == NULL)
                 { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
@@ -69,7 +66,7 @@ static void layout_intercom_goto_layout_process(void)
                 char number[128] = {0};
                 sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
                 intercom_call_username_setting(number);
-                //SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 
@@ -78,7 +75,7 @@ static void layout_intercom_goto_layout_process(void)
         sat_linphone_incomming_refresh(node->call_id);
         monitor_channel_set(node->channel);
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-        //SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+        SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
         linphone_incomming_node_release(node);
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
@@ -241,10 +238,8 @@ static void intercom_talk_call_time_display(void)
 
 static void intercom_talk_call_time_timer(lv_timer_t *ptime)
 {
-        printf("intercom_talk_timeout is %d\n",intercom_talk_timeout);
         if (intercom_talk_timeout == 0)
         {
-                printf("intercom_talk_timeout is %d\n",intercom_talk_timeout);
                 layout_intercom_goto_layout_process();
                 return;
         }
@@ -327,18 +322,6 @@ static void intercom_talk_answer_obj_display(void)
 //呼叫繁忙事件注册
 static bool intercom_talk_call_busy_callback(char *arg)
 {
-        // /*sip:5xxx代表室内设备*/
-        // if (strstr(arg, "sip:50") != NULL)
-        // {
-        //         sat_linphone_audio_play_stop();
-        //         layout_intercom_goto_layout_process();
-        // }
-
-        // /*sip:2xxx代表门口机*/
-        // if (strstr(arg, "sip:20") != NULL)
-        // {
-        //         return true;
-        // }
         return true;
 }
 
@@ -376,14 +359,14 @@ static bool intercom_talk_call_end_callback(char *arg)
         /*sip:5xxx代表室内设备*/
         if (strstr(arg, "sip:50") != NULL)
         {
-                printf("======%s========%d======\n",__func__,__LINE__);
+
                 intercom_doorcamera_end_process(arg);
         }
 
         /*sip:2xxx代表门口机*/
         if (strstr(arg, "sip:20") != NULL)
         {
-                printf("======%s========%d======\n",__func__,__LINE__);
+
                 intercom_doorcamera_end_process(arg);
         }
         return true;
@@ -393,8 +376,6 @@ static bool intercom_talk_call_end_callback(char *arg)
 static bool intercom_talk_call_failed_callback(char *arg)
 {
         sat_linphone_audio_play_stop();
-        printf("======%s========%d======\n",__func__,__LINE__);
-        printf("======%s========%d======\n",arg,__LINE__);
         layout_intercom_goto_layout_process();
         return true;
 }
@@ -415,6 +396,7 @@ static void intercom_talk_call_volume_obj_display(void)
         }
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(intercom_call_state == 3 ? "btn_call_sound_voice.png" : "btn_call_sound.png"), LV_PART_MAIN);
 }
+
 static void intercom_talk_answer_obj_click(lv_event_t *e)
 {
 

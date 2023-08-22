@@ -4,6 +4,7 @@
 #include "tuya_api.h"
 enum
 {
+        monitor_obj_id_other_call_list,
         monitor_obj_id_full_display_cont,
 
         monitor_obj_id_adj_cont,
@@ -1408,7 +1409,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
         }
 }
 
-//门口机通道点击事件
+//门口机通道接受通话事件
 static void layout_monitor_door_call_btn_click(lv_event_t * ev)
 {
         monitor_close(0x03);
@@ -1426,7 +1427,7 @@ static void layout_monitor_door_call_btn_click(lv_event_t * ev)
         
 }
 
-//内线通道点击事件
+//内线通道接受通话事件
 static void layout_monitor_intercom_call_btn_click(lv_event_t * ev)
 {
         monitor_close(0x03);
@@ -1446,56 +1447,68 @@ static void layout_monitor_intercom_call_btn_click(lv_event_t * ev)
         
 }
 
+//挂断其他设备的呼叫会话
+static void layout_monitor_other_call_handup_btn_click(lv_event_t * ev)
+{
+        monitor_close(0x03);
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
+        if(node != NULL)
+        {
+                sat_linphone_handup(node->call_id);
+        }
+}
+
+static lv_obj_t * layout_monitor_other_call_list_btn_create(void)
+{
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_other_call_list);
+        if (list != NULL)
+        {
+                return list;
+        }
+        list = lv_list_create(sat_cur_layout_screen_get());
+        lv_common_style_set_common(list, monitor_obj_id_other_call_list, 32, 96, 261, 360, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        return list;
+}
 //门呼叫，内线呼叫会话按键刷新
 static void layout_monitor_door_ch_btn_create(void)
 {
         linphone_incomming_info node[8] ;
         int total;
-        int old_total;//记录门口机会话个数（用来给内线会话通道按键坐标偏移计算）
    
-        
-        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_other_call_bg);
-        if(parent != NULL)
-        {
-                lv_obj_del(parent);
-        }
+        lv_obj_t *parent = layout_monitor_other_call_list_btn_create();
 
-        //创建通道案件背景容器
-        parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), monitor_obj_id_other_call_bg, 0, 80, 1024, 80,
-                                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         int sec_x = 0;
         int sec_y = 0;
         //门口机通道按键创建
         linphone_incomming_vaild_channel_get(true,node,&total);
         for(int i = 0; i < total; i++)
         {
-                lv_obj_t * obj = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 142, 61,
+                lv_obj_t * obj_answer = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 261, 80,
                                                 layout_monitor_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 80, 10, 62, 41, 1,
                                                 network_data_get()->door_device[node[i].channel].door_name, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                 0, 0, 142, 61, 0,
-                                                (const char *)resource_ui_src_get("btn_other_call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_obj_t * sub = lv_obj_get_child_form_id(obj,1);
+
+                lv_common_img_btn_create(obj_answer, 53, 24, 32, 32, 2,
+                                         layout_monitor_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                lv_obj_t * sub = lv_obj_get_child_form_id(obj_answer,1);
                 if (sub != NULL)
                 {
                         lv_label_set_long_mode(sub, LV_LABEL_LONG_SCROLL_CIRCULAR);
                 }
-
-                if(i != 0 && i % 5 == 0){
-                     sec_x = 0;
-                     sec_y += 110;   
-                }else{
-                        sec_x += 220;
-                }
+                sec_y += 100;   
+ 
         }
+
         //内线会话通道创建（坐标沿着门口机通道按键坐标增加）
-        old_total = total;
         linphone_incomming_vaild_channel_get(false,node,&total);
         for(int i = 0; i < total ; i++)
         {
@@ -1508,21 +1521,23 @@ static void layout_monitor_door_ch_btn_create(void)
                                                 80, 10, 62, 41, 61,
                                                 sip_user, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                 0, 0, 142, 61, 0,
-                                                (const char *)resource_ui_src_get("btn_other_call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_img_btn_create(obj, 53, 24, 32, 32, 2,
+                                                layout_monitor_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
                 lv_obj_t * sub = lv_obj_get_child_form_id(obj,1);
                 if (sub != NULL)
                 {
                         lv_label_set_long_mode(sub, LV_LABEL_LONG_SCROLL_CIRCULAR);
                 }
-                if((i + old_total) != 0 && (i + old_total % 5 == 0)){
-                     sec_x = 0;
-                     sec_y += 110;   
-                }else{
-                        sec_x += 220;
-                }
+                sec_y += 100;   
         }
 
 }
+
 static void sat_layout_enter(monitor)
 {
 
