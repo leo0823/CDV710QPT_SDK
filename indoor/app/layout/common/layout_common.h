@@ -85,7 +85,15 @@ void asterisk_server_sync_data_force(bool is_sync);
 ** 参数说明: 
 ** 注意事项: 
 ************************************************************/
-
 void common_passwd_check_func_create(int cont_id,void (*callback)(void));
+
+/************************************************************
+** 函数说明: 设备注册信息获取
+** 作者: xiaoxiao
+** 日期: 2023-08-05 10:50:25
+** 参数说明: 
+** 注意事项:此函数只对分机有效
+************************************************************/
+asterisk_register_info * asterisk_register_info_get_user(void);
 
 #endif

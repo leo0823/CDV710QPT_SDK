@@ -1549,8 +1549,37 @@ static bool tcp_device_serverce_xml_set_networkinterfaces(int tcp_socket_fd, con
 
         return true;
 }
+#define SYNC_FILE_DATA_MAX (512 * 1024)
+static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *recv_string)
+{
+        bool reslut = false;
+        /*base64解码*/
+        size_t base64_decode_size = 0;
+        char *base64_decode_buffer = (char *)malloc(SYNC_FILE_DATA_MAX);
+        if (base64_decode_buffer == NULL)
+        {
+                SAT_DEBUG("malloc fail");
+                return false;
+        }
+        base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+
+        if (base64_decode_size == (sizeof(asterisk_register_info) * ASTERISK_REIGSTER_DEVICE_MAX))
+        {
+                memcpy(asterisk_register_info_get(), base64_decode_buffer, base64_decode_size);
+        }
+        else
+        {
+                SAT_DEBUG("aster data sync error");
+        }
+
+        free(base64_decode_buffer);
+        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
+        return reslut;
+}
+#define SYNC_FILE_DATA_MAX (512 * 1024)
 static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
+        bool reslut = false;
         char username[128] = {0};
         char password[128] = {0};
         char nonce[128] = {0};
@@ -1573,144 +1602,157 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 return false;
         }
 
-        char data[128] = {0};
+        char *data = (char *)malloc(SYNC_FILE_DATA_MAX);
         if (discover_devices_data_parsing(ptr, "GetDeviceInformation", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetDeviceInformation\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_information(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_information(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing(ptr, "GetCapabilities", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "GetCapabilities", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetCapabilities\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_capabilities(tcp_socket_fd);
+                reslut = tcp_device_servrce_xml_get_capabilities(tcp_socket_fd);
         }
 
-        if (discover_devices_data_parsing(ptr, "GetScopes", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "GetScopes", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetScopes\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_scopes(tcp_socket_fd);
+                reslut = tcp_device_servrce_xml_get_scopes(tcp_socket_fd);
         }
 
-        if (discover_devices_data_parsing(ptr, "Register", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "Register", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] Register\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_register(tcp_socket_fd, ptr);
+                reslut = tcp_device_servrce_xml_get_register(tcp_socket_fd, ptr);
         }
 
-        if (discover_devices_data_parsing(ptr, "Delete", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "Delete", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] Delete\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_delete(tcp_socket_fd, ptr);
+                reslut = tcp_device_servrce_xml_get_delete(tcp_socket_fd, ptr);
         }
 
-        if (discover_devices_data_parsing(ptr, "GetName", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "GetName", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] Get name\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_device_name(tcp_socket_fd, ptr);
+                reslut = tcp_device_servrce_xml_get_device_name(tcp_socket_fd, ptr);
         }
 
-        if (discover_devices_data_parsing(ptr, "SetName", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "SetName", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] Set name\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_set_device_name(tcp_socket_fd, ptr);
+                reslut = tcp_device_servrce_xml_set_device_name(tcp_socket_fd, ptr);
         }
 
-        if (discover_devices_data_parsing(ptr, "GetVersion", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "GetVersion", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] Get version\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_version_name(tcp_socket_fd, ptr);
+                reslut = tcp_device_servrce_xml_get_version_name(tcp_socket_fd, ptr);
         }
 
-        if (discover_devices_data_parsing(ptr, "ChangePassword", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing(ptr, "ChangePassword", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] Change password\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_channge_device_password(tcp_socket_fd, ptr);
+                reslut = tcp_device_servrce_xml_channge_device_password(tcp_socket_fd, ptr);
         }
 
-        if ((discover_devices_data_parsing((const char *)ptr, "Category", data, sizeof(data)) == true))
+        else if ((discover_devices_data_parsing((const char *)ptr, "Category", data, sizeof(data)) == true))
         {
                 printf("[%s:%d] Category\n", __func__, __LINE__);
-                return tcp_device_servrce_xml_get_capabilities(tcp_socket_fd);
+                reslut = tcp_device_servrce_xml_get_capabilities(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetDNS", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetDNS", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetDNS\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_dns(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_dns(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetNetworkInterfaces", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetNetworkInterfaces", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetNetworkInterfaces\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_networkinterface(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_networkinterface(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "IncludeCapability", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "IncludeCapability", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] IncludeCapability\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_includecapability(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_includecapability(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetSystemDateAndTime", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetSystemDateAndTime", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetSystemDateAndTime\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_systemdataandtime(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_systemdataandtime(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "SetScopes", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "SetScopes", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] SetScopes\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_set_scopes(tcp_socket_fd, recv_data, recv_size);
+                reslut = tcp_device_serverce_xml_set_scopes(tcp_socket_fd, recv_data, recv_size);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetUsers", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetUsers", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetUsers\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_users(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_users(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "SetUser", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "SetUser", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] SetUser\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_set_users(tcp_socket_fd, recv_data, recv_size);
+                reslut = tcp_device_serverce_xml_set_users(tcp_socket_fd, recv_data, recv_size);
         }
 
-        if (discover_devices_data_parsing((const char *)recv_data, "GetNTP", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetNTP", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetNTP\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_ntp(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_ntp(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetHostname", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetHostname", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetHostname\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_hostname(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_hostname(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetDiscoveryMode", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetDiscoveryMode", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetDiscoveryMode\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_discovery(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_discovery(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetNetworkDefaultGateway", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetNetworkDefaultGateway", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetNetworkDefaultGateway\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_gateway(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_gateway(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "GetNetworkProtocols", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "GetNetworkProtocols", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] GetNetworkProtocols\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_get_network_protocols(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_get_network_protocols(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "SetNTP", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "SetNTP", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] SetNTP\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_set_ntp(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_set_ntp(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "SetDNS", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "SetDNS", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] SetDNS\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_set_dns(tcp_socket_fd);
+                reslut = tcp_device_serverce_xml_set_dns(tcp_socket_fd);
         }
-        if (discover_devices_data_parsing((const char *)recv_data, "SetNetworkInterfaces", data, sizeof(data)) == true)
+        else if (discover_devices_data_parsing((const char *)recv_data, "SetNetworkInterfaces", data, sizeof(data)) == true)
         {
                 printf("[%s:%d] SetNetworkInterfaces\n", __func__, __LINE__);
-                return tcp_device_serverce_xml_set_networkinterfaces(tcp_socket_fd, recv_data, recv_size);
+                reslut = tcp_device_serverce_xml_set_networkinterfaces(tcp_socket_fd, recv_data, recv_size);
+        }
+        else if (discover_devices_data_parsing(ptr, "SyncAsteriskData", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] SyncAsteriskData\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_get_asteriskdata(tcp_socket_fd, data);
+        }
+        else
+        {
+                SAT_DEBUG("%s", recv_data);
         }
 
-        SAT_DEBUG("%s", recv_data);
-        return false;
+        if (data != NULL)
+        {
+                free(data);
+        }
+
+        return reslut;
 }
 
 static bool tcp_receive_onvif_media_get_profiles_processing(int tcp_socket_fd)
@@ -2421,7 +2463,7 @@ static void *user_network_tcp_task(void *arg)
                 if (client_fd >= 0)
                 {
                         memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
-                        while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 1000)) > 0)
+                        while ((recv_len = sat_socket_tcp_receive(client_fd, receive_data, DOOR_CAMERA_RECEIVE_BUFFER_MAX, 100)) > 0)
                         {
                                 tcp_receive_data_parsing_processing(client_fd, receive_data, recv_len);
                         }

@@ -98,40 +98,46 @@ static void sat_layout_enter(indoor_register)
                         for (int i = 0; i < 20; i++)
                         {
 
-                        /*主机或者门口机过滤*/
-                        if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0) || (strncmp(p_register_info[i].name, "20", 2) == 0))
-                        {
-                                continue;
-                        }
-                    
-                        unsigned long long timestamp = user_timestamp_get();
-                        if(abs(timestamp - p_register_info[i].timestamp) >= (10 * 1000))
-                        {
-                                continue;
-                        }
-                        char * ip = strstr(p_register_info[i].ip,":");
-                        ip[0] = '\0';
-                        
-                                
-                                lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
-                                                                                                   NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                                   10, 8, 838, 50, 0,
-                                                                                                   p_register_info[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                                   10, 45, 838, 50, 1,
-                                                                                                   p_register_info[i].ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                                                                   0, 0, 0, 0, -1,
-                                                                                                   NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                                   0, 20, 48, 48, 2,
-                                                                                                   NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
-                                lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
-                                if (sub != NULL)
+                                /*主机或者门口机过滤*/
+                                if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0) || (strncmp(p_register_info[i].name, "20", 2) == 0))
                                 {
-                                        lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
+                                        continue;
                                 }
+                        
+                                // unsigned long long timestamp = user_timestamp_get();
+                                // if(abs(timestamp - p_register_info[i].timestamp) >= (10 * 1000))
+                                // {
+                                //         continue;
+                                // }
+                                printf("p_register_info[i].name is %s\n",p_register_info[i].name);
+                                printf("p_register_info[i].ip is %s\n",p_register_info[i].ip);
+                                char * ip = strstr(p_register_info[i].ip,":");
+                                if(ip == NULL)
+                                {
+                                        return;
+                                }
+                                ip[0] = '\0';
+                                
+                                        
+                                        lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
+                                                                                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                                                        10, 8, 838, 50, 0,
+                                                                                                        p_register_info[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                                        10, 45, 838, 50, 1,
+                                                                                                        p_register_info[i].ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                                                        0, 0, 0, 0, -1,
+                                                                                                        NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                                        0, 20, 48, 48, 2,
+                                                                                                        NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                        lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
+                                        if (sub != NULL)
+                                        {
+                                                lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
+                                        }
 
-                                item_y += 88;
+                                        item_y += 88;
                         }
                 }
         }

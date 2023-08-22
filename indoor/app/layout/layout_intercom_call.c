@@ -93,15 +93,36 @@ static void intercom_extension_obj_click(lv_event_t *e)
 static int intercom_call_id_index = 0;
 static void intercom_id_obj_click(lv_event_t *e)
 {
-
         
         lv_obj_t *obj = lv_event_get_target(e);
         intercom_call_id_index = lv_btnmatrix_get_selected_btn(obj) + 1;
+        char user_name[64] = {0};
+        char own_name[64] = {0};
+        sprintf(user_name,"50%d",intercom_call_id_index);
+        sprintf(own_name,"50%d",user_data_get()->system_mode & 0x0F);
+        if(strncmp(user_name,own_name,4) == 0)
+        {
+                return;
+        }
 
-        char number[128] = {0};
-        sprintf(number, "sip:50%d@%s:5066", intercom_call_id_index, user_data_get()->mastar_wallpad_ip);
-        sat_linphone_call(number, false, false, NULL);
-        //       sat_ipcamera_device_discover_search(0x02);
+        const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
+        for (int i = 0; i < 20; i++)
+        {
+                /*主机或者门口机过滤*/
+                if ((p_register_info[i].name[0] == '\0')  || (strncmp(p_register_info[i].name, "20", 2) == 0))
+                {
+                        continue;
+                }
+                if(strncmp(p_register_info[i].name ,user_name,3) == 0)
+                {
+                        char number[128] = {0};
+                        sprintf(number, "sip:%s@%s:5066", user_name, user_data_get()->mastar_wallpad_ip);
+                        sat_linphone_call(number, false, false, NULL);
+                        //sat_ipcamera_device_discover_search(0x02);
+                        return;
+                }
+        }
+
 }
 
 static bool intercom_linphone_outgoing_callback(char *arg)

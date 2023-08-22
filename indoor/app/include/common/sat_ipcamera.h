@@ -159,6 +159,7 @@ struct ipcamera_info *sat_ipcamera_node_data_get(int index);
 ** size:同步数据的大小
 ** inline_t:最后刷新注册的时间戳到现在的时间差判定是否在线
 ** timeout：发送超时
+** param: 预留参数，如果需要发送给门口机，则需要传送绑定的设备信息
 ***********************************************/
-bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout);
+bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout,void* param);
 #endif

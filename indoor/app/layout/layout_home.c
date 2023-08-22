@@ -179,8 +179,9 @@ static void home_obj_top_icon_display(void)
                 {
                         if(obj != NULL)
                         {
-
                                 lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                                char user_name[64] = {0};
+                                const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
                                 for (int i = 0; i < DEVICE_MAX; i++)
                                 {
                                         
@@ -188,18 +189,26 @@ static void home_obj_top_icon_display(void)
                                         {
                                                 continue;
                                         }
-
-                                        if (sat_ipcamera_device_name_get(i, 100) == false)
+                                        sprintf(user_name,"20%d",i + 1);
+     
+                                        for (int j = 0; j < 20; j++)
                                         {
-                                                printf("door device %d is not online\n",i + 1);
-                                                lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                                                if((strcmp(user_name,p_register_info[j].name) == 0) && (p_register_info[j].timestamp != 0))//注册的门口机在线
+                                                {
+                                                        break;
+                                                }
+                                                if( j == 19)
+                                                {
+                                                        lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                                                        lv_obj_set_x(obj, pos_x + 13);//门口机在线图标有点偏小
+                                                        return;
+                                                }
                                         }
+                                                
                                 }
-                                lv_obj_set_x(obj, pos_x + 13);//门口机在线图标有点Pixar
                         }
-                        
-                }
                 
+                }
         }
 
 }
