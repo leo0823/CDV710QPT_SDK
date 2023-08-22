@@ -2,6 +2,7 @@
 #include "layout_intercom_call.h"
 enum
 {
+        intercom_talk_obj_id_other_call_list,
         intercom_talk_screen_obj_id,
         intercom_talk_obj_top,
         intercom_talk_obj_status_label,
@@ -118,80 +119,105 @@ static void layout_interocm_talk_intercom_call_btn_click(lv_event_t * ev)
         
 }
 
+//会话列表创建
+static lv_obj_t * layout_intercom_other_call_list_btn_create(void)
+{
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_other_call_list);
+        if (list != NULL)
+        {
+                lv_obj_clean(list);
+                return list;
+        }
+        list = lv_list_create(sat_cur_layout_screen_get());
+        lv_common_style_set_common(list,intercom_talk_obj_id_other_call_list, 32, 96, 253, 360, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+
+        lv_obj_set_style_pad_row(list,20,LV_PART_MAIN);
+        
+        return list;
+}
+void layout_intercom_talk_door_ch_btn_create(void);
+//挂断其他设备的呼叫会话
+static void layout_intercom_talk_other_call_handup_btn_click(lv_event_t * ev)
+{
+        monitor_close(0x03);
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
+        if(node != NULL)
+        {
+                sat_linphone_handup(node->call_id);
+                linphone_incomming_node_release(node);
+                layout_intercom_talk_door_ch_btn_create();
+        }
+}
+
+
 //门呼叫，内线呼叫会话按键刷新
 void layout_intercom_talk_door_ch_btn_create(void)
 {
         linphone_incomming_info node[8] ;
         int total;
-        int old_total;//记录门口机会话个数（用来给内线会话通道按键坐标偏移计算）
    
-        
-        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_other_call_bg);
-        if(parent != NULL)
-        {
-                lv_obj_del(parent);
-        }
+        lv_obj_t *parent = layout_intercom_other_call_list_btn_create();
 
-        //创建通道案件背景容器
-        parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_obj_id_other_call_bg, 0, 80, 1024, 80,
-                                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         int sec_x = 0;
         int sec_y = 0;
         //门口机通道按键创建
         linphone_incomming_vaild_channel_get(true,node,&total);
         for(int i = 0; i < total; i++)
         {
-                lv_obj_t * obj = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 142, 61,
+                SAT_DEBUG("monitor total is %d",total);
+                lv_obj_t * obj_answer = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 253, 80,
                                                 layout_interocm_talk_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                80, 10, 62, 41, 1,
+                                                110, 21, 93, 35, 1,
                                                 network_data_get()->door_device[node[i].channel].door_name, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                                0, 0, 142, 61, 0,
-                                                (const char *)resource_ui_src_get("btn_other_call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                0, 0, 253, 80, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_obj_t * sub = lv_obj_get_child_form_id(obj,1);
+
+                lv_obj_t * handup = lv_common_img_btn_create(obj_answer, 2, 205, 24, 32, 32, 
+                                        layout_intercom_talk_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                lv_obj_set_ext_click_area(handup, 30);
+                lv_obj_t * sub = lv_obj_get_child_form_id(obj_answer,1);
                 if (sub != NULL)
                 {
                         lv_label_set_long_mode(sub, LV_LABEL_LONG_SCROLL_CIRCULAR);
                 }
-
-                if(i != 0 && i % 5 == 0){
-                     sec_x = 0;
-                     sec_y += 110;   
-                }else{
-                        sec_x += 220;
-                }
+                sec_y += 100;   
+ 
         }
+
         //内线会话通道创建（坐标沿着门口机通道按键坐标增加）
-        old_total = total;
         linphone_incomming_vaild_channel_get(false,node,&total);
         for(int i = 0; i < total ; i++)
         {
+                SAT_DEBUG("inter total is %d",total);
                 char sip_user[4] = {0};
                 sprintf(sip_user,"50%d",node[i].channel);
-                lv_obj_t * obj = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 142, 61,
+                lv_obj_t * obj = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 253, 80,
                                                 layout_interocm_talk_intercom_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                80, 10, 62, 41, 61,
+                                                110, 21, 93, 35, 1,
                                                 sip_user, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                                0, 0, 142, 61, 0,
-                                                (const char *)resource_ui_src_get("btn_other_call.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                0, 0, 253, 80, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_img_btn_create(obj, 2,205, 24, 32, 32, 
+                                                layout_intercom_talk_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
                 lv_obj_t * sub = lv_obj_get_child_form_id(obj,1);
                 if (sub != NULL)
                 {
                         lv_label_set_long_mode(sub, LV_LABEL_LONG_SCROLL_CIRCULAR);
                 }
-                if((i + old_total) != 0 && (i + old_total % 5 == 0)){
-                     sec_x = 0;
-                     sec_y += 110;   
-                }else{
-                        sec_x += 220;
-                }
+                sec_y += 100;   
         }
 }
 
@@ -418,6 +444,10 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
 
 static bool intercom_talk_call_answer_callback(char *args)
 {
+        if(intercom_call_state == 3)
+        {
+                return false;
+        }
         sat_linphone_audio_play_stop();
         intercom_call_state = 3;
 
