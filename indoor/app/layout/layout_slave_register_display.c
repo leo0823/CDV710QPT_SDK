@@ -104,13 +104,11 @@ static void sat_layout_enter(indoor_register)
                                         continue;
                                 }
                         
-                                // unsigned long long timestamp = user_timestamp_get();
-                                // if(abs(timestamp - p_register_info[i].timestamp) >= (10 * 1000))
-                                // {
-                                //         continue;
-                                // }
-                                printf("p_register_info[i].name is %s\n",p_register_info[i].name);
-                                printf("p_register_info[i].ip is %s\n",p_register_info[i].ip);
+                                unsigned long long timestamp = user_timestamp_get();
+                                if(abs(timestamp - p_register_info[i].timestamp) >= (10 * 1000))
+                                {
+                                        continue;
+                                }
                                 char * ip = strstr(p_register_info[i].ip,":");
                                 if(ip == NULL)
                                 {
