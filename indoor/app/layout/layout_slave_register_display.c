@@ -94,29 +94,25 @@ static void sat_layout_enter(indoor_register)
                         lv_obj_t *list = ipc_camera_registered_list_create();
                         int item_y = 0;
 
-                        const asterisk_register_info *p_register_info = asterisk_register_info_get();
+                        const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
                         for (int i = 0; i < 20; i++)
                         {
-
+                                printf("=========p_register_info[i].name is %s===========\n",(p_register_info[i].name));
+                                printf("=========p_register_info[i].ip is %s===========\n",(p_register_info[i].ip));
+                                printf("=========p_register_info[i].timestamp is %llu===========\n",(p_register_info[i].timestamp));
                                 /*主机或者门口机过滤*/
-                                if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0) || (strncmp(p_register_info[i].name, "20", 2) == 0))
+                                if ((p_register_info[i].name[0] == '\0') || (p_register_info[i].timestamp == 0))
                                 {
                                         continue;
                                 }
                         
-                                unsigned long long timestamp = user_timestamp_get();
-                                if(abs(timestamp - p_register_info[i].timestamp) >= (10 * 1000))
-                                {
-                                        continue;
-                                }
+
                                 char * ip = strstr(p_register_info[i].ip,":");
-                                if(ip == NULL)
+                                if(ip != NULL)
                                 {
-                                        return;
+                                        ip[0] = '\0';
                                 }
-                                ip[0] = '\0';
-                                
-                                        
+
                                         lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
                                                                                                         NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

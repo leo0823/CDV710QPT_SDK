@@ -53,7 +53,14 @@ static void logo_sip_server_register(void)
 
         char sip_user_id[16] = {0};
         char sip_sever[32] = {0};
-        sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
+        if((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                sprintf(sip_user_id, "%d", 100);
+        }
+        else
+        {
+                sprintf(sip_user_id, "50%d", (user_data_get()->system_mode & 0x0F) - 1);
+        }
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
         // printf("%s register to :%s\n",sip_user_id,sip_sever);
         sat_linphone_register(NULL, sip_user_id, NULL, sip_sever);
@@ -163,7 +170,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         user_data_get()->call_time = info->call_time;
                         user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                         user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
-
+                        printf("===receive data info\n");
                         memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                         memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                         user_data_save();
@@ -173,10 +180,11 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         user_network_info *info = (user_network_info *)recv_data;
                         memcpy(network_data_get()->door_device, info->door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         memcpy(network_data_get()->cctv_device, info->cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
+                        printf("===receive netwoek info\n");
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
                 {
-
+                        printf("===receive register_info\n");
                         memcpy((void *)&p_register_info_slave, recv_data, max);
 
                 }
@@ -310,8 +318,14 @@ static void logo_enter_system_timer(lv_timer_t *t)
          */
         media_file_list_init();
 
-        /*****  tuya api初始化 *****/
-        tuya_api_init(TUYA_PID);
+        int id = user_data_get()->system_mode & 0x0F;
+
+        if(id == 0x01)
+        {
+                /*****  tuya api初始化 *****/
+                tuya_api_init(TUYA_PID);
+        }
+
 
         /***********************************************
          ** 作者: leo.liu
@@ -342,7 +356,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         //  usleep(3000 * 1000);
         /*判断是否为master*/
-        int id = user_data_get()->system_mode & 0x0F;
+
 
         if (id == 0x01)
         {

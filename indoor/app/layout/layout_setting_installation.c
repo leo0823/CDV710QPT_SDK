@@ -280,7 +280,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                         /*分机*/
                         if (((system_mode & 0x0F) != 0x01))
                         {
-                                if( i == 6 || i == 7 || i == 8 || i == 9 || i == 10)
+                                if( i == 6 || i == 7 || i == 8 || i == 9 )
                                 {
                                         continue;
                                 }
@@ -290,7 +290,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                                 /*分机*/
                         if (((system_mode & 0x1F) != 0x11))
                         {
-                                if( i == 6 || i == 7 || i == 8 || i == 9 || i == 10)
+                                if( i == 6 || i == 7 || i == 8 || i == 9 )
                                 {
                                         continue;
                                 }

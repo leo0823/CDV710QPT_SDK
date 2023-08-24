@@ -975,9 +975,7 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
 static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 {
         int mode = REC_MODE_TUYA_CALL;
-        SAT_DEBUG("media_sdcard_insert_check() is %d", media_sdcard_insert_check());
-        SAT_DEBUG("ser_data_get()->auto_record_mod is %d", user_data_get()->auto_record_mode);
-        SAT_DEBUG("is_monitor_record_video_ing is %d", is_monitor_record_video_ing);
+
         if (user_data_get()->auto_record_mode != 0)
         {
                 if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 1))
@@ -1450,13 +1448,13 @@ static void layout_monitor_door_ch_btn_create(void);
 //挂断其他设备的呼叫会话
 static void layout_monitor_other_call_handup_btn_click(lv_event_t * ev)
 {
-        monitor_close(0x03);
         lv_obj_t *obj = lv_event_get_current_target(ev);
         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
         if(node != NULL)
         {
                 sat_linphone_handup(node->call_id);
                 linphone_incomming_node_release(node);
+
                 layout_monitor_door_ch_btn_create();
         }
 }
@@ -1492,7 +1490,6 @@ static void layout_monitor_door_ch_btn_create(void)
         linphone_incomming_vaild_channel_get(true,node,&total);
         for(int i = 0; i < total; i++)
         {
-                SAT_DEBUG("monitor total is %d",total);
                 lv_obj_t * obj_answer = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 253, 80,
                                                 layout_monitor_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1603,11 +1600,15 @@ static void sat_layout_enter(monitor)
                  ** 说明: 通道显示
                  ***********************************************/
                 {
-                        lv_common_text_create(parent, 1, 37, 23, 950, 42,
+                        lv_obj_t * obj = lv_common_text_create(parent, 1, 37, 23, 950, 42,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                        if(obj != NULL)
+                        {
+                                lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
+                        }
                         monitior_obj_channel_info_obj_display();
                 }
                 /***********************************************
