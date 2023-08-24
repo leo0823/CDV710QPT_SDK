@@ -84,6 +84,8 @@ static void slave_type_setting_confirm_func(lv_event_t *ev)
                         // setenv("SIP", network_data_get()->sip_user, 1);
                         network_data_save();
                         user_data_save();
+                        usleep(1000 * 100);
+                        system("reboot");
                         break;
                 }
         }

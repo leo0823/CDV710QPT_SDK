@@ -335,11 +335,15 @@ static void layout_motion_head_cont_create(void)
      ** 说明: 通道显示
      ***********************************************/
     {
-        lv_common_text_create(parent, 1, 0, 23, 950, 42,
+        lv_obj_t * obj = lv_common_text_create(parent, 1, 0, 23, 950, 42,
                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                               NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+        if(obj != NULL)
+        {
+            lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
+        }
         monitior_obj_channel_info_obj_display();
     }
     /***********************************************
