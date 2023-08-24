@@ -765,6 +765,10 @@ static void frame_show_monitor_channle_display(void)
 									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 									"", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+	    if(obj != NULL)
+        {
+            lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
+        }
 	}
 
 	if (is_channel_ipc_camera(channel) == true)

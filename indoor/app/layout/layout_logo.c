@@ -53,9 +53,16 @@ static void logo_sip_server_register(void)
 
         char sip_user_id[16] = {0};
         char sip_sever[32] = {0};
-        sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
+        if((user_data_get()->system_mode & 0x0f) == 0x01)
+        {
+                sprintf(sip_user_id, "%d", 100);
+        }
+        else
+        {
+                sprintf(sip_user_id, "50%d", (user_data_get()->system_mode & 0x0F) - 1);
+        }
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
-       // printf("%s register to :%s\n",sip_user_id,sip_sever);
+        // printf("%s register to :%s\n",sip_user_id,sip_sever);
         sat_linphone_register(NULL, sip_user_id, NULL, sip_sever);
 }
 
@@ -112,6 +119,17 @@ void sd_state_change_default_callback(void)
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
 
+static asterisk_register_info p_register_info_slave[20] = {0};
+asterisk_register_info *asterisk_register_info_get_user(void)
+{
+
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                return asterisk_register_info_get();
+        }
+        return p_register_info_slave;
+}
+
 // 文件同步回调注册
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
@@ -121,43 +139,65 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 return;
         }
 
-        static user_network_info network_data_temp = {0};
-        static user_data_info user_data_temp = {0};
-
-        if ((flag == 0x01) && (max == sizeof(user_data_info)))
+        static char *recv_data = NULL;
+        static int recv_size = 0;
+        if ((recv_data == NULL) && (pos == 0))
         {
-                char *p = (char *)&user_data_temp;
-                memcpy(&p[pos], data, size);
-                if ((size + pos) == max)
+                recv_data = (char *)malloc(max);
+                recv_size = max;
+        }
+
+        if (recv_data == NULL)
+        {
+                printf("[%s:%d] sync data failed\n", __func__, __LINE__);
+                return;
+        }
+
+        if (recv_size != max)
+        {
+                printf("[%s:%d] reve data malloc failed( %d %d)\n", __func__, __LINE__, recv_size, max);
+                free(recv_data);
+                recv_data = NULL;
+                return;
+        }
+        memcpy(&recv_data[pos], data, size);
+        
+        if ((size + pos) == max)
+        {
+                if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
-
-                        user_data_get()->call_time = user_data_temp.call_time;
-                        user_data_get()->etc.door1_open_door_mode = user_data_temp.etc.door1_open_door_mode;
-                        user_data_get()->etc.door2_lock_num = user_data_temp.etc.door2_lock_num;
-
-                        memcpy(&user_data_get()->alarm.away_sensor_enable,&user_data_temp.alarm.away_sensor_enable,sizeof(user_data_get()->alarm.away_sensor_enable));
-                        memcpy(&user_data_get()->alarm.security_sensor_enable,&user_data_temp.alarm.security_sensor_enable,sizeof(user_data_get()->alarm.security_sensor_enable));
-
+                        user_data_info *info = (user_data_info *)recv_data;
+                        user_data_get()->call_time = info->call_time;
+                        user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
+                        user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
+                        printf("===receive data info\n");
+                        memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
+                        memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                         user_data_save();
                 }
-        }
-        else if ((flag == 0x02) && (max == sizeof(user_network_info)))
-        {
-                char *p = (char *)&network_data_temp;
-                memcpy(&p[pos], data, size);
-                if ((size + pos) == max)
+                else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
-                        memcpy(network_data_get()->door_device, network_data_temp.door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
-                        memcpy(network_data_get()->cctv_device, network_data_temp.cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
-                        network_data_save();
+                        user_network_info *info = (user_network_info *)recv_data;
+                        memcpy(network_data_get()->door_device, info->door_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
+                        memcpy(network_data_get()->cctv_device, info->cctv_device, sizeof(struct ipcamera_info) * DEVICE_MAX);
+                        printf("===receive netwoek info\n");
                 }
+                else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
+                {
+                        printf("===receive register_info\n");
+                        memcpy((void *)&p_register_info_slave, recv_data, max);
+
+                }
+
+                free(recv_data);
+                recv_data = NULL;
         }
 }
 
 static void flash_backup_to_sd_timer(lv_timer_t *t)
 {
         bool backuped = *(bool *)t->user_data;
-        if(backuped)
+        if (backuped)
         {
                 lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
                 if (masgbox != NULL)
@@ -166,8 +206,6 @@ static void flash_backup_to_sd_timer(lv_timer_t *t)
                 }
         }
         lv_timer_del(t);
-
-
 }
 
 void flash_backup_to_sd_dispaly_create(bool *backup_ed)
@@ -180,97 +218,89 @@ void flash_backup_to_sd_dispaly_create(bool *backup_ed)
         masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
 
         lv_common_img_btn_create(masgbox, obj_id_sd_img, 55, 150, 67, 80,
-                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        resource_ui_src_get("Combined_Shape.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 resource_ui_src_get("Combined_Shape.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
 
+        lv_common_img_btn_create(masgbox, obj_id_sd_flsh_swap_img, 175, 180, 105, 44,
+                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 resource_ui_src_get("Shape.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
 
-        lv_common_img_btn_create(masgbox, obj_id_sd_flsh_swap_img, 175, 180, 105, 44, 
-                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        resource_ui_src_get("Shape.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
-
-
-        lv_common_img_btn_create(masgbox, obj_id_flash_img, 335, 150, 93, 71, 
-                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        resource_ui_src_get("Combined_Shape.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
-        //旋转器创建
+        lv_common_img_btn_create(masgbox, obj_id_flash_img, 335, 150, 93, 71,
+                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                 resource_ui_src_get("Combined_Shape.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+        // 旋转器创建
         {
-                static lv_style_t style;                     //创建样式
+                static lv_style_t style; // 创建样式
                 static lv_style_t bc_style;
 
-                lv_style_init(&style);                       //初始化样式
-                lv_style_set_arc_color(&style, lv_color_make(0x00, 0x96, 0xFF)); //设置圆弧颜色
-                lv_style_set_arc_width(&style, 12);            //设置圆弧宽度；
+                lv_style_init(&style);                                           // 初始化样式
+                lv_style_set_arc_color(&style, lv_color_make(0x00, 0x96, 0xFF)); // 设置圆弧颜色
+                lv_style_set_arc_width(&style, 12);                              // 设置圆弧宽度；
 
-                lv_style_init(&bc_style);                       //初始化样式
-                lv_style_set_arc_color(&bc_style, lv_color_make(0xFF, 0xFF, 0xFF)); //设置背景圆环颜色
-                lv_style_set_arc_width(&bc_style, 12);        //设置背景圆环宽度
+                lv_style_init(&bc_style);                                           // 初始化样式
+                lv_style_set_arc_color(&bc_style, lv_color_make(0xFF, 0xFF, 0xFF)); // 设置背景圆环颜色
+                lv_style_set_arc_width(&bc_style, 12);                              // 设置背景圆环宽度
 
-                lv_obj_t * preload = lv_spinner_create(masgbox, 1000, 45);
+                lv_obj_t *preload = lv_spinner_create(masgbox, 1000, 45);
 
-                lv_obj_set_id(preload,obj_id_sd_flsh_swap_preload);
+                lv_obj_set_id(preload, obj_id_sd_flsh_swap_preload);
 
-                lv_obj_add_style(preload, &style, LV_PART_INDICATOR);//应用到圆弧部分；
-                lv_obj_add_style(preload, &bc_style, LV_PART_MAIN);//应用到背景圆环部分；
-
+                lv_obj_add_style(preload, &style, LV_PART_INDICATOR); // 应用到圆弧部分；
+                lv_obj_add_style(preload, &bc_style, LV_PART_MAIN);   // 应用到背景圆环部分；
 
                 lv_obj_set_size(preload, 100, 100);
                 lv_obj_align(preload, LV_ALIGN_TOP_MID, 0, 40);
         }
 
         lv_sat_timer_create(flash_backup_to_sd_timer, 1000, backup_ed);
-
 }
 
 /************************************************************
 ** 函数说明: 文件备份到SD卡
 ** 作者: xiaoxiao
 ** 日期: 2023-08-09 11:41:51
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 static bool flash_backup_to_sd()
 {
 
-	if(access("/dev/mmcblk0", F_OK) == 0)
-	{
+        if (access("/dev/mmcblk0", F_OK) == 0)
+        {
                 if (access(SD_BASE_PATH, F_OK) != 0)
                 {
                         system("mkdir " SD_BASE_PATH);
                 }
-		system("mount /dev/mmcblk0 "SD_BASE_PATH);
-	}
-	else
-	{
-		return false;
-	}
- 
-	if (access(FLASH_MEDIA_BCAKUP_PATH, F_OK) != 0)
-	{
-		/***** 文件夹不存在 *****/
-		system("mkdir " FLASH_MEDIA_BCAKUP_PATH);
-		printf("mkdir " FLASH_MEDIA_BCAKUP_PATH "\n");
-	}
+                system("mount /dev/mmcblk0 " SD_BASE_PATH);
+        }
+        else
+        {
+                return false;
+        }
+
+        if (access(FLASH_MEDIA_BCAKUP_PATH, F_OK) != 0)
+        {
+                /***** 文件夹不存在 *****/
+                system("mkdir " FLASH_MEDIA_BCAKUP_PATH);
+                printf("mkdir " FLASH_MEDIA_BCAKUP_PATH "\n");
+        }
         static bool backup_ed = false;
         backup_ed = false;
         flash_backup_to_sd_dispaly_create(&backup_ed);
 
+        system("cp -r " FLASH_PHOTO_PATH "* " FLASH_MEDIA_BCAKUP_PATH);
 
-	system("cp -r "FLASH_PHOTO_PATH"* " FLASH_MEDIA_BCAKUP_PATH);
-
-
-        media_file_delete_all(FILE_TYPE_FLASH_PHOTO,true);
+        media_file_delete_all(FILE_TYPE_FLASH_PHOTO, true);
 
         backup_ed = true;
-	return true;
+        return true;
 }
-
-
 
 static void logo_enter_system_timer(lv_timer_t *t)
 {
@@ -288,8 +318,14 @@ static void logo_enter_system_timer(lv_timer_t *t)
          */
         media_file_list_init();
 
-        /*****  tuya api初始化 *****/
-        tuya_api_init(TUYA_PID);
+        int id = user_data_get()->system_mode & 0x0F;
+
+        if(id == 0x01)
+        {
+                /*****  tuya api初始化 *****/
+                tuya_api_init(TUYA_PID);
+        }
+
 
         /***********************************************
          ** 作者: leo.liu
@@ -320,7 +356,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         //  usleep(3000 * 1000);
         /*判断是否为master*/
-        int id = user_data_get()->system_mode & 0x0F;
+
 
         if (id == 0x01)
         {
@@ -427,7 +463,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
                  ** 参数说明:
                  ** 注意事项:
                  ************************************************************/
-                
+
                 standby_timer_restart(true);
                 user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
                 if (alarm_trigger_check() == false)

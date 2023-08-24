@@ -128,7 +128,7 @@ static void setting_buzzer_volume_slider_display(lv_obj_t *parent)
         lv_obj_t *slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_volume_obj_id_buzzer_cont), setting_volume_obj_id_buzzer_volume_slider_cont);
         lv_obj_t *slider_obj = lv_obj_get_child_form_id(slider_cont, setting_volume_obj_id_buzzer_volume_slider);
         lv_obj_t *value_obj = lv_obj_get_child_form_id(slider_cont, setting_volume_obj_id_buzzer_volume_slider_text);
-        int cur_volume = user_data_get()->audio.buzzer_tone;
+        int cur_volume = user_data_get()->audio.buzzer_volume;
         char value_str[32] = {0};
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
