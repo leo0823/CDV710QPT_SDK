@@ -336,11 +336,12 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
                 SAT_DEBUG("malloc fail");
                 return false;
         }
+
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+   
         asterisk_register_info * p = (asterisk_register_info *)base64_decode_buffer;
-        printf("=====%s======\n",p[0].name);
-        printf("=====%s======\n",p[0].name);
-        printf("=====%s======\n",p[0].name);
+        printf("=====++++%s======\n",p[0].name);
+
         int send_len = 0;
         int remain = sizeof(asterisk_register_info) * 20;
         while (remain > 0)

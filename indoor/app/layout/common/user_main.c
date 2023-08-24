@@ -176,6 +176,7 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_need_asterisk_update = true;
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 100, NULL);
+;
                         }
                         else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
                         {
@@ -184,6 +185,7 @@ static void *asterisk_server_sync_task(void *arg)
                                 /*离线设备需要同步到其他设备*/
                                 p_register_info[i].timestamp = 0;
                                 printf("%s %s offline \n", p_register_info[i].name, p_register_info[i].name);
+                               
                         }
                 }
                 
@@ -192,6 +194,8 @@ static void *asterisk_server_sync_task(void *arg)
                 {
                         is_need_asterisk_update = false;
                         sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 100, network_data_get()->door_device);
+
+                        
                 }
                 usleep(1000 * 1000);
         }

@@ -139,7 +139,7 @@ void layout_intercom_talk_door_ch_btn_create(void);
 //挂断其他设备的呼叫会话
 static void layout_intercom_talk_other_call_handup_btn_click(lv_event_t * ev)
 {
-        monitor_close(0x03);
+
         lv_obj_t *obj = lv_event_get_current_target(ev);
         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
         if(node != NULL)
