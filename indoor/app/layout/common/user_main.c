@@ -195,6 +195,7 @@ static void *asterisk_server_sync_task(void *arg)
                         is_need_asterisk_update = false;
                         sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 100, network_data_get()->door_device);
 
+
                         
                 }
                 usleep(1000 * 1000);
