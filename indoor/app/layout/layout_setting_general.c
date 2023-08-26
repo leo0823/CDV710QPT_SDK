@@ -380,6 +380,26 @@ static void setting_general_door1_opening_moethod_msgbox_confirm_click(lv_event_
         door_open_method_sub_display();
 }
 
+static void setting_general_door1_open_method_display(void)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent);
+
+        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
+
+        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
+        if (user_data_get()->etc.door1_open_door_mode == 0)
+        {
+
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
+}
+
 static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
 {
         const char *item[2] = {0};
@@ -388,6 +408,7 @@ static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENING_METHOD),
                                       setting_general_msgbox_cancel_click, setting_general_door1_opening_moethod_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
+        setting_general_door1_open_method_display();
 }
 
 /************************************************************
@@ -397,7 +418,7 @@ static void setting_general_door1_opening_moethod_obj_click(lv_event_t *ev)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-static void setting_general_door2_opening_modoule_msgbox_confirm_click(lv_event_t *ev)
+static void setting_general_door1_opening_modoule_msgbox_confirm_click(lv_event_t *ev)
 {
         lv_obj_t *item = lv_event_get_current_target(ev);
         lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
@@ -416,14 +437,35 @@ static void setting_general_door2_opening_modoule_msgbox_confirm_click(lv_event_
         door1_open_moudle_sub_display();
 }
 
+static void setting_general_door1_open_module_display(void)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_msgbox_cont), setting_general_obj_id_msgbox_parent);
+
+        lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
+
+        lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
+        if (user_data_get()->etc.door1_open_door_mode == 0)
+        {
+
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+        }
+}
+
 static void setting_general_door_opener_module_obj_click(lv_event_t *ev)
 {
         const char *item[2] = {0};
         item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_CAMERA);
         item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK);
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DOOR_OPENER_MODULE),
-                                      setting_general_msgbox_cancel_click, setting_general_door2_opening_modoule_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
+                                      setting_general_msgbox_cancel_click, setting_general_door1_opening_modoule_msgbox_confirm_click, setting_general_msgbox_moethod_checkbox_click,
                                       item, 2);
+        setting_general_door1_open_module_display();
 }
 
 static void setting_general_door2_opener_num_msgbox_confirm_click(lv_event_t *ev)
@@ -464,6 +506,7 @@ static void setting_general_door2_opener_num_display(void)
                 lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
 }
+
 static void setting_general_door2_opener_num_obj_click(lv_event_t *e)
 {
 

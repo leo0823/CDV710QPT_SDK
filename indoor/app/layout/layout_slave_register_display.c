@@ -97,9 +97,6 @@ static void sat_layout_enter(indoor_register)
                         const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
                         for (int i = 0; i < 20; i++)
                         {
-                                printf("=========p_register_info[i].name is %s===========\n",(p_register_info[i].name));
-                                printf("=========p_register_info[i].ip is %s===========\n",(p_register_info[i].ip));
-                                printf("=========p_register_info[i].timestamp is %llu===========\n",(p_register_info[i].timestamp));
                                 /*主机或者门口机过滤*/
                                 if ((p_register_info[i].name[0] == '\0') || (p_register_info[i].timestamp == 0))
                                 {
