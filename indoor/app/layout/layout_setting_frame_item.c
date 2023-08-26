@@ -62,7 +62,6 @@ static void setting_frame_item_checkbox_display(void)
         lv_obj_t * list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_frame_item_obj_id_list);
         lv_obj_t * obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_hour_cont),1);
         int data = user_data_get()->display.frame_list;
-        printf("frame_list is 0x%x\n",user_data_get()->display.frame_list);
         if(data & 0x01)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
@@ -78,11 +77,13 @@ static void setting_frame_item_checkbox_display(void)
         {
                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
         }
+        #ifdef FRONT_DOOR_ENABLE
         obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_front_door_video_cont),1);
         if (data & 0x08)
         {
                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
         }
+        #endif
         obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_cctv_fontage_cont),1);
         if (data & 0x10)
         {
@@ -124,31 +125,33 @@ static void sat_layout_enter(setting_frame_item)
         {
                 setting_list_info_t main_list_group[] = {
 
-                    {0, 0, 928, 88,
-                     setting_frame_item_obj_id_hour_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_HOUR, lang_str_get,
-                     -1, NULL,
-                     setting_frame_item_checkbox_click, 1},
-                    {0, 88, 928, 88,
-                     setting_frame_item_obj_id_calendar_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_CALENDAR, lang_str_get,
-                     -1, NULL,
-                     setting_frame_item_checkbox_click, 1},
-                    {0, 88 * 2, 928, 88,
-                     setting_frame_item_obj_id_recently_save_video_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_RECENTLY_SAVED_VIDEO, lang_str_get,
-                     -1, NULL,
-                     setting_frame_item_checkbox_click, 1},
-                    {0, 88 * 3, 928, 88,
-                     setting_frame_item_obj_id_front_door_video_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_FRONT_DOOR_VIDEO, lang_str_get,
-                     -1, NULL,
-                     setting_frame_item_checkbox_click, 1},
-                    {0, 88 * 2, 928, 88,
-                     setting_frame_item_obj_id_cctv_fontage_cont, 0, -1,
-                     SETTING_STANDBY_SCREEN_XLS_LANG_ID_CCTV_FOOTAGE, lang_str_get,
-                     -1, NULL,
-                     setting_frame_item_checkbox_click, 1}};
+                {0, 0, 928, 88,
+                setting_frame_item_obj_id_hour_cont, 0, -1,
+                SETTING_STANDBY_SCREEN_XLS_LANG_ID_HOUR, lang_str_get,
+                -1, NULL,
+                setting_frame_item_checkbox_click, 1},
+                {0, 88, 928, 88,
+                setting_frame_item_obj_id_calendar_cont, 0, -1,
+                SETTING_STANDBY_SCREEN_XLS_LANG_ID_CALENDAR, lang_str_get,
+                -1, NULL,
+                setting_frame_item_checkbox_click, 1},
+                {0, 88 * 2, 928, 88,
+                setting_frame_item_obj_id_recently_save_video_cont, 0, -1,
+                SETTING_STANDBY_SCREEN_XLS_LANG_ID_RECENTLY_SAVED_VIDEO, lang_str_get,
+                -1, NULL,
+                setting_frame_item_checkbox_click, 1},
+                #ifdef FRONT_DOOR_ENABLE
+                {0, 88 * 3, 928, 88,
+                setting_frame_item_obj_id_front_door_video_cont, 0, -1,
+                SETTING_STANDBY_SCREEN_XLS_LANG_ID_FRONT_DOOR_VIDEO, lang_str_get,
+                -1, NULL,
+                setting_frame_item_checkbox_click, 1},
+                #endif
+                {0, 88 * 3, 928, 88,
+                setting_frame_item_obj_id_cctv_fontage_cont, 0, -1,
+                SETTING_STANDBY_SCREEN_XLS_LANG_ID_CCTV_FOOTAGE, lang_str_get,
+                -1, NULL,
+                setting_frame_item_checkbox_click, 1}};
 
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_frame_item_obj_id_list);
                 lv_common_style_set_common(list, setting_frame_item_obj_id_list, 48, 88, 928, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
@@ -193,11 +196,13 @@ static void sat_layout_quit(setting_frame_item)
         {
                data |= 0x04;
         }
+        #ifdef FRONT_DOOR_ENABLE
         obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_front_door_video_cont),1);
         if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
         {
                data |= 0x08;
         }
+        #endif
         obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list,setting_frame_item_obj_id_cctv_fontage_cont),1);
         if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))))
         {

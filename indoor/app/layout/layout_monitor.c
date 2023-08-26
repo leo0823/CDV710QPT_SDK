@@ -583,81 +583,56 @@ static void monitor_obj_handup_display(void)
  ***********************************************/
 static void monitor_unlock_ctrl(int ch, int mode, bool en)
 {
-        if (ch == MON_CH_DOOR1)
+        if ((ch == MON_CH_DOOR1) && (mode == 2))
         {
-                if (mode == 2)
-                {
-                        door1_lock1_pin_ctrl(en);
-                }
-                else
-                {
-                        const char *user = monitor_channel_get_url(ch, false);
-                        char *cmd[3] = {
-                            "SAT_SHELL echo 33 > /sys/class/gpio/export",
-                            "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
-                            "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
+                door1_lock1_pin_ctrl(en);
 
-                        if (en == false)
-                        {
-                                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
-                        }
-
-                        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-                        {
-
-                                sat_linphone_message_cmd_send(user, cmd[i]);
-                        }
-                }
         }
-        else if (ch == MON_CH_DOOR2)
+        else if ((ch == MON_CH_DOOR2) && (mode == 2))
         {
-                if (mode == 1)
+                const char *user = monitor_channel_get_url(ch, false);
+                char *cmd[3] = {
+                        "SAT_SHELL echo 32 > /sys/class/gpio/export",
+                        "SAT_SHELL echo out > /sys/class/gpio/gpio32/direction",
+                        "SAT_SHELL echo 1 > /sys/class/gpio/gpio32/value"};
+
+                if (en == false)
                 {
-
-                        const char *user = monitor_channel_get_url(ch, false);
-                        char *cmd[3] = {
-                            "SAT_SHELL echo 33 > /sys/class/gpio/export",
-                            "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
-                            "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
-
-                        if (en == false)
-                        {
-                                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
-                        }
-
-                        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-                        {
-                                sat_linphone_message_cmd_send(user, cmd[i]);
-                        }
+                        cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio32/value";
                 }
-                else
+
+                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
+                        sat_linphone_message_cmd_send(user, cmd[i]);
+                }
+                
+        }else
+        {
+                const char *user = monitor_channel_get_url(ch, false);
+                char *cmd[3] = {
+                        "SAT_SHELL echo 33 > /sys/class/gpio/export",
+                        "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
+                        "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
 
-                        const char *user = monitor_channel_get_url(ch, false);
-                        char *cmd[3] = {
-                            "SAT_SHELL echo 32 > /sys/class/gpio/export",
-                            "SAT_SHELL echo out > /sys/class/gpio/gpio32/direction",
-                            "SAT_SHELL echo 1 > /sys/class/gpio/gpio32/value"};
+                if (en == false)
+                {
+                        cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
+                }
 
-                        if (en == false)
-                        {
-                                cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio32/value";
-                        }
-
-                        for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-                        {
-                                sat_linphone_message_cmd_send(user, cmd[i]);
-                        }
+                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                {
+                        sat_linphone_message_cmd_send(user, cmd[i]);
                 }
         }
 }
 
 static void monitor_lock_close(void)
 {
-        monitor_unlock_ctrl(0, 1, false);
-        monitor_unlock_ctrl(0, 2, false);
-        monitor_unlock_ctrl(1, 1, false);
-        monitor_unlock_ctrl(1, 2, false);
+        for (size_t i = 0; i < DEVICE_MAX; i++)
+        {
+                monitor_unlock_ctrl(i, 1, false);
+                monitor_unlock_ctrl(i, 2, false);
+        }
 }
 
 static void monitor_obj_unlock_open_timer(lv_timer_t *ptimer)
@@ -708,8 +683,12 @@ static void monitor_obj_normal_lock_click(lv_event_t *e)
                 else if (ch == MON_CH_DOOR2)
                 {
                         mode = user_data_get()->etc.door2_lock_num;
+                }else if((ch >= MON_CH_DOOR3) && (ch <= MON_CH_DOOR8))
+                {
+                        mode = 1;
                 }
                 monitor_unlock_ctrl(ch, mode, true);
+                
         }
 }
 static void monitor_obj_normal_lock_display(void)
@@ -1063,15 +1042,17 @@ static void layout_monitor_switch_btn_display(void)
         lv_obj_t *obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
         if (is_channel_ipc_camera(monitor_channel_get()) == true)
         {
-                if (0) // (network_data_get()->cctv_device_count <= 1)
+                if (cctv_register_num_get() <= 1)
                 {
                         lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
                 }
         }
+
+        
         else
         {
-                if (0) //(network_data_get()->door_device_count <= 1)
+                if ((door_camera_register_num_get() < 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG))
                 {
                         lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
@@ -1931,6 +1912,7 @@ static void sat_layout_enter(monitor)
 }
 static void sat_layout_quit(monitor)
 {
+        record_video_stop();
         lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_monitor_full_screen_display);
         lv_obj_pressed_func = lv_layout_touch_callback;
         MON_ENTER_FLAG flag = monitor_enter_flag_get();
@@ -2012,29 +1994,6 @@ sat_layout_create(monitor);
 *******************************					                               楚河汉界		                                         *******************************
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
-// 格式：user"user_name" <sip:sip_name1@172.16.0.110>,sip_name
-void extractDataInQuotes(const char *inputStr, char *extractedStr, size_t maxLen)
-{
-        const char *startPos = strstr(inputStr, "sip:");
-        if (startPos != NULL)
-        {
-                startPos += strlen("sip:");
-                const char *endPos = strchr(startPos, '@');
-                if (endPos != NULL)
-                {
-
-                        size_t length = endPos - startPos;
-
-                        if (length > maxLen - 1)
-                                length = maxLen - 1;
-
-                        strncpy(extractedStr, startPos, length);
-                        extractedStr[length] = '\0';
-                        return;
-                }
-        }
-        extractedStr[0] = '\0';
-}
 
 /* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容 id:建立连接的id号*/
 static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call)

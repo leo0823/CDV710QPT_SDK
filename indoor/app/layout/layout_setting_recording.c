@@ -359,7 +359,11 @@ static void ssetting_recording_auto_msgbox_confirm_click(lv_event_t *e)
 {
         int mode = setting_recording_checkbox_mode_get();
         if (mode >= 0)
-        {
+        {       if((mode == 1) && ((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
+                {
+                        return ;
+                }
+
                 user_data_get()->auto_record_mode = (char)mode;
                 user_data_save();
                 setting_recording_auto_sub_display();
@@ -515,7 +519,7 @@ static lv_obj_t *setting_recording_sub_list_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*此处请斟酌*/
-                if (((user_data_get()->system_mode & 0xF0) != 0x00) && (i == 1 || i == 2))
+                if ((((user_data_get()->system_mode & 0xF0) != 0x00) && i == 1 ) || i == 2)
                 {
                         continue;
                 }
