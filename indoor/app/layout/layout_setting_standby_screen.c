@@ -421,86 +421,104 @@ static void setting_standby_screen_sub_list_click(lv_event_t *e)
 
 static void setting_standby_screen_sub_list_display(lv_obj_t * parent)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_time_cont),setting_standby_screen_obj_id_display_time_sub);
-        if(obj != NULL)
+        lv_obj_t *cont = lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_time_cont);
+        lv_obj_t * obj = NULL;
+        if(cont != NULL)
         {
-                if(user_data_get()->display.frame_time_en ==  false)
+                obj = lv_obj_get_child_form_id(cont,setting_standby_screen_obj_id_display_time_sub);
+                if(obj != NULL)
                 {
-                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS));
-                }else
-                {
-		int s_hour = user_data_get()->display.frame_time_start / 60;
-		int s_min = user_data_get()->display.frame_time_start % 60;
-		int e_hour = user_data_get()->display.frame_time_end / 60;
-		int e_min = user_data_get()->display.frame_time_end % 60;
-                lv_label_set_text_fmt(obj,"%02d:%02d-%02d:%02d", s_hour, s_min, e_hour, e_min);
-                }
-                
-        }
-        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_wait_display_time_cont),setting_standby_screen_obj_id_wait_display_time_sub);
-        if(obj != NULL)
-        {
-                if(user_data_get()->display.screen_off_time == 15)
-                {
-                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC));
-                }else if(user_data_get()->display.screen_off_time == 30)
-                {
-                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_30SEC));
-                }else if(user_data_get()->display.screen_off_time == 60)
-                {
-                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_60SEC));
-                }else if(user_data_get()->display.screen_off_time == 180)
-                {
-                        lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_180SEC));
-                }
 
-        }
-        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_night_mode_cont),setting_standby_screen_obj_id_display_night_mode_sub);
-        if(obj != NULL)
-        {
-                if(user_data_get()->display.night_mode == false)
-                {
-                        lv_label_set_text(obj,lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF));
-                }else
-                {
-		int s_hour = user_data_get()->display.night_time_start / 60;
-		int s_min = user_data_get()->display.night_time_start % 60;
-		int e_hour = user_data_get()->display.night_time_end / 60;
-		int e_min = user_data_get()->display.night_time_end % 60;
-                lv_label_set_text_fmt(obj,"%02d:%02d-%02d:%02d", s_hour, s_min, e_hour, e_min);
-                }
-                
-        }
-        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_item_cont),setting_standby_screen_obj_id_display_item_sub);
-        if(obj != NULL)
-        {
-                int data = user_data_get()->display.frame_list;
-                int count = 0;
-                for (int i = 0; i < 5; i++)
-                {
-                        if (data & (0x01 << i))
+                        if(user_data_get()->display.frame_time_en ==  false)
                         {
-                                count++;
+                                lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS));
+                        }else
+                        {
+                                int s_hour = user_data_get()->display.frame_time_start / 60;
+                                int s_min = user_data_get()->display.frame_time_start % 60;
+                                int e_hour = user_data_get()->display.frame_time_end / 60;
+                                int e_min = user_data_get()->display.frame_time_end % 60;
+                                lv_label_set_text_fmt(obj,"%02d:%02d-%02d:%02d", s_hour, s_min, e_hour, e_min);
                         }
+                        
                 }
-                lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_0_ITEM + count));
-
-                
         }
-        obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_background_cont),setting_standby_screen_obj_id_background_sub);
-        if(obj != NULL)
+        cont = lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_wait_display_time_cont);
+        if(cont != NULL)
         {
-                if(user_data_get()->display.frame_background)
+                obj = lv_obj_get_child_form_id(cont,setting_standby_screen_obj_id_wait_display_time_sub);
+                if(obj != NULL)
                 {
-                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE));
-                }else
-                {
-                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_BASIC));
+                        if(user_data_get()->display.screen_off_time == 15)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC));
+                        }else if(user_data_get()->display.screen_off_time == 30)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_30SEC));
+                        }else if(user_data_get()->display.screen_off_time == 60)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_60SEC));
+                        }else if(user_data_get()->display.screen_off_time == 180)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_180SEC));
+                        }
+
                 }
+        }
+        cont = lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_night_mode_cont);
+        if(cont != NULL)
+        {
+                obj = lv_obj_get_child_form_id(cont,setting_standby_screen_obj_id_display_night_mode_sub);
+                if(obj != NULL)
+                {
+                        if(user_data_get()->display.night_mode == false)
+                        {
+                                lv_label_set_text(obj,lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF));
+                        }else
+                        {
+                        int s_hour = user_data_get()->display.night_time_start / 60;
+                        int s_min = user_data_get()->display.night_time_start % 60;
+                        int e_hour = user_data_get()->display.night_time_end / 60;
+                        int e_min = user_data_get()->display.night_time_end % 60;
+                        lv_label_set_text_fmt(obj,"%02d:%02d-%02d:%02d", s_hour, s_min, e_hour, e_min);
+                        }
+                        
+                }
+        }
 
+        cont = lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_item_cont);
+        if(cont != NULL)
+        {
+                obj = lv_obj_get_child_form_id(cont,setting_standby_screen_obj_id_display_item_sub);
+                if(obj != NULL)
+                {
+                        int data = user_data_get()->display.frame_list;
+                        int count = 0;
+                        for (int i = 0; i < 5; i++)
+                        {
+                                if (data & (0x01 << i))
+                                {
+                                        count++;
+                                }
+                        }
+                        lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_0_ITEM + count));
+                }
+        }
 
-
-                
+        cont = lv_obj_get_child_form_id(parent,setting_standby_screen_obj_id_display_item_cont);
+        if(cont != NULL)
+        {
+                obj = lv_obj_get_child_form_id(cont,setting_standby_screen_obj_id_background_sub); 
+                if(obj != NULL)
+                {
+                        if(user_data_get()->display.frame_background)
+                        {
+                                lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE));
+                        }else
+                        {
+                                lv_label_set_text(obj,lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_BASIC));
+                        }   
+                }
         }
 }
 static lv_obj_t *setting_standby_screen_sub_list_create(void)
@@ -513,22 +531,22 @@ static lv_obj_t *setting_standby_screen_sub_list_create(void)
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_WAIT_DISPLAY_TIME, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_WAIT_DISPLAY_TIME, lang_str_get,
              setting_standby_screen_sub_list_click},
-            {0, 72, 836, 72,
-             setting_standby_screen_obj_id_display_time_cont, setting_standby_screen_obj_id_display_time_title, setting_standby_screen_obj_id_display_time_sub,
-             SETTING_STANDBY_SCREEN_XLS_LANG_ID_DISPLAY_TIME, lang_str_get,
-             SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS, lang_str_get,
-             setting_standby_screen_sub_list_click},
-            {0, 72 * 2, 836, 72,
+        //     {0, 72, 836, 72,
+        //      setting_standby_screen_obj_id_display_time_cont, setting_standby_screen_obj_id_display_time_title, setting_standby_screen_obj_id_display_time_sub,
+        //      SETTING_STANDBY_SCREEN_XLS_LANG_ID_DISPLAY_TIME, lang_str_get,
+        //      SETTING_STANDBY_SCREEN_XLS_LANG_ID_ALWAYS, lang_str_get,
+        //      setting_standby_screen_sub_list_click},
+            {0, 72 * 1, 836, 72,
              setting_standby_screen_obj_id_display_night_mode_cont, setting_standby_screen_obj_id_display_night_mode_title, setting_standby_screen_obj_id_display_night_mode_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_USER_NIGHT_MODE, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_ADJUSTS_THE_BRIGHTNESS, lang_str_get,
              setting_standby_screen_sub_list_click},
-            {0, 72 * 3, 836, 72,
+            {0, 72 * 2, 836, 72,
              setting_standby_screen_obj_id_display_item_cont, setting_standby_screen_obj_id_display_item_title, setting_standby_screen_obj_id_display_item_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_ITEM_DISPLAY, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_1_ITEM, lang_str_get,
              setting_standby_screen_sub_list_click},
-            {0, 72 * 4, 836, 72,
+            {0, 72 * 3, 836, 72,
              setting_standby_screen_obj_id_background_cont, setting_standby_screen_obj_id_background_title, setting_standby_screen_obj_id_background_sub,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_BACKROUND, lang_str_get,
              SETTING_STANDBY_SCREEN_XLS_LANG_ID_RANDOM_IMAGE, lang_str_get,

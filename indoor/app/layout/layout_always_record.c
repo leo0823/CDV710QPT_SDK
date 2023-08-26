@@ -273,6 +273,7 @@ static void layout_always_monitor_open_task(lv_timer_t *task)
         /* if (always_record_loop == true) */
         {
                 layout_always_monitor_open();
+                lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
                 monitior_obj_channel_info_obj_display();
 
         }
@@ -468,7 +469,6 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static bool layout_always_record_streams_running_register_callback(char *arg)
 {
-        lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         lv_sat_timer_create(layout_always_record_delay_task, 1500, NULL);
         return true;
 
@@ -485,6 +485,7 @@ static void sat_layout_enter(always_record)
         user_linphone_call_streams_running_receive_register(layout_always_record_streams_running_register_callback);
         monitor_channel_set(MON_CH_NONE);
         layout_always_monitor_open();
+        lv_sat_timer_create(monitor_obj_timeout_timer, 1000, NULL);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
