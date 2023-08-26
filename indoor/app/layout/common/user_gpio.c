@@ -98,7 +98,6 @@ void door1_lock1_power_pin_ctrl(bool en)
 ************************************************************/
 void door1_lock1_pin_ctrl(bool en)
 {
-        printf("door1 lock2 is %d\n",en);
         gpio_level_set(DOOR1_LOCK_1_GPIO_PIN, en ? GPIO_LEVEL_LOW : GPIO_LEVEL_HIGH);
         //door1_lock1_power_pin_ctrl(en);
 }
