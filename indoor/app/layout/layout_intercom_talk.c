@@ -473,12 +473,12 @@ static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
         int value = lv_slider_get_value(parent);
         if (intercom_call_state == 3)
         {
-                user_data_get()->audio.inter_talk_volume = value;
+                user_data_get()->audio.entrancr_voice = value;
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
         {
-                user_data_get()->audio.inter_ring_volume = value;
+                user_data_get()->audio.extension_volume = value;
                 sat_linphone_audio_play_volume_set(value);
         }
         user_data_save();

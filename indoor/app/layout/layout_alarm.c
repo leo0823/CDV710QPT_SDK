@@ -84,7 +84,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 
         lv_obj_t * passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_passwd_cont);
 
-        if(!alarm_return)
+        if(!alarm_return)//警报停止模式
         {
                 sat_linphone_audio_play_stop();
                 struct tm tm;

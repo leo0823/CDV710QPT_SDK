@@ -494,7 +494,7 @@ static void layout_monitor_vol_bar_display(void)
         lv_obj_t *silder_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont), monitor_vol_obj_id_slider_cont);
         lv_obj_t *slider_obj = lv_obj_get_child_form_id(silder_cont, 1);
         lv_obj_t *value_obj = lv_obj_get_child_form_id(silder_cont, 0);
-        int cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.door_talk_volume : user_data_get()->audio.door_ring_volume;
+        int cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.entrancr_voice : user_data_get()->audio.entracne_volume;
         char value_str[32] = {0};
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
@@ -907,6 +907,10 @@ static void monitor_obj_record_photo_display(void)
         {
                 return;
         }
+        if(record_jpeg_mode_get() == REC_MODE_TUYA_CALL)//如果没设置自动记录，涂鸦抓拍不需要改变图标
+        {
+                return;
+        }
         if (is_monitor_snapshot_ing == true)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_save.png"), LV_PART_MAIN);
@@ -1048,8 +1052,6 @@ static void layout_monitor_switch_btn_display(void)
                         lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
                 }
         }
-
-        
         else
         {
                 if ((door_camera_register_num_get() < 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG))
@@ -1193,14 +1195,14 @@ static void layout_monitor_setting_volume_slider_change_cb(lv_event_t *e)
         {
                 int value = lv_slider_get_value(obj);
 
-                user_data_get()->audio.door_talk_volume = value;
+                user_data_get()->audio.entrancr_voice = value;
                 user_data_save();
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
         {
                 int value = lv_slider_get_value(obj);
-                user_data_get()->audio.door_ring_volume = value;
+                user_data_get()->audio.entracne_volume = value;
                 sat_linphone_audio_play_volume_set(value);
                 user_data_save();
         }

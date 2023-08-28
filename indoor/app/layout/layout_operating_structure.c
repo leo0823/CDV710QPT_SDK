@@ -69,6 +69,9 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         network_data_save();
         user_data_save();
 
+        sleep(100 * 1000);//改变系统模式，设备重启，重新加载资源
+        system("reboot");
+
         operating_structure_goto_layout_process(LV_SCR_LOAD_ANIM_FADE_IN);
 }
 static void operating_structure_slave_seting_click(lv_event_t *e)

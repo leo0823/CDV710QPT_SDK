@@ -309,9 +309,6 @@ static void home_date_timer(lv_timer_t *ptimer)
         home_time_obj_display();
         home_date_obj_display();
 
-        //     monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-        //    monitor_channel_set(MON_CH_CCTV1);
-        //   sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 /***********************************************
  ** 作者: leo.liu
@@ -476,7 +473,7 @@ static lv_obj_t *home_monitoring_msgbox_create(void)
  ***********************************************/
 static void home_monitor_obj_click(lv_event_t *ev)
 {
-        if ((user_data_get()->system_mode & 0xF0) == 0x10)
+        if (0/*(user_data_get()->system_mode & 0xF0) == 0x10*/)//室内机不允许监控大厅
         {
                 home_monitoring_msgbox_create();
         }
