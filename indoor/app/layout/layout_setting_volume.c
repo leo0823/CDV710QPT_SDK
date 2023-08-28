@@ -110,7 +110,7 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
                 user_data_get()->audio.buzzer_volume = value;
                 user_data_save();
 
-                if(is_setting_volume_ring_play_runing == false)
+                if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.buzzer_volume != 0))
                 {
                         ring_buzzer_play();
                 }
@@ -148,7 +148,7 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
 
                 user_data_get()->audio.entracne_volume = value;
                 user_data_save();
-                if(is_setting_volume_ring_play_runing == false)
+                if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.entracne_volume != 0))
                 {
                         ring_door_call_play();
                 }
@@ -194,7 +194,7 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.common_entrance_volume = value;
                 user_data_save();
-                if(is_setting_volume_ring_play_runing == false)
+                if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.common_entrance_volume != 0))
                 {
                         ring_common_door_play();
                 }
@@ -247,7 +247,7 @@ static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.guard_station_volume = value;
                 user_data_save();
-                if(is_setting_volume_ring_play_runing == false)
+                if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.guard_station_volume != 0))
                 {
                         ring_guard_play();
                 }
@@ -299,7 +299,7 @@ static void setting_extension_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.extension_volume = value;
                 user_data_save();
-                if(is_setting_volume_ring_play_runing == false)
+                if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.extension_volume != 0))
                 {
                         ring_intercom_play();
                 }
@@ -345,7 +345,7 @@ static void setting_touch_notification_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.touch_notification_volume = value;
                 user_data_save();
-                if(is_setting_volume_ring_play_runing == false)
+                if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.touch_notification_volume != 0))
                 {
                         ring_touch_play();
                 }

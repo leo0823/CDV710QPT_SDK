@@ -163,10 +163,20 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         user_data_get()->call_time = info->call_time;
                         user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                         user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
-
                         memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                         memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
+                        memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
+                        memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
+                        for(int i = 0; i< 8; i ++)
+                        {
+                                if((user_data_get()->alarm.alarm_gpio_value_group[i]) != (info->alarm.alarm_gpio_value_group[i]))
+                                {
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, info->alarm.alarm_gpio_value_group[i] * 100);
+                                }
+                        }
+                        memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                         user_data_save();
+                        
                 }
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
@@ -180,7 +190,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         memcpy((void *)&p_register_info_slave, recv_data, max);
 
                 }
-
                 free(recv_data);
                 recv_data = NULL;
         }
@@ -436,6 +445,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         lv_timer_ready(standby_timer);
 
         standby_timer_restart(false);
+        user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
         if (user_data_get()->is_device_init == false)
         {
                 user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
@@ -457,7 +467,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
                  ************************************************************/
 
                 standby_timer_restart(true);
-                user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
                 if (alarm_trigger_check() == false)
                 {
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);

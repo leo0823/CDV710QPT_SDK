@@ -295,7 +295,7 @@ static void sat_layout_enter(server_operation_network)
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_BUILD_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_BUILD_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_building_number_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,

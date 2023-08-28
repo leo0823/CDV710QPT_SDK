@@ -5,6 +5,7 @@
 #include "ssd20x_sarad/ssd20x_sarad.h"
 #include "cd4051/cd4051.h"
 #include "common/sat_main_event.h"
+#include "user_data.h"
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -195,7 +196,14 @@ float user_sensor_value_get(int ch)
         {
                 return 0xFFFFF;
         }
-        return cd4051_value_group[ch];
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                return cd4051_value_group[ch];
+        }else
+        {
+                return user_data_get()->alarm.alarm_gpio_value_group[ch];
+        }
+
 }
 /***********************************************
 ** 作者: leo.liu
@@ -262,10 +270,14 @@ bool user_gpio_init(void)
         
         /*警报电源输出初始化*/
         alarm_power_out_gpio_init();
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                /*开启gpio 任务检测*/
+                pthread_t task_id;
+                pthread_create(&task_id, sat_pthread_attr_get(), user_gpio_detect_task, NULL);
+        }
 
-        /*开启gpio 任务检测*/
-        pthread_t task_id;
-        pthread_create(&task_id, sat_pthread_attr_get(), user_gpio_detect_task, NULL);
+
 
 
         return true;

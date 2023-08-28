@@ -30,11 +30,6 @@ typedef struct
         int door_tone;
         int inter_tone;
 
-        int door_ring_volume;
-        int door_talk_volume;
-        int inter_ring_volume;
-        int inter_talk_volume;
-
         int buzzer_tone;
         int buzzer_volume;
         int common_entrance_tone;
@@ -145,6 +140,8 @@ typedef struct
 
         bool security_auto_record;//安全模式报警是否启动CCTV录像
 
+        float alarm_gpio_value_group[8];//主机警报检测gpio电平列表
+
 } user_alarm_info;
 
 typedef struct
@@ -169,10 +166,16 @@ typedef struct
         char system_mode; // 0xFF 高4位 0：单系统，1:服务型。低4位表示ID号
         char mastar_wallpad_ip[16];//sip server 的IP
 
+        char local_server[16];
+        char sip_server[16];
+        char update[16];
+        char cctv_server[16];
+        char guard_station_number[16];
+        
         int call_time;
-
         int always_monitoring;
         bool last_call_new;
+
 } user_data_info;
 
 bool user_data_save(void);
