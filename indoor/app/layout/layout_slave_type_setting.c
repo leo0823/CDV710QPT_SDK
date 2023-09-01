@@ -4,7 +4,7 @@ enum
 {
         slave_type_setting_obj_id_title,
         slave_type_setting_obj_id_cancel,
-
+        slave_type_setting_obj_id_next,
         slave_type_setting_obj_id_master_indor_cont,
         slave_type_setting_obj_id_master_indoor_tile,
         slave_type_setting_obj_id_master_indoor_sub,
@@ -24,6 +24,8 @@ enum
         slave_type_setting_obj_id_msgbox_confirm,
 
         slave_type_setting_obj_id_msgbox_cancel,
+
+        slave_type_setting_obj_id_msgbox_titile,
 };
 
 typedef enum
@@ -31,31 +33,27 @@ typedef enum
         slave_type_setting_obj_id_checkbox,
 } slave_type_setting_list;
 
-static void slave_type_setting_cancel_click(lv_event_t *e)
-{
-        sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-}
-static void slave_type_setting_master_indoor_click(lv_event_t *e)
-{
-        sat_layout_goto(setting_master_indoor_unit_ip, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
-}
+//定义此变量是为了判断在进入此界面以后，分机的属性值是否被修改了
+static char update_master_ip[16] = {0};
+static int  update_slave_id = 0;
 
-static void slave_type_setting_extension_number_display(void)
+void slave_typle_setting_update_master_ip_setting(char * master_ip)
 {
-        lv_obj_t *extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_extension_number_cont), slave_type_setting_obj_id_extension_number_sub);
-        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        if(master_ip != NULL)
         {
-                lv_label_set_text(extension_number, lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET));
+                strncpy(update_master_ip,master_ip,sizeof(update_master_ip));
         }
-        else
-        {
-                lv_label_set_text_fmt(extension_number, "ID %d", user_data_get()->system_mode & 0x0F);
-        }
-
-        extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_master_indor_cont), slave_type_setting_obj_id_master_indoor_sub);
-
-        lv_label_set_text(extension_number, user_data_get()->mastar_wallpad_ip);
 }
+
+const char * slave_typle_setting_update_master_ip_get(void)
+{
+        return update_master_ip;
+}
+void slave_typle_setting_update_slave_id_setting(int id)
+{
+        update_slave_id = id;
+}
+
 
 static void slave_type_setting_cancel_func(lv_event_t *ev)
 {
@@ -73,25 +71,70 @@ static void slave_type_setting_confirm_func(lv_event_t *ev)
 
                 if (!strncmp((const char *)checkbox->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
                 {
-                        user_data_get()->system_mode &= 0xF0;
-                        user_data_get()->system_mode |= (i + 2) & 0x0F;
-                        char number[32] = {0};
-                        memset(number, 0, sizeof(number));
-                        strncpy(number, network_data_get()->sip_user, 11);
-                        sprintf(&number[11], "%d", i + 2);
-                        memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
-                        strcpy(network_data_get()->sip_user, number);
-                        // setenv("SIP", network_data_get()->sip_user, 1);
-                        network_data_save();
-                        user_data_save();
-                        usleep(1000 * 100);
-                        system("reboot");
+                        update_slave_id = i + 2;
+
                         break;
                 }
         }
-        setting_msgdialog_msg_del(slave_type_setting_obj_id_msgbox_bg_cont);
-        slave_type_setting_extension_number_display();
+        sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        // setting_msgdialog_msg_del(slave_type_setting_obj_id_msgbox_bg_cont);
+        // slave_type_setting_extension_number_display();
 }
+
+
+static void slave_type_setting_save_btn_click(lv_event_t *e)
+{
+        if(is_valid_ipv4(update_master_ip))
+        {
+                strncpy(user_data_get()->mastar_wallpad_ip, update_master_ip, sizeof(user_data_get()->mastar_wallpad_ip));
+                user_data_get()->system_mode &= 0xF0;
+                user_data_get()->system_mode |= update_slave_id & 0x0F;
+                char number[32] = {0};
+                memset(number, 0, sizeof(number));
+                strncpy(number, network_data_get()->sip_user, 11);
+                sprintf(&number[11], "%d", update_slave_id);
+                memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
+                strcpy(network_data_get()->sip_user, number);
+                user_data_get()->is_device_init = true;
+                network_data_save();
+                user_data_save();
+                usleep(100 * 1000);
+                system("reboot");
+        }else
+        {
+                lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
+                setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_ILLEGAL), 0, 120, 460, 120);
+                setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_cancel_func);
+        }
+}
+
+static void slave_type_setting_cancel_click(lv_event_t *e)
+{
+        sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+}
+static void slave_type_setting_master_indoor_click(lv_event_t *e)
+{
+        sat_layout_goto(setting_master_indoor_unit_ip, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+
+static void slave_type_setting_extension_number_display(void)
+{
+        lv_obj_t *extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_extension_number_cont), slave_type_setting_obj_id_extension_number_sub);
+        if (update_slave_id== 1)
+        {
+                lv_label_set_text(extension_number, lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET));
+        }
+        else
+        {
+                lv_label_set_text_fmt(extension_number, "ID %d", update_slave_id);
+        }
+
+        extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_master_indor_cont), slave_type_setting_obj_id_master_indoor_sub);
+        lv_label_set_text(extension_number, update_master_ip);
+}
+
+
+
 
 static void slave_type_setting_extension_number_list_display(lv_obj_t *parent)
 {
@@ -200,7 +243,19 @@ static void sat_layout_enter(slave_type_setting)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        {
+                //下一步
+                lv_obj_t *obj = lv_common_img_btn_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_next, 912, 15, 80, 48,
+                                                         slave_type_setting_save_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                         resource_ui_src_get("btn_title_check.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
+                if((strncmp(update_master_ip,user_data_get()->mastar_wallpad_ip,sizeof(update_master_ip)) == 0) && ((user_data_get()->system_mode & 0x0f) == update_slave_id) )
+                {
+                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                }
+        }
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:50
@@ -234,6 +289,8 @@ static void sat_layout_enter(slave_type_setting)
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 slave_type_setting_extension_number_display();
         }
+        
+
 }
 static void sat_layout_quit(slave_type_setting)
 {

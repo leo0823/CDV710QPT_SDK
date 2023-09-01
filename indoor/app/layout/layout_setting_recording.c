@@ -311,7 +311,7 @@ static bool setting_recording_motion_sub_display(void)
         }
 
         char name[64] = {0};
-        if (user_data_get()->motion.select_camera > MON_CH_DOOR2)
+        if (user_data_get()->motion.select_camera > MON_CH_DOOR8)
         {
                 sprintf(name, network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
         }

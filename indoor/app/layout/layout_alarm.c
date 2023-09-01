@@ -63,7 +63,6 @@ static void layout_alarm_monitor_open(void)
                 
                 if(ch >= DEVICE_MAX)
                 {
-                        SAT_DEBUG("===========================");
                         return ;       
                 }else if(monitor_valid_channel_check(MON_CH_CCTV1 + ch))
                 {
@@ -84,7 +83,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 
         lv_obj_t * passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_passwd_cont);
 
-        if(!alarm_return)
+        if(!alarm_return)//警报停止模式
         {
                 sat_linphone_audio_play_stop();
                 struct tm tm;
@@ -94,7 +93,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                         alarm_list_add(security_emergency_stop, 8, &tm);
                 }else
                 {
-                         alarm_list_add(emergency_stop, 8, &tm);
+                        alarm_list_add(emergency_stop, 8, &tm);
                 }
                 lv_obj_clear_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);                    
   

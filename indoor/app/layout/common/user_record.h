@@ -21,6 +21,14 @@ typedef enum
 ** 返回参数说明：
 ***/
 bool record_jpeg_start(REC_MODE mode);
+
+/***
+** 日期: 2022-05-19 10:37
+** 作者: leo.liu
+** 函数作用：获取图片抓拍模式
+** 返回参数说明：
+***/
+int record_jpeg_mode_get(void);
 /*
  * @日期: 2022-09-15
  * @作者: leo.liu
