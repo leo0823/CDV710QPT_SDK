@@ -180,31 +180,14 @@ static void home_obj_top_icon_display(void)
                         if(obj != NULL)
                         {
                                 lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
-                                char user_name[64] = {0};
-                                const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
-                                for (int i = 0; i < DEVICE_MAX; i++)
+
+
+                                int online_num = 0;
+                                outdoor_online_check(MON_CH_DOOR1,&online_num);
+                                if((door_camera_register_num_get() != online_num) && door_camera_register_num_get() != 0)//注册的门口机和在线的门口机数量不一致
                                 {
-                                        
-                                        if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
-                                        {
-                                                continue;
-                                        }
-                                        sprintf(user_name,"20%d",i + 1);
-     
-                                        for (int j = 0; j < 20; j++)
-                                        {
-                                                if((strcmp(user_name,p_register_info[j].name) == 0) && (p_register_info[j].timestamp != 0))//注册的门口机在线
-                                                {
-                                                        break;
-                                                }
-                                                if( j == 19)
-                                                {
-                                                        lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
-                                                        lv_obj_set_x(obj, pos_x + 13);//门口机在线图标有点偏小
-                                                        return;
-                                                }
-                                        }
-                                                
+                                        lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                                        lv_obj_set_x(obj, pos_x + 13);//门口机在线图标有点偏小
                                 }
                         }
                 
@@ -229,6 +212,10 @@ static void home_use_mobile_app_obj_display(lv_obj_t *obj)
  ***********************************************/
 static void home_date_obj_click(lv_event_t *ev)
 {
+        if ((user_data_get()->system_mode & 0x0F) != 0x01)
+        {
+                return ;
+        }
         setting_time_first_enter_set_flag(0x01);
         sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
@@ -727,7 +714,7 @@ static void home_sd_state_change_callback(void)
 
 static void layout_home_monitor_icon_display(lv_obj_t *obj)
 {
-        if (0) // (network_data_get()->door_device_count <= 0)
+        if (door_camera_register_num_get() <= 0)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 {

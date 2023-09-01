@@ -461,10 +461,10 @@ static lv_obj_t *setting_password_reset_list_create(lv_obj_t *parent)
 
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if (((user_data_get()->system_mode & 0xF0) != 0x10) && (i == 1))
-                {
-                        continue;
-                }
+                // if (((user_data_get()->system_mode & 0xF0) != 0x10) && (i == 1))
+                // {
+                //         continue;
+                // }
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

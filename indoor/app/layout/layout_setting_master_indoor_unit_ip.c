@@ -26,11 +26,16 @@ enum
         ***********************************************/
         setting_master_indoor_unit_ip_obj_id_ip_label,
 };
+extern const char *slave_typle_setting_update_master_ip_get(void);
+extern void slave_typle_setting_update_master_ip_setting(char * master_ip);
 
 static void setting_master_indoor_unit_ip_obj_cancel_click(lv_event_t *e)
 {
         sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
+
+
+
 static void setting_master_indoor_unit_ip_obj_confirm_click(lv_event_t *e)
 {
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_master_indoor_unit_ip_obj_id_ip_textbox);
@@ -38,10 +43,11 @@ static void setting_master_indoor_unit_ip_obj_confirm_click(lv_event_t *e)
         {
                 return;
         }
-        strncpy(user_data_get()->mastar_wallpad_ip, lv_textarea_get_text(textarea), sizeof(user_data_get()->mastar_wallpad_ip));
-        user_data_save();
+        slave_typle_setting_update_master_ip_setting((char *)lv_textarea_get_text(textarea));
 
         sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        
+
 }
 
 static void setting_master_indoor_unit_ip_next_obj_display(void)
@@ -165,7 +171,7 @@ static void sat_layout_enter(setting_master_indoor_unit_ip)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          user_data_get()->mastar_wallpad_ip, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
+                                          slave_typle_setting_update_master_ip_get(), 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
         }
         /***********************************************

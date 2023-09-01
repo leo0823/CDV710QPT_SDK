@@ -63,7 +63,6 @@ static void layout_alarm_monitor_open(void)
                 
                 if(ch >= DEVICE_MAX)
                 {
-                        SAT_DEBUG("===========================");
                         return ;       
                 }else if(monitor_valid_channel_check(MON_CH_CCTV1 + ch))
                 {
@@ -94,7 +93,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                         alarm_list_add(security_emergency_stop, 8, &tm);
                 }else
                 {
-                         alarm_list_add(emergency_stop, 8, &tm);
+                        alarm_list_add(emergency_stop, 8, &tm);
                 }
                 lv_obj_clear_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);                    
   
