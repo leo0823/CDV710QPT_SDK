@@ -25,7 +25,7 @@ static void power_setting_language_btn_client(lv_event_t *ev)
 ***********************************************/
 static void power_setting_run_btn_client(lv_event_t *ev)
 {
-	if ((user_data_get()->system_mode & 0xF0) == 0x00)
+	if (0/*(user_data_get()->system_mode & 0xF0) == 0x00*/)
 	{
 		sat_layout_goto(single_operation_network, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 	}
@@ -42,10 +42,7 @@ static void power_setting_run_btn_client(lv_event_t *ev)
 ***********************************************/
 static void power_setting_skip_btn_client(lv_event_t *ev)
 {
-	standby_timer_restart(true);
-	user_data_get()->is_device_init = 1;
-	user_data_save();
-	sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+	sat_layout_goto(server_operation_network, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(power_setting)

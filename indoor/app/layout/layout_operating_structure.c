@@ -11,11 +11,11 @@ enum
         layout_operating_structure_obj_id_slave_setting_sub,
         layout_operating_structure_obj_id_slave_setting_img,
 
-        layout_operating_structure_obj_id_single_check,
-        layout_operating_structure_obj_id_single_text,
-        layout_operating_structure_obj_id_single_sub_text,
+        layout_operating_structure_obj_id_master_check,
+        layout_operating_structure_obj_id_master_text,
+        layout_operating_structure_obj_id_master_sub_text,
 
-        layout_operating_structure_obj_id_server_check,
+        layout_operating_structure_obj_id_slave_check,
         layout_operating_structure_obj_id_server_text,
         layout_operating_structure_obj_id_server_sub_text,
 
@@ -23,8 +23,10 @@ enum
 };
 static void operating_structure_goto_layout_process(lv_scr_load_anim_t anim)
 {
+
         if (user_data_get()->is_device_init == 0)
         {
+                #if 0
                 if ((user_data_get()->system_mode & 0xF0) == 0x00)
                 {
                         sat_layout_goto(single_operation_network, anim, SAT_VOID);
@@ -33,6 +35,8 @@ static void operating_structure_goto_layout_process(lv_scr_load_anim_t anim)
                 {
                         sat_layout_goto(server_operation_network, anim, SAT_VOID);
                 }
+                #endif
+                sat_layout_goto(server_operation_network, anim, SAT_VOID);
         }
         else
         {
@@ -46,7 +50,7 @@ static void operating_structure_cancel_btn_click(lv_event_t *e)
 }
 static void operating_structure_save_btn_click(lv_event_t *e)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_check);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_master_check);
         if (obj == NULL)
         {
                 return;
@@ -54,10 +58,7 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         if (strstr((const char *)lv_obj_get_img_src(obj), "btn_radio_s.png"))
         {
                 user_data_get()->system_mode = 0x01;
-        }
-        else
-        {
-                user_data_get()->system_mode = 0x11;
+                memset(user_data_get()->mastar_wallpad_ip,0,sizeof(user_data_get()->mastar_wallpad_ip));
         }
         char number[32] = {0};
         memset(number, 0, sizeof(number));
@@ -65,18 +66,12 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         sprintf(&number[11], "%d", 1);
         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
         strcpy(network_data_get()->sip_user, number);
-        // setenv("SIP", network_data_get()->sip_user, 1);
         network_data_save();
         user_data_save();
-
         operating_structure_goto_layout_process(LV_SCR_LOAD_ANIM_FADE_IN);
 }
-static void operating_structure_slave_seting_click(lv_event_t *e)
-{
-        sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-}
 
-static void opearting_strutrue_single_server_obj_display(lv_obj_t *obj_s, int dst_obj_id)
+static void opearting_strutrue_master_slave_obj_display(lv_obj_t *obj_s, int dst_obj_id)
 {
         lv_obj_t *obj_n = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), dst_obj_id);
         if (obj_n == NULL)
@@ -101,59 +96,44 @@ static void operating_structrue_next_obj_display(void)
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 }
-static void operating_structure_sub_info_display(int is_single)
-{
-        lv_obj_t *item = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_slave_setting_cont);
-        lv_obj_t *sub_label = lv_obj_get_child_form_id(item, layout_operating_structure_obj_id_slave_setting_sub);
-        lv_label_set_text(sub_label, lang_str_get(is_single == 0 ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO : is_single == 1 ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO_MSTAR
-                                                                                                                                              : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_ENABLE));
-}
 
-static void operating_structure_single_check_click(lv_event_t *e)
+
+static void operating_structure_master_check_click(lv_event_t *e)
 {
         lv_obj_t *obj_s = lv_event_get_current_target(e);
         if (obj_s == NULL)
         {
                 return;
         }
-        opearting_strutrue_single_server_obj_display(obj_s, layout_operating_structure_obj_id_server_check);
-        operating_structure_sub_info_display(0);
-        operating_structrue_next_obj_display();
-}
-static void operating_structure_server_check_click(lv_event_t *e)
-{
-        lv_obj_t *obj_s = lv_event_get_current_target(e);
-        if (obj_s == NULL)
-        {
-                return;
-        }
-        opearting_strutrue_single_server_obj_display(obj_s, layout_operating_structure_obj_id_single_check);
-        operating_structure_sub_info_display(1);
+        opearting_strutrue_master_slave_obj_display(obj_s, layout_operating_structure_obj_id_slave_check);
         operating_structrue_next_obj_display();
 }
 
-static void opearting_strutrue_single_server_init_display(void)
+static void operating_structure_slave_seting_click(lv_event_t *e)
 {
-        lv_obj_t *obj_single = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_check);
-        lv_obj_t *obj_server = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_check);
+        extern void slave_typle_setting_update_master_ip_setting(char * master_ip);
+        extern void slave_typle_setting_update_slave_id_setting(int id);
+        slave_typle_setting_update_master_ip_setting(user_data_get()->mastar_wallpad_ip);
+        slave_typle_setting_update_slave_id_setting(user_data_get()->system_mode & 0x0f);
+        sat_layout_goto(slave_type_setting , LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+
+static void opearting_strutrue_master_slave_init_display(void)
+{
+        lv_obj_t *obj_master = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_master_check);
+        lv_obj_t *obj_slave = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_slave_check);
 
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                if ((user_data_get()->system_mode & 0xF0) == 0x00)
-                {
-                        lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                        lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-                }
-                else if ((user_data_get()->system_mode & 0xF0) == 0x10)
-                {
-                        lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
-                        lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-                }
+
+                lv_obj_set_style_bg_img_src(obj_master, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(obj_slave, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+
         }
         else
         {
-                lv_obj_set_style_bg_img_src(obj_server, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-                lv_obj_set_style_bg_img_src(obj_single, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(obj_slave, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(obj_master, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
 }
 
@@ -192,6 +172,7 @@ static void sat_layout_enter(operating_structure)
                                                          resource_ui_src_get("btn_title_check.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
+        #if 0
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:50
@@ -213,25 +194,26 @@ static void sat_layout_enter(operating_structure)
 
                 operating_structure_sub_info_display((user_data_get()->system_mode & 0xF0) >> 4);
         }
+        #endif
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:50
-        ** 说明: single setting
+        ** 说明: master setting
         ***********************************************/
         {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_check, 240, 243, 32, 32,
-                                         operating_structure_single_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_master_check, 240, 243, 32, 32,
+                                         operating_structure_master_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_check, 753, 243, 32, 32,
-                                         operating_structure_server_check_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_slave_check, 753, 243, 32, 32,
+                                         operating_structure_slave_seting_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                opearting_strutrue_single_server_init_display();
+                opearting_strutrue_master_slave_init_display();
         }
 
         /***********************************************
@@ -240,13 +222,13 @@ static void sat_layout_enter(operating_structure)
          ** 说明: 系统显示
          ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_text, 0, 295, 511, 60,
+                lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_master_text, 0, 295, 511, 60,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
-                lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_single_sub_text, 100, 355, 311, 60,
+                lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_master_sub_text, 100, 355, 311, 60,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -256,12 +238,12 @@ static void sat_layout_enter(operating_structure)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
                 lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_sub_text, 613, 355, 311, 60,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SERVER_SYSTEM), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO_MSTAR), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
         /***********************************************
         ** 作者: leo.liu

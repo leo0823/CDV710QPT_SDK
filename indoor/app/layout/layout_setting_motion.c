@@ -405,8 +405,7 @@ static void setting_motion_select_camera_msgbox_confim_click(lv_event_t *e)
         // char u_camera_data = item_n == 0 ? MON_CH_DOOR1 : item_n == 1 ? MON_CH_DOOR2
         //                                               : item_n == 2   ? MON_CH_CCTV1
         //                                                               : MON_CH_CCTV2;
-        printf("item_n is %d\n",item_n);
-        printf("user_data_get()->motion.select_camera is %d\n",user_data_get()->motion.select_camera);
+
         if (item_n != user_data_get()->motion.select_camera)
         {
                 user_data_get()->motion.select_camera = item_n;
