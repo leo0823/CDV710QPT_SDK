@@ -51,6 +51,47 @@ static void setting_server_ipaddress_obj_cancel_click(lv_event_t *e)
 }
 static void setting_server_ipaddress_obj_confirm_click(lv_event_t *e)
 {
+        lv_obj_t * local_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_product_ip_textbox);
+        if(local_txt != NULL)
+        {
+                if(is_valid_ipv4(lv_textarea_get_text(local_txt)) == false)
+                {
+                        return;
+                }
+        }
+        lv_obj_t *sip_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_default_gateway_textbox);
+        if(sip_txt != NULL)
+        {
+                if(is_valid_ipv4(lv_textarea_get_text(sip_txt)) == false)
+                {
+                        return;
+                }
+        }
+        lv_obj_t *update_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_subnet_mask_textbox);
+        if(update_txt != NULL)
+        {
+                if(is_valid_ipv4(lv_textarea_get_text(update_txt)) == false)
+                {
+                        return;
+                }
+        }
+        lv_obj_t *cctv_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_dns_label);
+        if(cctv_txt != NULL)
+        {
+                if(is_valid_ipv4(lv_textarea_get_text(cctv_txt)) == false)
+                {
+                        return;
+                }
+        }
+        memset(user_data_get()->local_server, 0, sizeof(user_data_get()->local_server));
+        memset(user_data_get()->sip_server, 0, sizeof(user_data_get()->sip_server));
+        memset(user_data_get()->update_server, 0, sizeof(user_data_get()->update_server));
+        memset(user_data_get()->cctv_server, 0, sizeof(user_data_get()->cctv_server));
+        strcpy(user_data_get()->local_server, lv_textarea_get_text(local_txt));
+        strcpy(user_data_get()->sip_server, lv_textarea_get_text(sip_txt));
+        strcpy(user_data_get()->update_server, lv_textarea_get_text(update_txt));
+        strcpy(user_data_get()->cctv_server, lv_textarea_get_text(cctv_txt));
+        
         if(layout_setting_setting_server_ipaddress_flag_get() != 0)
         {
                 sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -152,6 +193,44 @@ static void setting_server_ipaddress_obj_keyboad_click(lv_event_t *e)
         }
         setting_server_ipaddress_next_obj_display();
 }
+
+static void setting_server_ipaddress_local_server()
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_product_ip_textbox);
+        if(obj != NULL)
+        {
+                lv_label_set_text_fmt(obj,"%s",user_data_get()->local_server);
+        }
+
+}
+
+static void setting_server_ipaddress_sip_server()
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_default_gateway_textbox);
+        if(obj != NULL)
+        {
+                lv_label_set_text_fmt(obj,"%s",user_data_get()->sip_server);
+        }
+}
+
+static void setting_server_ipaddress_update_server()
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_subnet_mask_textbox);
+        if(obj != NULL)
+        {
+                lv_label_set_text_fmt(obj,"%s",user_data_get()->update_server);
+        }
+}
+
+static void setting_server_ipaddress_cctv_server()
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_dns_textbox);
+        if(obj != NULL)
+        {
+                lv_label_set_text_fmt(obj,"%s",user_data_get()->cctv_server);
+        }
+}
+
 static void sat_layout_enter(setting_server_ipaddress)
 {
         /***********************************************
@@ -212,6 +291,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                           "192.168.0.254", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
+                setting_server_ipaddress_local_server();
         }
         /***********************************************
         ** 作者: leo.liu
@@ -238,6 +318,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                           "192.168.0.1", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
+                setting_server_ipaddress_sip_server();
         }
         /***********************************************
         ** 作者: leo.liu
@@ -250,6 +331,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_SIP_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                
         }
         /***********************************************
          ** 作者: leo.liu
@@ -264,6 +346,8 @@ static void sat_layout_enter(setting_server_ipaddress)
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                           "192.168.0.1", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
+                setting_server_ipaddress_update_server();
+                
         }
         /***********************************************
         ** 作者: leo.liu
@@ -290,6 +374,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                           "192.168.0.1", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
+                setting_server_ipaddress_cctv_server();
         }
         /***********************************************
         ** 作者: leo.liu

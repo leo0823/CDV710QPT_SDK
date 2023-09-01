@@ -41,6 +41,8 @@ static bool tuya_event_cmd_video_stop(void)
 
 bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 {
+        SAT_DEBUG("==============cmd is %d=========",cmd);
+        SAT_DEBUG("==============arg is %d=========",arg);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:
@@ -83,7 +85,7 @@ bool layout_monitor_report_vaild_channel(void)
 {
 	int ch = monitor_channel_get();
 	
-	return tuya_api_channel_report(ch < 2? ch + 1: ch - 5,
+	return tuya_api_channel_report(ch + 1,
 				       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(MON_CH_DOOR1),
 				       monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(MON_CH_DOOR2),
 				       monitor_valid_channel_check(MON_CH_CCTV1), language_common_ch_string_get(MON_CH_CCTV1),

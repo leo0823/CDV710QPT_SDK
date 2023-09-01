@@ -223,7 +223,7 @@ static void sat_layout_enter(server_operation_network)
                                                                 0, 8, 838, 50, server_operation_network_obj_id_setting_title,
                                                                 lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_OPERATION_STRCUUTRE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, server_operation_network_obj_id_setting_sub,
-                                                                lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                lang_str_get((user_data_get()->system_mode & 0x0f) == 0x01?SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_MASTER : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 880, 20, 48, 48, server_operation_network_obj_id_setting_img,

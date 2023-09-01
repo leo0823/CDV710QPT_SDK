@@ -142,6 +142,7 @@ static const user_data_info user_data_default =
             .away_sensor_enable[5] = false,
             .away_sensor_enable[6] = false,
             .away_sensor_enable[7] = false,
+            
             .security_sensor_enable[0] = false,
             .security_sensor_enable[1] = false,
             .security_sensor_enable[2] = false,

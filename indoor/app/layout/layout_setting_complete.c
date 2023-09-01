@@ -19,12 +19,15 @@ static void setting_complete_confirm_click(lv_event_t *ev)
         ** 日期: 2023-05-19 15:21:05
         ** 参数说明:
         ** 注意事项:
+        1
         ************************************************************/
 
         user_data_get()->is_device_init = 1;
         user_data_save();
-        standby_timer_restart(true);
-        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        usleep(100 * 1000);
+        system("reboot");
+        // standby_timer_restart(true);
+        // sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(setting_complete)

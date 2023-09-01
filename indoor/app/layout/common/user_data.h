@@ -168,7 +168,7 @@ typedef struct
 
         char local_server[16];
         char sip_server[16];
-        char update[16];
+        char update_server[16];
         char cctv_server[16];
         char guard_station_number[16];
         

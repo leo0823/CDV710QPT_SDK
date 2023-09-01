@@ -582,7 +582,7 @@ static void call_time_obj_sub_display(void)
                 return;
         }
 
-        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER + user_data_get()->call_time));
+        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA + user_data_get()->call_time));
 }
 static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 {
@@ -640,9 +640,9 @@ static void setting_general_call_time_num_display(void)
 static void setting_general_call_time_obj_click(lv_event_t *ev)
 {
         const char *item[3] = {0};
-        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_1_MINUTE);
-        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_3_MINUTE);
-        item[2] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_5_MINUTE);
+        item[0] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_1_MINUTE);
+        item[1] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_2_MINUTE);
+        item[2] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_3_MINUTE);
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER),
                                       setting_general_msgbox_cancel_click, setting_general_call_time_msgbox_confirm_click, setting_general_call_time_msgbox_item_click,
                                       item, 3);
