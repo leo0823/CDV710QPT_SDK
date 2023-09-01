@@ -43,10 +43,7 @@ static const user_data_info user_data_default =
             .ring_mute = false,
             .door_tone = 1,
             .inter_tone = 3,
-            .door_ring_volume = 2,
-            .door_talk_volume = 2,
-            .inter_ring_volume = 2,
-            .inter_talk_volume = 2,
+
 
             .buzzer_tone = 1,
             .buzzer_volume = 1,
@@ -145,6 +142,7 @@ static const user_data_info user_data_default =
             .away_sensor_enable[5] = false,
             .away_sensor_enable[6] = false,
             .away_sensor_enable[7] = false,
+            
             .security_sensor_enable[0] = false,
             .security_sensor_enable[1] = false,
             .security_sensor_enable[2] = false,
@@ -159,6 +157,15 @@ static const user_data_info user_data_default =
 
             .away_auto_record = false,
             .security_auto_record = false,
+        
+            .alarm_gpio_value_group[0] = 0,
+            .alarm_gpio_value_group[1] = 0,
+            .alarm_gpio_value_group[2] = 0,
+            .alarm_gpio_value_group[3] = 0,
+            .alarm_gpio_value_group[4] = 0,
+            .alarm_gpio_value_group[5] = 0,
+            .alarm_gpio_value_group[6] = 0,
+            .alarm_gpio_value_group[7] = 0,
 
         },
         .system_mode = 0x01,
@@ -166,6 +173,7 @@ static const user_data_info user_data_default =
         .call_time = 1,
         .always_monitoring = 0,
         .last_call_new = false,
+        
 
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},
@@ -195,7 +203,7 @@ bool user_data_save(void)
 #define user_data_check_range_out(cur, min, max)                                   \
         if ((user_##data.cur < min) || (user_##data.cur > max))                    \
         {                                                                          \
-                printf("user data error %d(%d,%d) \n", user_##data.cur, min, max); \
+                printf("user data error %d(%d,%d) \n", (int)user_##data.cur, (int)min, (int)max); \
                 user_##data.cur = user_##data##_default.cur;                       \
         }
 
@@ -273,11 +281,9 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(touch_notification_voice, 0, 100);
         user_data_audio_check_range_out(touch_notification_volume, 0, 100);
 
-        user_data_audio_check_range_out(door_ring_volume, 0, 3);
-        user_data_audio_check_range_out(inter_ring_volume, 0, 3);
 
-        user_data_audio_check_range_out(door_talk_volume, 0, 100);
-        user_data_audio_check_range_out(inter_talk_volume, 0, 100);
+        user_data_audio_check_range_out(extension_volume, 0, 100);
+        user_data_audio_check_range_out(extension_voice, 0, 100);
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
@@ -335,26 +341,20 @@ static void user_data_check_valid(void)
         for (int i = 0; i < 8; i++)
         {
                 user_data_alarm_check_range_out(alarm_enable[i], 0, 2);
-        }
-        for (int i = 0; i < 8; i++)
-        {
+
                 user_data_alarm_check_range_out(alarm_trigger[i], 0, 1);
-        }
-        for (int i = 0; i < 8; i++)
-        {
+ 
                 user_data_alarm_check_range_out(away_sensor_enable[i], 0, 1);
-        }
-        for (int i = 0; i < 8; i++)
-        {
+
                 user_data_alarm_check_range_out(security_sensor_enable[i], 0, 1);
-        }
-        for (int i = 0; i < 8; i++)
-        {
+
                 for (int j = 0; j < 2; j++)
                 {
                         user_data_alarm_check_range_out(alarm_enable_always[i][j], 0, 1);
                 }
+                user_data_alarm_check_range_out(alarm_gpio_value_group[i], 0, 4);
         }
+
 
         user_data_alarm_check_range_out(away_setting_time, 1, 3);
         user_data_alarm_check_range_out(away_release_time, 30, 90);
@@ -408,7 +408,7 @@ static user_network_info network_data = {0};
 static const user_network_info network_data_default = {
     .sip_user = {"010001001011"},
     .ip = {0},
-    .mask = {"255.0.0.0"},
+    .mask = {"255.0.0"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \

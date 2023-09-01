@@ -96,4 +96,14 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void));
 ************************************************************/
 asterisk_register_info * asterisk_register_info_get_user(void);
 
+/************************************************************
+** 函数说明: 判断是否是以恶搞合法的ipv4地址
+** 作者: xiaoxiao
+** 日期: 2023-04-27 17:30:01
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool is_valid_ipv4(const char *s);
+
+
 #endif

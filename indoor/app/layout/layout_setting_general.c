@@ -582,7 +582,7 @@ static void call_time_obj_sub_display(void)
                 return;
         }
 
-        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER + user_data_get()->call_time));
+        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA + user_data_get()->call_time));
 }
 static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 {
@@ -640,9 +640,9 @@ static void setting_general_call_time_num_display(void)
 static void setting_general_call_time_obj_click(lv_event_t *ev)
 {
         const char *item[3] = {0};
-        item[0] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_1_MINUTE);
-        item[1] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_3_MINUTE);
-        item[2] = lang_str_get(SETTING_GENERAL_XLS_LANG_ID_5_MINUTE);
+        item[0] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_1_MINUTE);
+        item[1] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_2_MINUTE);
+        item[2] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_3_MINUTE);
         setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER),
                                       setting_general_msgbox_cancel_click, setting_general_call_time_msgbox_confirm_click, setting_general_call_time_msgbox_item_click,
                                       item, 3);
@@ -718,7 +718,7 @@ lv_obj_t *setting_main_list_create(int id)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if ((user_data_get()->system_mode & 0x0F) != 0X01 && i == 1)
+                if ((user_data_get()->system_mode & 0x0F) != 0X01 && ((i == 1) || i == 4))
                 {
                         continue;
                 }
@@ -768,11 +768,11 @@ static lv_obj_t *setting_sub_list_create(void)
         {
                 
                 //此处请重新判断
-                if (((user_data_get()->system_mode & 0x0f) != 0x01) && ((i >= 5) && (i <= 8)))
+                if (((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7)|| (i == 8)))
                 {
                         continue;
                 }
-                
+
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

@@ -82,7 +82,7 @@ static void sd_state_checking_timer(lv_timer_t *timer)
         else if ((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG))
         {
                 masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
-                setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, "SD card is not normal statusor not inserted..", 0, 60, 460, 120);
+                setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_IS_VALID), 0, 60, 460, 120);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
         }
         lv_timer_del(timer);
@@ -107,7 +107,7 @@ void sd_state_change_default_callback(void)
                 setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
         }
         masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, "Checking SD card...", 0, 120, 460, 120);
+        setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_CHECKING_SD), 0, 120, 460, 120);
 
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
@@ -159,14 +159,27 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
         {
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
+
                         user_data_info *info = (user_data_info *)recv_data;
                         user_data_get()->call_time = info->call_time;
+                        user_data_get()->etc.open_the_door = info->etc.open_the_door;
                         user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                         user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
-
                         memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                         memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
+                        memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
+                        memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
+                        for(int i = 0; i< 8; i ++)
+                        {
+                                if((user_data_get()->alarm.alarm_gpio_value_group[i]) != (info->alarm.alarm_gpio_value_group[i]))
+                                {
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, info->alarm.alarm_gpio_value_group[i] * 100);
+                                }
+                        }
+                        memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                         user_data_save();
+ 
+                        
                 }
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
@@ -176,11 +189,9 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
                 {
-
                         memcpy((void *)&p_register_info_slave, recv_data, max);
 
                 }
-
                 free(recv_data);
                 recv_data = NULL;
         }
@@ -401,7 +412,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ************************************************************/
         call_list_init();
 
-        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+       
 #if 1
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
@@ -422,20 +433,18 @@ static void logo_enter_system_timer(lv_timer_t *t)
         }
 
 #endif
-
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
 
         /***** 音频输出初始化 *****/
         audio_output_cmd_register(audio_output_event_default_process);
 
-        sd_state_channge_callback_register(sd_state_change_default_callback);
-
         standby_timer_init(sat_playout_get(close), user_data_get()->display.screen_off_time * 1000);
         lv_timer_t *standby_timer = lv_timer_create(standby_dection_timer, 1000, NULL);
         lv_timer_ready(standby_timer);
 
         standby_timer_restart(false);
+
         if (user_data_get()->is_device_init == false)
         {
                 user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
@@ -455,9 +464,10 @@ static void logo_enter_system_timer(lv_timer_t *t)
                  ** 参数说明:
                  ** 注意事项:
                  ************************************************************/
-
-                standby_timer_restart(true);
+                alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
                 user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
+                sd_state_channge_callback_register(sd_state_change_default_callback);
+                standby_timer_restart(true);
                 if (alarm_trigger_check() == false)
                 {
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
