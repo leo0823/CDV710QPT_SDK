@@ -159,7 +159,7 @@ bool sat_linphone_video_play_duration_get(void);
 ** 日期: 2022-10-19 8:57:42
 ** 说明: 铃声播放
 ***********************************************/
-bool sat_linphone_audio_play_start(const char *file, int volume);
+bool sat_linphone_audio_play_start(const char *file, int reount);
 
 /***********************************************
 ** 作者: leo.liu

@@ -156,7 +156,7 @@ struct ipcamera_info *sat_ipcamera_node_data_get(int index);
 ** 日期: 2023-1-5 15:21:6
 ** 说明: 数据同步处理.注意：此接口只有ID1处理
 ** type: 0:user_data,1:network_data
-** flag: bit0:1发送到室内分机，bit1:1发送到门口机
+** flag: bit0:1发送到室内分机，bit1:1发送到门口机,bit2:1发送给主机
 ** data:需要同步的数据
 ** size:同步数据的大小
 ** inline_t:最后刷新注册的时间戳到现在的时间差判定是否在线
