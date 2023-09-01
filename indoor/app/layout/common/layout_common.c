@@ -653,3 +653,30 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void))
             }
         }
 }
+
+/************************************************************
+** 函数说明: 判断是否是以恶搞合法的ipv4地址
+** 作者: xiaoxiao
+** 日期: 2023-04-27 17:30:01
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool is_valid_ipv4(const char *s) 
+{
+    char *copy = strdup(s);
+    char *token = strtok(copy, ".");
+    int count = 0;
+
+    while (token != NULL) {
+        int num = atoi(token);
+        if (num < 0 || num > 255) {
+            free(copy);
+            return false;
+        }
+        count++;
+        token = strtok(NULL, ".");
+    }
+    free(copy);
+    return count == 4;
+}
+

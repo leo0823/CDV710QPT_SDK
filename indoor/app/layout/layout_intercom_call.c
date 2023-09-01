@@ -14,6 +14,7 @@ enum
         intercom_call_obj_id_tabview,
         intercom_call_obj_id_externsion,
         intercom_call_obj_id_guard,
+        intercom_call_obj_id_abnormal_title,
         intercom_call_obj_id_id_base,
 
         intercom_call_obj_id_list = intercom_call_obj_id_id_base + 8,
@@ -38,8 +39,8 @@ typedef enum
 
 } call_log_list_cont_obj;
 
-int checkbox_s_num = 0;
-static int enter_intercom_mode = 0;
+static int checkbox_s_num = 0;//call记录被选中的个数
+static int enter_intercom_mode = 0;//进入intercom_call界面的途径（0：通过点击call机按键；1：通过点击呼叫记录的按键）
 void enter_intercomm_call_mode_set(int mode)
 {
         enter_intercom_mode = mode;
@@ -86,8 +87,52 @@ static lv_obj_t *intercom_call_table_view_obj_create(void)
         return tabview;
 }
 
+static void intercom_call_abnormal_title_display(lv_obj_t * obj)
+{
+
+        int online_num = 0;
+        extension_online_check(-1,&online_num);
+        if( online_num == 0)
+        {
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }else
+        {
+                lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        }
+        
+}
+
 static void intercom_extension_obj_click(lv_event_t *e)
 {
+        lv_obj_t *obj = lv_event_get_target(e);
+        lv_obj_t * parent = lv_obj_get_parent(obj);
+        lv_obj_add_state(obj, LV_STATE_USER_1);
+        lv_obj_clear_state(obj, LV_STATE_USER_2);
+        if(obj->id == intercom_call_obj_id_guard)
+        {
+                lv_obj_t * abnormal = lv_obj_get_child_form_id(parent,intercom_call_obj_id_abnormal_title);
+                lv_obj_clear_flag(abnormal,LV_OBJ_FLAG_HIDDEN);;
+                lv_obj_t * extension = lv_obj_get_child_form_id(parent,intercom_call_obj_id_externsion);
+                if(extension != NULL)
+                {
+                        lv_obj_clear_state(extension, LV_STATE_USER_1);
+                        lv_obj_add_state(extension, LV_STATE_USER_2);
+                } 
+        }else
+        {
+                lv_obj_t * abnormal = lv_obj_get_child_form_id(lv_obj_get_parent(obj),intercom_call_obj_id_abnormal_title);
+                intercom_call_abnormal_title_display(abnormal);
+                lv_obj_t * guard = lv_obj_get_child_form_id(parent,intercom_call_obj_id_guard);
+                if(guard != NULL)
+                {
+                        lv_obj_clear_state(guard, LV_STATE_USER_1);
+                        lv_obj_add_state(guard, LV_STATE_USER_2);
+                } 
+        }
+       
+
+        
+        
 }
 
 static int intercom_call_id_index = 0;
@@ -95,17 +140,28 @@ static void intercom_id_obj_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_target(e);
         intercom_call_id_index = lv_btnmatrix_get_selected_btn(obj) + 1;
-
-        char number[128] = {0};
-        sprintf(number, "sip:50%d@%s:5066", intercom_call_id_index, user_data_get()->mastar_wallpad_ip);
-        sat_linphone_call(number, false, false, NULL);
-        //       sat_ipcamera_device_discover_search(0x02);
+        char user_name[64] = {0};
+        char own_name[64] = {0};
+        sprintf(user_name,"50%d",intercom_call_id_index);
+        sprintf(own_name,"50%d",user_data_get()->system_mode & 0x0F);
+        if(strncmp(user_name,own_name,4) == 0)//不允许打给自己
+        {
+                return;
+        }
+        if(extension_online_check(intercom_call_id_index,NULL))//对方分机设备是否在线
+        {
+                char number[128] = {0};
+                sprintf(number, "sip:%s@%s:5066", user_name, user_data_get()->mastar_wallpad_ip);
+                sat_linphone_call(number, false, false, NULL);
+                //sat_ipcamera_device_discover_search(0x02);
+                return;
+        }
 }
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
-        // intercom_call_username_setting(arg);
-        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        intercom_call_username_setting(arg);
+        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
@@ -113,8 +169,9 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
-        intercom_call_username_setting(arg);
-        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        // intercom_call_username_setting(arg);
+        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        return true;
 }
 
 /************************************************************
@@ -504,6 +561,7 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
         }
 }
 
+
 static void sat_layout_enter(intercom_call)
 {
         standby_timer_close();
@@ -570,7 +628,9 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_set_style_pad_top(exten_txt_obj, 94, LV_PART_MAIN);
                         lv_obj_set_style_bg_color(exten_txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
                         lv_obj_set_style_bg_opa(exten_txt_obj, LV_OPA_COVER, LV_STATE_USER_1);
+                        lv_obj_set_style_bg_opa(exten_txt_obj, LV_OPA_TRANSP, LV_STATE_USER_2);
                         lv_obj_add_state(exten_txt_obj, LV_STATE_USER_1);
+
 
                         lv_obj_t *guard_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_guard, 0, 231 + 8, 231, 231,
                                                                         intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
@@ -581,6 +641,8 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_set_style_pad_top(guard_txt_obj, 94, LV_PART_MAIN);
                         lv_obj_set_style_bg_color(guard_txt_obj, lv_color_hex(0x0096ff), LV_STATE_USER_1);
                         lv_obj_set_style_bg_opa(guard_txt_obj, LV_OPA_COVER, LV_STATE_USER_1);
+                        lv_obj_set_style_bg_opa(guard_txt_obj, LV_OPA_TRANSP, LV_STATE_USER_2);
+                        lv_obj_add_state(guard_txt_obj, LV_STATE_USER_2);
 
                         lv_obj_t *btnmatrix = lv_common_number_input_keyboard_create(page_1, intercom_call_obj_id_id_base, 231, 8, 793, 384,
                                                                                      intercom_id_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00a8ff,
@@ -588,7 +650,7 @@ static void sat_layout_enter(intercom_call)
                                                                                      0, 3, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                      0, 0);
-                        if ((user_data_get()->system_mode & 0xF0) != 0xF0)
+                        if (0/*(user_data_get()->system_mode & 0xF0) != 0xF0*/)
                         {
                                 lv_obj_add_flag(exten_txt_obj, LV_OBJ_FLAG_HIDDEN);
                                 lv_obj_add_flag(guard_txt_obj, LV_OBJ_FLAG_HIDDEN);
@@ -617,6 +679,16 @@ static void sat_layout_enter(intercom_call)
                         lv_btnmatrix_set_btn_bg_map(btnmatrix, btnm_img_map);
                         lv_btnmatrix_set_btn_ctrl(btnmatrix, 8, LV_BTNMATRIX_CTRL_HIDDEN);
                         lv_btnmatrix_set_btn_ctrl(btnmatrix, network_data_get()->sip_user[11] - 49, LV_BTNMATRIX_CTRL_DISABLED);
+
+                        {
+                                lv_obj_t *adnormal_obj = lv_common_text_create(page_1, intercom_call_obj_id_abnormal_title, 231, 8, 793, 384,
+                                                NULL, LV_OPA_COVER, 0, LV_OPA_COVER, 0x0096ff,
+                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
+                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
+                                                lang_str_get(CALL_XLS_LANG_ID_CANNOT_USE_BEFORE_SYSTEMSETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                intercom_call_abnormal_title_display(adnormal_obj);
+                                lv_obj_set_style_pad_top(adnormal_obj, 180, LV_PART_MAIN);
+                        }
                 }
                 lv_obj_t *page_2 = lv_obj_get_child_form_id(cont, 1);
                 {

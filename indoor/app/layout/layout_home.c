@@ -107,6 +107,97 @@ static void home_mute_obj_click(lv_event_t *ev)
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
+ ** 说明: 顶部图标显示
+ ***********************************************/
+static void home_obj_top_icon_display(void)
+{
+        lv_obj_t *obj = NULL;
+        int pos_x = 852;
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: 网络状态图标显示
+         ***********************************************/
+        {
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),home_obj_id_network_icon);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                char state = tuya_api_network_status();
+                if ((state == 0x00) || (user_data_get()->wifi_enable == false))
+                {
+                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                }
+                else if (state == 0x01)
+                {
+                        pos_x -= 56;
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_wifi.png"), LV_PART_MAIN);
+                }
+                else
+                {
+                        pos_x -= 56;
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
+                }
+        }
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: SD卡显示
+         ***********************************************/
+        {
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),home_obj_id_sd_icon);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+                {
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_x(obj, pos_x);
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        pos_x -= 56;
+
+                }
+                else
+                {
+                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                }
+ 
+        }
+
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: 门口机在线状态显示
+         ***********************************************/
+        {
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),home_obj_id_door_icon);
+                {
+                        if(obj != NULL)
+                        {
+                                lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+
+
+                                int online_num = 0;
+                                outdoor_online_check(MON_CH_DOOR1,&online_num);
+                                if((door_camera_register_num_get() != online_num) && door_camera_register_num_get() != 0)//注册的门口机和在线的门口机数量不一致
+                                {
+                                        lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                                        lv_obj_set_x(obj, pos_x + 13);//门口机在线图标有点偏小
+                                }
+                        }
+                
+                }
+        }
+
+}
+/***********************************************
+ ** 作者: leo.liu
+ ** 日期: 2023-2-2 13:42:25
  ** 说明: app状态显示
  ***********************************************/
 static void home_use_mobile_app_obj_display(lv_obj_t *obj)
@@ -121,6 +212,10 @@ static void home_use_mobile_app_obj_display(lv_obj_t *obj)
  ***********************************************/
 static void home_date_obj_click(lv_event_t *ev)
 {
+        if ((user_data_get()->system_mode & 0x0F) != 0x01)
+        {
+                return ;
+        }
         setting_time_first_enter_set_flag(0x01);
         sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
@@ -201,9 +296,6 @@ static void home_date_timer(lv_timer_t *ptimer)
         home_time_obj_display();
         home_date_obj_display();
 
-        //     monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-        //    monitor_channel_set(MON_CH_CCTV1);
-        //   sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 /***********************************************
  ** 作者: leo.liu
@@ -368,7 +460,7 @@ static lv_obj_t *home_monitoring_msgbox_create(void)
  ***********************************************/
 static void home_monitor_obj_click(lv_event_t *ev)
 {
-        if ((user_data_get()->system_mode & 0xF0) == 0x10)
+        if (0/*(user_data_get()->system_mode & 0xF0) == 0x10*/)//室内机不允许监控大厅
         {
                 home_monitoring_msgbox_create();
         }
@@ -614,31 +706,15 @@ static void home_media_thumb_display(void)
         home_media_thumb_new_display(info->is_new);
 }
 
-static void home_sd_icon_display(void)
-{
-        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),home_obj_id_sd_icon);
-        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
-        {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-
-        }
-        else
-        {
-                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }
-}
 
 static void home_sd_state_change_callback(void)
 {
-        home_media_thumb_display();
-        home_sd_icon_display();
-        
+        home_obj_top_icon_display();
 }
 
 static void layout_home_monitor_icon_display(lv_obj_t *obj)
 {
-        if (0) // (network_data_get()->door_device_count <= 0)
+        if (door_camera_register_num_get() <= 0)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 {
@@ -667,64 +743,15 @@ static void layout_home_cctv_icon_display(lv_obj_t *obj)
 }
 
 
-static void home_network_check_timer(lv_timer_t *ptimer)
+static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 {
-        lv_obj_t *obj = ptimer->user_data;
-        char state = tuya_api_network_status();
-        if ((state == 0x00) || (user_data_get()->wifi_enable == false))
-        {
-                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }
-        else if (state == 0x01)
-        {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_wifi.png"), LV_PART_MAIN);
-        }
-        else
-        {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
-        }
 
+        home_obj_top_icon_display();
 }
 
-static void home_door_online_check_timer(lv_timer_t *ptimer)
-{
-        lv_obj_t *obj = ptimer->user_data;
-        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
-        
-        for (int i = 0; i < DEVICE_MAX; i++)
-        {
-                
-                if (network_data_get()->door_device[i].rtsp[0].rtsp_url[0] == 0)
-                {
-                        continue;
-                }
-
-                if (sat_ipcamera_device_name_get(i, 100) == false)
-                {
-                        printf("door device %d is not online\n",i + 1);
-                        lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
-                }
-        }
-
-}
 
 static void sat_layout_enter(home)
 {
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2023-2-2 13:42:25
-         ** 说明: SD状态图标显示
-         ***********************************************/
-        {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_sd_icon, 787, 72, 48, 48,
-                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                resource_ui_src_get("ic_monitoring_sdcard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        }
-        home_sd_icon_display();
 
         /***********************************************
          ** 作者: leo.liu
@@ -1011,12 +1038,11 @@ static void sat_layout_enter(home)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,852, 77 , 35, 35,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon,852, 77 , 35, 35,
                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_timer_ready(lv_sat_timer_create(home_network_check_timer, 5000, network));
         }
         {
                 /************************************************************
@@ -1026,13 +1052,27 @@ static void sat_layout_enter(home)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-                lv_obj_t * network = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_door_icon,736, 77 , 35, 35,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_door_icon,736, 79 , 32, 32,
                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                 resource_ui_src_get("ic_system_callcam_no.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_timer_ready(lv_sat_timer_create(home_door_online_check_timer, 5000, network));
+
         }
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: SD状态图标显示
+         ***********************************************/
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_sd_icon, 787, 69, 48, 48,
+                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("ic_monitoring_sdcard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        lv_timer_ready(lv_sat_timer_create(home_obj_top_icon_display_timer, 5000, NULL));
+
 
         home_media_thumb_display();
         

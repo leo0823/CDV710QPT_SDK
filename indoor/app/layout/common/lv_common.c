@@ -102,19 +102,6 @@ lv_obj_t *lv_common_img_text_btn_create(lv_obj_t *parent, int id, int x, int y, 
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-31 16:43:19
-        ** 说明: 设置title
-        ***********************************************/
-        {
-                title_obj = lv_common_text_create(obj, title_id, title_x, title_y, title_w, title_h,
-                                                  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                  title_string, title_default_color, title_press_color, title_align, title_font);
-        }
-
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-1-31 16:43:19
         ** 说明: 设置img
         ***********************************************/
         {
@@ -124,7 +111,18 @@ lv_obj_t *lv_common_img_text_btn_create(lv_obj_t *parent, int id, int x, int y, 
                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                    img_src, press_img_recolor_opa, press_img_recolor, img_align);
         }
-
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-1-31 16:43:19
+        ** 说明: 设置title
+        ***********************************************/
+        {
+                title_obj = lv_common_text_create(obj, title_id, title_x, title_y, title_w, title_h,
+                                                  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  title_string, title_default_color, title_press_color, title_align, title_font);
+        }
         lv_obj_set_state_bind(obj, title_obj);
         lv_obj_set_state_bind(title_obj, img_obj);
         return obj;

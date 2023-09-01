@@ -19,6 +19,9 @@
 ** 函数作用：接收编码后的流
 ** 返回参数说明：
 ***/
+
+static int jpeg_record_mode = REC_MODE_MANUAL;
+
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 {
         if ((mode & 0x1F))
@@ -81,9 +84,21 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 ***/
 bool record_jpeg_start(REC_MODE mode)
 {
-        printf("record_jpeg_start \n");
-        return sat_linphone_snap(monitor_channel_get(), mode, jpeg_write_callback);
+        jpeg_record_mode = mode;
+        return sat_linphone_snap(monitor_channel_get(), jpeg_record_mode, jpeg_write_callback);
 }
+
+/***
+** 日期: 2022-05-19 10:37
+** 作者: leo.liu
+** 函数作用：获取图片抓拍模式
+** 返回参数说明：
+***/
+int record_jpeg_mode_get(void)
+{
+        return jpeg_record_mode;
+}
+
 /*
  * @日期: 2022-09-15
  * @作者: leo.liu

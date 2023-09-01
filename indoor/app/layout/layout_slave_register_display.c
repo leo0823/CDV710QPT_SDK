@@ -94,55 +94,43 @@ static void sat_layout_enter(indoor_register)
                         lv_obj_t *list = ipc_camera_registered_list_create();
                         int item_y = 0;
 
-                        const asterisk_register_info *p_register_info = asterisk_register_info_get();
+                        const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
                         for (int i = 0; i < 20; i++)
                         {
-
-                        /*主机或者门口机过滤*/
-                        if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0) || (strncmp(p_register_info[i].name, "20", 2) == 0))
-                        {
-                                continue;
-                        }
-                    
-                        unsigned long long timestamp = user_timestamp_get();
-                        if(abs(timestamp - p_register_info[i].timestamp) >= (10 * 1000))
-                        {
-                                continue;
-                        }
-                        char * ip = strstr(p_register_info[i].ip,":");
-                        ip[0] = '\0';
-                        
-                                
-                                lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
-                                                                                                   NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                                   10, 8, 838, 50, 0,
-                                                                                                   p_register_info[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                                   10, 45, 838, 50, 1,
-                                                                                                   p_register_info[i].ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                                                                   0, 0, 0, 0, -1,
-                                                                                                   NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                                   0, 20, 48, 48, 2,
-                                                                                                   NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
-                                lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
-                                if (sub != NULL)
+                                /*主机或者门口机过滤*/
+                                if ((p_register_info[i].name[0] == '\0') || (p_register_info[i].timestamp == 0))
                                 {
-                                        lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
+                                        continue;
+                                }
+                        
+
+                                char * ip = strstr(p_register_info[i].ip,":");
+                                if(ip != NULL)
+                                {
+                                        ip[0] = '\0';
                                 }
 
-                                item_y += 88;
+                                        lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
+                                                                                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                                                        10, 8, 838, 50, 0,
+                                                                                                        p_register_info[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                                        10, 45, 838, 50, 1,
+                                                                                                        p_register_info[i].ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                                                        0, 0, 0, 0, -1,
+                                                                                                        NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                                        0, 20, 48, 48, 2,
+                                                                                                        NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                        lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
+                                        if (sub != NULL)
+                                        {
+                                                lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
+                                        }
+
+                                        item_y += 88;
                         }
                 }
-        }
-
-        if (layout_ipc_cmeara_is_doorcamera_get() == true)
-        {
-                sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
-        }
-        else
-        {
-                sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
         }
 }
 static void sat_layout_quit(indoor_register)

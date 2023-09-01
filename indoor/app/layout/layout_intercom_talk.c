@@ -2,6 +2,7 @@
 #include "layout_intercom_call.h"
 enum
 {
+        intercom_talk_obj_id_other_call_list,
         intercom_talk_screen_obj_id,
         intercom_talk_obj_top,
         intercom_talk_obj_status_label,
@@ -12,6 +13,7 @@ enum
         intercom_talk_call_bottom_cont,
         intercom_talk_obj_id_vol_cont,
         intercom_talk_vol_obj_id_slider_cont,
+        intercom_talk_obj_id_other_call_bg,
 };
 
 static int intercom_talk_timeout = 0;
@@ -36,6 +38,189 @@ bool intercom_call_username_setting(const char *user)
         strcpy(intercom_call_user, user);
         return true;
 }
+
+
+static void layout_intercom_goto_layout_process(void)
+{
+        sat_linphone_handup(-1);
+        linphone_incomming_info *node = linphone_incomming_used_node_get(true);
+
+        if (node == NULL)
+        { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
+                node = linphone_incomming_used_node_get(false);
+                if (node == NULL)
+                { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
+                        sat_linphone_handup(0xFFFF);
+                        if (intercom_call_state == 1)
+                        {
+                                sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+                        }
+                        else
+                        {
+                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+                        }
+                        /*为了直观，加入return*/
+                        return;
+                }
+                sat_linphone_incomming_refresh(node->call_id);
+                intercom_call_status_setting(2);
+                char number[128] = {0};
+                sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
+                intercom_call_username_setting(number);
+                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                linphone_incomming_node_release(node);
+                sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+
+               
+        }
+        sat_linphone_incomming_refresh(node->call_id);
+        monitor_channel_set(node->channel);
+        monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
+        SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+        linphone_incomming_node_release(node);
+        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+
+//门口机通道点击事件
+static void layout_interocm_talk_door_call_btn_click(lv_event_t * ev)
+{
+        sat_linphone_handup(-1);
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(obj->id);
+        if(node != NULL)
+        {
+                sat_linphone_incomming_refresh(node->call_id);
+                monitor_channel_set(node->channel);
+                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
+                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                linphone_incomming_node_release(node);
+                sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+        
+}
+
+//内线通道点击事件
+static void layout_interocm_talk_intercom_call_btn_click(lv_event_t * ev)
+{
+        sat_linphone_handup(-1);
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(obj->id);
+        if(node != NULL)
+        {
+                sat_linphone_incomming_refresh(node->call_id);
+                intercom_call_status_setting(2);
+                char number[128] = {0};
+                sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
+                intercom_call_username_setting(number);
+                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                linphone_incomming_node_release(node);
+                sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+        
+}
+
+//会话列表创建
+static lv_obj_t * layout_intercom_other_call_list_btn_create(void)
+{
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),intercom_talk_obj_id_other_call_list);
+        if (list != NULL)
+        {
+                lv_obj_clean(list);
+                return list;
+        }
+        list = lv_list_create(sat_cur_layout_screen_get());
+        lv_common_style_set_common(list,intercom_talk_obj_id_other_call_list, 32, 96, 253, 360, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+
+        lv_obj_set_style_pad_row(list,20,LV_PART_MAIN);
+        
+        return list;
+}
+void layout_intercom_talk_door_ch_btn_create(void);
+//挂断其他设备的呼叫会话
+static void layout_intercom_talk_other_call_handup_btn_click(lv_event_t * ev)
+{
+
+        lv_obj_t *obj = lv_event_get_current_target(ev);
+        linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(lv_obj_get_parent(obj)->id);
+        if(node != NULL)
+        {
+                sat_linphone_handup(node->call_id);
+                linphone_incomming_node_release(node);
+                layout_intercom_talk_door_ch_btn_create();
+        }
+}
+
+
+//门呼叫，内线呼叫会话按键刷新
+void layout_intercom_talk_door_ch_btn_create(void)
+{
+        linphone_incomming_info node[8] ;
+        int total;
+   
+        lv_obj_t *parent = layout_intercom_other_call_list_btn_create();
+
+        int sec_x = 0;
+        int sec_y = 0;
+        //门口机通道按键创建
+        linphone_incomming_vaild_channel_get(true,node,&total);
+        for(int i = 0; i < total; i++)
+        {
+                SAT_DEBUG("monitor total is %d",total);
+                lv_obj_t * obj_answer = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 253, 80,
+                                                layout_interocm_talk_door_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                110, 21, 93, 35, 1,
+                                                network_data_get()->door_device[node[i].channel].door_name, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                0, 0, 253, 80, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+
+                lv_obj_t * handup = lv_common_img_btn_create(obj_answer, 2, 205, 24, 32, 32, 
+                                        layout_intercom_talk_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                lv_obj_set_ext_click_area(handup, 30);
+                lv_obj_t * sub = lv_obj_get_child_form_id(obj_answer,1);
+                if (sub != NULL)
+                {
+                        lv_label_set_long_mode(sub, LV_LABEL_LONG_SCROLL_CIRCULAR);
+                }
+                sec_y += 100;   
+ 
+        }
+
+        //内线会话通道创建（坐标沿着门口机通道按键坐标增加）
+        linphone_incomming_vaild_channel_get(false,node,&total);
+        for(int i = 0; i < total ; i++)
+        {
+                SAT_DEBUG("inter total is %d",total);
+                char sip_user[4] = {0};
+                sprintf(sip_user,"50%d",node[i].channel);
+                lv_obj_t * obj = lv_common_img_text_btn_create(parent, node[i].call_id, sec_x, sec_y, 253, 80,
+                                                layout_interocm_talk_intercom_call_btn_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                110, 21, 93, 35, 1,
+                                                sip_user, 0, 0, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                0, 0, 253, 80, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_img_btn_create(obj, 2,205, 24, 32, 32, 
+                                                layout_intercom_talk_other_call_handup_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                (const char *)resource_ui_src_get("btn_call_extension_close.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                lv_obj_t * sub = lv_obj_get_child_form_id(obj,1);
+                if (sub != NULL)
+                {
+                        lv_label_set_long_mode(sub, LV_LABEL_LONG_SCROLL_CIRCULAR);
+                }
+                sec_y += 100;   
+        }
+}
+
 static lv_obj_t *intercom_talk_call_top_obj_item_get(int id)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_top);
@@ -52,6 +237,7 @@ static lv_obj_t *intercom_talk_call_top_obj_item_get(int id)
         }
         return obj;
 }
+
 static void intercom_talk_call_info_display(void)
 {
         lv_obj_t *obj = intercom_talk_call_top_obj_item_get(0);
@@ -64,6 +250,7 @@ static void intercom_talk_call_info_display(void)
         user_time_read(&tm);
         lv_label_set_text_fmt(obj, "Call: %s    %04d-%02d:%02d %02d:%02d", intercom_call_user, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
 }
+
 static void intercom_talk_call_time_display(void)
 {
         lv_obj_t *obj = intercom_talk_call_top_obj_item_get(1);
@@ -74,16 +261,19 @@ static void intercom_talk_call_time_display(void)
         }
         lv_label_set_text_fmt(obj, "%02d:%02d", intercom_talk_timeout / 60, intercom_talk_timeout % 60);
 }
+
 static void intercom_talk_call_time_timer(lv_timer_t *ptime)
 {
         if (intercom_talk_timeout == 0)
         {
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+                layout_intercom_goto_layout_process();
+                return;
         }
         intercom_talk_call_info_display();
         intercom_talk_call_time_display();
         intercom_talk_timeout--;
 }
+
 static void intercom_talk_status_background_display(void)
 {
         if (intercom_call_state != 3)
@@ -95,6 +285,7 @@ static void intercom_talk_status_background_display(void)
                 lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("img_calling_voice_backgroud.jpg", 1024, 600));
         }
 }
+
 static void intercom_talk_call_status_label_display(void)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_status_label);
@@ -121,14 +312,8 @@ static void intercom_talk_call_status_icon_display(void)
 
 static void intercom_talk_handup_obj_click(lv_event_t *e)
 {
-        if (intercom_call_state == 1)
-        {
-                sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-        }
-        else
-        {
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-        }
+        layout_intercom_goto_layout_process();
+
 }
 
 static void intercom_talk_handup_obj_display(void)
@@ -160,27 +345,56 @@ static void intercom_talk_answer_obj_display(void)
         }
 }
 
+//呼叫繁忙事件注册
+static bool intercom_talk_call_busy_callback(char *arg)
+{
+        SAT_DEBUG("arg is %s",arg);
+        return true;
+}
+
+// 呼叫结束事件注册
+/* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容 id:建立连接的id号*/
+static bool intercom_doorcamera_end_process(char *arg)
+{
+        linphone_incomming_info *node = NULL;
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+
+        /*判断id是否是存在incomming中的,如果不是暂存的，那么就是当前监控的*/
+
+        if ((node = linphone_incomming_used_node_get_by_call_id(call_id)) != NULL)
+        {
+                linphone_incomming_node_release(node);
+                layout_intercom_talk_door_ch_btn_create();
+        }
+        else
+        {
+                layout_intercom_goto_layout_process();
+        }
+        return true;
+}
+
+
 // 呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
         /*sip:5xxx代表室内设备*/
         if (strstr(arg, "sip:50") != NULL)
         {
-                sat_linphone_audio_play_stop();
-                if (intercom_call_state == 1)
-                {
-                        sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, true);
-                }
-                else
-                {
-                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
-                }
+
+                intercom_doorcamera_end_process(arg);
         }
 
         /*sip:2xxx代表门口机*/
         if (strstr(arg, "sip:20") != NULL)
         {
-                return true;
+
+                intercom_doorcamera_end_process(arg);
         }
         return true;
 }
@@ -189,14 +403,8 @@ static bool intercom_talk_call_end_callback(char *arg)
 static bool intercom_talk_call_failed_callback(char *arg)
 {
         sat_linphone_audio_play_stop();
-        if (intercom_call_state == 1)
-        {
-                sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, true);
-        }
-        else
-        {
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, true);
-        }
+        layout_intercom_goto_layout_process();
+        return true;
 }
 static void intercom_talk_call_volume_obj_click(lv_event_t *e)
 {
@@ -215,14 +423,15 @@ static void intercom_talk_call_volume_obj_display(void)
         }
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(intercom_call_state == 3 ? "btn_call_sound_voice.png" : "btn_call_sound.png"), LV_PART_MAIN);
 }
+
 static void intercom_talk_answer_obj_click(lv_event_t *e)
 {
 
         sat_linphone_audio_play_stop();
         intercom_call_state = 3;
 
-        intercom_talk_timeout = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
-                                                                                                           : 5 * 60;
+        intercom_talk_timeout = 60;/*user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
+                                                                                                           : 5 * 60;*/
         intercom_talk_call_volume_obj_display();
         intercom_talk_answer_obj_display();
         intercom_talk_handup_obj_display();
@@ -236,11 +445,15 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
 
 static bool intercom_talk_call_answer_callback(char *args)
 {
+        if(intercom_call_state == 3)
+        {
+                return false;
+        }
         sat_linphone_audio_play_stop();
         intercom_call_state = 3;
 
-        intercom_talk_timeout = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
-                                                                                                           : 5 * 60;
+        intercom_talk_timeout = 60;/*user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
+                                                                                                           : 5 * 60;*/
         intercom_talk_call_volume_obj_display();
         intercom_talk_answer_obj_display();
         intercom_talk_handup_obj_display();
@@ -261,12 +474,12 @@ static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
         int value = lv_slider_get_value(parent);
         if (intercom_call_state == 3)
         {
-                user_data_get()->audio.inter_talk_volume = value;
+                user_data_get()->audio.entrancr_voice = value;
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
         {
-                user_data_get()->audio.inter_ring_volume = value;
+                user_data_get()->audio.extension_volume = value;
                 sat_linphone_audio_play_volume_set(value);
         }
         user_data_save();
@@ -306,6 +519,7 @@ static void layout_intercom_talk_call_screen_click(lv_event_t *e)
         }
 }
 
+
 static void sat_layout_enter(intercom_talk)
 {
         lv_obj_pressed_func = NULL;
@@ -315,11 +529,15 @@ static void sat_layout_enter(intercom_talk)
         // 满屏查看
         {
 
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_screen_obj_id, 0, 0, 1024, 600,
-                                         layout_intercom_talk_call_screen_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                // lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_talk_screen_obj_id, 0, 0, 1024, 600,
+                //                          layout_intercom_talk_call_screen_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                //                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                //                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                //                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                lv_obj_add_event_cb(sat_cur_layout_screen_get(), layout_intercom_talk_call_screen_click, LV_EVENT_CLICKED, NULL);
+        }
+        {
+                layout_intercom_talk_door_ch_btn_create();
         }
         /***********************************************
          ** 作者: leo.liu
@@ -443,12 +661,12 @@ static void sat_layout_enter(intercom_talk)
                                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
 
                 lv_obj_add_flag(vol_cont, LV_OBJ_FLAG_HIDDEN);
-
                 layout_intercom_talk_vol_bar_create(vol_cont);
         }
         user_linphone_call_error_register(intercom_talk_call_failed_callback);
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
         user_linphone_call_end_register(intercom_talk_call_end_callback);
+        user_linphone_call_busy_register(intercom_talk_call_busy_callback);
 
         if (sat_pre_layout_get() == sat_playout_get(monitor) && (intercom_call_state == 0x01))
         {
@@ -458,14 +676,14 @@ static void sat_layout_enter(intercom_talk)
 
 static void sat_layout_quit(intercom_talk)
 {
+        lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_intercom_talk_call_screen_click);
         user_linphone_call_error_register(NULL);
         sat_linphone_audio_play_stop();
         lv_obj_pressed_func = lv_layout_touch_callback;
         standby_timer_restart(true);
         intercom_call_state = 0;
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
-
-        sat_linphone_handup(0xFF);
+        user_linphone_call_busy_register(NULL);
         user_linphone_call_end_register(NULL);
         user_linphone_call_streams_connected_receive_register(NULL);
 }
