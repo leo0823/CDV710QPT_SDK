@@ -6,6 +6,7 @@
 #include "cd4051/cd4051.h"
 #include "common/sat_main_event.h"
 #include "user_data.h"
+#include "common/layout_common.h"
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -234,6 +235,7 @@ static void *user_gpio_detect_task(void *arg)
                         {
                                 cd4051_value_group[channel_to_sensor[i]] = value;
                                 SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
+                                asterisk_server_sync_data_force(true);
                                 sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
                         }
                         //usleep(1000 * 100);

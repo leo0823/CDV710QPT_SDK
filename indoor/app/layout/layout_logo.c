@@ -112,22 +112,11 @@ void sd_state_change_default_callback(void)
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
 
-static asterisk_register_info p_register_info_slave[20] = {0};
-asterisk_register_info *asterisk_register_info_get_user(void)
-{
-
-        if ((user_data_get()->system_mode & 0x0F) == 0x01)
-        {
-                return asterisk_register_info_get();
-        }
-        return p_register_info_slave;
-}
-
 // 文件同步回调注册
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
         /*master本身不接受回调处理*/
-        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        if (((user_data_get()->system_mode & 0x0F) == 0x01) && (flag != 0x00))
         {
                 return;
         }
@@ -159,8 +148,27 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
         {
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
-
                         user_data_info *info = (user_data_info *)recv_data;
+
+                        if(sat_cur_layout_get() == sat_playout_get(alarm))
+                        {
+                                for(int i = 0; i< 8; i ++)
+                                {
+                                        if((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i]))
+                                        {
+                                                user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
+                                                if (alarm_trigger_check() == false)
+                                                
+                                                {
+                                                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                                }
+                                        }
+                                }
+                        }
+                        if((user_data_get()->system_mode & 0x0F) == 0x01)
+                        {
+                                return;
+                        }
                         user_data_get()->call_time = info->call_time;
                         user_data_get()->etc.open_the_door = info->etc.open_the_door;
                         user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
@@ -168,14 +176,16 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                         memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                         memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
-                        memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
+                        memcpy(&user_data_get()->alarm.away_alarm_enable_list, &info->alarm.away_alarm_enable_list, sizeof(user_data_get()->alarm.away_alarm_enable_list));
+                        memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
                         for(int i = 0; i< 8; i ++)
                         {
-                                if((user_data_get()->alarm.alarm_gpio_value_group[i]) != (info->alarm.alarm_gpio_value_group[i]))
+                                if(abs(user_data_get()->alarm.alarm_gpio_value_group[i] - info->alarm.alarm_gpio_value_group[i]) > 1)
                                 {
                                         sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, info->alarm.alarm_gpio_value_group[i] * 100);
                                 }
                         }
+                        memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
                         memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                         user_data_save();
  
@@ -189,7 +199,16 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
                 {
-                        memcpy((void *)&p_register_info_slave, recv_data, max);
+                        
+                        
+                        asterisk_register_info * register_info = asterisk_register_info_get();
+                        if(register_info == NULL)
+                        {
+                                perror("asterisk info is null\n");
+                        }else{
+                                memcpy(register_info, recv_data, max);
+                        }
+                        
 
                 }
                 free(recv_data);
@@ -429,9 +448,9 @@ static void logo_enter_system_timer(lv_timer_t *t)
         else
         {
                 wifi_device_close();
-                sync_data_cmd_callback_register(asterisk_server_sync_data_callback);
+                
         }
-
+        sync_data_cmd_callback_register(asterisk_server_sync_data_callback);
 #endif
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness == 0 ? 1 : user_data_get()->display.lcd_brigtness);
@@ -472,7 +491,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
                 {
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
-                // sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
         lv_timer_del(t);
 }

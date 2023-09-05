@@ -309,8 +309,8 @@ static void layout_sensor_setting_save(void)
                         user_data_get()->alarm.alarm_enable_always[1][i] = true;
                         user_data_get()->alarm.alarm_enable_always[0][i] = false;
                     }
-
-                    user_data_get()->alarm.security_alarm_enable_list |= 0x01 << i;
+                    //设置总是监测的传感器自动加入到被检测的列表里，不需暴露在被选择的页面中
+                    user_data_get()->alarm.security_alarm_enable_list |= 0x01 << i;//
                     user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
                     
                     

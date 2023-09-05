@@ -94,7 +94,7 @@ static void sat_layout_enter(indoor_register)
                         lv_obj_t *list = ipc_camera_registered_list_create();
                         int item_y = 0;
 
-                        const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
+                        const asterisk_register_info *p_register_info = asterisk_register_info_get();
                         for (int i = 0; i < 20; i++)
                         {
                                 /*主机或者门口机过滤*/

@@ -132,14 +132,15 @@ static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
         lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, setting_installation_obj_id_operating_structure_cont), 1);
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                if ((user_data_get()->system_mode & 0xF0) == 0x00)
-                {
-                        lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE));
-                }
-                else if ((user_data_get()->system_mode & 0xF0) == 0x10)
-                {
-                        lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
-                }
+                // if ((user_data_get()->system_mode & 0xF0) == 0x00)
+                // {
+                //         lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE));
+                // }
+                // else if ((user_data_get()->system_mode & 0xF0) == 0x10)
+                // {
+                //         lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SERVER_SYSTEM));
+                // }
+                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_MASTER));
         }
         else
         {
@@ -271,32 +272,14 @@ static lv_obj_t *setting_installation_sub_list_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*单系统*/
-                if ((system_mode & 0xF0) == 0x00)
+                if ((system_mode & 0x0f) != 0x01)
                 {
-                        if (i == 1 || i == 3 || i == 4 || i == 5)
+                        if( i == 6 || i == 7 || i == 8 || i == 9 )
                         {
                                 continue;
                         }
-                        /*分机*/
-                        if (((system_mode & 0x0F) != 0x01))
-                        {
-                                if( i == 6 || i == 7 || i == 8 || i == 9 )
-                                {
-                                        continue;
-                                }
-                        }
-                }else
-                {
-                                                /*分机*/
-                        if (((system_mode & 0x1F) != 0x11))
-                        {
-                                if( i == 6 || i == 7 || i == 8 || i == 9 )
-                                {
-                                        continue;
-                                }
-                        }
+                        
                 }
-
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

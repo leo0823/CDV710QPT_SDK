@@ -407,8 +407,14 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .sip_user = {"010001001011"},
-    .ip = {0},
-    .mask = {"255.0.0"},
+    .ip = {"192.168.0.2"},
+    .mask = {"255.0.0.0"},
+    .gateway = {"192.168.0.2"},
+    .dns = {"192.168.0.2"},
+    .local_server = {"192.168.0.2"},
+    .sip_server = {"192.168.0.2"},
+    .cctv_server = {"192.168.0.2"},
+    .guard_number = {"192.168.0.2"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \
@@ -519,7 +525,54 @@ static void network_data_check_valid(void)
                         break;
                 }
         }
-
+        for (int i = 0; i < strlen(network_data.gateway); i++)
+        {
+                if (network_data.gateway[i] != '.')
+                {
+                        network_data_check_range_out(gateway[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.dns); i++)
+        {
+                if (network_data.dns[i] != '.')
+                {
+                        network_data_check_range_out(dns[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.local_server); i++)
+        {
+                if (network_data.local_server[i] != '.')
+                {
+                        network_data_check_range_out(local_server[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.sip_server); i++)
+        {
+                if (network_data.sip_server[i] != '.')
+                {
+                        network_data_check_range_out(sip_server[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.cctv_server); i++)
+        {
+                if (network_data.cctv_server[i] != '.')
+                {
+                        network_data_check_range_out(cctv_server[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.guard_number); i++)
+        {
+                if (network_data.guard_number[i] != '.')
+                {
+                        network_data_check_range_out(guard_number[i], '0', '9');
+                        break;
+                }
+        }
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-10 9:40:52
