@@ -72,9 +72,141 @@ static void setting_server_operation_network_cancel_btn_click(lv_event_t *e)
 {
         sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
+
+static void setting_server_operation_network_init(void)
+{
+        int obj_id[][2] = {
+        {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
+        {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
+        {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
+        {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
+        {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
+        {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
+        {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
+        {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
+        {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
+        {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
+
+        lv_obj_t *textarea = NULL;
+
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
+
+        int total = sizeof(obj_id) / (sizeof(int) * 2);
+        char building[8] = {0};
+        char household[8] = {0};
+        int loacal_number[8] = {0};
+        const char *username = network_data_get()->sip_user;
+        loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+        loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
+        sprintf(building, "%04d", loacal_number[0]);
+        sprintf(household, "%04d", loacal_number[1]);
+
+        for (int i = 0; i < total; i++)
+        {
+                lv_obj_t *parent = lv_obj_get_child_form_id(list, obj_id[i][0]);
+                textarea = lv_obj_get_child_form_id(parent, obj_id[i][1]);
+
+                if (textarea != NULL)
+                {
+                        if(i == 0)
+                        {
+                                lv_textarea_set_text(textarea,building);
+                        }
+                        else if(i == 1)
+                        {
+                                lv_textarea_set_text(textarea,household);
+                        }else if( i == 2)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->ip);                             
+                        }
+                        else if( i == 3)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->gateway);
+                        }else if (i == 4)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->mask);
+                        }else if(i == 5)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->dns);
+                        }else if(i == 6)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->local_server);
+                        }else if(i == 7)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->sip_server);
+                        }else if(i == 8)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->cctv_server);
+                        }else if(i == 9)
+                        {
+                                lv_textarea_set_text(textarea,network_data_get()->guard_number);
+                        }
+                }
+        }
+}
 static void setting_server_operation_network_next_btn_click(lv_event_t *e)
 {
-        sat_layout_goto(setting_wifi,LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        int obj_id[][2] = {
+        {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
+        {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
+        {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
+        {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
+        {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
+        {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
+        {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
+        {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
+        {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
+        {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
+
+        lv_obj_t *textarea = NULL;
+
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
+
+        int total = sizeof(obj_id) / (sizeof(int) * 2);
+        for (int i = 0; i < total; i++)
+        {
+                lv_obj_t *parent = lv_obj_get_child_form_id(list, obj_id[i][0]);
+                textarea = lv_obj_get_child_form_id(parent, obj_id[i][1]);
+
+                if (textarea != NULL)
+                {
+                        if(i == 0)
+                        {
+                                network_data_get()->sip_user[3] = '1';
+                                strncpy(&(network_data_get()->sip_user[4]),lv_textarea_get_text(textarea),2);
+                        }else if( i == 1)
+                        {
+                                strncpy(&(network_data_get()->sip_user[6]),lv_textarea_get_text(textarea),2);
+                                strncpy(&(network_data_get()->sip_user[8]),&(lv_textarea_get_text(textarea)[2]),2);
+                                network_data_get()->sip_user[8] = '0';                               
+                        }else if(i == 2)
+                        {
+                                strncpy(network_data_get()->ip, lv_textarea_get_text(textarea), sizeof(network_data_get()->ip));
+                        }else if( i == 3)
+                        {
+                                strncpy(network_data_get()->gateway, lv_textarea_get_text(textarea), sizeof(network_data_get()->gateway));
+                        }else if (i == 4)
+                        {
+                                strncpy(network_data_get()->mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->mask));
+                        }else if(i == 5)
+                        {
+                                strncpy(network_data_get()->dns, lv_textarea_get_text(textarea), sizeof(network_data_get()->dns));
+                        }else if(i == 6)
+                        {
+                                strncpy(network_data_get()->local_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->local_server));
+                        }else if(i == 7)
+                        {
+                                strncpy(network_data_get()->sip_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->sip_server));
+                        }else if(i == 8)
+                        {
+                                strncpy(network_data_get()->cctv_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->cctv_server));
+                        }else if(i == 9)
+                        {
+                                strncpy(network_data_get()->guard_number, lv_textarea_get_text(textarea), sizeof(network_data_get()->guard_number));
+                        }
+                }
+        }
+        sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void setting_server_operating_btn_click(lv_event_t *e)
 {
@@ -92,7 +224,6 @@ static lv_obj_t *setting_server_textarea_focused_get(void)
             {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
             {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
             {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
-            {server_operation_network_obj_id_update_server_cont, server_operation_network_obj_id_update_server_textarea},
             {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
             {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
 
@@ -487,7 +618,7 @@ static void sat_layout_enter(server_operation_network)
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_LOCAL_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
-                                lv_common_textarea_create(cont, server_operation_network_obj_id_product_ip_textarea, 298, 9, 262, 54,
+                                lv_common_textarea_create(cont, server_operation_network_obj_id_local_server_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
                                                            LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
@@ -523,32 +654,32 @@ static void sat_layout_enter(server_operation_network)
                                                           5, 500, 0Xffffff);
                         }
 
-                        /***********************************************
-                         ** 作者: leo.liu
-                         ** 日期: 2023-2-2 13:44:0
-                         ** 说明: update server
-                         ***********************************************/
+                        // /***********************************************
+                        //  ** 作者: leo.liu
+                        //  ** 日期: 2023-2-2 13:44:0
+                        //  ** 说明: update server
+                        //  ***********************************************/
 
-                        cont = lv_common_img_btn_create(list, server_operation_network_obj_id_update_server_cont, 0, 48 * 3 + 72 * 7, 584, 72,
-                                                        NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                        NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
-                        {
-                                lv_common_text_create(cont, server_operation_network_obj_id_update_server_text, 32, 16, 204, 40,
-                                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_UPDATE_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                        // cont = lv_common_img_btn_create(list, server_operation_network_obj_id_update_server_cont, 0, 48 * 3 + 72 * 7, 584, 72,
+                        //                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                        //                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        //                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        //                                 NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                        // {
+                        //         lv_common_text_create(cont, server_operation_network_obj_id_update_server_text, 32, 16, 204, 40,
+                        //                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                        //                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        //                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        //                               lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_UPDATE_SERVER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
 
-                                lv_common_textarea_create(cont, server_operation_network_obj_id_update_server_textarea, 298, 9, 262, 54,
-                                                          NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
-                                                          9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
-                                                          9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                                          "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
-                                                          5, 500, 0Xffffff);
-                        }
+                        //         lv_common_textarea_create(cont, server_operation_network_obj_id_update_server_textarea, 298, 9, 262, 54,
+                        //                                   NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
+                        //                                    LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                        //                                   9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
+                        //                                   9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
+                        //                                   "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
+                        //                                   5, 500, 0Xffffff);
+                        // }
 
                         /***********************************************
                          ** 作者: leo.liu
@@ -556,7 +687,7 @@ static void sat_layout_enter(server_operation_network)
                          ** 说明: cctv server
                          ***********************************************/
 
-                        cont = lv_common_img_btn_create(list, server_operation_network_obj_id_cctv_server_cont, 0, 48 * 3 + 72 * 8, 584, 72,
+                        cont = lv_common_img_btn_create(list, server_operation_network_obj_id_cctv_server_cont, 0, 48 * 3 + 72 * 7, 584, 72,
                                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -583,7 +714,7 @@ static void sat_layout_enter(server_operation_network)
                  ** 说明: guard station
                  ***********************************************/
                 {
-                        lv_obj_t *obj = lv_common_text_create(list, server_operation_network_obj_id_guard_station_title, 0, 48 * 3 + 72 * 9, 584, 48,
+                        lv_obj_t *obj = lv_common_text_create(list, server_operation_network_obj_id_guard_station_title, 0, 48 * 3 + 72 * 8, 584, 48,
                                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -618,6 +749,7 @@ static void sat_layout_enter(server_operation_network)
                                                           5, 500, 0Xffffff);
                         }
                 }
+                setting_server_operation_network_init();
         }
 }
 static void sat_layout_quit(server_operation_network)

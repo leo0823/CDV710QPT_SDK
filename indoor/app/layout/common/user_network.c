@@ -281,7 +281,15 @@ static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_s
                 return false;
         }
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+        // user_data_info * p = (user_data_info *)base64_decode_buffer;
+        // if(p !=NULL)
+        // {
 
+        //         printf("=======call time is %d\n",p->call_time);
+        //         printf("=======system_mode is %d\n",p->system_mode);
+
+                
+        // }
         int send_len = 0;
         int remain = sizeof(user_data_info);
         while (remain > 0)
@@ -309,7 +317,15 @@ static bool tcp_device_serverce_xml_get_networkdata(int tcp_socket_fd, char *rec
                 return false;
         }
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+        // user_network_info * p = (user_network_info *)base64_decode_buffer;
+        // if(p !=NULL)
+        // {
 
+        //         printf("=======sip_user is %s\n",p->sip_user);
+        //         printf("=======mask is %s\n",p->mask);
+        //         printf("=======ip is %s\n",p->ip);
+                
+        // }
         int send_len = 0;
         int remain = sizeof(user_network_info);
         while (remain > 0)
@@ -336,12 +352,18 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
                 SAT_DEBUG("malloc fail");
                 return false;
         }
-
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
-   
-        asterisk_register_info * p = (asterisk_register_info *)base64_decode_buffer;
-        printf("=====++++%s======\n",p[0].name);
+        // asterisk_register_info * p = (asterisk_register_info *)base64_decode_buffer;
+        // if(p !=NULL)
+        // {
+        //         for(int i = 0; i < 20; i++)
+        //         {
+        //                 printf("===register_info[%d]==%s======\n",i,p[i].name);
+        //                 printf("===register_info[%d]==%s======\n",i,p[i].ip);
+        //         }
 
+        // }
+        
         int send_len = 0;
         int remain = sizeof(asterisk_register_info) * 20;
         while (remain > 0)
@@ -424,6 +446,7 @@ static void *user_network_tcp_task(void *arg)
                                 //  printf("%s\n", receive_data);
                                 read_len += recv_len;
                                 remain_len -= recv_len;
+
                         }
                         if (read_len > 0)
                         {
