@@ -15,7 +15,6 @@
 ***********************************************/
 bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout, void *param);
 
-
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
@@ -24,6 +23,15 @@ bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, in
 bool ipc_camera_device_sync_data(char *data_type, char *data, const char *ip, int port, const char *user, const char *password, int timeout)；
 /*sat_ipcamera_data_sync()会将data数据会将data进行编码，但是只是进行一次编码，后续发送都是引用编码后的数据，但是此函数内部会调用
 ipc_camera_device_sync_data()这个函数，这个函数会将编码的buffer数据改变，内容会发送得到的返回值，故需要修改重新填充base64编码的数据*/
+```
+> 2. 修改sip通话接口，增加参数区分app接听or室内机接听
+```c
+/*
+ * @日期: 2022-09-06
+ * @作者: leo.liu
+ * @注释: 同意通话
+ */
+bool sat_linphone_answer(long id, bool is_tuya_anwser);
 ```
 # 2023/09/01
 > 1. 修改门口机的呼叫逻辑，在按键按下去的时候，如果之前是呼入状态，那么可以直接打断，进行呼出。
