@@ -1,5 +1,24 @@
 # 2023/09/06
 > 1. 完善室内机铃声播放次数的接口
+> 2. 增加接口让目标设备执行相应的shell 脚本
+```c
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 15:21:6
+** 说明: 发送shell cmd 执行命名
+** ip: 对象IP，
+** port: 对象端口
+** user： 对象用户名
+** password: 对象密码
+** cmd: shell命令
+** timeout : 超时时间
+***********************************************/
+bool sat_ipcamera_report_data(char *ip, int port, const char *user, const char *password, const char *cmd, int timeout);
+```
+> 3. 在user_newtork.c增加函数执行对方发送的shell脚本
+```c 
+static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *recv_string);
+```
 
 # 2023/09/05
 > 1. 修复数据同步错误的问题，因为容易错误，故特此记录错误原因：
