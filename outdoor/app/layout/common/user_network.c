@@ -1579,8 +1579,17 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
 
 static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *recv_string)
 {
-        printf("%s", recv_string);
-        system(recv_string);
+        size_t base64_decode_size = strlen(recv_string);
+        char *base64_decode_buffer = (char *)malloc(base64_decode_size);
+        if (base64_decode_buffer == NULL)
+        {
+                SAT_DEBUG("malloc fail");
+                return false;
+        }
+        base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
+
+        printf("%s", base64_decode_buffer);
+        system(base64_decode_buffer);
         return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
 }
 #define SYNC_FILE_DATA_MAX (512 * 1024)
