@@ -202,7 +202,7 @@ static void *user_network_common_multicast_task(void *arg)
 
 /*********************************************** 		tcp   		***********************************************/
 #define POST_ONVIF_DEVICE_HTML_TEXT "POST /onvif/device_service"
-static bool trcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
+static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
 {
         int html_size = sat_file_size_get(S200_OK_REQUEST_PATH);
         if (html_size <= 0)
@@ -294,7 +294,7 @@ static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_s
 
         free(base64_decode_buffer);
 
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
         return reslut;
 }
 static bool tcp_device_serverce_xml_get_networkdata(int tcp_socket_fd, char *recv_string)
@@ -321,7 +321,7 @@ static bool tcp_device_serverce_xml_get_networkdata(int tcp_socket_fd, char *rec
         }
 
         free(base64_decode_buffer);
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
         return reslut;
 }
 
@@ -338,23 +338,26 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
         }
 
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
-   
-        asterisk_register_info * p = (asterisk_register_info *)base64_decode_buffer;
-        printf("=====++++%s======\n",p[0].name);
 
         int send_len = 0;
         int remain = sizeof(asterisk_register_info) * 20;
         while (remain > 0)
         {
                 int read_len = remain > 1024 ? 1024 : remain;
-                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0x02, &base64_decode_buffer[send_len], read_len, send_len, sizeof(asterisk_register_info)*20);
+                sat_msg_send_cmd_data(MSG_EVENT_CMD_SYNC_DATA, 0x02, &base64_decode_buffer[send_len], read_len, send_len, sizeof(asterisk_register_info) * 20);
                 send_len += read_len;
                 remain -= read_len;
         }
 
         free(base64_decode_buffer);
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
         return reslut;
+}
+static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *recv_string)
+{
+        printf("%s", recv_string);
+        system(recv_string);
+        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "CIP-70QPT");
 }
 static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
@@ -376,11 +379,15 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 printf("[%s:%d] SyncNetworkData\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_get_networkdata(tcp_socket_fd, data);
         }
-        else if(discover_devices_data_parsing(ptr, "SyncAsteriskData", data, SYNC_FILE_DATA_MAX) == true)
+        else if (discover_devices_data_parsing(ptr, "SyncAsteriskData", data, SYNC_FILE_DATA_MAX) == true)
         {
                 printf("[%s:%d] SyncAsteriskData\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_get_asteriskdata(tcp_socket_fd, data);
-        
+        }
+        else if (discover_devices_data_parsing(ptr, "ShellCmd", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] ShellCmd\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_shellcmd(tcp_socket_fd, data);
         }
         else
         {
@@ -444,7 +451,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         // system("killall udhcpc");
         sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
         system("ifconfig eth0 0.0.0.0");
-         system("ifconfig eth0 down");
+        system("ifconfig eth0 down");
         usleep(10 * 1000);
         system("ifconfig eth0 up");
         usleep(10 * 1000);
