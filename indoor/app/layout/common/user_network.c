@@ -285,7 +285,7 @@ static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_s
         // if(p !=NULL)
         // {
 
-        //         printf("=======call time is %d\n",p->call_time);
+        //         printf("=======call time is %d\n",p->etc.call_time);
         //         printf("=======system_mode is %d\n",p->system_mode);
 
                 

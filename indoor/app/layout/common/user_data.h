@@ -102,6 +102,12 @@ typedef struct
         char password[4];
         /*****  common entrance password *****/
         char comm_ent_password[4];
+        /****** 时间设置模式 0:手动； 1：自动***/
+        char time_automatically;
+        /****** 时间字符串格式 2023-09-20 13:30:25***/
+        char time_str[32];
+        /****** 通话时间 1:1分钟 2:2分钟 3:3分钟***/
+        int call_time;
         
 
 } user_etc_info;
@@ -149,7 +155,7 @@ typedef struct
 typedef struct
 {
         char is_device_init;
-        char time_automatically;
+        
 
         char auto_record_mode; // 0:off,1:video,2:photo;
 
@@ -168,7 +174,7 @@ typedef struct
         char system_mode; // 0xFF 高4位 0：单系统，1:服务型。低4位表示ID号
         char mastar_wallpad_ip[16];//sip server 的IP
         
-        int call_time;
+
         int always_monitoring;
         bool last_call_new;
 
