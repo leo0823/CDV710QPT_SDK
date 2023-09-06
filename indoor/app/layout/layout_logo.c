@@ -180,8 +180,10 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                                 memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
-                                memcpy(&user_data_get()->etc.time_str,&info->etc.time_str,sizeof(user_data_get()->etc.time_str));
-      
+                                user_data_get()->etc.cur_time = info->etc.cur_time;
+
+                                struct tm *timeInfo = localtime(&user_data_get()->etc.cur_time);
+                                user_time_set(timeInfo);
 
 
                                 
