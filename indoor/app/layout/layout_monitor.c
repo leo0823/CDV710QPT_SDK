@@ -108,7 +108,7 @@ void layout_monitor_goto_layout_process(void)
                 char number[128] = {0};
                 sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
                 intercom_call_username_setting(number);
-                SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                // SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -116,7 +116,7 @@ void layout_monitor_goto_layout_process(void)
         monitor_channel_set(node->channel);
         layout_monitor_report_vaild_channel();
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
-        SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+        // SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
         linphone_incomming_node_release(node);
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
@@ -600,7 +600,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         }
         else if ((ch == MON_CH_DOOR2) && (mode == 2))
         {
-                const char *user = monitor_channel_get_url(ch, false);
+                // const char *user = monitor_channel_get_url(ch, false);
                 char *cmd[3] = {
                     "SAT_SHELL echo 32 > /sys/class/gpio/export",
                     "SAT_SHELL echo out > /sys/class/gpio/gpio32/direction",
@@ -613,12 +613,14 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
-                        sat_linphone_message_cmd_send(user, cmd[i]);
+
+                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,80,"admiin",network_data_get()->door_device[ch].password,cmd[i],100);
+
                 }
         }
         else
         {
-                const char *user = monitor_channel_get_url(ch, false);
+                // const char *user = monitor_channel_get_url(ch, false);
                 char *cmd[3] = {
                     "SAT_SHELL echo 33 > /sys/class/gpio/export",
                     "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
@@ -631,7 +633,7 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
-                        sat_linphone_message_cmd_send(user, cmd[i]);
+                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,80,"admiin",network_data_get()->door_device[ch].password,cmd[i],100);
                 }
         }
 }
