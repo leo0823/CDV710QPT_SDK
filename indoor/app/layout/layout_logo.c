@@ -3,7 +3,9 @@
 #include "tuya_api.h"
 #include "tuya_uuid_and_key.h"
 #include "layout_monitor.h"
-
+#include<stdio.h>
+#include<time.h>
+#include<string.h>
 // #include "dds/topic_table.h"
 // #include "dds/msgStruct/message_data.h"
 // #include "dds/public_topic.h"
@@ -163,13 +165,9 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 {
                         user_data_info *info = (user_data_info *)recv_data;
 
-
-
-                        
                         if((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
-                                user_data_get()->call_time = info->call_time;
-                                printf("user_data_get()->call_time is %d\n",user_data_get()->call_time);
+                                user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                                 user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
@@ -182,6 +180,11 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                                 memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
+                                memcpy(&user_data_get()->etc.time_str,&info->etc.time_str,sizeof(user_data_get()->etc.time_str));
+      
+
+
+                                
                         }
                         for(int i = 0; i< 8; i ++)
                         {

@@ -356,7 +356,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         {
                 monitor_obj_timeout_label_display();
 
-                monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 2 * 60
+                monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
                                                                                                                                                     : 3 * 60)
                                                                       : 30);
         }
@@ -519,7 +519,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 is_monitor_door_camera_talk = true;
 
                 call_duration = 0;
-                monitor_timeout_sec = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 2 * 60
+                monitor_timeout_sec = user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
                                                                                                                  : 3 * 60;
                 monitor_enter_flag_set(monitor_enter_flag_get() == MON_ENTER_CALL_FLAG ? MON_ENTER_CALL_TALK_FLAG : MON_ENTER_MANUAL_TALK_FLAG);
 
@@ -2343,7 +2343,7 @@ static bool truye_event_cmd_audio_start(void)
                 is_monitor_door_camera_talk = true;
         
                 call_duration = 0;
-                monitor_timeout_sec = user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 2 * 60: 3 * 60;
+                monitor_timeout_sec = user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60: 3 * 60;
                 monitor_enter_flag_set(MON_ENTER_TUYA_TALK_FLAG);                                                                                                 
                 sat_linphone_answer(-1, true);
                 monitor_obj_talk_display();

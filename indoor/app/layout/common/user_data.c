@@ -91,6 +91,8 @@ static const user_data_info user_data_default =
             .door2_lock_num = 1,
             .password = {"1234"},
             .comm_ent_password = {"1234"},
+            .time_automatically = 1,
+            .call_time = 1,
         },
         .alarm = {
             .auto_record = false,
@@ -171,8 +173,6 @@ static const user_data_info user_data_default =
 
         },
         .system_mode = 0x01,
-        .time_automatically = 1,
-        .call_time = 1,
         .always_monitoring = 0,
         .last_call_new = false,
         
@@ -329,6 +329,8 @@ static void user_data_check_valid(void)
         user_data_etc_check_range_out(password[1], '0', '9');
         user_data_etc_check_range_out(password[2], '0', '9');
         user_data_etc_check_range_out(password[3], '0', '9');
+        user_data_etc_check_range_out(time_automatically, 0, 1);
+        user_data_etc_check_range_out(call_time, 1, 3);
 
         /*****	alarm *****/
         user_data_alarm_check_range_out(away_save_photo, 0, 1);
@@ -365,8 +367,7 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(buzzer_alarm, 1, 3);
 
         user_data_check_range_out(system_mode, 1, 29);
-        user_data_check_range_out(time_automatically, 0, 1);
-        user_data_check_range_out(call_time, 1, 3);
+
 
         
 }
@@ -412,7 +413,7 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .sip_user = {"010001001011"},
-    .ip = {"192.168.0.2"},
+    .ip = {"10.168.0.2"},
     .mask = {"255.0.0.0"},
     .gateway = {"192.168.0.2"},
     .dns = {"192.168.0.2"},
