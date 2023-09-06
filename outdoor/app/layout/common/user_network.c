@@ -435,7 +435,7 @@ static bool tcp_device_serverce_xml_bad_request(int tcp_socket_fd)
         return true;
 }
 
-static bool trcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
+static bool tcp_device_serverce_xml_200_ok_requeset(int tcp_socket_fd, const char *string)
 {
         int html_size = sat_file_size_get(S200_OK_REQUEST_PATH);
         if (html_size <= 0)
@@ -718,7 +718,7 @@ static bool tcp_device_servrce_xml_get_register(int tcp_socket_fd, const char *x
                 SAT_DEBUG("NUMBER:%s,domain:%s", user_data_get()->device.number, user_data_get()->server_ip);
                 is_reboot = true;
         }
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
         if (is_reboot == true)
         {
                 user_data_save();
@@ -735,7 +735,7 @@ static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml
         {
                 return false;
         }
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "delete");
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, "delete");
 
         memset(user_data_get()->device.number, 0, sizeof(user_data_get()->device.number));
         memset(user_data_get()->server_ip, 0, sizeof(user_data_get()->server_ip));
@@ -745,7 +745,7 @@ static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml
 
 static bool tcp_device_servrce_xml_get_device_name(int tcp_socket_fd, const char *xml)
 {
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
         return true;
 }
 
@@ -759,7 +759,7 @@ static bool tcp_device_servrce_xml_set_device_name(int tcp_socket_fd, const char
         strncpy(user_data_get()->device.name, sip_uri, sizeof(user_data_get()->device.name));
         user_data_save();
         SAT_DEBUG("change name:%s", sip_uri);
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
         return true;
 }
 
@@ -770,7 +770,7 @@ static bool tcp_device_servrce_xml_get_version_name(int tcp_socket_fd, const cha
         if (platform_build_date_get(&tm) == true)
         {
                 sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-                trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, version);
+                tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, version);
         }
         else
         {
@@ -789,7 +789,7 @@ static bool tcp_device_servrce_xml_channge_device_password(int tcp_socket_fd, co
         strncpy(user_data_get()->device.password, sip_uri, sizeof(user_data_get()->device.password));
         user_data_save();
         SAT_DEBUG("change password:%s", sip_uri);
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, sip_uri);
         return true;
 }
 
@@ -1573,8 +1573,15 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
         }
 
         free(base64_decode_buffer);
-        trcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
+        tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
         return reslut;
+}
+
+static bool tcp_device_serverce_xml_process_shellcmd(int tcp_socket_fd, char *recv_string)
+{
+        printf("%s", recv_string);
+        system(recv_string);
+        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, user_data_get()->device.name);
 }
 #define SYNC_FILE_DATA_MAX (512 * 1024)
 static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
@@ -1741,6 +1748,11 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
         {
                 printf("[%s:%d] SyncAsteriskData\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_get_asteriskdata(tcp_socket_fd, data);
+        }
+        else if (discover_devices_data_parsing(ptr, "ShellCmd", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] ShellCmd\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_shellcmd(tcp_socket_fd, data);
         }
         else
         {
