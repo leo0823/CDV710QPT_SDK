@@ -602,19 +602,18 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 // const char *user = monitor_channel_get_url(ch, false);
                 char *cmd[3] = {
-                    "SAT_SHELL echo 32 > /sys/class/gpio/export",
-                    "SAT_SHELL echo out > /sys/class/gpio/gpio32/direction",
-                    "SAT_SHELL echo 1 > /sys/class/gpio/gpio32/value"};
+                    "echo 32 > /sys/class/gpio/export",
+                    "echo out > /sys/class/gpio/gpio32/direction",
+                    "echo 1 > /sys/class/gpio/gpio32/value"};
 
                 if (en == false)
                 {
-                        cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio32/value";
+                        cmd[2] = "echo 0 > /sys/class/gpio/gpio32/value";
                 }
 
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
-
-                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,80,"admiin",network_data_get()->door_device[ch].password,cmd[i],100);
+                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,network_data_get()->door_device[ch].port,network_data_get()->door_device[ch].username,network_data_get()->door_device[ch].password,cmd[i],100);
 
                 }
         }
@@ -622,13 +621,13 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
         {
                 // const char *user = monitor_channel_get_url(ch, false);
                 char *cmd[3] = {
-                    "SAT_SHELL echo 33 > /sys/class/gpio/export",
-                    "SAT_SHELL echo out > /sys/class/gpio/gpio33/direction",
-                    "SAT_SHELL echo 1 > /sys/class/gpio/gpio33/value"};
+                    "echo 33 > /sys/class/gpio/export",
+                    "echo out > /sys/class/gpio/gpio33/direction",
+                    "echo 1 > /sys/class/gpio/gpio33/value"};
 
                 if (en == false)
                 {
-                        cmd[2] = "SAT_SHELL echo 0 > /sys/class/gpio/gpio33/value";
+                        cmd[2] = "echo 0 > /sys/class/gpio/gpio33/value";
                 }
 
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
