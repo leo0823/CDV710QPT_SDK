@@ -164,4 +164,17 @@ struct ipcamera_info *sat_ipcamera_node_data_get(int index);
 ** param: 预留参数，如果需要发送给门口机，则需要传送绑定的设备信息
 ***********************************************/
 bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, int inline_t, int timeout, void *param);
+
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-5 15:21:6
+** 说明: 发送shell cmd 执行命名
+** ip: 对象IP，
+** port: 对象端口
+** user： 对象用户名
+** password: 对象密码
+** cmd: shell命令
+** timeout : 超时时间
+***********************************************/
+bool sat_ipcamera_report_data(char *ip, int port, const char *user, const char *password, char *cmd, int timeout);
 #endif
