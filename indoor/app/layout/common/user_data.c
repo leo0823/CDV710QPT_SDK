@@ -167,6 +167,8 @@ static const user_data_info user_data_default =
             .alarm_gpio_value_group[6] = 0,
             .alarm_gpio_value_group[7] = 0,
 
+            .buzzer_alarm = 0,
+
         },
         .system_mode = 0x01,
         .time_automatically = 1,
@@ -360,10 +362,13 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
+        user_data_alarm_check_range_out(buzzer_alarm, 1, 3);
 
         user_data_check_range_out(system_mode, 1, 29);
         user_data_check_range_out(time_automatically, 0, 1);
         user_data_check_range_out(call_time, 1, 3);
+
+        
 }
 
 bool user_data_init(void)

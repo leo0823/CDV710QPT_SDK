@@ -274,12 +274,13 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                 /*单系统*/
                 if ((system_mode & 0x0f) != 0x01)
                 {
-                        if( i == 6 || i == 7 || i == 8 || i == 9 )
+                        if (i == 1 || i == 3 || i == 4 || i == 5 || i == 6 || i == 7 || i == 8 || i == 9)
                         {
                                 continue;
                         }
-                        
+
                 }
+
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

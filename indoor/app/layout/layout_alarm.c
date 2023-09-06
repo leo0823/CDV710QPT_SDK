@@ -1,4 +1,5 @@
 #include "layout_define.h"
+#include "layout_monitor.h"
 enum
 {
          layout_alarm_obj_id_bg,
@@ -73,7 +74,6 @@ static void layout_alarm_monitor_open(void)
         }else 
         {       
 
-
         }
                  
 }
@@ -119,6 +119,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 }
                 else
                 {
+                        user_data_get()->alarm.alarm_trigger[7] = false;
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(emergency_return, 8, &tm);
@@ -127,13 +128,8 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 {
                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                 }
-                if(alarm_trigger_check() == false)
-                {
-                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                }
+                alarm_trigger_check();
         }
-
-
 }
 
 
@@ -436,6 +432,7 @@ static void sat_layout_enter(alarm)
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
         ring_play_event_cmd_register(layout_alarm_ringplay_register_callback);
+        user_linphone_call_incoming_received_register(NULL);
         layout_alarm_monitor_open();
         /************************************************************
         ** 函数说明: 背景创建
@@ -634,6 +631,7 @@ static void sat_layout_enter(alarm)
 }
 static void sat_layout_quit(alarm)
 {
+        user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
         alarm_power_out_ctrl(false);
         lv_obj_pressed_func = lv_layout_touch_callback;
         ring_play_event_cmd_register(NULL);
