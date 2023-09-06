@@ -112,6 +112,19 @@ void sd_state_change_default_callback(void)
         lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
 
+
+static void buzzer_call_trigger_check(void)
+{
+        if((user_data_get()->alarm.buzzer_alarm) && (sat_cur_layout_get() != sat_playout_get(buzzer_call)))
+        {
+                sat_linphone_handup(0xFFFF);
+                sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }else if((!user_data_get()->alarm.buzzer_alarm) && (sat_cur_layout_get() == sat_playout_get(buzzer_call)))
+        {
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+}
+
 // 文件同步回调注册
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
@@ -150,46 +163,41 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 {
                         user_data_info *info = (user_data_info *)recv_data;
 
-                        if(sat_cur_layout_get() == sat_playout_get(alarm))
+
+
+                        
+                        if((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
-                                for(int i = 0; i< 8; i ++)
-                                {
-                                        if((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i]))
-                                        {
-                                                user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
-                                                if (alarm_trigger_check() == false)
-                                                
-                                                {
-                                                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                                                }
-                                        }
-                                }
+                                user_data_get()->call_time = info->call_time;
+                                printf("user_data_get()->call_time is %d\n",user_data_get()->call_time);
+                                user_data_get()->etc.open_the_door = info->etc.open_the_door;
+                                user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
+                                user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
+                                user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
+                                memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
+                                memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
+                                memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
+                                memcpy(&user_data_get()->alarm.away_alarm_enable_list, &info->alarm.away_alarm_enable_list, sizeof(user_data_get()->alarm.away_alarm_enable_list));
+                                memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
+
+                                memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
+                                memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                         }
-                        if((user_data_get()->system_mode & 0x0F) == 0x01)
-                        {
-                                return;
-                        }
-                        user_data_get()->call_time = info->call_time;
-                        user_data_get()->etc.open_the_door = info->etc.open_the_door;
-                        user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
-                        user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
-                        memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
-                        memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
-                        memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
-                        memcpy(&user_data_get()->alarm.away_alarm_enable_list, &info->alarm.away_alarm_enable_list, sizeof(user_data_get()->alarm.away_alarm_enable_list));
-                        memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
                         for(int i = 0; i< 8; i ++)
                         {
-                                if(abs(user_data_get()->alarm.alarm_gpio_value_group[i] - info->alarm.alarm_gpio_value_group[i]) > 1)
+                                if((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i]))
                                 {
-                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, info->alarm.alarm_gpio_value_group[i] * 100);
+                                        user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
+                                        alarm_trigger_check();
                                 }
                         }
-                        memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
-                        memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
+
+                        if(user_data_get()->alarm.buzzer_alarm != info->alarm.buzzer_alarm)
+                        {
+                                user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
+                                buzzer_call_trigger_check();
+                        }
                         user_data_save();
- 
-                        
                 }
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
@@ -199,8 +207,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
                 {
-                        
-                        
                         asterisk_register_info * register_info = asterisk_register_info_get();
                         if(register_info == NULL)
                         {
@@ -208,8 +214,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         }else{
                                 memcpy(register_info, recv_data, max);
                         }
-                        
-
                 }
                 free(recv_data);
                 recv_data = NULL;

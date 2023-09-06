@@ -142,6 +142,8 @@ typedef struct
 
         float alarm_gpio_value_group[8];//主机警报检测gpio电平列表
 
+        bool buzzer_alarm;
+
 } user_alarm_info;
 
 typedef struct

@@ -19,13 +19,14 @@ static void layout_emergeency_back_obj_click(lv_event_t *ev)
 static void emergency_setting_confirm_obj_click(lv_event_t *ev)
 {
         user_data_get()->alarm.emergency_mode = 0;
-        user_data_save();
         if(user_data_get()->alarm.away_auto_record)
-        record_jpeg_start(REC_MODE_AUTO);
+                record_jpeg_start(REC_MODE_AUTO);
         struct tm tm;
         user_time_read(&tm);
-        layout_alarm_alarm_channel_set(8);
+        layout_alarm_alarm_channel_set(7);
+        user_data_get()->alarm.alarm_trigger[7] = true;
         alarm_list_add(emergency_occur,8, &tm);
+        user_data_save();
         sat_layout_goto(alarm,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
