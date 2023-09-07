@@ -729,7 +729,7 @@ static void layout_home_monitor_icon_display(lv_obj_t *obj)
 
 static void layout_home_cctv_icon_display(lv_obj_t *obj)
 {
-        if (0) //(network_data_get()->cctv_device_count <= 0)
+        if (cctv_register_num_get() <= 0)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 {

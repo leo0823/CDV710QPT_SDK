@@ -420,7 +420,7 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
         sat_linphone_audio_play_stop();
         intercom_call_state = 3;
 
-        intercom_talk_timeout = 60; /*user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
+        intercom_talk_timeout = 60; /*user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 3 * 60
                                                                                                             : 5 * 60;*/
         intercom_talk_call_volume_obj_display();
         intercom_talk_answer_obj_display();
@@ -442,7 +442,7 @@ static bool intercom_talk_call_answer_callback(char *args)
         sat_linphone_audio_play_stop();
         intercom_call_state = 3;
 
-        intercom_talk_timeout = 60; /*user_data_get()->call_time == 1 ? 1 * 60 : user_data_get()->call_time == 2 ? 3 * 60
+        intercom_talk_timeout = 60; /*user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 3 * 60
                                                                                                             : 5 * 60;*/
         intercom_talk_call_volume_obj_display();
         intercom_talk_answer_obj_display();
