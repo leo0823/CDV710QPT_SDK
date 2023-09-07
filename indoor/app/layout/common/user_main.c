@@ -180,7 +180,7 @@ static void *asterisk_server_sync_task(void *arg)
                                 }
                                 struct tm tm;
                                 user_time_read(&tm);
-                                user_data_get()->etc.cur_time = mktime(&tm);
+                                user_data_get()->etc.cur_time = tm;
                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 100, NULL);
                         }

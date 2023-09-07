@@ -99,21 +99,18 @@ static lv_obj_t *setting_general_list_item_sub_get(int cont, int sub_id)
         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
         if (list == NULL)
         {
-                SAT_DEBUG("lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_general_obj_id_setting_list) faild");
                 return NULL;
         }
 
         lv_obj_t *item = lv_obj_get_child_form_id(list, cont);
         if (item == NULL)
         {
-                SAT_DEBUG("lv_obj_get_child_form_id(list,cont); ");
                 return NULL;
         }
 
         lv_obj_t *sub = lv_obj_get_child_form_id(item, sub_id);
         if (sub == NULL)
         {
-                SAT_DEBUG("lv_obj_get_child_form_id(item, sub_id); ");
                 return NULL;
         }
 
@@ -132,7 +129,6 @@ static void door_open_method_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
 
@@ -151,7 +147,6 @@ static void door1_open_moudle_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
         lv_label_set_text(sub, user_data_get()->etc.door1_open_door_mode == 0 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_CAMERA) : lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK));
@@ -169,7 +164,6 @@ static void door2_open_lock_num_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
 
@@ -578,7 +572,6 @@ static void call_time_obj_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("call_time_sub is null\n");
                 return;
         }
 

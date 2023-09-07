@@ -171,27 +171,23 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                                 user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
-                                user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
                                 memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                                 memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.away_alarm_enable_list, &info->alarm.away_alarm_enable_list, sizeof(user_data_get()->alarm.away_alarm_enable_list));
                                 memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
 
-                                memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
+
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group,&info->alarm.alarm_gpio_value_group,sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                                 user_data_get()->etc.cur_time = info->etc.cur_time;
-
-                                struct tm *timeInfo = localtime(&user_data_get()->etc.cur_time);
-                                user_time_set(timeInfo);
-
-
+                                user_time_set(&user_data_get()->etc.cur_time);
                                 
                         }
                         for(int i = 0; i< 8; i ++)
                         {
                                 if((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i]))
                                 {
+                                        memcpy(&user_data_get()->alarm.alarm_trigger,&info->alarm.alarm_trigger,sizeof(user_data_get()->alarm.alarm_trigger));
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
                                         alarm_trigger_check();
                                 }
