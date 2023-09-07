@@ -59,6 +59,8 @@ static void buzzer_call_time_timer(lv_timer_t *ptime)
 {
         if (buzzer_call_timeout == 0)
         {
+                user_data_get()->alarm.buzzer_alarm = false;
+                user_data_save();
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
         buzzer_call_info_display();
@@ -93,8 +95,13 @@ static void buzzer_call_status_icon_display(void)
 
 static void buzzer_call_handup_obj_click(lv_event_t *e)
 {
-
-   sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        user_data_get()->alarm.buzzer_alarm = false;
+        user_data_save();
+        if(user_data_get()->system_mode && 0x0f != 0x01)
+        {
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+        }
+        sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         
 }
 

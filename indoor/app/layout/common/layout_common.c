@@ -262,6 +262,9 @@ void layout_alarm_trigger_default(int arg1,int arg2)
 {
         if((arg1 == 7) && (arg2 < ALM_LOW * 100))
         {
+                sat_linphone_handup(0xFFFF);
+                user_data_get()->alarm.buzzer_alarm = true;
+                user_data_save();
                 sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }else
         {
@@ -278,6 +281,7 @@ void layout_alarm_trigger_default(int arg1,int arg2)
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(security_emergency,arg1, &tm);
+                        sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
@@ -292,36 +296,47 @@ void layout_alarm_trigger_default(int arg1,int arg2)
 ************************************************************/
 bool alarm_trigger_check(void)
 {
-
         bool alarm_occur = false;
-
         for(int i =0; i<8; i++)
         {
-                if(user_data_get()->alarm.alarm_enable[i] != 0 )
+                if(i != 7)
                 {
-                        if((user_data_get()->alarm.alarm_trigger[i] == true) && (user_data_get()->alarm.alarm_enable[i] != 0))
+                        if(user_data_get()->alarm.alarm_enable[i] == 0)
+                        {
+                                user_data_get()->alarm.alarm_trigger[i] = false;
+                                user_data_save();
+                                continue;  
+                        }   
+                        if (((!user_data_get()->alarm.away_alarm_enable_list) & (0x01 << i)) && (!user_data_get()->alarm.security_alarm_enable_list) & (0x01 << i))
+                        {
+                                continue;
+                        }
+                        if ((user_data_get()->alarm.alarm_enable[i] != 0 && user_data_get()->alarm.alarm_trigger[i]))
                         {
                                 alarm_occur = true;
-                                if(user_data_get()->alarm.alarm_enable[i] == 1)
-                                {
-                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 3.0 * 100);//发送警报事件
-                                }else
-                                {
-                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, 0.25 * 100);//发送警报事件
-                                }
-                                return true;
+                                user_data_get()->alarm.emergency_mode = 1;
                         }
-                }
-                else
+                }else if(user_data_get()->alarm.alarm_trigger[i])
                 {
-                        user_data_get()->alarm.alarm_trigger[i] = false;
+                        alarm_occur = true;
+                        user_data_get()->alarm.emergency_mode = 0;       
+                }
+                if((alarm_occur)  && (sat_cur_layout_get() != sat_playout_get(alarm)))
+                {
                         user_data_save();
-                }                
+                        struct tm tm;
+                        user_time_read(&tm);
+                        alarm_list_add(security_emergency,i, &tm);
+                        layout_alarm_alarm_channel_set(i);
+                        sat_linphone_handup(0xFFFF);
+                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
+                }   
         }
-
+        if((alarm_occur == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
+        {
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
+        }
         return alarm_occur;
-
-
 }
 
 /***********************************************************************/
