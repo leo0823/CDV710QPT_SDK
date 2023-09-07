@@ -1,4 +1,5 @@
 #include "layout_define.h"
+#include "layout_monitor.h"
 enum
 {
          layout_alarm_obj_id_bg,
@@ -73,7 +74,6 @@ static void layout_alarm_monitor_open(void)
         }else 
         {       
 
-
         }
                  
 }
@@ -103,7 +103,6 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
                 {
                         int ch = layout_alarm_alarm_channel_get();
-  
                         if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch)> ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
                         {
                                 user_data_get()->alarm.alarm_trigger[ch] = false;
@@ -120,29 +119,20 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 }
                 else
                 {
+                        user_data_get()->alarm.alarm_trigger[7] = false;
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(emergency_return, 8, &tm);
                 }
-                for (int i = 0; i < 8; i++)
+                if(user_data_get()->system_mode && 0x0f != 0x01)
                 {
-                        if (((!user_data_get()->alarm.away_alarm_enable_list) & (0x01 << i)) && (!user_data_get()->alarm.security_alarm_enable_list) & (0x01 << i))
-                        {
-                                continue;
-                        }
-                        if ((user_data_get()->alarm.alarm_enable[i] != 0 && user_data_get()->alarm.alarm_trigger[i]))
-                        {
-                                user_data_get()->alarm.emergency_mode = 1;
-                                user_data_save();
-                                layout_alarm_alarm_channel_set(i);
-                                sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                        }
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                 }
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                alarm_trigger_check();
         }
-
-
 }
+
+
 
 /************************************************************
 ** 函数说明: 警报界面警报触发处理
@@ -174,7 +164,6 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                         alarm_list_add(security_emergency, arg1, &tm);
                 }
         }
-
 }
 
 /************************************************************
@@ -443,6 +432,7 @@ static void sat_layout_enter(alarm)
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
         ring_play_event_cmd_register(layout_alarm_ringplay_register_callback);
+        user_linphone_call_incoming_received_register(NULL);
         layout_alarm_monitor_open();
         /************************************************************
         ** 函数说明: 背景创建
@@ -641,6 +631,7 @@ static void sat_layout_enter(alarm)
 }
 static void sat_layout_quit(alarm)
 {
+        user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
         alarm_power_out_ctrl(false);
         lv_obj_pressed_func = lv_layout_touch_callback;
         ring_play_event_cmd_register(NULL);

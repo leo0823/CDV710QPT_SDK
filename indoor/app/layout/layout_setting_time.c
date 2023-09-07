@@ -53,7 +53,7 @@ static void setting_time_next_click(lv_event_t *ev)
 }
 static void setting_time_set_date_automatically_enable_display(lv_obj_t *obj)
 {
-        if (user_data_get()->time_automatically == true)
+        if (user_data_get()->etc.time_automatically == true)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
         }
@@ -67,9 +67,9 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_setting_cont);
         lv_obj_t *img = lv_obj_get_child_form_id(parent, setting_time_obj_id_setting_img);
 
-        user_data_get()->time_automatically = user_data_get()->time_automatically ? false : true;
+        user_data_get()->etc.time_automatically = user_data_get()->etc.time_automatically ? false : true;
         user_data_save();
-        if(user_data_get()->time_automatically)
+        if(user_data_get()->etc.time_automatically)
         {
                 extern bool tuya_api_time_sync(void);
                 if(tuya_api_time_sync() == true)
@@ -358,8 +358,10 @@ static void sat_layout_quit(setting_time)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_sec));
-
+                user_data_get()->etc.cur_time = tm;
+                user_data_save();
                 user_time_set(&tm);
+
 
         }
         standby_timer_restart(true);
