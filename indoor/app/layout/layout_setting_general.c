@@ -99,21 +99,18 @@ static lv_obj_t *setting_general_list_item_sub_get(int cont, int sub_id)
         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
         if (list == NULL)
         {
-                SAT_DEBUG("lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_general_obj_id_setting_list) faild");
                 return NULL;
         }
 
         lv_obj_t *item = lv_obj_get_child_form_id(list, cont);
         if (item == NULL)
         {
-                SAT_DEBUG("lv_obj_get_child_form_id(list,cont); ");
                 return NULL;
         }
 
         lv_obj_t *sub = lv_obj_get_child_form_id(item, sub_id);
         if (sub == NULL)
         {
-                SAT_DEBUG("lv_obj_get_child_form_id(item, sub_id); ");
                 return NULL;
         }
 
@@ -132,7 +129,6 @@ static void door_open_method_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opening_method_cont, setting_general_obj_id_door_opening_method_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
 
@@ -151,7 +147,6 @@ static void door1_open_moudle_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opener_module_cont, setting_general_obj_id_door_opener_module_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
         lv_label_set_text(sub, user_data_get()->etc.door1_open_door_mode == 0 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_CAMERA) : lang_str_get(SETTING_GENERAL_XLS_LANG_ID_DIGITAL_DOOR_LOCK));
@@ -169,7 +164,6 @@ static void door2_open_lock_num_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_door_opener_num_cont, setting_general_obj_id_door_opener_num_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("open_method_sub is null\n");
                 return;
         }
 
@@ -578,11 +572,10 @@ static void call_time_obj_sub_display(void)
         lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_call_time_count, setting_general_obj_id_call_time_sub);
         if (sub == NULL)
         {
-                SAT_DEBUG("call_time_sub is null\n");
                 return;
         }
 
-        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA + user_data_get()->call_time));
+        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA + user_data_get()->etc.call_time));
 }
 static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 {
@@ -593,15 +586,15 @@ static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
         lv_obj_t *check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_parent(item), setting_general_obj_id_msgbox_check_3), setting_general_obj_id_msgbox_check_3_img);
         if (!strncmp((const char *)check1->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->call_time = 1;
+                user_data_get()->etc.call_time = 1;
         }
         else if (!strncmp((const char *)check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->call_time = 2;
+                user_data_get()->etc.call_time = 2;
         }
         else if (!strncmp((const char *)check3->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                user_data_get()->call_time = 3;
+                user_data_get()->etc.call_time = 3;
         }
         user_data_save();
         setting_general_msgbox_del();
@@ -617,20 +610,20 @@ static void setting_general_call_time_num_display(void)
         lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
 
         lv_obj_t *check3 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_3), setting_general_obj_id_msgbox_check_3_img);
-        if (user_data_get()->call_time == 1)
+        if (user_data_get()->etc.call_time == 1)
         {
 
                 lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
-        else if (user_data_get()->call_time == 2)
+        else if (user_data_get()->etc.call_time == 2)
         {
                 lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(check3, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
         }
-        else if (user_data_get()->call_time == 3)
+        else if (user_data_get()->etc.call_time == 3)
         {
                 lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);

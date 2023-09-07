@@ -44,6 +44,7 @@ typedef struct
         int extension_voice;
         int touch_notification_volume;
         int touch_notification_voice;
+        char ring_repeat;
 } user_audio_info;
 
 typedef struct
@@ -102,6 +103,12 @@ typedef struct
         char password[4];
         /*****  common entrance password *****/
         char comm_ent_password[4];
+        /****** 时间设置模式 0:手动； 1：自动***/
+        char time_automatically;
+        /****** 时间字符串格式 2023-09-20 13:30:25***/
+        struct tm cur_time;
+        /****** 通话时间 1:1分钟 2:2分钟 3:3分钟***/
+        int call_time;
         
 
 } user_etc_info;
@@ -117,15 +124,15 @@ typedef struct
 
         bool away_alarm_enable;//离家警报模式；0：关闭；1：开启
 
-        int emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
+        char emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
 
-        int alarm_enable[8];//设置触发方式; 0:不触发，1：NO高电平触发 2：NC低电平触发
+        char alarm_enable[8];//设置触发方式; 0:不触发，1：NO高电平触发 2：NC低电平触发
 
-        int away_sensor_enable[8];//离家模式下传感器使能状态：只有被使能的传感器才能设置监测状态
+        char away_sensor_enable[8];//离家模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
-        int security_sensor_enable[8];//安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
+        char security_sensor_enable[8];//安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
-        int alarm_trigger[8];//传感器触发列表
+        char alarm_trigger[8];//传感器触发列表
 
         bool alarm_enable_always[2][8];//传感器总是使能：设置了总是使能，对应模式下的传感器总是能被检测（即使没有开启警报检测）
 
@@ -142,12 +149,14 @@ typedef struct
 
         float alarm_gpio_value_group[8];//主机警报检测gpio电平列表
 
+        bool buzzer_alarm;
+
 } user_alarm_info;
 
 typedef struct
 {
         char is_device_init;
-        char time_automatically;
+        
 
         char auto_record_mode; // 0:off,1:video,2:photo;
 
@@ -165,14 +174,8 @@ typedef struct
 
         char system_mode; // 0xFF 高4位 0：单系统，1:服务型。低4位表示ID号
         char mastar_wallpad_ip[16];//sip server 的IP
-
-        char local_server[16];
-        char sip_server[16];
-        char update_server[16];
-        char cctv_server[16];
-        char guard_station_number[16];
         
-        int call_time;
+
         int always_monitoring;
         bool last_call_new;
 
@@ -194,6 +197,12 @@ typedef struct
         char sip_user[32];
         char ip[32];
         char mask[32];
+        char gateway[32];
+        char dns[32];
+        char local_server[32];
+        char sip_server[32];
+        char cctv_server[32];
+        char guard_number[32];
 
 
         struct ipcamera_info door_device[DEVICE_MAX];

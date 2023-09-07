@@ -226,14 +226,14 @@ static void sat_layout_enter(operating_structure)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SINGLE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_MASTER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_master_sub_text, 100, 355, 311, 60,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SINGLE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
-
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_MASTER_INFO), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                
                 lv_common_text_create(sat_cur_layout_screen_get(), layout_operating_structure_obj_id_server_text, 513, 295, 511, 60,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -243,7 +243,7 @@ static void sat_layout_enter(operating_structure)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_SETTING_INFO_MSTAR), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE_INFO), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
         /***********************************************
         ** 作者: leo.liu

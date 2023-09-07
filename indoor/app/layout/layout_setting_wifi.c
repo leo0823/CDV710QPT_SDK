@@ -114,7 +114,7 @@ enum
 
 static void setting_wifi_cancel_click(lv_event_t *e)
 {
-        if ((user_data_get()->system_mode & 0xF0) == 0x00)
+        if (0/*(user_data_get()->system_mode & 0xF0) == 0x00*/)
         {
                 sat_layout_goto(single_operation_network, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }

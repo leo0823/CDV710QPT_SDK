@@ -135,7 +135,7 @@ bool alarm_list_total_get(int *total)
 ************************************************************/
 bool alarm_occur_time_get(int ch, struct tm *tm)
 {
-	if((ch > 8) || (ch < 0))
+	if((ch > 7) || (ch < 0))
 	{
 		return false;
 	}

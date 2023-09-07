@@ -17,7 +17,7 @@ bool ring_touch_play(void)
                 return false;
         }
         sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 100); // touch.wav
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 1); // touch.wav
 
         return true;
 }
@@ -37,7 +37,7 @@ bool ring_door_call_play(void)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entracne_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.door_tone);
-        return sat_linphone_audio_play_start(cmd, 100);
+        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0? 1 : 0xfffff);
 }
 
 
@@ -53,7 +53,7 @@ bool ring_unlock_play(void)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(100);
         sprintf(cmd, RESOURCE_RING_PATH "open.mp3");
-        return sat_linphone_audio_play_start(cmd, 100);
+        return sat_linphone_audio_play_start(cmd, 1);
 }
 /***********************************************
 ** 作者: leo.liu
@@ -71,7 +71,7 @@ bool ring_intercom_play(void)
         sat_linphone_audio_play_volume_set(user_data_get()->audio.extension_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.inter_tone);
         printf("cmd is %s\n",cmd);
-        return sat_linphone_audio_play_start(cmd, 100);
+        return sat_linphone_audio_play_start(cmd, 1);
 }
 
 /************************************************************
@@ -83,8 +83,8 @@ bool ring_intercom_play(void)
 ************************************************************/
 bool ring_alarm_play(void)
 {
-        sat_linphone_audio_play_volume_set(100);
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
+        // sat_linphone_audio_play_volume_set(100);
+        // sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
         return true;
 
 }
@@ -106,7 +106,7 @@ bool ring_buzzer_play(void)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.buzzer_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.buzzer_tone);
-        return sat_linphone_audio_play_start(cmd, 100);
+        return sat_linphone_audio_play_start(cmd, 1);
 
 }
 
@@ -128,7 +128,7 @@ bool ring_common_door_play(void)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.common_entrance_tone);
-        return sat_linphone_audio_play_start(cmd, 100);
+        return sat_linphone_audio_play_start(cmd, 1);
 
 }
 
@@ -149,6 +149,6 @@ bool ring_guard_play(void)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.guard_station_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.securirty_office_tone);
-        return sat_linphone_audio_play_start(cmd, 100);
+        return sat_linphone_audio_play_start(cmd, 1);
 
 }

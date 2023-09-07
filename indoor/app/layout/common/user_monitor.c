@@ -351,18 +351,14 @@ BYTE1. 010(固定部分).
 ************************************************************/
 bool monitor_valid_channel_check(int channel)
 {
-
         if (channel < 8)
         {
-
                 if ((network_data_get()->door_device[channel].sip_url[0] != 0))
                 {
                         return true;
                 }
         }
-
         else if ((channel >= 8) && (channel < 16))
-
         {
                 channel -= 8;
                 if (network_data_get()->cctv_device[channel].rtsp[0].rtsp_url[0] != 0)
@@ -421,10 +417,9 @@ int cctv_register_num_get()
 ************************************************************/
 bool outdoor_online_check(int ch,int *total)
 {
-
         int online_num = 0;
         bool result = false;
-        const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
+        const asterisk_register_info *p_register_info = asterisk_register_info_get();
         for (int j = 0; j < 20; j++)
         {
                 if((strncmp("20",p_register_info[j].name,2) == 0) && (p_register_info[j].timestamp != 0))//获取在线的门口机
@@ -446,6 +441,38 @@ bool outdoor_online_check(int ch,int *total)
         return result;
 }
 
+// /************************************************************
+// ** 函数说明: 门口机ip获取
+// ** 作者: xiaoxiao
+// ** 日期: 2023-08-08 14:29:29
+// ** 参数说明:ch:门口机通道；ip:返回的ip地址
+// ** 注意事项:
+// ************************************************************/
+// bool outdoor_ip_check(int ch,char *ip)
+// {
+//         int online_num = 0;
+//         bool result = false;
+//         const asterisk_register_info *p_register_info = asterisk_register_info_get();
+//         for (int j = 0; j < 20; j++)
+//         {
+//                 if((strncmp("20",p_register_info[j].name,2) == 0) && (p_register_info[j].timestamp != 0))//获取在线的门口机
+//                 {
+//                         if (network_data_get()->door_device[p_register_info[j].name[2] - '0' -1].rtsp[0].rtsp_url[0] != 0)//如果此在线的门口机是已经注册的
+//                         {
+//                                 online_num ++;
+//                                 if(p_register_info[j].name[2] - '0' == (ch + 1))//判断在线的门口机是否和传入的参数一致
+//                                 {
+//                                         result = true;
+//                                         sprintf(ip, "%s", p_register_info[j].ip);
+//                                         break;
+//                                 }
+//                         }
+//                 }
+//         }
+
+//         return result;
+// }
+
 /************************************************************
 ** 函数说明: 分机在线查询
 ** 作者: xiaoxiao
@@ -457,7 +484,7 @@ bool extension_online_check(int ch,int *total)
 {
         int online_num = 0;
         bool result = false;
-        const asterisk_register_info *p_register_info = asterisk_register_info_get_user();
+        const asterisk_register_info *p_register_info = asterisk_register_info_get();
         char user_name[64] = {0};
         sprintf(user_name,"50%d",user_data_get()->system_mode & 0x0f);
         for (int j = 0; j < 20; j++)
@@ -473,7 +500,6 @@ bool extension_online_check(int ch,int *total)
                                 }
                         }
                 }
-
         }
         if(total != NULL)
         {
@@ -481,3 +507,4 @@ bool extension_online_check(int ch,int *total)
         }
         return result;
 }
+

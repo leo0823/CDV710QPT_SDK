@@ -62,6 +62,7 @@ static const user_data_info user_data_default =
             .extension_voice = 4,
             .touch_notification_volume = 1,
             .touch_notification_voice = 1,
+            .ring_repeat = 0,
         },
 
         .display = {
@@ -91,6 +92,8 @@ static const user_data_info user_data_default =
             .door2_lock_num = 1,
             .password = {"1234"},
             .comm_ent_password = {"1234"},
+            .time_automatically = 1,
+            .call_time = 1,
         },
         .alarm = {
             .auto_record = false,
@@ -167,10 +170,10 @@ static const user_data_info user_data_default =
             .alarm_gpio_value_group[6] = 0,
             .alarm_gpio_value_group[7] = 0,
 
+            .buzzer_alarm = 0,
+
         },
         .system_mode = 0x01,
-        .time_automatically = 1,
-        .call_time = 1,
         .always_monitoring = 0,
         .last_call_new = false,
         
@@ -281,9 +284,10 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(touch_notification_voice, 0, 100);
         user_data_audio_check_range_out(touch_notification_volume, 0, 100);
 
-
         user_data_audio_check_range_out(extension_volume, 0, 100);
         user_data_audio_check_range_out(extension_voice, 0, 100);
+        user_data_audio_check_range_out(ring_repeat, 0, 1);
+        
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
@@ -327,6 +331,8 @@ static void user_data_check_valid(void)
         user_data_etc_check_range_out(password[1], '0', '9');
         user_data_etc_check_range_out(password[2], '0', '9');
         user_data_etc_check_range_out(password[3], '0', '9');
+        user_data_etc_check_range_out(time_automatically, 0, 1);
+        user_data_etc_check_range_out(call_time, 1, 3);
 
         /*****	alarm *****/
         user_data_alarm_check_range_out(away_save_photo, 0, 1);
@@ -360,10 +366,12 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
+        user_data_alarm_check_range_out(buzzer_alarm, 1, 3);
 
         user_data_check_range_out(system_mode, 1, 29);
-        user_data_check_range_out(time_automatically, 0, 1);
-        user_data_check_range_out(call_time, 1, 3);
+
+
+        
 }
 
 bool user_data_init(void)
@@ -408,7 +416,13 @@ static user_network_info network_data = {0};
 static const user_network_info network_data_default = {
     .sip_user = {"010001001011"},
     .ip = {0},
-    .mask = {"255.0.0"},
+    .mask = {"255.0.0.0"},
+    .gateway = {"192.168.0.2"},
+    .dns = {"192.168.0.2"},
+    .local_server = {"192.168.0.2"},
+    .sip_server = {"192.168.0.2"},
+    .cctv_server = {"192.168.0.2"},
+    .guard_number = {"192.168.0.2"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \
@@ -519,7 +533,54 @@ static void network_data_check_valid(void)
                         break;
                 }
         }
-
+        for (int i = 0; i < strlen(network_data.gateway); i++)
+        {
+                if (network_data.gateway[i] != '.')
+                {
+                        network_data_check_range_out(gateway[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.dns); i++)
+        {
+                if (network_data.dns[i] != '.')
+                {
+                        network_data_check_range_out(dns[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.local_server); i++)
+        {
+                if (network_data.local_server[i] != '.')
+                {
+                        network_data_check_range_out(local_server[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.sip_server); i++)
+        {
+                if (network_data.sip_server[i] != '.')
+                {
+                        network_data_check_range_out(sip_server[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.cctv_server); i++)
+        {
+                if (network_data.cctv_server[i] != '.')
+                {
+                        network_data_check_range_out(cctv_server[i], '0', '9');
+                        break;
+                }
+        }
+        for (int i = 0; i < strlen(network_data.guard_number); i++)
+        {
+                if (network_data.guard_number[i] != '.')
+                {
+                        network_data_check_range_out(guard_number[i], '0', '9');
+                        break;
+                }
+        }
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-10 9:40:52
