@@ -176,5 +176,5 @@ bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, in
 ** cmd: shell命令
 ** timeout : 超时时间
 ***********************************************/
-bool sat_ipcamera_report_data(char *ip, int port, const char *user, const char *password, char *cmd, int timeout);
+bool sat_ipcamera_report_shellcmd(char *ip, int port, const char *user, const char *password, char *cmd, int timeout);
 #endif

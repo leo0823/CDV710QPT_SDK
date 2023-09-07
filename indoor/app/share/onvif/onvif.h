@@ -63,5 +63,5 @@ bool ipc_camera_device_password_change( char *pwd, const char *ip, int port, con
 **@作者: leo.liu
 **@功能: 数据同步
 *****************************************************************/
-bool ipc_camera_device_sync_data(char* data_type, char *data, const char *ip, int port, const char *user, const char *password, int timeout);
+bool ipc_camera_device_send_data(char* data_type, char *data, const char *ip, int port, const char *user, const char *password, int timeout);
 #endif
