@@ -37,7 +37,7 @@ bool ring_door_call_play(void)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entracne_volume);
         sprintf(cmd, RESOURCE_RING_PATH "sound%d.mp3", user_data_get()->audio.door_tone);
-        return sat_linphone_audio_play_start(cmd, 1);
+        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0? 1 : 0xfffff);
 }
 
 

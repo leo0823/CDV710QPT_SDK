@@ -263,6 +263,8 @@ void layout_alarm_trigger_default(int arg1,int arg2)
         if((arg1 == 7) && (arg2 < ALM_LOW * 100))
         {
                 sat_linphone_handup(0xFFFF);
+                user_data_get()->alarm.buzzer_alarm = true;
+                user_data_save();
                 sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }else
         {

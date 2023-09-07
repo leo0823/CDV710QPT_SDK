@@ -62,6 +62,7 @@ static const user_data_info user_data_default =
             .extension_voice = 4,
             .touch_notification_volume = 1,
             .touch_notification_voice = 1,
+            .ring_repeat = 0,
         },
 
         .display = {
@@ -283,9 +284,10 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(touch_notification_voice, 0, 100);
         user_data_audio_check_range_out(touch_notification_volume, 0, 100);
 
-
         user_data_audio_check_range_out(extension_volume, 0, 100);
         user_data_audio_check_range_out(extension_voice, 0, 100);
+        user_data_audio_check_range_out(ring_repeat, 0, 1);
+        
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
@@ -413,7 +415,7 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .sip_user = {"010001001011"},
-    .ip = {"10.168.0.2"},
+    .ip = {0},
     .mask = {"255.0.0.0"},
     .gateway = {"192.168.0.2"},
     .dns = {"192.168.0.2"},

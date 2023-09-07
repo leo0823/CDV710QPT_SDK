@@ -358,8 +358,10 @@ static void sat_layout_quit(setting_time)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_sec));
-
+                user_data_get()->etc.cur_time = tm;
+                user_data_save();
                 user_time_set(&tm);
+
 
         }
         standby_timer_restart(true);

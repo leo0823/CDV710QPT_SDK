@@ -613,7 +613,8 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
-                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,network_data_get()->door_device[ch].port,network_data_get()->door_device[ch].username,network_data_get()->door_device[ch].password,cmd[i],100);
+                        
+                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,network_data_get()->door_device[ch].port,network_data_get()->door_device[ch].username,network_data_get()->door_device[ch].password,cmd[i],1000);
 
                 }
         }
@@ -632,7 +633,8 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
 
                 for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
                 {
-                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,80,"admiin",network_data_get()->door_device[ch].password,cmd[i],100);
+                        printf("cmd[%d] is %s\n",i,cmd[i]);
+                        sat_ipcamera_report_data(network_data_get()->door_device[ch].ipaddr,80,"admiin",network_data_get()->door_device[ch].password,cmd[i],1000);
                 }
         }
 }
@@ -2336,7 +2338,7 @@ static bool truye_event_cmd_audio_start(void)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
         if (obj != NULL)
         {
-                lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP));
+                lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_TALK_MOBILE_APP));
         }
         if (is_monitor_door_camera_talk == false)
         {
