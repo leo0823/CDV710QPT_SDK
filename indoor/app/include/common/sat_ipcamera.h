@@ -21,6 +21,8 @@ struct ipcamera_info
         int port;
         ipcamera_rtsp_info rtsp[IPCAMERA_PROFILE_MAX];
         int profile_token_num;
+        /*0:token,1:digest*/
+        char auther_flag;
 };
 /****************************************************************
 **@日期: 2022-09-21
@@ -49,12 +51,6 @@ bool sat_ipcamera_user_password_set(int index, const char *username, const char 
 **@功能:获取在线的IP
 *****************************************************************/
 int sat_ipcamera_online_num_get(void);
-/****************************************************************
-**@日期: 2022-09-21
-**@作者: leo.liu
-**@功能:获取有效的ipcamera
-*****************************************************************/
-int sat_ipcamera_valid_num_get(void);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -109,12 +105,6 @@ int sat_ipcamera_profile_token_num_get(int index);
 **@功能:向doorcamera 注册一个设备
 *****************************************************************/
 bool sat_ipcamera_device_register(char *loc_sip_uri, int index, int timeout);
-/****************************************************************
-**@日期: 2022-09-21
-**@作者: leo.liu
-**@功能:向doorcamera 注册一个设备
-*****************************************************************/
-bool sat_ipcamera_device_delete(char *loc_sip_uri, int index, int timeout);
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -176,5 +166,5 @@ bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, in
 ** cmd: shell命令
 ** timeout : 超时时间
 ***********************************************/
-bool sat_ipcamera_report_data(char *ip, int port, const char *user, const char *password, char *cmd, int timeout);
+bool sat_ipcamera_report_shellcmd(char *ip, int port, const char *user, const char *password, char *cmd, int timeout);
 #endif
