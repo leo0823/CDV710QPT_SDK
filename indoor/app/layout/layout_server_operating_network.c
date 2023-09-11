@@ -206,7 +206,7 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
                         }
                 }
         }
-        sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 static void setting_server_operating_btn_click(lv_event_t *e)
 {

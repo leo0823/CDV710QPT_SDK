@@ -33,9 +33,9 @@ static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
 
 static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 {
-        extern void layout_setting_setting_server_ipaddress_flag_set(char flag);
-        layout_setting_setting_server_ipaddress_flag_set(layout_ipc_cmeara_is_doorcamera_get() ? 0x01 : 0x02);
-        sat_layout_goto(setting_server_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+
+        layout_ip_setting_flag_set(layout_ipc_cmeara_is_doorcamera_get() ? 0x01 : 0x02);
+        sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
 static bool ipc_camera_search_display_register_func(void)
@@ -260,7 +260,10 @@ static void sat_layout_enter(ipc_camera_display)
 }
 static void sat_layout_quit(ipc_camera_display)
 {
-        standby_timer_restart(true);
+        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        {
+                standby_timer_restart(true);
+        }
         lv_common_video_mode_enable(false);
         sat_linphone_ipcamera_stop();
         ipcamera_state_callback_register(NULL);

@@ -24,7 +24,7 @@ enum
         setting_time_obj_id_3_obj,
         setting_time_obj_id_4_obj
 };
-// 0x00:first 0x01:home 0x03:setting
+// 0x00:first 0x01:home 0x02:setting
 static char setting_timer_layout_first_enter_flag = 0x00;
 static bool modify = false;
 void setting_time_first_enter_set_flag(char isfirst)
@@ -35,7 +35,7 @@ static void setting_time_cancel_click(lv_event_t *ev)
 {
         if (setting_timer_layout_first_enter_flag == 0x00)
         {
-                sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else if (setting_timer_layout_first_enter_flag == 0x01)
         {
@@ -62,31 +62,51 @@ static void setting_time_set_date_automatically_enable_display(lv_obj_t *obj)
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
         }
 }
-static void setting_time_set_date_automatically_click(lv_event_t *ev)
-{
-        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_setting_cont);
-        lv_obj_t *img = lv_obj_get_child_form_id(parent, setting_time_obj_id_setting_img);
 
-        user_data_get()->etc.time_automatically = user_data_get()->etc.time_automatically ? false : true;
-        user_data_save();
-        if(user_data_get()->etc.time_automatically)
-        {
-                extern bool tuya_api_time_sync(void);
-                if(tuya_api_time_sync() == true)
-                {
-                        sat_layout_goto(setting_time, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
-                }
-        }
-        setting_time_set_date_automatically_enable_display(img);
-}
-static void setting_time_set_roller_click(lv_event_t *ev)
+static void layout_setting_time_save_time(void)
 {
-        printf("ev->code is %d\n",ev->code);
-        if (ev->code == LV_EVENT_VALUE_CHANGED)
-	{
-                modify = true;
-	}
+        if(modify)
+        {
+                struct tm tm;
+                /***** year *****/
+                char buffer[8] = {0};
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_year_roller);
+                lv_roller_get_selected_str(obj, buffer, 8);
+                sscanf(buffer, "%d", &(tm.tm_year));        
+                printf("buffer is %s\n",buffer);
+                /***** month *****/
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_month_roller);
+                lv_roller_get_selected_str(obj, buffer, 8);
+                sscanf(buffer, "%d", &(tm.tm_mon));
+
+
+                /***** day *****/
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_day_roller);
+                lv_roller_get_selected_str(obj, buffer, 8);
+                sscanf(buffer, "%d", &(tm.tm_mday));
+
+
+                /***** hour *****/
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_hour_roller);
+                lv_roller_get_selected_str(obj, buffer, 8);
+                sscanf(buffer, "%d", &(tm.tm_hour));
+
+                /***** min *****/
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_min_roller);
+                lv_roller_get_selected_str(obj, buffer, 8);
+                sscanf(buffer, "%d", &(tm.tm_min));
+
+
+                /***** sec *****/
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
+                lv_roller_get_selected_str(obj, buffer, 8);
+                sscanf(buffer, "%d", &(tm.tm_sec));
+                user_data_get()->etc.cur_time = tm;
+                user_data_save();
+                user_time_set(&tm);
+        }
 }
+
 /************************************************************
 ** 函数说明: 时间显示初始化
 ** 作者: xiaoxiao
@@ -111,6 +131,34 @@ static void setting_time_param_init(void)
         lv_roller_set_selected(min,tm.tm_min - 0, false);
         lv_roller_set_selected(sec,tm.tm_sec - 0, false);
 }
+
+static void setting_time_set_date_automatically_click(lv_event_t *ev)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_setting_cont);
+        lv_obj_t *img = lv_obj_get_child_form_id(parent, setting_time_obj_id_setting_img);
+
+        user_data_get()->etc.time_automatically = user_data_get()->etc.time_automatically ? false : true;
+        user_data_save();
+        if(user_data_get()->etc.time_automatically)
+        {
+                layout_setting_time_save_time();
+                extern bool tuya_api_time_sync(void);
+                if(tuya_api_time_sync() == true)
+                {
+                        setting_time_param_init();
+                }
+        }
+        setting_time_set_date_automatically_enable_display(img);
+}
+static void setting_time_set_roller_click(lv_event_t *ev)
+{
+        printf("ev->code is %d\n",ev->code);
+        if (ev->code == LV_EVENT_VALUE_CHANGED)
+	{
+                modify = true;
+	}
+}
+
 static void sat_layout_enter(setting_time)
 {
         standby_timer_close();
@@ -320,51 +368,15 @@ static void sat_layout_enter(setting_time)
 
 
 }
+
+
 static void sat_layout_quit(setting_time)
 {
-        if(modify)
+        layout_setting_time_save_time();
+        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
         {
-                struct tm tm;
-                /***** year *****/
-                char buffer[8] = {0};
-                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_year_roller);
-                lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_year));        
-                printf("buffer is %s\n",buffer);
-                /***** month *****/
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_month_roller);
-                lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_mon));
-
-
-                /***** day *****/
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_day_roller);
-                lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_mday));
-
-
-                /***** hour *****/
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_hour_roller);
-                lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_hour));
-
-                /***** min *****/
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_min_roller);
-                lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_min));
-
-
-                /***** sec *****/
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
-                lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_sec));
-                user_data_get()->etc.cur_time = tm;
-                user_data_save();
-                user_time_set(&tm);
-
-
+                standby_timer_restart(true);
         }
-        standby_timer_restart(true);
 }
 
 sat_layout_create(setting_time);

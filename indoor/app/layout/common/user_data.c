@@ -406,6 +406,7 @@ void user_data_reset(void)
         user_data_save();
         system("sync");
 }
+
 /*************************************************************************************************************************************************
 *******************************											                                                                                              *******************************
 *******************************					                                                        楚河汉界					                             *******************************
@@ -414,6 +415,7 @@ void user_data_reset(void)
 static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
+    .dhcp = true,
     .sip_user = {"010001001011"},
     .ip = {0},
     .mask = {"255.0.0.0"},
@@ -422,7 +424,7 @@ static const user_network_info network_data_default = {
     .local_server = {"192.168.0.2"},
     .sip_server = {"192.168.0.2"},
     .cctv_server = {"192.168.0.2"},
-    .guard_number = {"192.168.0.2"},
+    .guard_number = {"00000000000"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \
