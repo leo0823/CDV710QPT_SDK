@@ -376,6 +376,7 @@ static void playback_media_channel_obj_display(lv_obj_t *parent, const char *ch_
                 return;
         }
         lv_label_set_text(obj, ch_name);
+        lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
 }
 static void playback_thumb_left_right_arrow_display(void)
 {

@@ -5,6 +5,7 @@ enum
         setting_complete_obj_id_title,
         setting_complete_obj_id_cancel,
         setting_complete_obj_id_start_setting,
+        setting_complete_obj_id_reboot,
         setting_complete_obj_id_confirm
 };
 static void setting_complete_cancel_click(lv_event_t *ev)
@@ -69,6 +70,13 @@ static void sat_layout_enter(setting_complete)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_START_SETTING_IS_COMPLETE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+
+
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_complete_obj_id_reboot, 68, 275, 888, 70,
+                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_START_SETTING_REBOOT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
 
         /***********************************************

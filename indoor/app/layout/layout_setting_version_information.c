@@ -131,6 +131,7 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
                 }
         }
 }
+
 static void sat_layout_enter(setting_version_information)
 {
         sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);

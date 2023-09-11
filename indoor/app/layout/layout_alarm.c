@@ -27,7 +27,6 @@ typedef enum
 
 }passwd_cont_obj_id;
 
-static bool alarm_return;//标注当前警报页面底部按键功能是停止或者返回
 
 static void alarm_alarm_cont_display(lv_timer_t *ptimer)
 {
@@ -36,19 +35,7 @@ static void alarm_alarm_cont_display(lv_timer_t *ptimer)
         lv_color_t color = lv_obj_get_style_bg_color(cont, LV_PART_MAIN);
         lv_obj_set_style_bg_color(cont, (color.full == lv_color_hex(0xdb3535).full) ? lv_color_hex(0xff4040) : lv_color_hex(0xdb3535), LV_PART_MAIN);
 }
-#if 0
-/************************************************************
-** 函数说明: 警报播放定时器
-** 作者: xiaoxiao
-** 日期: 2023-05-15 20:53:41
-** 参数说明: 
-** 注意事项: 
-************************************************************/
-static void alarm_ringplay_timer(lv_timer_t *ptimer)
-{
 
-}
-#endif
 /************************************************************
 ** 函数说明: 开启警报监控
 ** 作者: xiaoxiao
@@ -80,12 +67,14 @@ static void layout_alarm_monitor_open(void)
 
 static void alarm_stop_obj_click(lv_event_t *ev)
 {
-
+        user_data_get()->alarm.alarm_ring_play = false;
+        user_data_save();
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+        sat_linphone_audio_play_stop();
         lv_obj_t * passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_passwd_cont);
-
-        if(!alarm_return)//警报停止模式
+        if(!user_data_get()->alarm.is_alarm_return)//警报停止模式
         {
-                sat_linphone_audio_play_stop();
+
                 struct tm tm;
                 user_time_read(&tm);
                 if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
@@ -99,7 +88,6 @@ static void alarm_stop_obj_click(lv_event_t *ev)
   
         }else
         {
-                sat_linphone_audio_play_stop();
                 if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
                 {
                         int ch = layout_alarm_alarm_channel_get();
@@ -113,6 +101,9 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                         }
                         else
                         {
+                                user_data_get()->alarm.alarm_ring_play = true;
+                                user_data_save();
+                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                 ring_alarm_play();
                                 return;
                         }
@@ -226,6 +217,24 @@ static void passwd_incorrect_timer(lv_timer_t *ptimer)
 
 }
 
+bool layout_alarm_stop_btn_label_display(void)
+{
+        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_confirm_btn);
+        if(obj != NULL)
+        {
+                lv_obj_t *label = lv_obj_get_child_form_id(obj,layout_alarm_obj_id_confirm_label);
+                if(user_data_get()->alarm.is_alarm_return)
+                {
+                        lv_label_set_text(label,lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_RETURN));
+                }else
+                {
+                        lv_label_set_text(label,lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_STOP));
+                }
+                return true;
+        }
+        return false;
+}
+
 static void  layout_alarm_passwd_input_text_next_foucued(void)
 {
         lv_obj_t *textarea = NULL;
@@ -249,13 +258,18 @@ static void  layout_alarm_passwd_input_text_next_foucued(void)
                                 if(strncmp(user_data_get()->etc.password,buffer,4) == 0)
                                 {
                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN);
-                                        alarm_return =  true;
                                         lv_obj_t * label = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_alarm_obj_id_confirm_btn),layout_alarm_obj_id_confirm_label);
+                                        user_data_get()->alarm.is_alarm_return = true;
+                                        user_data_save();
+                                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                         lv_label_set_text(label,lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_RETURN));
                                         return;
 
 
                                 }
+                                user_data_get()->alarm.alarm_ring_play = true;
+                                user_data_save();
+                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                 ring_alarm_play();
                                 lv_obj_set_style_bg_color(parent, lv_color_hex(0x5E0000), LV_PART_MAIN);
                                 lv_sat_timer_create(passwd_incorrect_timer, 500, NULL);
@@ -427,7 +441,9 @@ static void sat_layout_enter(alarm)
 {
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        alarm_return = false;
+        user_data_get()->alarm.is_alarm_return = false;
+        user_data_get()->alarm.alarm_ring_play = true;
+        user_data_save();
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
@@ -530,16 +546,15 @@ static void sat_layout_enter(alarm)
                                                       NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
         }
+        printf("=============%s=============%d========\n",__func__,__LINE__);
         {
-                // /************************************************************
-                // ** 函数说明: 警报铃声任务
-                // ** 作者: xiaoxiao
-                // ** 日期: 2023-05-15 20:52:12
-                // ** 参数说明: 
-                // ** 注意事项: 
-                // ************************************************************/
-                // lv_timer_t *ringplay_timer = lv_sat_timer_create(alarm_ringplay_timer, 1000, cont);
-                // lv_timer_ready(ringplay_timer);
+                /************************************************************
+                ** 函数说明: 警报铃声任务
+                ** 作者: xiaoxiao
+                ** 日期: 2023-05-15 20:52:12
+                ** 参数说明: 
+                ** 注意事项: 
+                ************************************************************/
                 ring_alarm_play();
          
         }
@@ -626,7 +641,7 @@ static void sat_layout_enter(alarm)
             }
        
         }
-
+        printf("=============%s=============%d========\n",__func__,__LINE__);
         lv_obj_pressed_func = NULL;
 }
 static void sat_layout_quit(alarm)

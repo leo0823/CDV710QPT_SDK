@@ -42,7 +42,10 @@ static void power_setting_run_btn_client(lv_event_t *ev)
 ***********************************************/
 static void power_setting_skip_btn_client(lv_event_t *ev)
 {
-	sat_layout_goto(server_operation_network, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+	standby_timer_restart(true);
+	user_data_get()->is_device_init = true;
+	user_data_save();
+	sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(power_setting)

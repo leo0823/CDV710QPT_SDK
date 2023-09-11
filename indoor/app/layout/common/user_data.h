@@ -151,6 +151,10 @@ typedef struct
 
         bool buzzer_alarm;
 
+        bool alarm_ring_play;//是否需要播放警报铃声（警报同步需要用)
+        
+        bool is_alarm_return;//表示当前
+
 } user_alarm_info;
 
 typedef struct
@@ -173,9 +177,9 @@ typedef struct
         user_alarm_info alarm;
 
         char system_mode; // 0xFF 高4位 0：单系统，1:服务型。低4位表示ID号
+
         char mastar_wallpad_ip[16];//sip server 的IP
         
-
         int always_monitoring;
         bool last_call_new;
 
@@ -194,6 +198,7 @@ void user_data_reset(void);
 
 typedef struct
 {
+        bool dhcp;
         char sip_user[32];
         char ip[32];
         char mask[32];

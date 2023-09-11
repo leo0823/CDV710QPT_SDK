@@ -88,7 +88,7 @@ void asterisk_server_sync_data_force(bool is_sync);
 void common_passwd_check_func_create(int cont_id,void (*callback)(void));
 
 /************************************************************
-** 函数说明: 判断是否是以恶搞合法的ipv4地址
+** 函数说明: 判断是否是以一个合法的ipv4地址
 ** 作者: xiaoxiao
 ** 日期: 2023-04-27 17:30:01
 ** 参数说明: 
@@ -96,5 +96,20 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void));
 ************************************************************/
 bool is_valid_ipv4(const char *s);
 
-
+/************************************************************
+** 函数说明: 蜂鸣器呼叫注册函数
+** 作者: xiaoxiao
+** 日期: 2023-04-27 17:30:01
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+void buzzer_call_callback_register(void (*callback)(void));
+/************************************************************
+** 函数说明: 蜂鸣器触发检查
+** 作者: xiaoxiao
+** 日期: 2023-04-27 17:30:01
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool buzzer_call_trigger_check(void);
 #endif
