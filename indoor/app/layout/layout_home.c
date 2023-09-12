@@ -22,12 +22,14 @@ enum
 
         home_obj_id_video_cont,
         home_obj_id_video_title,
+        home_obj_id_no_video_title,
         home_obj_id_video_img,
         home_obj_id_video_label,
         home_obj_id_video_new,
 
         home_obj_id_recent_call_cont,
         home_obj_id_recent_call_title,
+        home_obj_id_no_call_title,
         home_obj_id_recent_call_list,
         home_obj_id_recent_call_right,
         home_obj_id_recent_call_new,
@@ -641,6 +643,38 @@ static void home_thumb_refresh_display_callback(void)
 
 }
 
+static void layout_home_video_call_title_param_init(void)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_video_cont);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, home_obj_id_no_video_title);
+        lv_obj_t * video_date = lv_obj_get_child_form_id(parent, home_obj_id_video_label);
+        if ((obj == NULL) || video_date == NULL)
+        {
+                return;
+        }
+        file_type type = FILE_TYPE_FLASH_PHOTO;
+        int total = 0;
+        if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
+        {
+                type = FILE_TYPE_VIDEO;
+        }
+        media_file_total_get(type, &total,NULL);
+        if(total <= 0)
+        {
+                lv_obj_clear_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_set_style_bg_opa(video_date, LV_OPA_TRANSP, LV_PART_MAIN); 
+        }else
+        {
+                lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_set_style_bg_opa(video_date, LV_OPA_60, LV_PART_MAIN);
+        }
+}
+
 static void home_media_thumb_time_display(const char *filename)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_video_cont);
@@ -716,6 +750,8 @@ static void home_media_thumb_display(void)
 
 static void home_sd_state_change_callback(void)
 {
+        layout_home_video_call_title_param_init();
+        home_media_thumb_display();
         home_obj_top_icon_display();
 }
 
@@ -890,10 +926,16 @@ static void sat_layout_enter(home)
                                       lang_str_get(HOME_XLS_LANG_ID_RECENT_VIDEO), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                 lv_common_img_btn_create(parent, home_obj_id_video_img, 0, 40, THUMB_WIDTH, THUMB_HIGHT,
-                                         NULL, false, LV_OPA_COVER, 0x00, LV_OPA_COVER, 0x00,
+                                         NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
                                          8, 0, LV_BORDER_SIDE_BOTTOM, LV_OPA_TRANSP, 0,
                                          8, 0, LV_BORDER_SIDE_BOTTOM, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                lv_common_text_create(parent, home_obj_id_no_video_title, 18, 80, 180, 72,
+                        NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        "There is no saved information", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
 
                 lv_common_text_create(parent, home_obj_id_video_label, 0, 216 - 54, THUMB_WIDTH, 54,
@@ -920,6 +962,7 @@ static void sat_layout_enter(home)
                                                             8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
+ 
                 lv_common_text_create(parent, home_obj_id_recent_call_title, 14, 8, 104, 22,
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -935,16 +978,29 @@ static void sat_layout_enter(home)
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          resource_ui_src_get("btn_widget_more.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-
                 lv_obj_set_ext_click_area(obj, 30);
+                if(!call_list_total_get())
+                {
+                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                }
+                
 
+                obj = lv_common_text_create(parent, home_obj_id_no_call_title, 18, 80, 180, 80,
+                        NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        "There is no saved information", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                if(call_list_total_get())
+                {
+                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                }   
                 lv_common_img_btn_create(parent, home_obj_id_recent_call_new, 158, 10, 48, 24,
                                          NULL, false, LV_OPA_TRANSP, 0x242526, LV_OPA_TRANSP, 0x242526,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          layout_last_call_new_flag_get() ? resource_ui_src_get("ic_main_new.png") : "", LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
+        layout_home_video_call_title_param_init();
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 14:16:18
