@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
+#include "tuya/tuya_api.h"
 enum
 {
         setting_initialize_obj_id_title,
@@ -12,6 +13,8 @@ enum
         setting_initialize_obj_id_saved_video_complete,
         setting_initialize_obj_id_emergency_record_label,
         setting_initialize_obj_id_emergency_reocrd_complete,
+        setting_initialize_obj_id_app_link_label,
+        setting_initialize_obj_id_app_link_complete,
         setting_initialize_obj_id_initiallization_is_complete_label,
         setting_initialize_obj_id_reset
 };
@@ -48,6 +51,10 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         }
         else if (setting_initialize_count == 3)
         {
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_complete);
+                tuay_api_data_reset();
+        }else if (setting_initialize_count == 4)
+        {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_initiallization_is_complete_label);
         }
         else
@@ -72,6 +79,8 @@ static void setting_initialize_reset_obj_click(lv_event_t *e)
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_saved_video_complete);
         lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_emergency_reocrd_complete);
+        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_complete);
         lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_initiallization_is_complete_label);
         lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
@@ -193,6 +202,26 @@ static void sat_layout_enter(setting_initialize)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
         /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 13:46:56
+        ** 说明: app_link
+        ***********************************************/
+        {
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_label, 273, 310, 234, 29,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_EMERGENCY_RECORD), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
+
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_complete, 517, 310, 234, 29,
+                                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_APP_LINK), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
+
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
          ** 说明: complete
@@ -207,6 +236,8 @@ static void sat_layout_enter(setting_initialize)
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
+
+
 
         /***********************************************
          ** 作者: leo.liu

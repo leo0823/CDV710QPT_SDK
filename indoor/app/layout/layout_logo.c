@@ -179,6 +179,13 @@ static void buzzer_call_trigger_ui_create(void)
         }
 }
 
+/************************************************************
+** 函数说明: 蜂鸣器定时任务，蜂鸣器的触发时长为6秒，针对不同的场景，在触发时间内做相应的行为
+** 作者: xiaoxiao
+** 日期：2023-09-12 08:11:03 
+** 参数说明: 
+** 注意事项：
+************************************************************/
 static void default_buzzer_call_timer(lv_timer_t *timer)
 {
         lv_obj_t * bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_alarm_screen_id);
@@ -191,7 +198,14 @@ static void default_buzzer_call_timer(lv_timer_t *timer)
         }
 }
 
-//蜂鸣器警报触发函数
+
+/************************************************************
+** 函数说明: 蜂鸣器警报触发函数
+** 作者: xiaoxiao
+** 日期：2023-09-12 08:00:33 
+** 参数说明: 
+** 注意事项：
+************************************************************/
 static void buzzer_alarm_trigger_default(void)
 {
         if(user_data_get()->is_device_init == false)
@@ -208,7 +222,13 @@ static void buzzer_alarm_trigger_default(void)
 
 
 
-//警报页面铃声播放/暂停同步
+/************************************************************
+** 函数说明: 警报页面铃声播放/暂停同步
+** 作者: xiaoxiao
+** 日期：2023-09-12 08:00:33 
+** 参数说明: 
+** 注意事项：
+************************************************************/
 static void alarm_ringtone_play_check(void)
 {
         if(sat_cur_layout_get() == sat_playout_get(alarm))
@@ -223,7 +243,13 @@ static void alarm_ringtone_play_check(void)
         }
 }
 
-//警报页面stop/return状态转换同步
+/************************************************************
+** 函数说明: 警报页面stop/return状态转换同步
+** 作者: xiaoxiao
+** 日期：2023-09-12 08:00:07 
+** 参数说明: 
+** 注意事项：
+************************************************************/
 static void alarm_stop_return_status_display_check(void)
 {
         if(sat_cur_layout_get() == sat_playout_get(alarm))
@@ -233,7 +259,13 @@ static void alarm_stop_return_status_display_check(void)
         }
 }
 
-// 文件同步回调注册
+/************************************************************
+** 函数说明: 文件同步事件回调
+** 作者: xiaoxiao
+** 日期：2023-09-12 07:59:42 
+** 参数说明: 
+** 注意事项：
+************************************************************/
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
         if(user_data_get()->is_device_init == false)
@@ -361,7 +393,13 @@ static void flash_backup_to_sd_timer(lv_timer_t *t)
         lv_timer_del(t);
 }
 
-
+/************************************************************
+** 函数说明: 媒体照片备份
+** 作者: xiaoxiao
+** 日期：2023-09-12 07:58:08 
+** 参数说明: 
+** 注意事项：开机备份过程不需ui显示（无效函数）
+************************************************************/
 void flash_backup_to_sd_dispaly_create(bool *backup_ed)
 {
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
