@@ -112,7 +112,7 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
 
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.buzzer_volume != 0))
                 {
-                        ring_buzzer_play();
+                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
                 }
                 else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.buzzer_volume == 0))
                 {
@@ -154,7 +154,7 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
                 user_data_save();
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.entracne_volume != 0))
                 {
-                        ring_door_call_play();
+                        ring_door_call_play(user_data_get()->audio.door_tone);
                 }
                 else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.entracne_volume == 0))
                 {
@@ -203,7 +203,7 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
                 user_data_save();
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.common_entrance_volume != 0))
                 {
-                        ring_common_door_play();
+                        ring_common_door_play(user_data_get()->audio.common_entrance_tone);
                 }
                 else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.common_entrance_volume == 0))
                 {
@@ -259,7 +259,7 @@ static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
                 user_data_save();
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.guard_station_volume != 0))
                 {
-                        ring_guard_play();
+                        ring_guard_play(user_data_get()->audio.securirty_office_tone);
                 }
                 else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.guard_station_volume == 0))
                 {
@@ -315,7 +315,7 @@ static void setting_extension_volume_slider_change_cb(lv_event_t *e)
                 user_data_save();
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.extension_volume != 0))
                 {
-                        ring_intercom_play();
+                        ring_intercom_play(user_data_get()->audio.inter_tone);
                 }
                 else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.extension_volume == 0))
                 {
@@ -502,10 +502,10 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                if (((user_data_get()->system_mode & 0xF0) != 0x10) && (i == 2 || i == 3))
-                {
-                        continue;
-                }
+                // if (((user_data_get()->system_mode & 0xF0) != 0x10) && (i == 2 || i == 3))
+                // {
+                //         continue;
+                // }
                 lv_obj_t *item = lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                                  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                  0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
