@@ -63,6 +63,7 @@ static char *resource_src_get(const char *path, const char *file, int w, int h, 
         *p_param = w;
         p_param++;
         *p_param = h;
+
         return resource_string;
 }
 

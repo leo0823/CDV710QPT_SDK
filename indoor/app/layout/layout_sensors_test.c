@@ -47,7 +47,7 @@ static void layout_sensor_test_sensor_status_display(void)
             if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > 250) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < 100))
             {
 
-                lv_obj_set_style_bg_img_src(sensor_img, resource_ui_src_get("ic_undetect.png"), LV_PART_MAIN);ic_detect
+                lv_obj_set_style_bg_img_src(sensor_img, resource_ui_src_get("ic_undetect.png"), LV_PART_MAIN);
             }else
             {
                 lv_obj_set_style_bg_img_src(sensor_img, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);           

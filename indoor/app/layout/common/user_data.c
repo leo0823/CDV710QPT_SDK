@@ -21,7 +21,7 @@ static user_data_info user_data =
 static const user_data_info user_data_default =
     {
         .is_device_init = 0,
-        .auto_record_mode = 0,
+        .auto_record_mode = 2,
         .wifi_enable = true,
         .motion = {
             .enable = false,
