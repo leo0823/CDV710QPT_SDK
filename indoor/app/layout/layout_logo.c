@@ -110,6 +110,7 @@ static void sd_state_checking_timer(lv_timer_t *timer)
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
+        SAT_DEBUG("================================");
         if (user_data_get()->is_device_init == false)
         {
                 return;

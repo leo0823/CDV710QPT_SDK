@@ -259,39 +259,35 @@ static void home_date_obj_display(void)
         // layout_home_month_language_get(tm.tm_mon - 1);
 
         LANGUAGE_ID lang = language_id_get();
-        if (lang == LANGUAGE_ID_ENGLISH)
-        {
-                // printf("%d %d %d %d\n",tm.tm_wday,tm.tm_mday,tm.tm_mon,tm.tm_year);
-                lv_label_set_text_fmt(label_date, "%s,%s %d %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_HANYU)
-        {
-                lv_label_set_text_fmt(label_date, "%04d년%d월%d일,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
-        }
-        else if (lang == LANGUAGE_ID_ELUOSI)
-        {
-                lv_label_set_text_fmt(label_date, "%s,%s,%d,%04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_XIBANYA)
-        {
-                lv_label_set_text_fmt(label_date, "%s,%d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
-        }
-        else if (lang == LANGUAGE_ID_CHINESE)
-        {
-                lv_label_set_text_fmt(label_date, "%04d年%d月%d日,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
-        }
-        else if (lang == LANGUAGE_ID_YUENAN)
-        {
-                lv_label_set_text_fmt(label_date, "%s,%d,%04d,%s", mon_str, tm.tm_mday, tm.tm_year, week_str);
-        }
-        else if (lang == LANGUAGE_ID_ALABOYU)
-        {
-                lv_label_set_text_fmt(label_date, "%s,%d,%04d,%s", mon_str, tm.tm_mday, tm.tm_year, week_str);
-        }
-        else if (lang == LANGUAGE_ID_ALABOYU)
-        {
-                lv_label_set_text_fmt(label_date, "%s, %s %d, %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
-        }
+	if (lang == LANGUAGE_ID_ENGLISH)
+	{
+		// printf("%d %d %d %d\n",tm.tm_wday,tm.tm_mday,tm.tm_mon,tm.tm_year);
+		lv_label_set_text_fmt(label_date, "%s,%s %d %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
+	}
+	else if (lang == LANGUAGE_ID_HANYU)
+	{
+		lv_label_set_text_fmt(label_date, "%04d년%d월%d일,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
+	}
+	else if (lang == LANGUAGE_ID_ELUOSI)
+	{
+		lv_label_set_text_fmt(label_date, "%s,,%d,%s,%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+	}
+	else if (lang == LANGUAGE_ID_XIBANYA)
+	{
+		lv_label_set_text_fmt(label_date, "%s,%d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+	}
+	else if (lang == LANGUAGE_ID_CHINESE)
+	{
+		lv_label_set_text_fmt(label_date, "%04d年%d月%d日,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
+	}
+	else if (lang == LANGUAGE_ID_YUENAN)
+	{
+		lv_label_set_text_fmt(label_date, "%s,%d,%s,%04d", week_str, tm.tm_mday, mon_str, tm.tm_year );
+	}
+	else if (lang == LANGUAGE_ID_ALABOYU)
+	{
+		lv_label_set_text_fmt(label_date, "%d,%s,%04d,%s",  tm.tm_mday, mon_str, tm.tm_year, week_str);
+	}
 }
 static void home_date_timer(lv_timer_t *ptimer)
 {
@@ -639,6 +635,7 @@ static void home_thumb_refresh_display_callback(void)
         lv_style_set_radius(&style, 20); // 设置圆角半径
         lv_obj_add_style(obj, &style,LV_PART_MAIN);
         lv_obj_refresh_style(obj, LV_PART_MAIN,LV_STYLE_RADIUS); // 刷新样式以反映更改
+
         lv_obj_set_style_bg_img_src(obj, home_thumb_img_dsc, LV_PART_MAIN);
 
 }

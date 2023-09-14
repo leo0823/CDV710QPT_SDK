@@ -1066,7 +1066,7 @@ static void layout_monitor_switch_btn_display(void)
         }
         else
         {
-                if ((door_camera_register_num_get() < 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG) || tuya_api_client_num() >= 1)
+                if ((door_camera_register_num_get() <= 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG) || tuya_api_client_num() >= 1)
                 {
                         lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);

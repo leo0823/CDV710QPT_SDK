@@ -636,7 +636,7 @@ static void setting_general_call_time_obj_click(lv_event_t *ev)
         item[0] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_1_MINUTE);
         item[1] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_2_MINUTE);
         item[2] = lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_3_MINUTE);
-        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER),
+        setting_general_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA),
                                       setting_general_msgbox_cancel_click, setting_general_call_time_msgbox_confirm_click, setting_general_call_time_msgbox_item_click,
                                       item, 3);
         setting_general_call_time_num_display();
