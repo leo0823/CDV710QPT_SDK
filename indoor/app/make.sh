@@ -30,12 +30,12 @@ copy_to_rootfs()
 
         cp ./build/SAT_SSD20X.BIN ./rootfs/board/CDV810QPT/app/
 
-        cp -r ./layout/resource/commax_xml/ ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/onvif/ ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/rings/ ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/ttf/ ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/ui/ ./rootfs/board/CDV810QPT/app/
-        cp -r ./layout/resource/wallpaper/ ./rootfs/board/CDV810QPT/app/
+        cp -r ./layout/resource/commax_xml/ ./rootfs/board/CDV810QPT/resource/
+        cp -r ./layout/resource/onvif/ ./rootfs/board/CDV810QPT/resource/
+        cp -r ./layout/resource/rings/ ./rootfs/board/CDV810QPT/resource/
+        cp -r ./layout/resource/ttf/ ./rootfs/board/CDV810QPT/resource/
+        cp -r ./layout/resource/ui/ ./rootfs/board/CDV810QPT/resource/
+        cp -r ./layout/resource/wallpaper/ ./rootfs/board/CDV810QPT/resource/
 }
 make_rootfs()
 {	

@@ -211,13 +211,13 @@ static void sat_layout_enter(setting_initialize)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_EMERGENCY_RECORD), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_APP_LINK), 0x808080, 0x808080, LV_TEXT_ALIGN_RIGHT, lv_font_small);
 
                 lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_complete, 517, 310, 234, 29,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_APP_LINK), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
+                                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_COMPLETE), 0x46FF90, 0x46FF90, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }

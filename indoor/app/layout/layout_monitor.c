@@ -2046,7 +2046,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
 
         if (!user_data_get()->audio.ring_mute)
         {
-                ring_door_call_play();
+                ring_door_call_play(user_data_get()->audio.door_tone);
         }
 
         /*如果是外部呼叫，则直接进入监控*/
@@ -2128,7 +2128,7 @@ static bool monitor_intercom_extern_call(const char *arg)
         {
                 if (!user_data_get()->audio.ring_mute)
                 {
-                        ring_intercom_play();
+                        ring_intercom_play(user_data_get()->audio.inter_tone);
                 }
                 intercom_call_status_setting(2);
 
