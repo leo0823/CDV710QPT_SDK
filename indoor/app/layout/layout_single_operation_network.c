@@ -59,7 +59,7 @@ static void setting_single_operation_network_cancel_btn_click(lv_event_t *ev)
 
 static void setting_single_operation_network_next_btn_click(lv_event_t *ev)
 {
-	sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+	sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
 /***********************************************

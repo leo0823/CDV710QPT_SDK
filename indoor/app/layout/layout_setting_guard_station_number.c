@@ -32,7 +32,14 @@ static void setting_guard_station_number_obj_cancel_click(lv_event_t *e)
 }
 static void setting_guard_station_number_obj_confirm_click(lv_event_t *e)
 {
-        sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        lv_obj_t * txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_guard_station_number_obj_id_building_number_textbox);
+        if(txt != NULL)
+        {
+                strncpy(network_data_get()->guard_number ,lv_textarea_get_text(txt),sizeof(network_data_get()->guard_number));
+                network_data_save();
+                sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
+
 }
 
 static void setting_guard_station_number_next_obj_display(void)
@@ -184,7 +191,7 @@ static void sat_layout_enter(setting_guard_station_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          "1234", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
+                                          network_data_get()->guard_number, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
         }
         /***********************************************

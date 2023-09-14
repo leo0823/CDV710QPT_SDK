@@ -30,6 +30,7 @@ enum
         setting_recording_obj_id_msgbox_check_2,
         setting_recording_obj_id_msgbox_check_2_text,
         setting_recording_obj_id_msgbox_check_2_img,
+        setting_recording_obj_id_msgbox_check_2_cover,
         setting_recording_obj_id_msgbox_check_3,
         setting_recording_obj_id_msgbox_check_3_text,
         setting_recording_obj_id_msgbox_check_3_img,
@@ -91,6 +92,14 @@ static lv_obj_t *setting_recording_msgbox_create(const char *title, lv_event_cb_
                                               item[1], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_recording_obj_id_msgbox_check_2_img,
                                               (const char *)resource_ui_src_get(select_item == 1 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                if(((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
+                {
+                        lv_common_img_btn_create(msgbox, setting_recording_obj_id_msgbox_check_2_cover, 48, 145, 365, 48,
+                        NULL, true, LV_OPA_60, 0x242526, LV_OPA_60, 0x242526,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                }
 
                 lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_3, 48, 201, 365, 48,
                                               checkbox_cb, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,

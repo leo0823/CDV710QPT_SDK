@@ -41,8 +41,10 @@ static bool tuya_event_cmd_video_stop(void)
 
 bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 {
-        SAT_DEBUG("==============cmd is %d=========",cmd);
-        SAT_DEBUG("==============arg is %d=========",arg);
+        if(user_data_get()->is_device_init == false)
+        {
+                return false;
+        }
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:

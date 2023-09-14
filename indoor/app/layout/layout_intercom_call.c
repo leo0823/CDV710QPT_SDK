@@ -193,7 +193,10 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
         lv_obj_t *del_num = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
         {
-
+                if(checkbox_s_num == 0)
+                {
+                        lv_obj_clear_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
+                }
                 checkbox_s_num++;
                 lv_label_set_text_fmt(del_num,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
 
@@ -202,6 +205,10 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
         else
         {
                 checkbox_s_num--;
+                if(checkbox_s_num == 0)
+                {
+                        lv_obj_add_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
+                }
                 lv_label_set_text_fmt(del_num,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
@@ -289,6 +296,8 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
         lv_obj_t *obj = lv_event_get_current_target(ev);
         lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
         lv_obj_t *del_cancel = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del_cancel);
+        lv_obj_t *exit = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_cancel);
+        
         lv_obj_t *title = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         int id = lv_tabview_get_tab_act(obj);
         if (id == 1)
@@ -298,8 +307,10 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
                         lv_label_set_text_fmt(title, "%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                         lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 }
-
-                lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
+                if(checkbox_s_num)
+                {
+                        lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
+                }
                 layout_last_call_new_flag_set(false);
         }
         else
@@ -308,6 +319,7 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
                 lv_label_set_text(title, lang_str_get(HOME_XLS_LANG_ID_CALL));
                 lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(exit, LV_OBJ_FLAG_HIDDEN);
         }
 }
 
@@ -392,7 +404,8 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
         lv_obj_t *del_all = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_tabview_get_content(tabview), 1), intercom_call_obj_id_del_all);
         lv_obj_t *del_cancel = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del_cancel);
         lv_obj_t *back = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_cancel);
-
+        lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
+        
         if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_title_delete.png"), strlen(resource_ui_src_get("btn_title_delete.png"))) == 0)
         {
 
@@ -402,6 +415,7 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
                 lv_obj_clear_flag(del_all, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_set_y(log_list, 88);
                 lv_obj_add_flag(back, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
 
                 for (int i = total - 1; i >= 0; i--)
                 {
@@ -448,11 +462,13 @@ static void intercom_call_log_obj_del_cancel_click(lv_event_t *ev)
         lv_obj_t *title = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
 
         checkbox_s_num = 0;
+
         lv_label_set_text(title, lang_str_get(HOME_XLS_LANG_ID_CALL));
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         lv_obj_clear_flag(back, LV_OBJ_FLAG_HIDDEN);
         lv_obj_set_style_bg_img_src(lv_obj_get_child_form_id(del_all, intercom_call_obj_id_del_all_img), resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         lv_obj_add_flag(del_all, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
         lv_obj_set_style_bg_img_src(del_obj, resource_ui_src_get("btn_title_delete.png"), LV_PART_MAIN);
         lv_obj_set_height(log_list, 466);
         lv_obj_set_y(log_list, 0);
@@ -525,10 +541,11 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
         lv_obj_t *title = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         lv_obj_t *del_cancel = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del_cancel);
         lv_obj_t *back = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_cancel);
-
+        lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
         if (strncmp(obj_img->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))) == 0)
         {
                 checkbox_s_num = 0;
+                lv_obj_add_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
                 lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(obj_img, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
                 for (int i = total - 1; i >= 0; i--)
@@ -545,6 +562,7 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
 
                 lv_obj_set_style_bg_img_src(obj_img, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
                 checkbox_s_num = total;
+                lv_obj_clear_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
                 lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(back, LV_OBJ_FLAG_HIDDEN);

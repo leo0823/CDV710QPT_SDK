@@ -107,6 +107,7 @@ static void video_info_obj_display(void)
         }
 
         const file_info *info = playback_media_info_get();
+        lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR);
         lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch,  playback_media_total_get() - playback_pview_item_get(), playback_media_total_get());
 }
 static void video_time_obj_display(void)
@@ -140,7 +141,6 @@ static void video_time_obj_display(void)
                 str[index_group[i][0]] = info->file_name[index_group[i][1]];
                 str[index_group[i][0] + 1] = info->file_name[index_group[i][1] + 1];
         }
-
         lv_label_set_text(label, str);
 }
 #if 0

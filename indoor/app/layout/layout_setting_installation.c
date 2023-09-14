@@ -63,6 +63,8 @@ static void setting_installation_building_house_no_obj_click(lv_event_t *ev)
 }
 static void setting_installation_ipaddres_obj_click(lv_event_t *ev)
 {
+
+        layout_ip_setting_flag_set(0x00);
         sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_installation_operation_server_ip_obj_click(lv_event_t *ev)
@@ -117,8 +119,10 @@ static void setting_installation_factory_reset_cancel_func(lv_event_t *ev)
 }
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
+        
+        sat_layout_goto(factory_reset, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, "Do you want to process initiatialization?", 0, 110, 460, 120);
+        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_ACK), 0, 110, 460, 120);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 
@@ -179,9 +183,8 @@ static void layout_setting_installation_guard_no_display(lv_obj_t *list)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
 
-                lv_label_set_text(obj, "1234-1234-1234");   
+                lv_label_set_text(obj, network_data_get()->guard_number);   
         }
-
 }
 
 static void layout_setting_installation_slave_display(lv_obj_t *list)
@@ -434,7 +437,9 @@ static void sat_layout_enter(setting_installation)
             (sat_pre_layout_get() == sat_playout_get(setting_guard_station_number)) ||
             (sat_pre_layout_get() == sat_playout_get(setting_sensor_settings)) ||
             (sat_pre_layout_get() == sat_playout_get(ipc_camera_register)) ||
-            (sat_pre_layout_get() == sat_playout_get(ipc_camera_register)))
+            (sat_pre_layout_get() == sat_playout_get(factory_reset)) ||
+            (sat_pre_layout_get() == sat_playout_get(sensor_settings)) ||
+            (sat_pre_layout_get() == sat_playout_get(sensors_test)))
         {
                 setting_installation_confirm_obj_click(NULL);
         }

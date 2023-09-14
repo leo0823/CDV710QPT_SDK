@@ -295,7 +295,7 @@ static void sat_layout_enter(ipc_camera_register)
                                                                                                    0, 0, 0, 0, -1,
                                                                                                    NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                                    0, 20, 48, 48, 2,
-                                                                                                   resource_ui_src_get(sat_ipcamera_device_name_get(i, 100) == true ? "ic_detect.png" : "ic_error.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                                                                                   resource_ui_src_get(outdoor_online_check(i,NULL) == true ? "ic_detect.png" : "ic_error.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                                 lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
                                 if (sub != NULL)
                                 {

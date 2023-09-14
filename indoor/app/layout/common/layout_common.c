@@ -63,6 +63,7 @@ static char *resource_src_get(const char *path, const char *file, int w, int h, 
         *p_param = w;
         p_param++;
         *p_param = h;
+
         return resource_string;
 }
 
@@ -251,6 +252,30 @@ void layout_alarm_alarm_channel_set(int ch)
 {
         alarm_ch = ch;
 }
+
+static void (*buzzer_call_fun)(void) = NULL;
+
+void buzzer_call_callback_register(void (*callback)(void))
+{
+        buzzer_call_fun = callback;
+}
+
+
+bool buzzer_call_trigger_check(void)
+{
+        if((user_data_get()->alarm.buzzer_alarm) && (sat_cur_layout_get() != sat_playout_get(buzzer_call)))
+        {
+                if(buzzer_call_fun != NULL)
+                {
+                        buzzer_call_fun();
+                }
+        }else if((!user_data_get()->alarm.buzzer_alarm) && (sat_cur_layout_get() == sat_playout_get(buzzer_call)))
+        {
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, false);
+        }
+        return true;
+}
+
 /************************************************************
 ** 函数说明: 警报处理函数
 ** 作者: xiaoxiao
@@ -260,12 +285,19 @@ void layout_alarm_alarm_channel_set(int ch)
 ************************************************************/
 void layout_alarm_trigger_default(int arg1,int arg2)
 {
+        if(user_data_get()->is_device_init == false)
+        {
+                return;
+        }
         if((arg1 == 7) && (arg2 < ALM_LOW * 100))
         {
                 sat_linphone_handup(0xFFFF);
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save();
-                sat_layout_goto(buzzer_call, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                if(buzzer_call_fun != NULL)
+                {
+                        buzzer_call_fun();
+                }
         }else
         {
                 if((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))&&(!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
@@ -369,7 +401,6 @@ bool layout_last_call_new_flag_get(void)
 
 //警报界面输入安全密码公共函数
 /***********************************************************************/
-
 enum
 {
         common_obj_id_number_keyboard_btn,

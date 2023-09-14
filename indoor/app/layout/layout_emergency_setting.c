@@ -45,19 +45,19 @@ static void sat_layout_enter(emergency_setting)
     ************************************************************/
     {
         lv_common_img_btn_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_bg, 0, 0, 1024, 600,
-                                                NULL, false, LV_OPA_COVER, 0xffa5a5, LV_OPA_COVER, 0xffa5a5,
+                                                NULL, false, LV_OPA_TRANSP, 0xffa5a5, LV_OPA_TRANSP, 0xffa5a5,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                resource_ui_src_get("bg_emergency_occur04.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     }
 
-{
-        lv_common_img_btn_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_back,  35, 15, 48, 48,
-                        layout_emergeency_back_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-}
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_back,  35, 15, 48, 48,
+                                layout_emergeency_back_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        }
 
         /************************************************************
         ** 函数说明: emergency title

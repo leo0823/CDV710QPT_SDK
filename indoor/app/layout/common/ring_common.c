@@ -12,12 +12,12 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
-        if(user_data_get()->audio.touch_notification_volume == 0)
-        {
-                return false;
-        }
-        sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 1); // touch.wav
+        // if(user_data_get()->audio.touch_notification_volume == 0)
+        // {
+        //         return false;
+        // }
+        // sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
+        // sat_linphone_audio_play_start(RESOURCE_RING_PATH "touch.mp3", 1); // touch.wav
 
         return true;
 }
@@ -83,8 +83,8 @@ bool ring_intercom_play(void)
 ************************************************************/
 bool ring_alarm_play(void)
 {
-        // sat_linphone_audio_play_volume_set(100);
-        // sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 100);
+        sat_linphone_audio_play_volume_set(100);
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm.mp3", 1);
         return true;
 
 }

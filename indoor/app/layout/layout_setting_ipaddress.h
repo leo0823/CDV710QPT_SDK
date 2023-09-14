@@ -1,4 +1,3 @@
-bool enter_layout_setting_ipaddress_is_ipc_display();
+void layout_ip_setting_flag_set(char flag);
 
-void enter_layout_setting_ipaddress_ipc_display_set(bool is);
-  
+char layout_ip_setting_flag_get(void);
