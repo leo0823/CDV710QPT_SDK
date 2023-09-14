@@ -82,16 +82,6 @@ static void buzzer_call_status_label_display(void)
         }
         lv_label_set_text(obj,"buzzer call");
 }
-static void buzzer_call_status_icon_display(void)
-{
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_obj_status_icon);
-        if (obj == NULL)
-        {
-                SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_obj_status_icon);");
-                return;
-        }
-        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("img_calling_bell.png"), LV_PART_MAIN);
-}
 
 static void buzzer_call_handup_obj_click(lv_event_t *e)
 {
@@ -260,8 +250,7 @@ static void sat_layout_enter(buzzer_call)
                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                buzzer_call_status_icon_display();
+                                         resource_ui_src_get("img_calling_bell.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         /***********************************************
         ** 作者: leo.liu

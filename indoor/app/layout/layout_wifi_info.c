@@ -28,7 +28,7 @@ static void wifi_info_cancel_click(lv_event_t *ev)
 {
         if (user_data_get()->is_device_init == false)
         {
-                sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else
         {

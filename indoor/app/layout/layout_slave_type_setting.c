@@ -81,28 +81,35 @@ static void slave_type_setting_confirm_func(lv_event_t *ev)
         // slave_type_setting_extension_number_display();
 }
 
+static void slave_type_setting_save_confirm(lv_event_t *e)
+{
+        strncpy(user_data_get()->mastar_wallpad_ip, update_master_ip, sizeof(user_data_get()->mastar_wallpad_ip));
+        user_data_get()->system_mode &= 0xF0;
+        user_data_get()->system_mode |= update_slave_id & 0x0F;
+        char number[32] = {0};
+        memset(number, 0, sizeof(number));
+        strncpy(number, network_data_get()->sip_user, 11);
+        sprintf(&number[11], "%d", update_slave_id);
+        memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
+        strcpy(network_data_get()->sip_user, number);
+        user_data_get()->is_device_init = true;
+        network_data_save();
+        user_data_save();
+        usleep(100 * 1000);
+        system("reboot");
+}
+
 
 static void slave_type_setting_save_btn_click(lv_event_t *e)
 {
+        lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
         if(is_valid_ipv4(update_master_ip))
         {
-                strncpy(user_data_get()->mastar_wallpad_ip, update_master_ip, sizeof(user_data_get()->mastar_wallpad_ip));
-                user_data_get()->system_mode &= 0xF0;
-                user_data_get()->system_mode |= update_slave_id & 0x0F;
-                char number[32] = {0};
-                memset(number, 0, sizeof(number));
-                strncpy(number, network_data_get()->sip_user, 11);
-                sprintf(&number[11], "%d", update_slave_id);
-                memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
-                strcpy(network_data_get()->sip_user, number);
-                user_data_get()->is_device_init = true;
-                network_data_save();
-                user_data_save();
-                usleep(100 * 1000);
-                system("reboot");
+                setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_VALID), 0, 120, 460, 120);
+                setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_save_confirm);
+
         }else
         {
-                lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
                 setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_ILLEGAL), 0, 120, 460, 120);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_cancel_func);
         }

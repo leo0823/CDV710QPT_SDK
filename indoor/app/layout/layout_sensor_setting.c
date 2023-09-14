@@ -456,6 +456,10 @@ static void setting_sensor_settings_list_click(lv_event_t *e)
 
 }
 
+// static void layout_sensor_setting_sensor_status_display(lv_obj_t * parent)
+// {
+
+// }
 static void layout_sensor_list_create(void)
 {
     setting_list_info_t main_list_group[] = {

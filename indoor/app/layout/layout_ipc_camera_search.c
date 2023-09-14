@@ -151,7 +151,10 @@ static void sat_layout_enter(ipc_camera_search)
 }
 static void sat_layout_quit(ipc_camera_search)
 {
-        standby_timer_restart(true);
+        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        {
+                standby_timer_restart(true);
+        }
         ipcamera_state_callback_register(NULL);
         // for(int i = 0; i < network_data_get()->cctv_device_count; i++)
         // {

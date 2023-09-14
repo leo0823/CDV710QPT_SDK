@@ -366,7 +366,8 @@ static void layout_monitor_channel_type_switch_btn_display(void)
 {
         char *door_ch_png[8] = {"btn_call_cam1.png", "btn_call_cam2.png", "btn_call_cam3.png", "btn_call_cam4.png", "btn_call_cam5.png", "btn_call_cam6.png", "btn_call_cam7.png", "btn_call_cam8.png"};
         char *cctv_ch_png[8] = {"btn_call_cctv1.png", "btn_call_cctv2.png", "btn_call_cctv3.png", "btn_call_cctv4.png", "btn_call_cctv5.png", "btn_call_cctv6.png", "btn_call_cctv7.png", "btn_call_cctv8.png"};
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
+        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont),monitor_obj_id_channel_switch_CCTTV_monitor);
+        
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
         {
@@ -1065,7 +1066,7 @@ static void layout_monitor_switch_btn_display(void)
         }
         else
         {
-                if ((door_camera_register_num_get() < 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG) || tuya_api_client_num() >= 1)
+                if ((door_camera_register_num_get() <= 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG) || tuya_api_client_num() >= 1)
                 {
                         lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
@@ -1091,8 +1092,6 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
         else if (is_channel_ipc_camera(monitor_channel_get()) == true)
         {
@@ -1107,8 +1106,7 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
-                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
         }
 }
 
@@ -1660,21 +1658,7 @@ static void sat_layout_enter(monitor)
                 }
         }
 
-        /************************************************************
-        ** 函数说明: 切换到CCTV
-        ** 作者: xiaoxiao
-        ** 日期: 2023-07-05 18:25:47
-        ** 参数说明:
-        ** 注意事项:
-        ************************************************************/
-        {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor, 912, 384, 80, 80,
-                                         layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("btn_call_cctv1.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-                layout_monitor_channel_type_switch_btn_display();
-        }
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1848,6 +1832,22 @@ static void sat_layout_enter(monitor)
                                                  resource_ui_src_get("btn_call_camera.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
 
                         monitor_obj_record_photo_display();
+                }
+
+                /************************************************************
+                ** 函数说明: 切换到CCTV
+                ** 作者: xiaoxiao
+                ** 日期: 2023-07-05 18:25:47
+                ** 参数说明:
+                ** 注意事项:
+                ************************************************************/
+                {
+                        lv_common_img_btn_create(parent, monitor_obj_id_channel_switch_CCTTV_monitor, 912, 384, 80, 80,
+                                                layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                        layout_monitor_channel_type_switch_btn_display();
                 }
         }
 

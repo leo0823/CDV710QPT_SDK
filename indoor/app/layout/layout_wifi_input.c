@@ -44,7 +44,7 @@ static void wifi_input_cancel_click(lv_event_t *ev)
 {
         if (user_data_get()->is_device_init == false)
         {
-                sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else
         {
@@ -118,7 +118,7 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
 		wifi_device_tmp_sync();
                 if (user_data_get()->is_device_init == false)
                 {
-                        sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                        sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
                 else
                 {
@@ -138,7 +138,10 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
 
                         setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
                         setting_msgdialog_msg_confirm_btn_create(parent,wifi_input_obj_id_confirm_btn,wifi_input_msg_dialog_error_confirm_up);
-                        standby_timer_restart(true);
+                        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+                        {
+                                standby_timer_restart(true);
+                        }
 		}
 		else
 		{
@@ -344,6 +347,9 @@ static void sat_layout_enter(wifi_input)
 }
 static void sat_layout_quit(wifi_input)
 {
-        standby_timer_restart(true);
+        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        {
+                standby_timer_restart(true);
+        }
 }
 sat_layout_create(wifi_input);

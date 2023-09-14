@@ -175,6 +175,7 @@ sat_layout_define(frame_show);//语言已完成
 sat_layout_define(always_record);//语言已完成
 sat_layout_define(sensors_test);
 sat_layout_define(buzzer_call);
+sat_layout_define(factory_reset);
 
 sat_layout_define(indoor_register);
 

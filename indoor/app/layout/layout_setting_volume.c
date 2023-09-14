@@ -114,6 +114,10 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
                 {
                         ring_buzzer_play();
                 }
+                else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.buzzer_volume == 0))
+                {
+                        sat_linphone_audio_play_stop();
+                }
 
                 sat_linphone_audio_play_volume_set(value);
                 //printf("setting valume is %d\n",value);
@@ -152,7 +156,10 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
                 {
                         ring_door_call_play();
                 }
-
+                else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.entracne_volume == 0))
+                {
+                        sat_linphone_audio_play_stop();
+                }
                 sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
@@ -198,7 +205,10 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
                 {
                         ring_common_door_play();
                 }
-
+                else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.common_entrance_volume == 0))
+                {
+                        sat_linphone_audio_play_stop();
+                }
                 sat_linphone_audio_play_volume_set(value);
                 
         }
@@ -250,6 +260,10 @@ static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.guard_station_volume != 0))
                 {
                         ring_guard_play();
+                }
+                else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.guard_station_volume == 0))
+                {
+                        sat_linphone_audio_play_stop();
                 }
 
                 sat_linphone_audio_play_volume_set(value);
@@ -303,6 +317,10 @@ static void setting_extension_volume_slider_change_cb(lv_event_t *e)
                 {
                         ring_intercom_play();
                 }
+                else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.extension_volume == 0))
+                {
+                        sat_linphone_audio_play_stop();
+                }
                 sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
@@ -348,6 +366,10 @@ static void setting_touch_notification_volume_slider_change_cb(lv_event_t *e)
                 if((is_setting_volume_ring_play_runing == false) && (user_data_get()->audio.touch_notification_volume != 0))
                 {
                         ring_touch_play();
+                }
+                else if((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.touch_notification_volume == 0))
+                {
+                        sat_linphone_audio_play_stop();
                 }
                 sat_linphone_audio_play_volume_set(value);
         }
@@ -559,7 +581,10 @@ static bool setting_volume_ring_play_callback(int arg)
         is_setting_volume_ring_play_runing = arg == 0 ? true : false;
         return true;
 }
-
+static void layout_setting_touch_callback(lv_event_t *e)
+{
+        standby_timer_restart(false);
+}
 static void sat_layout_enter(setting_volume)
 {
         /***********************************************
@@ -587,7 +612,7 @@ static void sat_layout_enter(setting_volume)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
+        lv_obj_pressed_func = layout_setting_touch_callback;
         setting_volume_slider_obj_create();
 
         ring_play_event_cmd_register(setting_volume_ring_play_callback);
@@ -595,6 +620,7 @@ static void sat_layout_enter(setting_volume)
 static void sat_layout_quit(setting_volume)
 {
         ring_play_event_cmd_register(NULL);
+        lv_obj_pressed_func = lv_layout_touch_callback;
 }
 
 sat_layout_create(setting_volume);
