@@ -33,20 +33,19 @@ static lv_timer_t * alarm_ring_idel_timer = 0;//警报铃声空闲时间计时
 static void alarm_alarm_cont_display(lv_timer_t *ptimer)
 {
 
-        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
-        // lv_color_t color = lv_obj_get_style_bg_color(cont, LV_PART_MAIN);
-        // lv_obj_set_style_bg_color(cont, (color.full == lv_color_hex(0xdb3535).full) ? lv_color_hex(0xff4040) : lv_color_hex(0xdb3535), LV_PART_MAIN);
+        lv_disp_t*obj = lv_disp_get_default();
+  
 
-        if (strncmp(obj->bg_img_src, resource_ui_src_get("bg_emergency_occur01.png"), strlen(resource_ui_src_get("bg_emergency_occur01.png"))) == 0)
+        if (strncmp((char *)obj->bg_img,(char *)resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600), strlen((char *)obj->bg_img)) == 0)
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("bg_emergency_occur02.png"), LV_PART_MAIN);
+                lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur02.jpg", 1024, 600));
         }
-        else if (strncmp(obj->bg_img_src, resource_ui_src_get("bg_emergency_occur02.png"), strlen(resource_ui_src_get("bg_emergency_occur02.png"))) == 0)
+        else if (strncmp((char *)obj->bg_img,(char *)resource_wallpaper_src_get("bg_emergency_occur02.jpg", 1024, 600), strlen((char *)obj->bg_img)) == 0)
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("bg_emergency_occur03.png"), LV_PART_MAIN);
+                lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur03.jpg", 1024, 600));
         }else
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("bg_emergency_occur01.png"), LV_PART_MAIN);
+                lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600));
         }
 
 }
@@ -609,12 +608,8 @@ static void sat_layout_enter(alarm)
         ** 注意事项:
         ************************************************************/
         {
-                lv_obj_t *cont = lv_common_img_btn_create(sat_cur_layout_screen_get(),  layout_alarm_obj_id_bg, 0, 0, 1024, 600,
-                                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                          resource_ui_src_get("bg_emergency_occur01.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_timer_t *timer_task = lv_sat_timer_create(alarm_alarm_cont_display, 1000, cont);
+                lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600));
+                lv_timer_t *timer_task = lv_sat_timer_create(alarm_alarm_cont_display, 1000, NULL);
                 lv_timer_ready(timer_task);
 
                 /************************************************************
@@ -809,6 +804,7 @@ static void sat_layout_quit(alarm)
         record_video_stop();
         monitor_close(0x02);
         standby_timer_restart(true);
+        lv_disp_set_bg_image(lv_disp_get_default(), NULL);
 
 }
 
