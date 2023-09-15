@@ -111,7 +111,7 @@ static bool layout_buzzer_call_ringplay_register_callback(int arg)
 {
         if(arg == 1)
         {
-                ring_buzzer_play();
+                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
         }
         return true;
 }
@@ -223,7 +223,7 @@ static void sat_layout_enter(buzzer_call)
         {
             if(user_data_get()->audio.ring_mute == false)
             {
-                ring_buzzer_play();
+                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
             }
 
         }
