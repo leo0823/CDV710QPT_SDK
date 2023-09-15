@@ -235,6 +235,7 @@ static void setting_ipaddress_dhcp_check_click(lv_event_t *e)
         {
                 return;
         }
+        setting_ipaddress_next_obj_display();
         setting_ipaddress_obj_display(obj_s, setting_ipaddress_obj_id_static);
 
 }
@@ -246,6 +247,7 @@ static void setting_ipaddress_static_check_click(lv_event_t *e)
         {
                 return;
         }
+        setting_ipaddress_next_obj_display();
         setting_ipaddress_obj_display(obj_s, setting_ipaddress_obj_id_dhcp);
 
 }

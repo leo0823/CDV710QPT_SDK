@@ -83,6 +83,28 @@ static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
         }
         if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
         {
+                layout_setting_sound_select_id_get();
+                int id = layout_setting_sound_select_id_get();
+                if (id == setting_sound_obj_id_buzzer_cont)
+                {
+                        ring_buzzer_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_front_door_cont)
+                {
+                        ring_door_call_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_common_entrance_cont)
+                {
+                        ring_common_door_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_security_office_cont)
+                {
+                        ring_guard_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_extension_cont)
+                {
+                        ring_intercom_play(item->id + 1);
+                }
                 lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
 
                 int item_n = lv_obj_get_child_cnt(parent);
@@ -363,7 +385,6 @@ static lv_obj_t *setting_sound_sub_list_create(void)
                 // {
                 //         continue;
                 // }
-                
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,
                                                                 main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
