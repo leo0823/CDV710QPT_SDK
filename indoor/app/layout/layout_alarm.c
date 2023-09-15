@@ -48,6 +48,7 @@ static void alarm_alarm_cont_display(lv_timer_t *ptimer)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("bg_emergency_occur01.png"), LV_PART_MAIN);
         }
+
 }
 
 
@@ -379,6 +380,7 @@ static void  layout_alarm_passwd_input_text_next_foucued(void)
                                                 // struct tm tm;
                                                 // user_time_read(&tm);
                                                 // alarm_list_add(emergency_stop, 8, &tm);
+                                                
                                         }
                                         if(user_data_get()->system_mode && 0x0f != 0x01)
                                         {
