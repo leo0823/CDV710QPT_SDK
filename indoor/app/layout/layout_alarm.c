@@ -34,8 +34,6 @@ static void alarm_alarm_cont_display(lv_timer_t *ptimer)
 {
 
         lv_disp_t*obj = lv_disp_get_default();
-  
-
         if (strncmp((char *)obj->bg_img,(char *)resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600), strlen((char *)obj->bg_img)) == 0)
         {
                 lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur02.jpg", 1024, 600));
@@ -47,7 +45,6 @@ static void alarm_alarm_cont_display(lv_timer_t *ptimer)
         {
                 lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600));
         }
-
 }
 
 

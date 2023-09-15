@@ -795,14 +795,17 @@ static void layout_home_cctv_icon_display()
 
 static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 {
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         layout_home_monitor_icon_display();
         layout_home_cctv_icon_display();
         home_obj_top_icon_display();
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
 }
 
 
 static void sat_layout_enter(home)
 {
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
 
         /***********************************************
          ** 作者: leo.liu
@@ -818,6 +821,7 @@ static void sat_layout_enter(home)
                 thumb_display_refresh_register(home_thumb_refresh_display_callback);
                 sd_state_channge_callback_register(home_sd_state_change_callback);
         }
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -830,7 +834,7 @@ static void sat_layout_enter(home)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -843,7 +847,7 @@ static void sat_layout_enter(home)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_title_setting.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -863,7 +867,7 @@ static void sat_layout_enter(home)
 
                 home_mute_obj_display(obj);
         }
-
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -883,6 +887,7 @@ static void sat_layout_enter(home)
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 home_use_mobile_app_obj_display(obj);
         }
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -922,7 +927,7 @@ static void sat_layout_enter(home)
 
                 lv_sat_timer_create(home_date_timer, 1000, NULL);
         }
-
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -966,6 +971,7 @@ static void sat_layout_enter(home)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1017,6 +1023,7 @@ static void sat_layout_enter(home)
                                          layout_last_call_new_flag_get() ? resource_ui_src_get("ic_main_new.png") : "", LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
         layout_home_video_call_title_param_init();
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 14:16:18
@@ -1121,6 +1128,7 @@ static void sat_layout_enter(home)
                                               13, 0, 77, 77, home_obj_id_emergency_img,
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         {
                 /************************************************************
                 ** 函数说明: 网络图标创建
@@ -1150,6 +1158,7 @@ static void sat_layout_enter(home)
                 resource_ui_src_get("ic_system_callcam_no.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
         }
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1164,10 +1173,11 @@ static void sat_layout_enter(home)
         }
         lv_timer_ready(lv_sat_timer_create(home_obj_top_icon_display_timer, 1000, NULL));
 
-
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
         home_media_thumb_display();
         
         linphone_incomming_node_release_all();
+        printf("===================%s====================%d=====\n",__func__,__LINE__);
 }
 
 static void sat_layout_quit(home)
