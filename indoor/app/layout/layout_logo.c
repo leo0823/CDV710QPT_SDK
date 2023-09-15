@@ -177,6 +177,7 @@ static void buzzer_call_trigger_ui_create(void)
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                 resource_ui_src_get("btn_buzzer_confrim.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
         }
 }
 

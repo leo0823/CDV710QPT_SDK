@@ -1521,6 +1521,7 @@ static void layout_monitor_door_ch_btn_create(void)
 static void sat_layout_enter(monitor)
 {
 
+        sat_linphone_audio_play_stop();
         /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
         user_linphone_call_busy_register(layout_monitor_busy_callback);
 
