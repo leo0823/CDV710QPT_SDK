@@ -19,16 +19,16 @@ typedef enum
 #define THUMB_WIDTH (1024)
 #define THUMB_HIGHT (600)
 
-#define FRAME_1_FILE_PATH "/app/data/wallpaper/bg_openframe_background01.jpg"	 
-#define FRAME_2_FILE_PATH "/app/data/wallpaper/bg_openframe_background02.jpg"
-#define FRAME_3_FILE_PATH "/app/data/wallpaper/bg_openframe_background03.jpg"	 
-#define FRAME_4_FILE_PATH "/app/data/wallpaper/bg_openframe_background04.jpg"
-#define FRAME_5_FILE_PATH "/app/data/wallpaper/bg_openframe_background05.jpg"	 
-#define FRAME_6_FILE_PATH "/app/data/wallpaper/bg_openframe_background06.jpg"
-#define FRAME_7_FILE_PATH "/app/data/wallpaper/bg_openframe_background07.jpg"	 
-#define FRAME_8_FILE_PATH "/app/data/wallpaper/bg_openframe_background08.jpg"
-#define FRAME_9_FILE_PATH "/app/data/wallpaper/bg_openframe_background09.jpg"	 
-#define FRAME_10_FILE_PATH "/app/data/wallpaper/bg_openframe_background10.jpg"
+#define FRAME_1_FILE_PATH "/app/resource/wallpaper/bg_openframe_background01.jpg"	 
+#define FRAME_2_FILE_PATH "/app/resource/wallpaper/bg_openframe_background02.jpg"
+#define FRAME_3_FILE_PATH "/app/resource/wallpaper/bg_openframe_background03.jpg"	 
+#define FRAME_4_FILE_PATH "/app/resource/wallpaper/bg_openframe_background04.jpg"
+#define FRAME_5_FILE_PATH "/app/resource/wallpaper/bg_openframe_background05.jpg"	 
+#define FRAME_6_FILE_PATH "/app/resource/wallpaper/bg_openframe_background06.jpg"
+#define FRAME_7_FILE_PATH "/app/resource/wallpaper/bg_openframe_background07.jpg"	 
+#define FRAME_8_FILE_PATH "/app/resource/wallpaper/bg_openframe_background08.jpg"
+#define FRAME_9_FILE_PATH "/app/resource/wallpaper/bg_openframe_background09.jpg"	 
+#define FRAME_10_FILE_PATH "/app/resource/wallpaper/bg_openframe_background10.jpg"
 
 char * frame_path[10] = {
 	FRAME_1_FILE_PATH,

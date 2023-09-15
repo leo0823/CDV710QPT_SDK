@@ -36,7 +36,7 @@ bool ring_door_call_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entracne_volume);
-        sprintf(cmd, RESOURCE_RING_PATH "door camera/call_door%d.mp3", index);
+        sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
         return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0? 1 : 0xfffff);
 }
 
@@ -82,8 +82,8 @@ bool ring_intercom_play(int index)
 ************************************************************/
 bool ring_alarm_play(void)
 {
-        sat_linphone_audio_play_volume_set(100);
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm/alarm.mp3", 1);
+        // sat_linphone_audio_play_volume_set(100);
+        // sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm/alarm.mp3", 1);
         return true;
 
 }
@@ -126,7 +126,7 @@ bool ring_common_door_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
-        sprintf(cmd, RESOURCE_RING_PATH "common entrance/Common entrance_%d.mp3", index);
+        sprintf(cmd, RESOURCE_RING_PATH "common_entrance/Common entrance_%d.mp3", index);
         return sat_linphone_audio_play_start(cmd, 1);
 
 }
@@ -147,7 +147,20 @@ bool ring_guard_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.guard_station_volume);
-        sprintf(cmd, RESOURCE_RING_PATH "security office/security office_%d.mp3",index );
+        sprintf(cmd, RESOURCE_RING_PATH "security_office/security office_%d.mp3",index );
         return sat_linphone_audio_play_start(cmd, 1);
+
+}
+
+/************************************************************
+** 函数说明: 播放繁忙音
+** 作者: xiaoxiao
+** 日期: 2023-07-05 11:19:41
+** 参数说明: 
+** 注意事项: 
+************************************************************/
+bool ring_busy_play(int index)
+{
+        return false;
 
 }

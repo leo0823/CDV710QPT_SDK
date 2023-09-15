@@ -83,6 +83,28 @@ static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
         }
         if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
         {
+                layout_setting_sound_select_id_get();
+                int id = layout_setting_sound_select_id_get();
+                if (id == setting_sound_obj_id_buzzer_cont)
+                {
+                        ring_buzzer_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_front_door_cont)
+                {
+                        ring_door_call_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_common_entrance_cont)
+                {
+                        ring_common_door_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_security_office_cont)
+                {
+                        ring_guard_play(item->id + 1);
+                }
+                else if (id == setting_sound_obj_id_extension_cont)
+                {
+                        ring_intercom_play(item->id + 1);
+                }
                 lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
 
                 int item_n = lv_obj_get_child_cnt(parent);
