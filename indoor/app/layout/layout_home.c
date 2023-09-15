@@ -855,6 +855,11 @@ static void sat_layout_enter(home)
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          resource_ui_src_get("btn_mute_off.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                if(obj == NULL)
+                {
+                        printf("====home_obj_id_mute_icon is null========\n");
+                        return;
+                }
 
                 home_mute_obj_display(obj);
         }
@@ -870,6 +875,11 @@ static void sat_layout_enter(home)
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                if(obj == NULL)
+                {
+                        printf("====home_obj_id_user_app_label is null========\n");
+                        return;
+                }
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 home_use_mobile_app_obj_display(obj);
         }
@@ -884,13 +894,22 @@ static void sat_layout_enter(home)
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-
+                if(parent == NULL)
+                {
+                        printf("====home_obj_id_time_cont is null========\n");
+                        return;
+                }
                 // 时间
                 lv_obj_t *obj = lv_common_text_create(parent, home_obj_id_time_label, 0, 0, 252, 110,
                                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_plus);
+                if(obj == NULL)
+                {
+                        printf("====home_obj_id_time_label is null========\n");
+                        return;
+                }
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
                 home_time_obj_display();
 
