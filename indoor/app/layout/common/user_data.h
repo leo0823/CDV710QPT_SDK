@@ -28,7 +28,7 @@ typedef struct
         bool ring_mute;
         /***** 1-6 rings *****/
         int door_tone;
-        int inter_tone;
+        int extenion_tone;
 
         int buzzer_tone;
         int buzzer_volume;
@@ -208,7 +208,6 @@ typedef struct
         char sip_server[32];
         char cctv_server[32];
         char guard_number[32];
-
 
         struct ipcamera_info door_device[DEVICE_MAX];
 
