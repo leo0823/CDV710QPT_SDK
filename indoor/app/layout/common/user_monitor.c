@@ -507,4 +507,3 @@ bool extension_online_check(int ch,int *total)
         }
         return result;
 }
-

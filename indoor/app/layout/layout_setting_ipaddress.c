@@ -444,6 +444,8 @@ static void sat_layout_enter(setting_ipaddress)
                                       lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_DNS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 
+
+
         layout_setting_ipaddress_item_disp();
 }
 static void sat_layout_quit(setting_ipaddress)

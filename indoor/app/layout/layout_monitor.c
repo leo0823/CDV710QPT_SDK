@@ -290,7 +290,7 @@ static void montior_obj_top_icon_display(void)
                 {
                         return;
                 }
-                if (user_data_get()->audio.ring_mute == 0)
+                if (user_data_get()->audio.ring_mute)
                 {
                         lv_obj_set_x(obj, pos_x);
                         pos_x -= 56;
@@ -341,25 +341,34 @@ static void monitor_obj_timeout_label_display(void)
 
 static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 {
-        int num = tuya_api_client_num();
+
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
                 monitor_timeout_sec--;
-        }
-        else if (num == 0)
+        }else
         {
-
                 layout_monitor_goto_layout_process();
         }
-        else
-        {
-                monitor_obj_timeout_label_display();
+        // int num = tuya_api_client_num();
+        // if (monitor_timeout_sec > 0)
+        // {
+        //         monitor_obj_timeout_label_display();
+        //         monitor_timeout_sec--;
+        // }
+        // else if (num == 0)
+        // {
 
-                monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
-                                                                                                                                                            : 3 * 60)
-                                                                      : 30);
-        }
+        //         layout_monitor_goto_layout_process();
+        // }
+        // else
+        // {
+        //         monitor_obj_timeout_label_display();
+
+        //         monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
+        //                                                                                                                                                     : 3 * 60)
+        //                                                               : 30);
+        // }
 }
 
 static void layout_monitor_channel_type_switch_btn_display(void)
@@ -1521,7 +1530,6 @@ static void layout_monitor_door_ch_btn_create(void)
 static void sat_layout_enter(monitor)
 {
 
-        sat_linphone_audio_play_stop();
         /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
         user_linphone_call_busy_register(layout_monitor_busy_callback);
 
@@ -2045,7 +2053,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                 network_data_save();
         }
 
-        if (!user_data_get()->audio.ring_mute)
+        if (user_data_get()->audio.ring_mute == false)
         {
                 ring_door_call_play(user_data_get()->audio.door_tone);
         }
@@ -2127,9 +2135,9 @@ static bool monitor_intercom_extern_call(const char *arg)
         }
         else
         {
-                if (!user_data_get()->audio.ring_mute)
+                if (user_data_get()->audio.ring_mute == false)
                 {
-                        ring_intercom_play(user_data_get()->audio.inter_tone);
+                        ring_intercom_play(user_data_get()->audio.extenion_tone);
                 }
                 intercom_call_status_setting(2);
 
@@ -2290,15 +2298,25 @@ static bool tuya_event_cmd_ch_channge(int channel)
         {
                 if (node_group[i].channel == ch)
                 {
+                        SAT_DEBUG("======channel value========");
                         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(node_group[i].call_id);
                         if (node != NULL)
                         {
-                                linphone_incomming_node_release(node);
+                                SAT_DEBUG("======node not null========");
                                 sat_linphone_incomming_refresh(node_group[i].call_id);
+                                linphone_incomming_node_release(node);
                                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                         }
                 }
+        }
+        if (is_channel_ipc_camera(ch))
+        {
+                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
+        }
+        else 
+        {
+                monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
         }
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
@@ -2364,7 +2382,7 @@ static bool truye_event_cmd_audio_start(void)
 ************************************************************/
 static void tuya_event_cmd_video_stop(void)
 {
-        if (!is_monitor_door_camera_talk || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
+        if (is_monitor_door_camera_talk == false|| monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
         {
                 layout_monitor_goto_layout_process();
         }
@@ -2400,30 +2418,36 @@ static bool tuya_event_cmd_video_start(void)
 ************************************************************/
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
 {
-
+        SAT_DEBUG("receive tuya cmd is %d",cmd);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_VIDEO_START");
                 return tuya_event_cmd_video_start();
                 break;
         case TUYA_EVENT_CMD_VIDEO_STOP:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_VIDEO_STOP");
                 tuya_event_cmd_video_stop();
                 return true;
                 break;
         case TUYA_EVENT_CMD_AUDIO_START:
-
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_AUDIO_START");
                 return truye_event_cmd_audio_start();
                 break;
         case TUYA_EVENT_CMD_ONLINE:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_ONLINE");
                 return layout_monitor_report_vaild_channel();
                 break;
         case TUYA_EVENT_CMD_CH_CHANGE:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_CH_CHANGE");
                 return tuya_event_cmd_ch_channge(arg);
                 break;
         case TUYA_EVENT_CMD_MOTION_ENBALE:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_MOTION_ENBALE");
                 return tuya_event_cmd_motion_enable(arg);
                 break;
         case TUYA_EVENT_CMD_DOOR_OPEN:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_DOOR_OPEN");
                 return tuya_event_cmd_door_open(arg);
                 break;
         default:
