@@ -167,4 +167,10 @@ bool sat_ipcamera_data_sync(char type, char flag, const char *data, int size, in
 ** timeout : 超时时间
 ***********************************************/
 bool sat_ipcamera_report_shellcmd(char *ip, int port, const char *user, const char *password, char *cmd, int timeout);
+/****************************************************************
+**@日期: 2023-09-19
+**@作者: leo.liu
+**@功能: 获取图像调整的数值
+*****************************************************************/
+bool sat_ipcamera_image_get(const char *ip, int port, const char *user, const char *password, char auther_flag, int brightness[3], int saturation[3], int contrast[3], int timeout);
 #endif
