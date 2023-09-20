@@ -214,8 +214,8 @@ static void sat_layout_enter(single_operation_network)
 	** 说明: 数字键盘创建
 	***********************************************/
 	{
-		lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_single_operation_network_obj_id_number_keyboard_btn, 648, 184, 312, 500,
-						       setting_single_number_keyboard_btn_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+		lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_single_operation_network_obj_id_number_keyboard_btn, 648, 184, 312, 402,
+						       setting_single_number_keyboard_btn_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
 						       360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 						       360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 						       0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,

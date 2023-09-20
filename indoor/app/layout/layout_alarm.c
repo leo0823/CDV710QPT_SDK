@@ -742,8 +742,8 @@ static void sat_layout_enter(alarm)
             ** 注意事项: 
             ************************************************************/
             {
-                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, layout_alarm_obj_id_number_keyboard_btn, 128, 90, 312, 500,
-                                                     layout_alarm_password_input_keyboard_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, layout_alarm_obj_id_number_keyboard_btn, 128, 90, 312, 402,
+                                                     layout_alarm_password_input_keyboard_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                     360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,

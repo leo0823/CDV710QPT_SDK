@@ -609,8 +609,8 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void))
             ** 注意事项: 
             ************************************************************/
             {
-                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, common_obj_id_number_keyboard_btn, 128, 90, 312, 500,
-                                                    password_input_keyboard_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, common_obj_id_number_keyboard_btn, 128, 90, 312, 402,
+                                                    password_input_keyboard_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                     360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
@@ -676,7 +676,7 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void))
 }
 
 /************************************************************
-** 函数说明: 判断是否是以恶搞合法的ipv4地址
+** 函数说明: 判断是否是一个合法的ipv4地址
 ** 作者: xiaoxiao
 ** 日期: 2023-04-27 17:30:01
 ** 参数说明: 
