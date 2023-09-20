@@ -288,7 +288,6 @@ static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_s
         //         printf("=======call time is %d\n",p->etc.call_time);
         //         printf("=======system_mode is %d\n",p->system_mode);
 
-                
         // }
         int send_len = 0;
         int remain = sizeof(user_data_info);
@@ -324,7 +323,7 @@ static bool tcp_device_serverce_xml_get_networkdata(int tcp_socket_fd, char *rec
         //         printf("=======sip_user is %s\n",p->sip_user);
         //         printf("=======mask is %s\n",p->mask);
         //         printf("=======ip is %s\n",p->ip);
-                
+
         // }
         int send_len = 0;
         int remain = sizeof(user_network_info);
@@ -354,7 +353,6 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
         }
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
 
-        
         int send_len = 0;
         int remain = sizeof(asterisk_register_info) * 20;
         while (remain > 0)
@@ -457,7 +455,6 @@ static void *user_network_tcp_task(void *arg)
                                 //  printf("%s\n", receive_data);
                                 read_len += recv_len;
                                 remain_len -= recv_len;
-
                         }
                         if (read_len > 0)
                         {
@@ -475,14 +472,13 @@ static bool ipaddr_udhcp_server_get_wait(void)
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
-        // system("killall udhcpc");
-        sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+        sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
         system("ifconfig eth0 0.0.0.0");
         system("ifconfig eth0 down");
         usleep(10 * 1000);
         system("ifconfig eth0 up");
         usleep(10 * 1000);
-        system("udhcpc -i eth0 -s /etc/init.d/udhcpc.script &");
+        sat_network_udhcpc_ip("eth0");
         usleep(10 * 1000);
         while ((sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false) || (ip[0] == '\0'))
         {
@@ -504,7 +500,12 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         return false;
 }
-static bool obtain_aipddress_based_on_manual(void)
+/****************************************************************
+**@日期: 2023-09-18
+**@作者: leo.liu
+**@功能: 手动获取的IP信息
+*****************************************************************/
+static bool obtain_ipddress_based_on_manual(void)
 {
         char cmd[128] = {0};
         sprintf(cmd, "ifconfig eth0 %s netmask %s", network_data_get()->ip, network_data_get()->mask[0] != 0 ? network_data_get()->mask : "255.0.0.0");
@@ -512,7 +513,11 @@ static bool obtain_aipddress_based_on_manual(void)
         SAT_DEBUG("%s ", cmd);
         return true;
 }
-
+/****************************************************************
+**@日期: 2023-09-18
+**@作者: leo.liu
+**@功能: 依据用户名或者网卡获取IP
+*****************************************************************/
 static bool obtain_ipaddress_based_on_username(void)
 {
         // 010193001012
@@ -610,18 +615,18 @@ static bool automatic_ip_setting(void)
 {
         /*杀死相关的端口进程*/
         kill_related_port_process("5060");
-
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
-        if (ipaddr_udhcp_server_get_wait() == false)
+        if ((network_data_get()->dhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
-                sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
-                // system("killall udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+                sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->ip[0] != '\0')
                 {
-                        obtain_aipddress_based_on_manual();
+                        /*手动设置的IP信息*/
+                        obtain_ipddress_based_on_manual();
                 }
                 else
                 {
+                        /*默认IP*/
                         obtain_ipaddress_based_on_username();
                 }
                 add_multicase_routing_addres();

@@ -104,7 +104,9 @@ static bool ipc_camera_search_display_register_func(void)
                                         strncpy(network_data_get()->door_device[i].door_name, doorname, strlen(doorname));
 
                                         network_data_save();
-                                       // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
+                                        // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
+                                        //  struct ipcamera_info *device = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
+                                        // printf("ip:%s,port=%d,username:%s,password:%s,auther=%d\n", device->ipaddr, device->port, device->username, device->password, device->auther_flag);
                                         return true;
                                 }
                                 return false;
@@ -163,7 +165,7 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
                 if ((rtsp != NULL) && (strstr(rtsp, "rtsp://")))
                 {
                         sprintf(buffer, "%s %s %s", rtsp, sat_ipcamera_username_get(layout_ipc_camera_edit_index_get()), sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()));
-                       // SAT_DEBUG("%s", buffer);
+                        // SAT_DEBUG("%s", buffer);
                         sat_linphone_ipcamera_start(buffer);
                         lv_common_video_mode_enable(true);
                 }
@@ -253,14 +255,12 @@ static void sat_layout_enter(ipc_camera_display)
                                                       lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTRATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
-
         sat_ipcamera_rtsp_url_get(layout_ipc_camera_edit_index_get());
-
         ipcamera_state_callback_register(ipc_camera_display_ipcamera_state_func);
 }
 static void sat_layout_quit(ipc_camera_display)
 {
-        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
                 standby_timer_restart(true);
         }
