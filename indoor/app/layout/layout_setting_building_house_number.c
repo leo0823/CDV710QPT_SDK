@@ -253,8 +253,8 @@ static void sat_layout_enter(setting_building_house_number)
         ** 说明: 数字键盘创建
         ***********************************************/
         {
-                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_number_keyboard_btn, 608, 127, 312, 500,
-                                                       setting_building_house_number_obj_keyboad_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_number_keyboard_btn, 608, 127, 312, 402,
+                                                       setting_building_house_number_obj_keyboad_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
@@ -268,6 +268,7 @@ static void sat_layout_enter(setting_building_house_number)
         int loacal_number[8] = {0};
 
         const char *username = network_data_get()->sip_user;
+        printf("===============network_data_get()->sip_user is %s\n",network_data_get()->sip_user);
         loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
         loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
 

@@ -270,7 +270,7 @@ static void sat_layout_enter(setting_server_ipaddress)
         ** 说明: 数字键盘创建
         ***********************************************/
         {
-                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_number_keyboard_btn, 608, 127, 312, 500,
+                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_number_keyboard_btn, 608, 127, 312, 402,
                                                        setting_server_ipaddress_obj_keyboad_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

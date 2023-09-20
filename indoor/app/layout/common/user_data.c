@@ -22,7 +22,7 @@ static const user_data_info user_data_default =
     {
         .is_device_init = 0,
         .auto_record_mode = 2,
-        .wifi_enable = true,
+        .wifi_enable = false,
         .motion = {
             .enable = false,
             .select_camera = 1,
@@ -421,9 +421,9 @@ static const user_network_info network_data_default = {
     .mask = {"255.0.0.0"},
     .gateway = {"192.168.0.2"},
     .dns = {"192.168.0.2"},
-    .local_server = {"192.168.0.2"},
-    .sip_server = {"192.168.0.2"},
-    .cctv_server = {"192.168.0.2"},
+    .local_server = {"10.0.0.2"},
+    .sip_server = {"10.0.0.2"},
+    .cctv_server = {"10.0.0.2"},
     .guard_number = {"00000000000"},
 };
 

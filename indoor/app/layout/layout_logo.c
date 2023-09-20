@@ -675,7 +675,10 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         if (user_data_get()->is_device_init == false)
         {
-                user_data_get()->etc.language = LANGUAGE_ID_ENGLISH;
+                system("rm -rf /app/data/user_data.cfg");
+                system("rm -rf /app/data/network_data.cfg");
+                user_data_init();
+                network_data_init();
                 language_id_set(LANGUAGE_ID_ENGLISH);
                 sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -826,7 +829,7 @@ static void logo_num_keyboard_event(lv_event_t *e)
 static void layout_logo_input_keyboard_create(void)
 {
         lv_obj_t *kb = lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), logo_obj_id_tuya_register_number_keyboard_btn, 389, 229, 230, 371,
-                                                              logo_num_keyboard_event, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                                                              logo_num_keyboard_event, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                               360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,

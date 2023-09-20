@@ -255,12 +255,12 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
                         if (layout_ipc_cmeara_is_doorcamera_get() == true)
                         {
                                 memset(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].password, 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].password));
-                                strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].password, ipc_camera_password_input_password_temp);
+                                strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].password, lv_textarea_get_text(textarea));
                         }
                         else
                         {
                                 memset(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].password, 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].password));
-                                strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].password, ipc_camera_password_input_password_temp);
+                                strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].password, lv_textarea_get_text(textarea));
                         }
                         network_data_save();
                         return true;
