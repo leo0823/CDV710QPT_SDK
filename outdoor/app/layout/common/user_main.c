@@ -35,6 +35,9 @@
 #include "common/user_network.h"
 #include "common/sat_user_time.h"
 #include "common/user_gpio.h"
+#include "anyka/ak_common.h"
+#include "anyka/ak_vi.h"
+#include "anyka/ak_vpss.h"
 #if 0
 #include <stdio.h>
 #include <stdlib.h>
@@ -282,6 +285,14 @@ static void *media_server_task(void *arg)
 static void video_stream_status_callback(bool en)
 {
         led_ctrl_enable(((en == false) || (ir_feed_read() == GPIO_LEVEL_LOW)) ? false : true);
+
+        if (en == true)
+        {
+                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_BRIGHTNESS, user_data_get()->brightness);
+                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SATURATION, user_data_get()->saturation);
+                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_CONTRAST, user_data_get()->contrast);
+                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SHARP, user_data_get()->sharpness);
+        }
         return;
 }
 /*

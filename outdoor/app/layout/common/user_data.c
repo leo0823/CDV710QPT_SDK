@@ -25,6 +25,10 @@ static const user_data_info user_data_default =
     {
         .network = {.ip = {'\0'}, .mask = "255.0.0.0"},
         .device = {.name = "CIP-D20YS", .number = "0101001001012", .password = "123456789"},
+        .brightness = 0,
+        .contrast = 0,
+        .saturation = 0,
+        .sharpness = 0,
 };
 
 bool user_data_save(void)
@@ -53,7 +57,6 @@ bool user_data_save(void)
 
 #define user_data_network_check_range_out(x, min, max) user_data_check_range_out(network.x, min, max)
 #define user_data_sip_check_range_out(x, min, max) user_data_check_range_out(device.x, min, max)
-
 /***
 ** 日期: 2022-05-05 08:47
 ** 作者: leo.liu
@@ -91,6 +94,12 @@ static void user_data_check_valid(void)
         {
                 user_data_sip_check_range_out(number[i], '0', '9');
         }
+
+        user_data_check_range_out(brightness, -50, 50);
+        user_data_check_range_out(saturation, -50, 50);
+        user_data_check_range_out(contrast, -50, 50);
+        user_data_check_range_out(sharpness, -50, 50);
+
         SAT_DEBUG("server:%s", user_data.server_ip);
         SAT_DEBUG(" device name:%s", user_data.device.name);
         SAT_DEBUG(" device number:%s", user_data.device.number);

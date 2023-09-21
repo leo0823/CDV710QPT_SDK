@@ -49,13 +49,6 @@ typedef struct
 
 typedef struct
 {
-        int bright;
-        int cont;
-        int color;
-} isp_info;
-
-typedef struct
-{
         /***** 0:lcd off 1:open frame *****/
         char standby_mode;
         /**屏幕待机时间设置***/
@@ -79,11 +72,6 @@ typedef struct
         int frame_list;
         /***** 帧背景显示 *****/
         bool frame_background;
-
-        isp_info door1;
-        isp_info door2;
-        isp_info cctv1;
-        isp_info cctv2;
 } user_display_info;
 
 typedef struct
@@ -109,7 +97,6 @@ typedef struct
         struct tm cur_time;
         /****** 通话时间 1:1分钟 2:2分钟 3:3分钟***/
         int call_time;
-        
 
 } user_etc_info;
 
@@ -117,50 +104,48 @@ typedef struct
 {
         bool auto_record;
 
-        int away_alarm_enable_list;//离家警报模式：被监测的传感器列表
-        int security_alarm_enable_list;//安全警报模式：被监测的传感器列表
+        int away_alarm_enable_list;     // 离家警报模式：被监测的传感器列表
+        int security_alarm_enable_list; // 安全警报模式：被监测的传感器列表
 
-        bool security_alarm_enable;//安全警报模式；0：关闭；1：开启
+        bool security_alarm_enable; // 安全警报模式；0：关闭；1：开启
 
-        bool away_alarm_enable;//离家警报模式；0：关闭；1：开启
+        bool away_alarm_enable; // 离家警报模式；0：关闭；1：开启
 
-        char emergency_mode;//0:手动触发警报 1:安防系统自动触发警报
+        char emergency_mode; // 0:手动触发警报 1:安防系统自动触发警报
 
-        char alarm_enable[8];//设置触发方式; 0:不触发，1：NO高电平触发 2：NC低电平触发
+        char alarm_enable[8]; // 设置触发方式; 0:不触发，1：NO高电平触发 2：NC低电平触发
 
-        char away_sensor_enable[8];//离家模式下传感器使能状态：只有被使能的传感器才能设置监测状态
+        char away_sensor_enable[8]; // 离家模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
-        char security_sensor_enable[8];//安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
+        char security_sensor_enable[8]; // 安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
-        char alarm_trigger[8];//传感器触发列表
+        char alarm_trigger[8]; // 传感器触发列表
 
-        bool alarm_enable_always[2][8];//传感器总是使能：设置了总是使能，对应模式下的传感器总是能被检测（即使没有开启警报检测）
+        bool alarm_enable_always[2][8]; // 传感器总是使能：设置了总是使能，对应模式下的传感器总是能被检测（即使没有开启警报检测）
 
+        int away_release_time; // 离家释放时间；在点击离家检测使能的按键后，在此期间内，并不会真正的使能离家警报检测
 
-        int away_release_time;//离家释放时间；在点击离家检测使能的按键后，在此期间内，并不会真正的使能离家警报检测
+        int away_setting_time; // 离家设置时间；在进入离家警报检测以后（离家释放时间过后），在此期间内，检测无效
 
-        int away_setting_time;//离家设置时间；在进入离家警报检测以后（离家释放时间过后），在此期间内，检测无效
+        bool away_save_photo; // 离家模式报警是否拍照
 
-        bool away_save_photo;//离家模式报警是否拍照
+        bool away_auto_record; // 离家模式报警是否启动CCTV录像
 
-        bool away_auto_record;//离家模式报警是否启动CCTV录像
+        bool security_auto_record; // 安全模式报警是否启动CCTV录像
 
-        bool security_auto_record;//安全模式报警是否启动CCTV录像
-
-        float alarm_gpio_value_group[8];//主机警报检测gpio电平列表
+        float alarm_gpio_value_group[8]; // 主机警报检测gpio电平列表
 
         bool buzzer_alarm;
 
-        bool alarm_ring_play;//是否需要播放警报铃声（警报同步需要用)
-        
-        bool is_alarm_return;//表示当前
+        bool alarm_ring_play; // 是否需要播放警报铃声（警报同步需要用)
+
+        bool is_alarm_return; // 表示当前
 
 } user_alarm_info;
 
 typedef struct
 {
         char is_device_init;
-        
 
         char auto_record_mode; // 0:off,1:video,2:photo;
 
@@ -178,8 +163,8 @@ typedef struct
 
         char system_mode; // 0xFF 高4位 0：单系统，1:服务型。低4位表示ID号
 
-        char mastar_wallpad_ip[16];//sip server 的IP
-        
+        char mastar_wallpad_ip[16]; // sip server 的IP
+
         int always_monitoring;
         bool last_call_new;
 

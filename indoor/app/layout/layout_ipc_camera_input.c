@@ -244,7 +244,6 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
 
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
-
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
 
@@ -490,7 +489,6 @@ static void sat_layout_enter(ipc_camera_input)
 }
 static void sat_layout_quit(ipc_camera_input)
 {
-       
 }
 
 sat_layout_create(ipc_camera_input);

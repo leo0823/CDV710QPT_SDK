@@ -72,6 +72,10 @@ static void monitor_obj_lock_2_display(void);
 static void monitor_obj_volume_display(void);
 static void monitor_obj_dispaly_display(void);
 
+static void layout_monitor_brightness_bar_display(void);
+static void layout_monitor_contrast_bar_display(void);
+static void layout_monitor_color_bar_display(void);
+
 static int monitor_timeout_sec = 0;
 static int call_duration = 0;
 
@@ -79,7 +83,14 @@ static bool is_monitor_door_camera_talk = false;
 static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
-
+/****************************************************************
+**@日期: 2023-09-20
+**@作者: leo.liu
+**@功能: 图形调整寄存器
+*****************************************************************/
+static int monitor_brightness[3] = {0};
+static int monitor_saturation[3] = {0};
+static int monitor_contrast[3] = {0};
 // static char sip_call_name[4];
 static bool monitor_talk_call_end_callback(char *arg);
 
@@ -375,8 +386,9 @@ static void layout_monitor_channel_type_switch_btn_display(void)
 {
         char *door_ch_png[8] = {"btn_call_cam1.png", "btn_call_cam2.png", "btn_call_cam3.png", "btn_call_cam4.png", "btn_call_cam5.png", "btn_call_cam6.png", "btn_call_cam7.png", "btn_call_cam8.png"};
         char *cctv_ch_png[8] = {"btn_call_cctv1.png", "btn_call_cctv2.png", "btn_call_cctv3.png", "btn_call_cctv4.png", "btn_call_cctv5.png", "btn_call_cctv6.png", "btn_call_cctv7.png", "btn_call_cctv8.png"};
+
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_channel_switch_CCTTV_monitor);
-        
+
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
         {
@@ -445,6 +457,13 @@ static void monitor_obj_volume_display(void)
  ***********************************************/
 static void monitor_obj_display_click(lv_event_t *e)
 {
+
+        int channel = monitor_channel_get();
+        struct ipcamera_info *device = NULL;
+        if (is_channel_ipc_camera(channel) == false)
+        {
+                device = &network_data_get()->door_device[channel];
+
         lv_obj_t *adj_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
         lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
         lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
@@ -461,7 +480,30 @@ static void monitor_obj_display_click(lv_event_t *e)
         }
         else
         {
-                lv_obj_add_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                device = &network_data_get()->cctv_device[channel];
+        }
+
+        if (sat_ipcamera_image_get(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness, monitor_saturation, monitor_contrast, 1000) == true)
+        {
+                printf("[%d %d %d] \n", monitor_saturation[0], monitor_saturation[1], monitor_saturation[2]);
+                lv_obj_t *adj_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
+                lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
+                lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
+                lv_obj_t *right_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+                if (lv_obj_has_flag(adj_cont, LV_OBJ_FLAG_HIDDEN) == true)
+                {
+                        lv_obj_clear_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(left_btn, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(right_btn, LV_OBJ_FLAG_HIDDEN);
+                        layout_monitor_brightness_bar_display();
+                        layout_monitor_contrast_bar_display();
+                        layout_monitor_color_bar_display();
+                }
+                else
+                {
+                        lv_obj_add_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                }
         }
 }
 static void monitor_obj_dispaly_display(void)
@@ -1127,6 +1169,7 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -1143,6 +1186,7 @@ static void layout_monitor_setting_brightness_slider_change_cb(lv_event_t *e)
         }
         else
         {
+
 
         }
 }
@@ -1174,6 +1218,32 @@ static void layout_monitor_brightness_bar_create(lv_obj_t *parent)
 
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
+}
+static void layout_monitor_brightness_bar_display(void)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        parent = lv_obj_get_child_form_id(parent, monitor_obj_id_brigrtness_slider_cont);
+
+        lv_obj_t *text = lv_obj_get_child_form_id(parent, 0);
+        if (text == NULL)
+        {
+                return;
+        }
+        lv_label_set_text_fmt(text, "%d", monitor_brightness[2]);
+
+        lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);
+        if (slider == NULL)
+        {
+                return;
+        }
+        lv_slider_set_range(slider, monitor_brightness[0], monitor_brightness[1]);
+
+        lv_slider_set_value(slider, monitor_brightness[2], LV_ANIM_OFF);
 }
 
 static void layout_monitor_setting_contrast_slider_change_cb(lv_event_t *e)
@@ -1218,6 +1288,33 @@ static void layout_monitor_contrast_bar_create(lv_obj_t *parent)
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
 }
+static void layout_monitor_contrast_bar_display(void)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        parent = lv_obj_get_child_form_id(parent, monitor_obj_id_contrast_slider_cont);
+
+
+        lv_obj_t *text = lv_obj_get_child_form_id(parent, 0);
+        if (text == NULL)
+        {
+                return;
+        }
+        lv_label_set_text_fmt(text, "%d", monitor_contrast[2]);
+
+        lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);
+        if (slider == NULL)
+        {
+                return;
+        }
+        lv_slider_set_range(slider, monitor_contrast[0], monitor_contrast[1]);
+
+        lv_slider_set_value(slider, monitor_contrast[2], LV_ANIM_OFF);
+}
 
 static void layout_monitor_setting_color_slider_change_cb(lv_event_t *e)
 {
@@ -1233,6 +1330,7 @@ static void layout_monitor_setting_color_slider_change_cb(lv_event_t *e)
         }
 }
 
+
 static void layout_monitor_color_bar_create(lv_obj_t *parent)
 {
         lv_common_img_btn_create(parent, monitor_obj_id_color_icon, 251, 153, 48, 48,
@@ -1243,7 +1341,7 @@ static void layout_monitor_color_bar_create(lv_obj_t *parent)
 
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
-        lv_common_slider_create(parent, monitor_obj_id_color_cont, 269, 153, 540, 48,
+        lv_common_slider_create(parent, monitor_obj_id_color_slider_cont, 269, 153, 540, 48,
                                 NULL, LV_OPA_TRANSP, 0X00,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1260,7 +1358,37 @@ static void layout_monitor_color_bar_create(lv_obj_t *parent)
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
 }
+static void layout_monitor_color_bar_display(void)
+{
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
+        if (parent == NULL)
+        {
+                return;
+        }
 
+        parent = lv_obj_get_child_form_id(parent, monitor_obj_id_color_slider_cont);
+        if (parent == NULL)
+        {
+                return;
+        }
+
+        lv_obj_t *text = lv_obj_get_child_form_id(parent, 0);
+        if (text == NULL)
+        {
+                return;
+        }
+        lv_label_set_text_fmt(text, "%d", monitor_saturation[2]);
+
+        lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);
+        if (slider == NULL)
+        {
+                return;
+        }
+
+        lv_slider_set_range(slider, monitor_saturation[0], monitor_saturation[1]);
+
+        lv_slider_set_value(slider, monitor_saturation[2], LV_ANIM_OFF);
+}
 static void layout_monitor_setting_volume_slider_change_cb(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_current_target(e);
@@ -1723,7 +1851,6 @@ static void sat_layout_enter(monitor)
                 }
         }
 
-
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -1898,6 +2025,7 @@ static void sat_layout_enter(monitor)
 
                         monitor_obj_record_photo_display();
                 }
+
         }
         /************************************************************
         ** 函数说明: 切换到CCTV
