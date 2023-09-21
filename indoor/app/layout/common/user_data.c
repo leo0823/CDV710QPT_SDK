@@ -22,7 +22,7 @@ static const user_data_info user_data_default =
     {
         .is_device_init = 0,
         .auto_record_mode = 2,
-        .wifi_enable = true,
+        .wifi_enable = false,
         .motion = {
             .enable = false,
             .select_camera = 1,
@@ -42,25 +42,27 @@ static const user_data_info user_data_default =
             .key_sound = true,
             .ring_mute = false,
             .door_tone = 1,
-            .inter_tone = 3,
+
+            .extenion_tone = 3,
+
 
             .buzzer_tone = 1,
-            .buzzer_volume = 1,
+            .buzzer_volume = 50,
             .common_entrance_tone = 1,
-            .common_entrance_volume = 1,
-            .common_entrance_voice = 1,
+            .common_entrance_volume = 50,
+            .common_entrance_voice = 50,
 
             .securirty_office_tone = 1,
 
-            .entracne_volume = 1,
-            .entrancr_voice = 1,
+            .entracne_volume = 50,
+            .entrancr_voice = 50,
 
-            .guard_station_volume = 1,
-            .guard_station_voice = 1,
-            .extension_volume = 1,
-            .extension_voice = 4,
-            .touch_notification_volume = 1,
-            .touch_notification_voice = 1,
+            .guard_station_volume = 50,
+            .guard_station_voice = 50,
+            .extension_volume = 50,
+            .extension_voice = 50,
+            .touch_notification_volume = 50,
+            .touch_notification_voice = 50,
             .ring_repeat = 0,
         },
 
@@ -259,7 +261,7 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(key_sound, 0, 1);
         user_data_audio_check_range_out(ring_mute, 0, 1);
         user_data_audio_check_range_out(door_tone, 1, 6);
-        user_data_audio_check_range_out(inter_tone, 4, 4);
+        user_data_audio_check_range_out(extenion_tone, 4, 4);
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
         user_data_audio_check_range_out(buzzer_volume, 1, 6);
@@ -389,14 +391,14 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .dhcp = true,
-    .sip_user = {"010001001011"},
-    .ip = {0},
+    .sip_user = {"010000101011"},
+    .ip = {"0"},
     .mask = {"255.0.0.0"},
     .gateway = {"192.168.0.2"},
     .dns = {"192.168.0.2"},
-    .local_server = {"192.168.0.2"},
-    .sip_server = {"192.168.0.2"},
-    .cctv_server = {"192.168.0.2"},
+    .local_server = {"10.0.0.2"},
+    .sip_server = {"10.0.0.2"},
+    .cctv_server = {"10.0.0.2"},
     .guard_number = {"00000000000"},
 };
 

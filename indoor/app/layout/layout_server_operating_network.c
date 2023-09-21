@@ -68,38 +68,25 @@ enum
         server_operation_network_obj_id_guard_statioon_textarea
 };
 
-static void setting_server_operation_network_cancel_btn_click(lv_event_t *e)
-{
-        sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-}
-
-static void setting_server_operation_network_init(void)
+static bool setting_server_operation_data_valid_check(void)
 {
         int obj_id[][2] = {
-        {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
-        {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
-        {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
-        {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
-        {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
-        {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
-        {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
-        {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
-        {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
-        {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
+            {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
+            {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
+            {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
+            {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
+            {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
+            {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
+            {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
+            {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
+            {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
+            {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
 
         lv_obj_t *textarea = NULL;
 
         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
 
         int total = sizeof(obj_id) / (sizeof(int) * 2);
-        char building[8] = {0};
-        char household[8] = {0};
-        int loacal_number[8] = {0};
-        const char *username = network_data_get()->sip_user;
-        loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-        loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
-        sprintf(building, "%04d", loacal_number[0]);
-        sprintf(household, "%04d", loacal_number[1]);
 
         for (int i = 0; i < total; i++)
         {
@@ -108,55 +95,206 @@ static void setting_server_operation_network_init(void)
 
                 if (textarea != NULL)
                 {
-                        if(i == 0)
+                        if (i == 0)
                         {
-                                lv_textarea_set_text(textarea,building);
+                                const char *building_str = lv_textarea_get_text(textarea);
+                                // int building = 0;
+                                // building = atoi(building_str);
+                                int len = strlen(building_str);
+                                if ((len == 0))
+                                {
+                                        return false;
+                                }
                         }
-                        else if(i == 1)
+                        else if (i == 1)
                         {
-                                lv_textarea_set_text(textarea,household);
-                        }else if( i == 2)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->ip);                             
+                                const char *household_str = lv_textarea_get_text(textarea);
+                                int len = strlen(household_str);
+                                if ((len == 0))
+                                {
+                                        return false;
+                                }
                         }
-                        else if( i == 3)
+                        else if (i == 2)
                         {
-                                lv_textarea_set_text(textarea,network_data_get()->gateway);
-                        }else if (i == 4)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->mask);
-                        }else if(i == 5)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->dns);
-                        }else if(i == 6)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->local_server);
-                        }else if(i == 7)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->sip_server);
-                        }else if(i == 8)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->cctv_server);
-                        }else if(i == 9)
-                        {
-                                lv_textarea_set_text(textarea,network_data_get()->guard_number);
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
                         }
+                        else if (i == 3)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
+                        }
+                        else if (i == 4)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
+                        }
+                        else if (i == 5)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
+                        }
+                        else if (i == 6)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
+                        }
+                        else if (i == 7)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
+                        }
+                        else if (i == 8)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        return false;
+                                }
+                        }
+                        else if (i == 9)
+                        {
+                                if (strlen(lv_textarea_get_text(textarea)) != 11)
+                                {
+                                        return false;
+                                }
+                                for (int i = 0; i < 8; i++)
+                                {
+                                        if (((lv_textarea_get_text(textarea)[i] - 48) < 0) || ((lv_textarea_get_text(textarea)[i] - 48) > 9))
+                                        {
+                                                return false;
+                                        }
+                                }
+                        }
+                }
+        }
+        return true;
+}
+
+static void setting_server_operation_network_cancel_btn_click(lv_event_t *e)
+{
+        if (setting_server_operation_data_valid_check())
+        {
+                sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
+}
+
+static void setting_server_operation_network_init(void)
+{
+        int obj_id[][2] = {
+            {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
+            {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
+            {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
+            {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
+            {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
+            {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
+            {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
+            {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
+            {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
+            {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
+
+        lv_obj_t *textarea = NULL;
+
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
+
+        // int total = sizeof(obj_id) / (sizeof(int) * 2);
+        // char building[8] = {0};
+        // char household[8] = {0};
+        // int loacal_number[8] = {0};
+        // const char *username = network_data_get()->sip_user;
+        // loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+        // loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
+        // sprintf(building, "%04d", loacal_number[0]);
+        // sprintf(household, "%04d", loacal_number[1]);
+        int total = sizeof(obj_id) / (sizeof(int) * 2);
+        char building[8] = {0};
+        char household[8] = {0};
+        strncpy(building, &network_data_get()->sip_user[3], 4);
+        strncpy(household, &network_data_get()->sip_user[7], 4);
+        for (int i = 0; i < total; i++)
+        {
+                lv_obj_t *parent = lv_obj_get_child_form_id(list, obj_id[i][0]);
+                textarea = lv_obj_get_child_form_id(parent, obj_id[i][1]);
+
+                if (textarea != NULL)
+                {
+                        if (i == 0)
+                        {
+                                lv_textarea_set_text(textarea, building);
+                        }
+                        else if (i == 1)
+                        {
+                                lv_textarea_set_text(textarea, household);
+                        }
+                        else if (i == 2)
+                        {
+                                if (network_data_get()->ip[0] != '0')
+                                {
+                                        printf("========%d=========%s=========\n", __LINE__, network_data_get()->ip);
+                                        lv_textarea_set_text(textarea, network_data_get()->ip);
+                                }
+                                else
+                                {
+                                        printf("========%d=========%s=========\n", __LINE__, __func__);
+                                        lv_textarea_set_text(textarea, "10.1.1.1");
+                                }
+                        }
+                }
+                else if (i == 3)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->gateway);
+                }
+                else if (i == 4)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->mask);
+                }
+                else if (i == 5)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->dns);
+                }
+                else if (i == 6)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->local_server);
+                }
+                else if (i == 7)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->sip_server);
+                }
+                else if (i == 8)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->cctv_server);
+                }
+                else if (i == 9)
+                {
+                        lv_textarea_set_text(textarea, network_data_get()->guard_number);
                 }
         }
 }
 static void setting_server_operation_network_next_btn_click(lv_event_t *e)
 {
         int obj_id[][2] = {
-        {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
-        {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
-        {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
-        {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
-        {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
-        {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
-        {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
-        {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
-        {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
-        {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
+            {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
+            {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
+            {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
+            {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
+            {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
+            {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
+            {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
+            {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
+            {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
+            {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
 
         lv_obj_t *textarea = NULL;
 
@@ -170,47 +308,69 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
 
                 if (textarea != NULL)
                 {
-                        if(i == 0)
+                        if (i == 0)
                         {
-                                network_data_get()->sip_user[3] = '1';
-                                strncpy(&(network_data_get()->sip_user[4]),lv_textarea_get_text(textarea),2);
-                        }else if( i == 1)
+                                int building = 0;
+                                char number[64] = {0};
+                                sscanf(lv_textarea_get_text(textarea), "%d", &building);
+                                sprintf(number, "%04d", building);
+                                memset(&network_data_get()->sip_user[3], 0, 4);
+                                strncpy(&(network_data_get()->sip_user[3]), number, 4);
+                        }
+                        else if (i == 1)
                         {
-                                strncpy(&(network_data_get()->sip_user[6]),lv_textarea_get_text(textarea),2);
-                                strncpy(&(network_data_get()->sip_user[8]),&(lv_textarea_get_text(textarea)[2]),2);
-                                network_data_get()->sip_user[8] = '0';                               
-                        }else if(i == 2)
+                                int household = 0;
+                                char number[64] = {0};
+                                sscanf(lv_textarea_get_text(textarea), "%d", &household);
+                                sprintf(number, "%02d%02d", household / 100, (household % 100));
+                                memset(&network_data_get()->sip_user[7], 0, 4);
+                                strncpy(&(network_data_get()->sip_user[7]), number, 4);
+                        }
+                        else if (i == 2)
                         {
                                 strncpy(network_data_get()->ip, lv_textarea_get_text(textarea), sizeof(network_data_get()->ip));
-                        }else if( i == 3)
+                        }
+                        else if (i == 3)
                         {
                                 strncpy(network_data_get()->gateway, lv_textarea_get_text(textarea), sizeof(network_data_get()->gateway));
-                        }else if (i == 4)
+                        }
+                        else if (i == 4)
                         {
                                 strncpy(network_data_get()->mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->mask));
-                        }else if(i == 5)
+                        }
+                        else if (i == 5)
                         {
                                 strncpy(network_data_get()->dns, lv_textarea_get_text(textarea), sizeof(network_data_get()->dns));
-                        }else if(i == 6)
+                        }
+                        else if (i == 6)
                         {
                                 strncpy(network_data_get()->local_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->local_server));
-                        }else if(i == 7)
+                        }
+                        else if (i == 7)
                         {
                                 strncpy(network_data_get()->sip_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->sip_server));
-                        }else if(i == 8)
+                        }
+                        else if (i == 8)
                         {
                                 strncpy(network_data_get()->cctv_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->cctv_server));
-                        }else if(i == 9)
+                        }
+                        else if (i == 9)
                         {
                                 strncpy(network_data_get()->guard_number, lv_textarea_get_text(textarea), sizeof(network_data_get()->guard_number));
                         }
                 }
         }
-        sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        if (setting_server_operation_data_valid_check())
+        {
+                sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
 }
 static void setting_server_operating_btn_click(lv_event_t *e)
 {
-        sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        if (setting_server_operation_data_valid_check())
+        {
+                sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
 }
 static lv_obj_t *setting_server_textarea_focused_get(void)
 {
@@ -307,6 +467,7 @@ static lv_obj_t *server_operating_network_list_create(void)
         lv_common_style_set_common(list, server_operation_network_obj_id_list, 0, 168, 584, 432, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
         return list;
 }
+
 static void sat_layout_enter(server_operation_network)
 {
         /***********************************************
@@ -354,7 +515,7 @@ static void sat_layout_enter(server_operation_network)
                                                                 0, 8, 838, 50, server_operation_network_obj_id_setting_title,
                                                                 lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_OPERATION_STRCUUTRE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 0, 45, 838, 50, server_operation_network_obj_id_setting_sub,
-                                                                lang_str_get((user_data_get()->system_mode & 0x0f) == 0x01?SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_MASTER : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                lang_str_get((user_data_get()->system_mode & 0x0f) == 0x01 ? SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_MASTER : SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                 880, 20, 48, 48, server_operation_network_obj_id_setting_img,
@@ -366,8 +527,8 @@ static void sat_layout_enter(server_operation_network)
         ** 说明: 数字键盘创建
         ***********************************************/
         {
-                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), server_operation_network_obj_id_keyboard, 648, 184, 312, 500,
-                                                       setting_server_number_keyboard_btn_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), server_operation_network_obj_id_keyboard, 648, 184, 312, 402,
+                                                       setting_server_number_keyboard_btn_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
@@ -430,10 +591,10 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_building_number_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                          LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                                          "01", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 2,
+                                                          "01", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                                           5, 500, 0Xffffff);
                         }
 
@@ -457,10 +618,10 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_building_household_number_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                                          "01", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 2,
+                                                          "01", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                                           5, 500, 0Xffffff);
                         }
                 }
@@ -500,7 +661,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_product_ip_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -525,7 +686,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_gateway_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -550,7 +711,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_mask_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -577,7 +738,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_dns_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -620,7 +781,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_local_server_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -647,7 +808,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_sip_server_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -701,7 +862,7 @@ static void sat_layout_enter(server_operation_network)
 
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_cctv_server_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                                           "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
@@ -739,13 +900,13 @@ static void sat_layout_enter(server_operation_network)
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_GUARD_STATION_NUMBER), 0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
-                         
+
                                 lv_common_textarea_create(cont, server_operation_network_obj_id_guard_statioon_textarea, 298, 9, 262, 54,
                                                           NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
-                                                           LV_OPA_TRANSP,0Xffffff,LV_OPA_COVER,0Xffffff,
+                                                          LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                                          "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
+                                                          "192.168.0.2", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 11,
                                                           5, 500, 0Xffffff);
                         }
                 }

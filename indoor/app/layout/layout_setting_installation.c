@@ -119,7 +119,7 @@ static void setting_installation_factory_reset_cancel_func(lv_event_t *ev)
 }
 static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 {
-        
+
         sat_layout_goto(factory_reset, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
         setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_ACK), 0, 110, 460, 120);
@@ -158,20 +158,25 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
         if (parent != NULL)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
-    
+
+                // char building[8] = {0};
+                // char household[8] = {0};
+                // int loacal_number[8] = {0};
+
+                // const char *username = network_data_get()->sip_user;
+
+                // loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+
+                // loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
+
+                // sprintf(building, "%04d", loacal_number[0]);
+                // sprintf(household, "%04d", loacal_number[1]);
+
                 char building[8] = {0};
                 char household[8] = {0};
-                int loacal_number[8] = {0};
+                strncpy(building, &network_data_get()->sip_user[3], 4);
+                strncpy(building, &network_data_get()->sip_user[7], 4);
 
-                const char *username = network_data_get()->sip_user;
-
-                loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-
-                loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
-
-                sprintf(building, "%04d", loacal_number[0]);
-                sprintf(household, "%04d", loacal_number[1]);
-                   
                 lv_label_set_text_fmt(obj, "%s-%s", building, household);
         }
 }
@@ -179,24 +184,23 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
 static void layout_setting_installation_guard_no_display(lv_obj_t *list)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_guard_station_number_cont);
-        if(parent != NULL)
+        if (parent != NULL)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
 
-                lv_label_set_text(obj, network_data_get()->guard_number);   
+                lv_label_set_text(obj, network_data_get()->guard_number);
         }
 }
 
 static void layout_setting_installation_slave_display(lv_obj_t *list)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_slave_register_cont);
-        if(parent != NULL)
+        if (parent != NULL)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
 
-                lv_label_set_text(obj, "Slave registerd display");   
+                lv_label_set_text(obj, "Slave registerd display");
         }
-
 }
 static lv_obj_t *setting_installation_sub_list_create(void)
 {
@@ -258,8 +262,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              -1, NULL,
              setting_installation_factory_reset_obj_click, -1},
 
-
-             {0, 72 * 11, 622, 72,
+            {0, 72 * 11, 622, 72,
              setting_installation_obj_id_slave_register_cont, 0, -1,
              INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
              -1, NULL,
@@ -281,7 +284,6 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                         {
                                 continue;
                         }
-
                 }
 
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
@@ -298,7 +300,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 j++;
         }
-        
+
         layout_setting_installation_open_structure_dispaly(list);
         layout_setting_installation_build_house_no_display(list);
         layout_setting_installation_guard_no_display(list);
@@ -358,7 +360,7 @@ static void setting_installation_confirm_obj_click(lv_event_t *ev)
         {
                 lv_obj_del(obj);
         }
-  
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
