@@ -70,4 +70,16 @@ bool ipc_camera_device_send_data(char *data_type, char *data, const char *ip, in
 **@功能:获取设备的rtsp 来自摘要
 *****************************************************************/
 bool ipc_rtsp_digest_get(const char *ip, int port, const char *user, const char *password, char *profile_token, char *rtsp, char *sip, int len, int timeout);
+/****************************************************************
+**@日期: 2023-09-19
+**@作者: leo.liu
+**@功能: 获取亮度色度对比度数据,百分比
+*****************************************************************/
+bool ipc_camera_device_get_imaging(const char *ip, int port, const char *user, const char *password, char auther_flag, int brightness[3], int saturation[3], int contrast[3], int timeout);
+/****************************************************************
+**@日期: 2023-09-19
+**@作者: leo.liu
+**@功能: 设置亮度色度对比度数据,百分比
+*****************************************************************/
+bool ipc_camera_device_setting_imaging(const char *ip, int port, const char *user, const char *password, char auther_flag, int brightness, int saturation, int contrast, int timeout);
 #endif

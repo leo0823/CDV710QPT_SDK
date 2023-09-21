@@ -42,7 +42,9 @@ static const user_data_info user_data_default =
             .key_sound = true,
             .ring_mute = false,
             .door_tone = 1,
+
             .extenion_tone = 3,
+
 
             .buzzer_tone = 1,
             .buzzer_volume = 50,
@@ -77,10 +79,6 @@ static const user_data_info user_data_default =
             .night_time_end = 0,
             .frame_list = 0x03,
             .frame_background = false,
-            .door1 = {.bright = 10, .cont = 10, .color = 10},
-            .door2 = {.bright = 10, .cont = 10, .color = 10},
-            .cctv1 = {.bright = 10, .cont = 10, .color = 10},
-            .cctv2 = {.bright = 10, .cont = 10, .color = 10},
 
         },
         .etc = {
@@ -302,22 +300,6 @@ static void user_data_check_valid(void)
         user_data_display_check_range_out(frame_list, 0, 0x1F);
         user_data_display_check_range_out(frame_background, 0, 1);
 
-        user_data_display_check_range_out(door1.bright, 0, 20);
-        user_data_display_check_range_out(door1.cont, 0, 20);
-        user_data_display_check_range_out(door1.color, 0, 20);
-
-        user_data_display_check_range_out(door2.bright, 0, 20);
-        user_data_display_check_range_out(door2.cont, 0, 20);
-        user_data_display_check_range_out(door2.color, 0, 20);
-
-        user_data_display_check_range_out(cctv1.bright, 0, 20);
-        user_data_display_check_range_out(cctv1.cont, 0, 20);
-        user_data_display_check_range_out(cctv1.color, 0, 20);
-
-        user_data_display_check_range_out(cctv2.bright, 0, 20);
-        user_data_display_check_range_out(cctv2.cont, 0, 20);
-        user_data_display_check_range_out(cctv2.color, 0, 20);
-
         /***** etc *****/
         user_data_etc_check_range_out(language, 0, 9);
         user_data_etc_check_range_out(deive_id, 0, 3);
@@ -459,6 +441,7 @@ static void printf_register_device(void)
                 printf("door camera :%d\n", i);
                 printf("accout:%s\n", network_data.door_device[i].username);
                 printf("password:%s\n", network_data.door_device[i].password);
+                printf("authr:%d\n", network_data.door_device[i].auther_flag);
                 printf("ipaddr:%s\n", network_data.door_device[i].ipaddr);
                 printf("port:%d\n", network_data.door_device[i].port);
                 printf("sip_url:%s\n", network_data.door_device[i].sip_url);
@@ -476,6 +459,7 @@ static void printf_register_device(void)
                 printf("CCTV  :%d\n", i);
                 printf("accout:%s\n", network_data.cctv_device[i].username);
                 printf("password:%s\n", network_data.cctv_device[i].password);
+                printf("authr:%d\n", network_data.cctv_device[i].auther_flag);
                 printf("ipaddr:%s\n", network_data.cctv_device[i].ipaddr);
                 printf("port:%d\n", network_data.cctv_device[i].port);
                 printf("sip_url:%s\n", network_data.cctv_device[i].sip_url);

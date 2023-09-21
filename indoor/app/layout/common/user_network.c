@@ -472,14 +472,13 @@ static bool ipaddr_udhcp_server_get_wait(void)
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
-        // system("killall udhcpc");
-        sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+        sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
         system("ifconfig eth0 0.0.0.0");
         system("ifconfig eth0 down");
         usleep(10 * 1000);
         system("ifconfig eth0 up");
         usleep(10 * 1000);
-        system("udhcpc -i eth0 -s /etc/init.d/udhcpc.script &");
+        sat_network_udhcpc_ip("eth0");
         usleep(10 * 1000);
         while ((sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false) || (ip[0] == '\0'))
         {
@@ -502,7 +501,13 @@ static bool ipaddr_udhcp_server_get_wait(void)
         return false;
 }
 
-static bool obtain_aipddress_based_on_manual(void)
+/****************************************************************
+**@日期: 2023-09-18
+**@作者: leo.liu
+**@功能: 手动获取的IP信息
+*****************************************************************/
+static bool obtain_ipddress_based_on_manual(void)
+
 {
         char cmd[128] = {0};
         sprintf(cmd, "ifconfig eth0 %s netmask %s", network_data_get()->ip, network_data_get()->mask[0] != 0 ? network_data_get()->mask : "255.0.0.0");
@@ -510,7 +515,12 @@ static bool obtain_aipddress_based_on_manual(void)
         SAT_DEBUG("%s ", cmd);
         return true;
 }
-
+#if 0
+/****************************************************************
+**@日期: 2023-09-18
+**@作者: leo.liu
+**@功能: 依据用户名或者网卡获取IP
+*****************************************************************/
 static bool obtain_ipaddress_based_on_username(void)
 {
         // 010193001012
@@ -532,6 +542,70 @@ static bool obtain_ipaddress_based_on_username(void)
         SAT_DEBUG("%s ", cmd);
 
         SAT_DEBUG("defalut ip:%s,mask:%s", network_data_get()->ip, network_data_get()->mask);
+        return true;
+}
+#endif
+
+static int convert_a_string_to_an_integer_number(const char *str, int len)
+{
+        int val = 0;
+        for (int i = 0; i < len; i++)
+        {
+                if ((str[i] >= '0') && (str[i] <= '9'))
+                {
+                        val = val * 16 + (str[i] - '0');
+                }
+                else if ((str[i] >= 'A') && (str[i] <= 'F'))
+                {
+                        val = val * 16 + ((str[i] - 'A') + 10);
+                }
+                else if ((str[i] >= 'a') && (str[i] <= 'f'))
+                {
+                        val = val * 16 + ((str[i] - 'a') + 10);
+                }
+        }
+        return val;
+}
+
+static bool obtain_ipaddress_based_on_mac(void)
+{
+        char mac[64] = {0};
+        if (sat_ip_mac_addres_get("eth0", NULL, mac, NULL) == false)
+        {
+                SAT_DEBUG("if(sat_ip_mac_addres_get(\"eth0\",NULL,mac) == false)");
+                return false;
+        }
+
+        /*获取mac的xx:xx:xx:xx:xx:xx 低字节*/
+        char *str = mac;
+        for (int i = 0; i < 3; i++)
+        {
+                str = strchr(str, ':');
+                if (str == NULL)
+                {
+                        SAT_DEBUG("char *str = strchar(mac, ':');%d", i);
+                        return false;
+                }
+                str++;
+        }
+        if (strlen(str) != 8)
+        {
+                SAT_DEBUG("char *str = %s", str);
+                return false;
+        }
+
+        int ip_part[3] = {0};
+        ip_part[0] = convert_a_string_to_an_integer_number(str, 2);
+        ip_part[1] = convert_a_string_to_an_integer_number(str + 3, 2);
+        ip_part[2] = convert_a_string_to_an_integer_number(str + 6, 2);
+
+        char ip[32] = {0};
+        sprintf(ip, "%d.%d.%d.%d", 10, ip_part[0], ip_part[1], ip_part[2]);
+
+        char cmd[128] = {0};
+        sprintf(cmd, "ifconfig eth0 %s netmask %s", ip, "255.0.0.0");
+        system(cmd);
+        SAT_DEBUG("%s ", cmd);
         return true;
 }
 
@@ -608,19 +682,19 @@ static bool automatic_ip_setting(void)
 {
         /*杀死相关的端口进程*/
         kill_related_port_process("5060");
-
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
-        if (ipaddr_udhcp_server_get_wait() == false)
+        if ((network_data_get()->dhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
-                sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
-                // system("killall udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+                sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->ip[0] != '\0')
                 {
-                        obtain_aipddress_based_on_manual();
+                        /*手动设置的IP信息*/
+                        obtain_ipddress_based_on_manual();
                 }
                 else
                 {
-                        obtain_ipaddress_based_on_username();
+                        /*默认IP*/
+                        obtain_ipaddress_based_on_mac(); // obtain_ipaddress_based_on_username();
                 }
                 add_multicase_routing_addres();
         }

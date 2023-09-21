@@ -1,366 +1,537 @@
 #ifndef __AK_VPSS_H__
 #define __AK_VPSS_H__
 
+#define VPSS_MD_DIMENSION_H_MAX 32
+#define VPSS_MD_DIMENSION_V_MAX 24
 
-#define VPSS_MD_DIMENSION_H_MAX     32
-#define VPSS_MD_DIMENSION_V_MAX     24
+#define VPSS_OD_AF_STATICS_MAX 5
+#define VPSS_OD_RGB_HIST_MAX 256
 
-#define VPSS_OD_AF_STATICS_MAX      5
-#define VPSS_OD_RGB_HIST_MAX        256
+#define VPSS_MASK_AREA_MAX 4
 
-#define VPSS_MASK_AREA_MAX	        4
+#define NIGHT_ARRAY_NUM 5
+#define DAY_ARRAY_NUM 10
 
-#define NIGHT_ARRAY_NUM		        5
-#define DAY_ARRAY_NUM		        10
+enum mode_state
 
-enum mode_state {
-    STATE_DAY,
-	STATE_NIGHT,
+{
+  STATE_DAY,
+  STATE_NIGHT,
+
 };
 
+enum vpss_mask_color_type
 
-enum vpss_mask_color_type {
-	VPSS_MASK_ORIGINAL_COLOR = 0,	/* masked with original color*/
-	VPSS_MASK_MOSAIC_VIDEO,			/* masked with mosaic video data*/
-	VPSS_MASK_MOSAIC_WHITE_VIDEO,	/* masked with mosaic & white 50% video data*/
-	VPSS_MASK_MOSAIC_BLACK_VIDEO,	/* masked with mosaic & black 50% video data*/
+{
+  VPSS_MASK_ORIGINAL_COLOR = 0, /* masked with original color*/
+  VPSS_MASK_MOSAIC_VIDEO,       /* masked with mosaic video data*/
+  VPSS_MASK_MOSAIC_WHITE_VIDEO, /* masked with mosaic & white 50% video data*/
+  VPSS_MASK_MOSAIC_BLACK_VIDEO, /* masked with mosaic & black 50% video data*/
+
 };
 
+enum vpss_effect_type
 
-enum vpss_effect_type {
-	/* HUE to SHARP, value: [-50, 50], 0 means use the value in ISP config file */
-	VPSS_EFFECT_HUE = 0x00,
-	VPSS_EFFECT_BRIGHTNESS,
-	VPSS_EFFECT_SATURATION,
-	VPSS_EFFECT_CONTRAST,
-	VPSS_EFFECT_SHARP,
-	VPSS_EFFECT_WDR,
-	
-	VPSS_STYLE_ID,		//[0, 2]
-	VPSS_POWER_HZ,		//50 or 60
-	VPSS_FLIP_MIRROR    //[0, 3]
+{
+  /* HUE to SHARP, value: [-50, 50], 0 means use the value in ISP config file */
+  VPSS_EFFECT_HUE = 0x00,
+  VPSS_EFFECT_BRIGHTNESS,
+  VPSS_EFFECT_SATURATION,
+  VPSS_EFFECT_CONTRAST,
+  VPSS_EFFECT_SHARP,
+  VPSS_EFFECT_WDR,
+
+  VPSS_STYLE_ID,   //[0, 2]
+  VPSS_POWER_HZ,   // 50 or 60
+  VPSS_FLIP_MIRROR //[0, 3]
+
 };
 
-enum vpss_gain_stat {
-	VPSS_GAIN_NO_CHANGE_STAT = 0,
-	VPSS_GAIN_LOW_STAT,
-	VPSS_GAIN_HIGH_STAT,
-	VPSS_GAIN_MID_STAT,
+enum vpss_gain_stat
+
+{
+  VPSS_GAIN_NO_CHANGE_STAT = 0,
+  VPSS_GAIN_LOW_STAT,
+  VPSS_GAIN_HIGH_STAT,
+  VPSS_GAIN_MID_STAT,
+
 };
 
-struct vpss_md_info {
-	unsigned short stat[VPSS_MD_DIMENSION_V_MAX][VPSS_MD_DIMENSION_H_MAX];
+struct vpss_md_info
+
+{
+  unsigned short stat[VPSS_MD_DIMENSION_V_MAX][VPSS_MD_DIMENSION_H_MAX];
 };
 
-struct vpss_od_info {
-	unsigned int af_statics[VPSS_OD_AF_STATICS_MAX];
-	unsigned int rgb_total;
-	unsigned int rgb_hist[VPSS_OD_RGB_HIST_MAX];
+struct vpss_od_info
+
+{
+  unsigned int af_statics[VPSS_OD_AF_STATICS_MAX];
+  unsigned int rgb_total;
+  unsigned int rgb_hist[VPSS_OD_RGB_HIST_MAX];
 };
 
-struct vpss_af_stat_info {
-   unsigned int  af_statics[5];            //ç»Ÿè®¡ç»“æžœ
+struct vpss_af_stat_info
+
+{
+  unsigned int af_statics[5];
+  // ï¿½~ï¿½ï¿½ï¿½~ï¿½g
 };
 
-struct vpss_af_attr {
-    unsigned short  af_win0_left; 	//[0, 4095]
-	unsigned short  af_win0_right;	//[0, 4095]
-	unsigned short  af_win0_top;	    //[0, 4095]
-	unsigned short  af_win0_bottom;   //[0, 4095]
+struct vpss_af_attr
 
-	unsigned short  af_win1_left; 	//[0, 4095]
-	unsigned short  af_win1_right;	//[0, 4095]
-	unsigned short  af_win1_top;	    //[[0, 4095]
-	unsigned short  af_win1_bottom;   //[0, 4095]
+{
+  unsigned short af_win0_left;
+  //[0, 4095]
+  unsigned short af_win0_right;
+  //[0, 4095]
+  unsigned short af_win0_top;
+  //[0, 4095]
+  unsigned short af_win0_bottom;
+  //[0, 4095]
 
-	unsigned short  af_win2_left; 	//[0, 4095]
-	unsigned short  af_win2_right;	//[0, 4095]
-	unsigned short  af_win2_top;	    //[0, 4095]
-	unsigned short  af_win2_bottom;   //[0, 4095]
+  unsigned short af_win1_left;
+  //[0, 4095]
+  unsigned short af_win1_right;
+  //[0, 4095]
+  unsigned short af_win1_top;    //[[0, 4095]
+  unsigned short af_win1_bottom; //[0, 4095]
 
-	unsigned short  af_win3_left; 	//[0, 4095]
-	unsigned short  af_win3_right;	//[0, 4095]
-	unsigned short  af_win3_top;	    //[0, 4095]
-	unsigned short  af_win3_bottom;   //[0, 4095]
+  unsigned short af_win2_left;   //[0, 4095]
+  unsigned short af_win2_right;  //[0, 4095]
+  unsigned short af_win2_top;    //[0, 4095]
+  unsigned short af_win2_bottom; //[0, 4095]
 
-	unsigned short  af_win4_left; 	//[0, 4095]
-	unsigned short  af_win4_right;	//[0, 4095]
-	unsigned short  af_win4_top;	    //[0, 4095]
-	unsigned short  af_win4_bottom;   //[0, 4095]
-    
-	unsigned short   af_th;       //[0, 128],     af_thÎª·§Öµ£¬´óÓÚ¸ÃÖµµÄ¸ßÍ¨ÂË²¨½á¹û½«±»½ØÈ¡¡£ÆäÖÐ¸ßÍ¨ÂË²¨½á¹ûÀ´×ÔÓÚsharpÄ£¿éÖÐµÄ¸ßÆµÈñ»¯½á¹û¡£
-    
+  unsigned short af_win3_left;   //[0, 4095]
+  unsigned short af_win3_right;  //[0, 4095]
+  unsigned short af_win3_top;    //[0, 4095]
+  unsigned short af_win3_bottom; //[0, 4095]
+
+  unsigned short af_win4_left;   //[0, 4095]
+  unsigned short af_win4_right;  //[0, 4095]
+  unsigned short af_win4_top;    //[0, 4095]
+  unsigned short af_win4_bottom; //[0, 4095]
+
+  unsigned short af_th; //[0, 128],     af_thï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½hï¿½ï¿½ï¿½!ï¿½ï¿½8ï¿½ï¿½hï¿½ï¿½ï¿½sharp#ï¿½ï¿½58ï¿½ï¿½ï¿½ï¿½ï¿½
 };
 
+struct vpss_mask_color_info
 
-struct vpss_mask_color_info {
-	/* defined by enum vpss_mask_color_type*/
-	unsigned char color_type;
+{
+  /* defined by enum vpss_mask_color_type*/
+  unsigned char color_type;
 
-	/* range [0, 0xff]. if 0 mask video opaquely, then can not see image */
-	unsigned char mk_alpha;
+  /* range [0, 0xff]. if 0 mask video opaquely, then can not see image */
+  unsigned char mk_alpha;
 
-	/* range [0, 0xff] */
-	unsigned char r_mk_color;
-	/* range [0, 0xff] */
-	unsigned char g_mk_color;
-	/* range [0, 0xff] */
-	unsigned char b_mk_color;
+  /* range [0, 0xff] */
+  unsigned char r_mk_color;
+  /* range [0, 0xff] */
+  unsigned char g_mk_color;
+  /* range [0, 0xff] */
+  unsigned char b_mk_color;
 };
 
-struct vpss_mask_area {
-	unsigned short start_xpos;
-	unsigned short end_xpos;
-	unsigned short start_ypos;
-	unsigned short end_ypos;
-    unsigned char enable;
+struct vpss_mask_area
+
+{
+  unsigned short start_xpos;
+  unsigned short end_xpos;
+  unsigned short start_ypos;
+  unsigned short end_ypos;
+  unsigned char enable;
 };
 
-struct vpss_mask_area_info {
-	struct vpss_mask_area main_mask[VPSS_MASK_AREA_MAX];
+struct vpss_mask_area_info
+
+{
+  struct vpss_mask_area main_mask[VPSS_MASK_AREA_MAX];
 };
 
-struct vpss_isp_ae_run_info {
-    unsigned char current_calc_avg_lumi;         		//ÏÖÔÚµÄ¼ÆËã³öµÄÁÁ¶ÈÖµ
-    unsigned char current_calc_avg_compensation_lumi;	//¾­¹ýÆØ¹â²¹³¥ºóµÄÁÁ¶ÈÖµ
+struct vpss_isp_ae_run_info
 
-    unsigned char current_darked_flag;                 	//°×ÌìºÚÒ¹µÄ±ê¼Ç
+{
+  unsigned char current_calc_avg_lumi;
+  // ï¿½ï¿½ï¿½<ï¿½
+  unsigned char current_calc_avg_compensation_lumi;
+  // ï¿½ï¿½9ï¿½,ï¿½ï¿½ï¿½
 
-    long  current_a_gain;				//Ä£ÄâÔöÒæµÄÖµ
-    long  current_d_gain;				//Êý×ÖÔöÒæµÄÖµ
-    long  current_isp_d_gain;			//ispÊý×ÖÔöÒæµÄÖµ
-    long  current_exp_time;				//ÆØ¹âÊ±¼äµÄÖµ
+  unsigned char current_darked_flag;
+  // ï¿½ï¿½ï¿½ï¿½ï¿½1
 
-    unsigned long  current_a_gain_step;	//ÏÖÔÚµÄÄ£ÄâÔöÒæµÄ²½³¤
-    unsigned long  current_d_gain_step; //Êý×ÖÔöÒæµÄ²½³¤
-    unsigned long  current_isp_d_gain_step;	//ispÊý×ÖÔöÒæµÄ²½³¤
-    unsigned long  current_exp_time_step;	//ÆØ¹âÊ±¼äµÄ²½³¤
+  long current_a_gain;
+  // #ï¿½ï¿½ï¿½
+  long current_d_gain;
+  // ï¿½ï¿½ï¿½
+  long current_isp_d_gain;
+  // ispï¿½ï¿½ï¿½
+  long current_exp_time;
+  // ï¿½ï¿½9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+  unsigned long current_a_gain_step;
+  // ï¿½ï¿½ï¿½ï¿½ï¿½#2ï¿½ï¿½
+  unsigned long current_d_gain_step;
+  // 2ï¿½ï¿½
+  unsigned long current_isp_d_gain_step;
+  // isp2ï¿½ï¿½
+  unsigned long current_exp_time_step;
+  // ï¿½ï¿½9ï¿½ï¿½ï¿½2ï¿½ï¿½
 };
 
+struct vpss_isp_ae_init_info
 
-struct vpss_isp_ae_init_info {
-    long  a_gain;				//Ä£ÄâÔöÒæµÄÖµ
-    long  d_gain;				//Êý×ÖÔöÒæµÄÖµ
-    long  isp_d_gain;			//ispÊý×ÖÔöÒæµÄÖµ
-    long  exp_time;				//ÆØ¹âÊ±¼äµÄÖµ
+{
+  long a_gain;
+  // #ï¿½ï¿½ï¿½
+  long d_gain;
+  // ï¿½ï¿½ï¿½
+  long isp_d_gain;
+  // ispï¿½ï¿½ï¿½
+  long exp_time;
+  // ï¿½ï¿½9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 };
 
-struct vpss_isp_ae_attr {
-	unsigned int exp_time_max;			//ÆØ¹âÊ±¼äµÄ×î´óÖµ
-    unsigned int exp_time_min;			//ÆØ¹âÊ±¼äµÄ×îÐ¡Öµ
-    unsigned int d_gain_max;      		//Êý×ÖÔöÒæµÄ×î´óÖµ
-    unsigned int d_gain_min;     		//Êý×ÖÔöÒæµÄ×îÐ¡Öµ
-    unsigned int isp_d_gain_min;  		//ispÊý×ÖÔöÒæµÄ×îÐ¡
-    unsigned int isp_d_gain_max;  		//ispÊý×ÖÔöÒæµÄ×î´óÖµ
-    unsigned int a_gain_max;     		//Ä£ÄâÔöÒæµÄ×î´óÖµ
-    unsigned int a_gain_min;      		//Ä£ÄâÔöÒæµÄ×îÐ¡Öµ
-    unsigned int exp_step;            	//ÓÃ»§ÆØ¹âµ÷Õû²½³¤
-    unsigned int exp_stable_range;     //ÎÈ¶¨·¶Î§
-    unsigned int target_lumiance[10];     	//Ä¿±êÁÁ¶È
-    unsigned int envi_gain_range[10][2];
-    unsigned int hist_weight[16];
-    unsigned int BC_en;                 //±³¹â²¹³¥Ê¹ÄÜ
-    unsigned int BC_detect_scope;		//°µÇøÖ±·½Í¼¼ì²â·¶Î§
-    unsigned int BC_rate_max;			//Ö±·½Í¼°µÇøÏñËØ×î´ó±ÈÂÊ
-    unsigned int BC_rate_min;			//Ö±·½Í¼°µÇøÏñËØ×îÐ¡±ÈÂÊ
+struct vpss_isp_ae_attr
+
+{
+  unsigned int exp_time_max;
+  // ï¿½ï¿½9ï¿½ï¿½ï¿½ï¿½
+  unsigned int exp_time_min;
+  // ï¿½ï¿½9ï¿½ï¿½ï¿½ï¿½ï¿½!ï¿½
+  unsigned int d_gain_max;
+  // ï¿½
+  unsigned int d_gain_min;
+  // ï¿½ï¿½!ï¿½
+  unsigned int isp_d_gain_min;
+  // ispï¿½ï¿½!
+  unsigned int isp_d_gain_max;
+  // ispï¿½
+  unsigned int a_gain_max;
+  // #ï¿½
+  unsigned int a_gain_min;
+  // #ï¿½ï¿½!ï¿½
+  unsigned int exp_step;
+  // ï¿½ï¿½ï¿½9
+  unsigned int exp_stable_range;
+  // ï¿½ï¿½6ï¿½ï¿½ï¿½
+  unsigned int target_lumiance[10];
+  // ?
+  unsigned int envi_gain_range[10][2];
+  unsigned int hist_weight[16];
+  unsigned int BC_en;
+  // ï¿½ï¿½ï¿½,ï¿½
+  unsigned int BC_detect_scope;
+  // ï¿½|ï¿½-ï¿½
+  unsigned int BC_rate_max;
+  // ï¿½|
+  unsigned int BC_rate_min;
+  // ï¿½|!
 };
 
-struct vpss_isp_me_attr {
-	unsigned int exp_time;	
-    unsigned int a_gain; 
-    unsigned int d_gain;	
-    unsigned int isp_d_gain;	
+struct vpss_isp_me_attr
+
+{
+  unsigned int exp_time;
+  unsigned int a_gain;
+  unsigned int d_gain;
+  unsigned int isp_d_gain;
 };
 
+struct vpss_isp_awb_stat_info
 
-struct vpss_isp_awb_stat_info {
-	//ÔÚ°×Æ½ºâÍ³¼Æ²ÎÊý·¶Î§ÄÚµÄ°×Æ½ºâÍ³¼Æ½á¹û
-    unsigned long  total_R[10];	//10¸öÉ«ÎÂÃ¿Ò»¸öÉ«ÎÂÏÂµÄR·ÖÁ¿ÏñËØÖµ
-    unsigned long  total_G[10]; //10¸öÉ«ÎÂÃ¿Ò»¸öÉ«ÎÂÏÂµÄG·ÖÁ¿ÏñËØÖµ
-    unsigned long  total_B[10]; //10¸öÉ«ÎÂÃ¿Ò»¸öÉ«ÎÂÏÂµÄB·ÖÁ¿ÏñËØÖµ
-    unsigned long  total_cnt[10];	//ÔÚ°×Æ½ºâÍ³¼Æ²ÎÊý·¶Î§ÄÚµÄÏñËØÊýÁ¿Öµ
-    
-    //¾­ÓÉ×Ô¶¯°×Æ½ºâËã·¨Ëã³öµÄ°×Æ½ºâÔöÒæÖµ
-    unsigned short  r_gain;	// ºìÉ«·ÖÁ¿ÔöÒæÖµ
-    unsigned short  g_gain;	// ÂÌÉ«·ÖÁ¿ÔöÒæÖµ
-    unsigned short  b_gain;	// À¶É«·ÖÁ¿ÔöÒæÖµ
-    unsigned short  r_offset;	// ºìÉ«·ÖÁ¿Æ«ÒÆÖµ
-    unsigned short  g_offset;	// ÂÌÉ«·ÖÁ¿Æ«ÒÆÖµ
-    unsigned short  b_offset;	// À¶É«·ÖÁ¿Æ«ÒÆÖµ
-    unsigned short  current_colortemp_index;   //»·¾³É«ÎÂ±ê¼Ç£¬ÊÇ²ÎÊýËæ»·¾³±ä»¯µÄÉ«ÎÂÖ¸±ê  
-    unsigned short  colortemp_stable_cnt[10];  //Ã¿Ò»ÖÖÉ«ÎÂÎÈ¶¨µÄÖ¡Êý¼ÆÊý   
+{
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½
+  unsigned long total_R[10];
+  // 10kï¿½ï¿½kï¿½Rï¿½
+  unsigned long total_G[10];
+  // 10kï¿½ï¿½kï¿½Gï¿½
+  unsigned long total_B[10];
+  // 10kï¿½ï¿½kï¿½Bï¿½
+  unsigned long total_cnt[10];
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+  // ï¿½ï¿½6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=0ï¿½ï¿½ï¿½ï¿½
+  unsigned short r_gain;
+  // kï¿½
+  unsigned short g_gain;
+  // kï¿½
+  unsigned short b_gain;
+  // kï¿½
+  unsigned short r_offset;
+  // kï¿½ï¿½
+  unsigned short g_offset;
+  // kï¿½ï¿½
+  unsigned short b_offset;
+  // kï¿½ï¿½
+  unsigned short current_colortemp_index;
+  // kï¿½ï¿½ï¿½ï¿½nï¿½ï¿½ï¿½Nkï¿½
+  unsigned short colortemp_stable_cnt[10];
+  // ï¿½ï¿½kï¿½ï¿½6ï¿½ï¿½ï¿½
 };
 
-struct ak_auto_day_night_threshold {
-    int day_to_night_lum;	// day to night lum value
-    int night_to_day_lum;	// night to day lum value
-    int night_cnt[NIGHT_ARRAY_NUM];	// awb night cnt array
-    int day_cnt[DAY_ARRAY_NUM];	// awb day cnt array
-    int lock_time;					// locke night status time
-    int quick_switch_mode;			// quick switch mode
-    int day2night_sleep_time;       // day change to night sleep time
-    int night2day_sleep_time;       // night change to day sleep time
+struct ak_auto_day_night_threshold
+
+{
+  int day_to_night_lum;
+  // day to night lum value
+  int night_to_day_lum;
+  // night to day lum value
+  int night_cnt[NIGHT_ARRAY_NUM];
+  // awb night cnt array
+  int day_cnt[DAY_ARRAY_NUM];
+  // awb day cnt array
+  int lock_time;
+  // locke night status time
+  int quick_switch_mode;
+  // quick switch mode
+  int day2night_sleep_time;
+  // day change to night sleep time
+  int night2day_sleep_time;
+  // night change to day sleep time
 };
 
-struct vpss_isp_wdr {
-    unsigned short   hdr_uv_adjust_level;        //uvè°ƒæ•´ç¨‹åº¦, [0,31]
-    unsigned short   hdr_cnoise_suppress_slop;   //æŠ‘åˆ¶æ–œçŽ‡
-    unsigned short   wdr_enable;
-  
-	unsigned short	wdr_th1;	  //0-1023
-	unsigned short	wdr_th2;	  //0-1023
-	unsigned short	wdr_th3;	  //0-1023
-	unsigned short	wdr_th4;	  //0-1023
-	unsigned short	wdr_th5;	  //0-1023
+struct vpss_isp_wdr
 
-    //unsigned short wdr_light_weight;
-    
-	unsigned short	area_tb1[65];	  //10bit
-	unsigned short	area_tb2[65];	  //10bit
-	unsigned short	area_tb3[65];	  //10bit
-	unsigned short	area_tb4[65];	  //10bit
-	unsigned short	area_tb5[65];	  //10bit
-	unsigned short	area_tb6[65];	  //10bit
+{
+  unsigned short hdr_uv_adjust_level;
+  // uvï¿½te zï¿½ ^, [0,31]
+  unsigned short hdr_cnoise_suppress_slop;
+  // ï¿½b6Rï¿½eï¿½s
+  unsigned short wdr_enable;
 
-	unsigned short	area1_key[16];
-	unsigned short	area2_key[16];
-	unsigned short	area3_key[16];
-	unsigned short	area4_key[16];
-	unsigned short	area5_key[16];
-	unsigned short	area6_key[16];
+  unsigned short wdr_th1;
+  // 0-1023
+  unsigned short wdr_th2;
+  // 0-1023
+  unsigned short wdr_th3;
+  // 0-1023
+  unsigned short wdr_th4;
+  // 0-1023
+  unsigned short wdr_th5;
+  // 0-1023
 
-    unsigned short   hdr_uv_adjust_enable;       //uvè°ƒæ•´ä½¿èƒ½
-    unsigned short   hdr_cnoise_suppress_yth1;   //è‰²å½©å™ªå£°äº®åº¦é˜ˆå€¼1
-    unsigned short   hdr_cnoise_suppress_yth2;   //è‰²å½©å™ªå£°äº®åº¦é˜ˆå€¼2
-    unsigned short   hdr_cnoise_suppress_gain;   //è‰²å·®æŠ‘åˆ¶
+  // unsigned short wdr_light_weight;
+
+  unsigned short area_tb1[65];
+  // 10bit
+  unsigned short area_tb2[65];
+  // 10bit
+  unsigned short area_tb3[65];
+  // 10bit
+  unsigned short area_tb4[65];
+  // 10bit
+  unsigned short area_tb5[65];
+  // 10bit
+  unsigned short area_tb6[65];
+  // 10bit
+
+  unsigned short area1_key[16];
+  unsigned short area2_key[16];
+  unsigned short area3_key[16];
+  unsigned short area4_key[16];
+  unsigned short area5_key[16];
+  unsigned short area6_key[16];
+
+  unsigned short hdr_uv_adjust_enable;
+  // uvï¿½teOï¿½ï¿½
+  unsigned short hdr_cnoise_suppress_yth1;
+  // rï¿½i_jVï¿½Xï¿½Nï¿½ ^ï¿½< P1
+  unsigned short hdr_cnoise_suppress_yth2;
+  // rï¿½i_jVï¿½Xï¿½Nï¿½ ^ï¿½< P2
+  unsigned short hdr_cnoise_suppress_gain; // rï¿½ï¿½]ï¿½b6R
 };
 
-struct vpss_wdr_attr {
-	unsigned short      wdr_mode;              //æ¨¡å¼é€‰æ‹©ï¼Œæ‰‹åŠ¨æˆ–è€…è”åŠ¨
-	
-	struct vpss_isp_wdr manual_wdr;
-	struct vpss_isp_wdr linkage_wdr[9]; 
+struct vpss_wdr_attr
+
+{
+  unsigned short wdr_mode;
+  // !j_	ï¿½ï¿½bï¿½Kbï¿½Rbï¿½Tï¿½ï¿½R
+
+  struct vpss_isp_wdr manual_wdr;
+  struct vpss_isp_wdr linkage_wdr[9];
 };
 
-struct vpss_isp_weight_attr {
-   unsigned short zone_weight[8][16];
+struct vpss_isp_weight_attr
+
+{
+  unsigned short zone_weight[8][16];
 };
 
-struct vpss_isp_wb_type_attr {
-    unsigned short wb_type;
+struct vpss_isp_wb_type_attr
+
+{
+  unsigned short wb_type;
 };
 
-struct vpss_isp_3d_nr {
-	unsigned short		tnr_enable;			    //default:1
-	unsigned short		updata_ref;			    //¸üÐÂy/uv,default:1
-	unsigned short		tnr_refFrame_format;	//²Î¿¼Ö¡µÄ¸ñÊ½default:2
+struct vpss_isp_3d_nr
 
-	unsigned short		t_mf_th1; 	            //[0, 8191],default:300
-	unsigned short		t_mf_th2; 	            //[0, 8191],default:500
-	unsigned short 		statScale[129];	        //[0, 15],default:8
-	unsigned short		statScale_key[16];
-	unsigned short	 	t_k_scale;	            //[0, 63],default:34
-	unsigned short		minstep;	            //[0-15],default:2
-	unsigned short		update_th;	            //[0-15],default:8
+{
+  unsigned short tnr_enable;
+  // default:1
+  unsigned short updata_ref;
+  // y/uv,default:1
+  unsigned short tnr_refFrame_format;
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½ï¿½default:2
 
-	unsigned short		uvnr_k; 		        //[0, 15],default:8
-	unsigned short		uvlp_k1; 		        //[0, 15],default:7
-	unsigned short		uvlp_k2; 		        //[0, 15],default:0
-	unsigned short		t_uv_th1;		        //[0, 255],default:48
-	unsigned short		t_uv_th2;		        //[0, 255],default:16
-	unsigned short		t_uv_k; 		        //[0, 127],default:120
-	unsigned short		t_uv_kslop; 		    //[0, 127],default:32
+  unsigned short t_mf_th1;
+  //[0, 8191],default:300
+  unsigned short t_mf_th2;
+  //[0, 8191],default:500
+  unsigned short statScale[129];
+  //[0, 15],default:8
+  unsigned short statScale_key[16];
+  unsigned short t_k_scale;
+  //[0, 63],default:34
+  unsigned short minstep;
+  //[0-15],default:2
+  unsigned short update_th;
+  //[0-15],default:8
 
-	unsigned short		ynr_weight_tbl[17];     //ynr_strength
-	unsigned short		ynr_calc_k;
-	unsigned short		ylp_k1;			        //[0, 15],default:7
-	unsigned short		ylp_k2;			        //[0, 15],default:0
-	unsigned short		t_y_th1;		        //[0, 255],default:48
-	unsigned short		t_y_th2;		        //[0, 255],default:16
-	unsigned short		t_y_k; 		            //[0, 127],default:120
-	unsigned short		t_y_kslop; 		        //[0, 127],default:32
+  unsigned short uvnr_k;
+  //[0, 15],default:8
+  unsigned short uvlp_k1;
+  //[0, 15],default:7
+  unsigned short uvlp_k2;
+  //[0, 15],default:0
+  unsigned short t_uv_th1;
+  //[0, 255],default:48
+  unsigned short t_uv_th2;
+  //[0, 255],default:16
+  unsigned short t_uv_k;
+  //[0, 127],default:120
+  unsigned short t_uv_kslop;
+  //[0, 127],default:32
 
-	unsigned int		md_th;			        //[0, 65535]  ÔË¶¯¼ì²âãÐÖµ[0-127],default:0
+  unsigned short ynr_weight_tbl[17];
+  // ynr_strength
+  unsigned short ynr_calc_k;
+  unsigned short ylp_k1;
+  //[0, 15],default:7
+  unsigned short ylp_k2;
+  //[0, 15],default:0
+  unsigned short t_y_th1;
+  //[0, 255],default:48
+  unsigned short t_y_th2;
+  //[0, 255],default:16
+  unsigned short t_y_k;
+  //[0, 127],default:120
+  unsigned short t_y_kslop;
+  //[0, 127],default:32
+
+  unsigned int md_th;
+  //[0, 65535]  ï¿½ï¿½ï¿½ï¿½[0-127],default:0
 };
 
-struct vpss_isp_3d_nr_attr {
-    unsigned short        _3d_nr_mode;
-    struct vpss_isp_3d_nr manual_3d_nr;
-    struct vpss_isp_3d_nr linkage_3d_nr[9];
+struct vpss_isp_3d_nr_attr
+
+{
+  unsigned short _3d_nr_mode;
+  struct vpss_isp_3d_nr manual_3d_nr;
+  struct vpss_isp_3d_nr linkage_3d_nr[9];
 };
 
-struct vpss_isp_mwb_attr {
-    unsigned short r_gain;
-    unsigned short g_gain;
-    unsigned short b_gain;
-    short r_offset;
-    short g_offset;
-    short b_offset;
+struct vpss_isp_mwb_attr
+
+{
+  unsigned short r_gain;
+  unsigned short g_gain;
+  unsigned short b_gain;
+  short r_offset;
+  short g_offset;
+  short b_offset;
 };
 
-struct vpss_isp_awb_attr {
-    unsigned short g_weight[16];
-    unsigned short y_low;				//y_low<=y_high
-    unsigned short y_high;
-	unsigned short err_est;
-    unsigned short gr_low[10];			//gr_low[i]<=gr_high[i]
-    unsigned short gb_low[10]; 			//gb_low[i]<=gb_high[i]
-    unsigned short gr_high[10];
-    unsigned short gb_high[10];
-    unsigned short rb_low[10];			//rb_low[i]<=rb_high[i]
-    unsigned short rb_high[10];
+struct vpss_isp_awb_attr
 
-    //awbÈí¼þ²¿·ÖÐèÒªÉèÖÃµÄ²ÎÊý
-    unsigned short auto_wb_step;                //°×Æ½ºâ²½³¤¼ÆËã
-    unsigned short total_cnt_thresh;            //ÏñËØ¸öÊýãÐÖµ
-    unsigned short colortemp_stable_cnt_thresh; //ÎÈ¶¨Ö¡Êý£¬¶àÉÙÖ¡Ò»ÑùÈÏÎª»·¾³É«ÎÂ¸Ä±ä
-    unsigned short colortemp_envi[10];
+{
+  unsigned short g_weight[16];
+  unsigned short y_low;
+  // y_low<=y_high
+  unsigned short y_high;
+  unsigned short err_est;
+  unsigned short gr_low[10];
+  // gr_low[i]<=gr_high[i]
+  unsigned short gb_low[10];
+  // gb_low[i]<=gb_high[i]
+  unsigned short gr_high[10];
+  unsigned short gb_high[10];
+  unsigned short rb_low[10];
+  // rb_low[i]<=rb_high[i]
+  unsigned short rb_high[10];
+
+  // awbï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½
+  unsigned short auto_wb_step;
+  // ï¿½ï¿½ï¿½ï¿½,
+  unsigned short total_cnt_thresh;
+  // ï¿½ï¿½8ï¿½ï¿½ï¿½
+  unsigned short colortemp_stable_cnt_thresh;
+  // ï¿½ï¿½6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½kï¿½ï¿½ï¿½1ï¿½ï¿½
+  unsigned short colortemp_envi[10];
 };
 
-struct vpss_isp_exp_type {
-    unsigned short  exp_type;
+struct vpss_isp_exp_type
+
+{
+  unsigned short exp_type;
 };
 
-struct vpss_isp_sensor_reg_info {
-    unsigned short reg_addr;
-    unsigned short value;
+struct vpss_isp_sensor_reg_info
+
+{
+  unsigned short reg_addr;
+  unsigned short value;
 };
 
-struct vpss_lens_coef{
-    unsigned short coef_b[10];    //[0,255]
-    unsigned short coef_c[10];    //[0,1023]
+struct vpss_lens_coef
+
+{
+  unsigned short coef_b[10];
+  //[0,255]
+  unsigned short coef_c[10];
+  //[0,1023]
 };
 
-struct vpss_lsc_attr {
-    unsigned short          enable;
-    //the reference point of lens correction
-    unsigned short          xref;        //[0,4096]
-    unsigned short          yref;        //[0,4096]
-    unsigned short          lsc_shift;   //[0,15]
-    struct vpss_lens_coef   lsc_r_coef;
-    struct vpss_lens_coef   lsc_gr_coef;
-    struct vpss_lens_coef   lsc_gb_coef;
-    struct vpss_lens_coef   lsc_b_coef;
-    //the range of ten segment
-    unsigned short          range[10];   //[0,1023]
-    unsigned short          lsc_mode;
-    unsigned char           linkage_strength[10];   //[0,1023]
+struct vpss_lsc_attr
+
+{
+  unsigned short enable;
+  // the reference point of lens correction
+  unsigned short xref;
+  //[0,4096]
+  unsigned short yref;
+  //[0,4096]
+  unsigned short lsc_shift;
+  //[0,15]
+  struct vpss_lens_coef lsc_r_coef;
+  struct vpss_lens_coef lsc_gr_coef;
+  struct vpss_lens_coef lsc_gb_coef;
+  struct vpss_lens_coef lsc_b_coef;
+  // the range of ten segment
+  unsigned short range[10];
+  //[0,1023]
+  unsigned short lsc_mode;
+  unsigned char linkage_strength[10];
+  //[0,1023]
 };
 
-struct vpss_fps_level {
-	int high_fps;
-    int high_fps_exp_time;
-    int high_fps_to_lower_fps_gain;
-    
-	int mid_fps;                    //set 0 means no use middle fps 
-    int mid_fps_exp_time;           //set 0 means no use middle fps 
-    int mid_fps_to_low_fps_gain;    //set 0 means no use middle fps 
-    
-	int low_fps;
-	int low_fps_exp_time;
-    int low_fps_to_higher_fps_gain;
-};
+struct vpss_fps_level
 
+{
+  int high_fps;
+  int high_fps_exp_time;
+  int high_fps_to_lower_fps_gain;
+
+  int mid_fps;
+  // set 0 means no use middle fps
+  int mid_fps_exp_time;
+  // set 0 means no use middle fps
+  int mid_fps_to_low_fps_gain;
+  // set 0 means no use middle fps
+
+  int low_fps;
+  int low_fps_exp_time;
+  int low_fps_to_higher_fps_gain;
+};
 
 /********************** public *******************************/
 
@@ -373,17 +544,16 @@ const char *ak_vpss_get_version(void);
 /**
  * ak_vpss_get_ispsdk_version - get ispsdk version
  * return: version string
- * notes: 
+ * notes:
  */
-const char* ak_vpss_get_ispsdk_version(void);
-
+const char *ak_vpss_get_ispsdk_version(void);
 
 /********************** md *******************************/
 
 /**
  * ak_vpss_hw_md_get_stat: get motion detection stat params
  * @dev[IN]: dev id
- * @md[OUT]: md params 
+ * @md[OUT]: md params
  * return: 0 success, otherwise error code
  * notes:
  */
@@ -394,12 +564,11 @@ int ak_vpss_md_get_stat(int dev, struct vpss_md_info *md);
 /**
  * brief: get occlusion detection params
  * @dev[IN]: dev id
- * @od[OUT]: od params 
+ * @od[OUT]: od params
  * return: 0 success, otherwise error code
  * notes:
  */
 int ak_vpss_od_get(int dev, struct vpss_od_info *od);
-
 
 /********************** af stat *******************************/
 
@@ -430,65 +599,65 @@ int ak_vpss_af_set_attr(int dev, struct vpss_af_attr *af_attr);
  */
 int ak_vpss_af_get_attr(int dev, struct vpss_af_attr *af_attr);
 
-
 /********************** effect *******************************/
 
-/**  
- * ak_vpss_effect_get - get isp effect param. 
+/**
+ * ak_vpss_effect_get - get isp effect param.
  * @dev[IN]: dev id
- * @type[IN]:   effect type name 
- * @value[OUT]: effect value(s) 
- * return: 0 - success; otherwise error code
+ * @type[IN]:   effect type name
+ * @value[OUT]: effect value(s)
+ * return: 0 - success;
+ otherwise error code
  */
 int ak_vpss_effect_get(int dev, enum vpss_effect_type type, int *value);
 
-/** 
- * ak_vpss_effect_set - set isp effect param. 
+/**
+ * ak_vpss_effect_set - set isp effect param.
  * @dev[IN]: dev id
  * @type[IN]:   effect type name
  * @value[IN]: effect value
- * return: 0 - success; otherwise error code
+ * return: 0 - success;
+ otherwise error code
  */
-int ak_vpss_effect_set(int dev, enum vpss_effect_type type, 	const int value);
+int ak_vpss_effect_set(int dev, enum vpss_effect_type type, const int value);
 
 /********************** mask *******************************/
 
-/**  
+/**
  * brief: set main & sub channel mask area
  * @dev[IN]: dev id
  * @area[IN]: main channel mask area paramters
  * return: 0 success, other error code
- * notes: 
+ * notes:
  */
 int ak_vpss_mask_set_area(int dev, const struct vpss_mask_area_info *area);
 
-/**  
+/**
  * brief: get main & sub channel mask area
  * @dev[IN]: dev id
  * @area[OUT]: main channel mask area paramters
  * return: 0 success, other error code
- * notes: 
+ * notes:
  */
 int ak_vpss_mask_get_area(int dev, struct vpss_mask_area_info *area);
 
-/**  
+/**
  * brief: set main & sub channel mask color
  * @dev[IN]: dev id
  * @color[IN]: main & sub channel mask color paramters
  * return: 0 success, other error code
- * notes: 
+ * notes:
  */
 int ak_vpss_mask_set_color(int dev, const struct vpss_mask_color_info *color);
 
-/**  
+/**
  * brief: get main & sub channel mask color
  * @dev[IN]: dev id
  * @color[OUT]: main & sub channel mask color paramters
  * return: 0 success, other error code
- * notes: 
+ * notes:
  */
 int ak_vpss_mask_get_color(int dev, struct vpss_mask_color_info *color);
-
 
 /**
  * brief: get fps ctrl stat
@@ -536,7 +705,6 @@ int ak_vpss_get_fps_level(int dev, struct vpss_fps_level *fps_level);
  */
 int ak_vpss_get_sensor_fps(int dev, int *fps);
 
-
 /**
  * ak_vpss_get_ae_run_info: get ae run info
  * @dev[IN]: device id
@@ -545,7 +713,6 @@ int ak_vpss_get_sensor_fps(int dev, int *fps);
  */
 int ak_vpss_get_ae_run_info(int dev, struct vpss_isp_ae_run_info *ae_run_info);
 
-
 /**
  * ak_vpss_set_ae_init_info: set ae init info
  * @dev[IN]: device id
@@ -553,7 +720,6 @@ int ak_vpss_get_ae_run_info(int dev, struct vpss_isp_ae_run_info *ae_run_info);
  * return: 0 success, otherwise error code;
  */
 int ak_vpss_set_ae_init_info(int dev, struct vpss_isp_ae_init_info *ae_init_info);
-
 
 /**
  * ak_vpss_get_sensor_ae_info: get sensor fast ae info
@@ -625,7 +791,7 @@ int ak_vpss_set_me_attr(int dev, const struct vpss_isp_me_attr *me_attr);
  * ae_suspend_flag[IN]: 1 suspend, 0 resume
  * return: 0 success, otherwise error code;
  */
-int ak_vpss_set_ae_suspend(int dev,  int ae_suspend_flag);
+int ak_vpss_set_ae_suspend(int dev, int ae_suspend_flag);
 
 /**
  * ak_vpss_get_awb_stat_info: get awb stat info
@@ -636,9 +802,9 @@ int ak_vpss_set_ae_suspend(int dev,  int ae_suspend_flag);
 int ak_vpss_get_awb_stat_info(int dev, struct vpss_isp_awb_stat_info *awb_stat_info);
 
 /**
- * brief: get current lum factor 
+ * brief: get current lum factor
  * @dev[IN]: device id
- * @lumi[OUT]: lum factor 
+ * @lumi[OUT]: lum factor
  * return: 0 success, otherwise error code;
  * notes:
  */
@@ -648,16 +814,18 @@ int ak_vpss_get_cur_lumi(int dev, int *lumi);
  * ak_vpss_set_auto_day_night_param: set auto day or night switch threshold
  * @dev[IN]: device id
  * @param[IN]: input param threshold
- * return: 0 - success; otherwise error code;
+ * return: 0 - success;
+ otherwise error code;
  */
 int ak_vpss_set_auto_day_night_param(int dev, struct ak_auto_day_night_threshold *param);
 
 /**
- * ak_vpss_get_auto_day_night_level: get day or night 
+ * ak_vpss_get_auto_day_night_level: get day or night
  * @dev[IN]: device id
  * @pre_ir_level[IN]: pre status, 0 day, 1 night
  * @new_level[OUT]: new status, 0 day, 1 night
- * return: 0 - success; otherwise error code;
+ * return: 0 - success;
+ otherwise error code;
  */
 int ak_vpss_get_auto_day_night_level(int dev, int pre_ir_level, int *new_ir_level);
 
@@ -744,8 +912,8 @@ int ak_vpss_set_weight_attr(int dev, struct vpss_isp_weight_attr *weight_attr);
  * @b_avr[OUT]: b average value
  * return: 0 success, otherwise error code;
  */
-int ak_vpss_get_rgb_average(int dev, 
-        unsigned int *r_avr, unsigned int *g_avr, unsigned int *b_avr);
+int ak_vpss_get_rgb_average(int dev,
+                            unsigned int *r_avr, unsigned int *g_avr, unsigned int *b_avr);
 
 /**
  * ak_vpss_get_wb_type: get wb type
@@ -858,6 +1026,5 @@ int ak_vpss_set_lsc_attr(int dev, const struct vpss_lsc_attr *lsc);
  * return: 0 success, otherwise error code;
  */
 int ak_vpss_get_awb_stable(int dev, char *awb_stable_flag);
-
 
 #endif
