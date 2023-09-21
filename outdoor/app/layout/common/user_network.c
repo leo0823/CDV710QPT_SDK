@@ -2619,7 +2619,7 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
                 return false;
         }
         free(html_fmt);
-
+        // printf("\n%s\n", recv_data);
         /*解析获取颜色数值*/
         const char *pxml = strstr((const char *)recv_data, "<"); // "<?xml version=\"1.0\"");
         if (pxml == NULL)
@@ -2634,7 +2634,7 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
                 if (node != NULL)
                 {
                         int value = (int)atof(mxmlGetText(node, NULL));
-                        if (value != user_data_get()->brightness)
+                        if ((value <= 50) && (value >= (-50)) && (value != user_data_get()->brightness))
                         {
                                 is_need_save = true;
                                 user_data_get()->brightness = value;
@@ -2647,7 +2647,7 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
                 if (node != NULL)
                 {
                         int value = (int)atof(mxmlGetText(node, NULL));
-                        if (value != user_data_get()->saturation)
+                        if ((value <= 50) && (value >= (-50)) && (value != user_data_get()->saturation))
                         {
                                 is_need_save = true;
                                 user_data_get()->saturation = value;
@@ -2660,7 +2660,7 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
                 if (node != NULL)
                 {
                         int value = (int)atof(mxmlGetText(node, NULL));
-                        if (value != user_data_get()->contrast)
+                        if ((value <= 50) && (value >= (-50)) && (value != user_data_get()->contrast))
                         {
                                 is_need_save = true;
                                 user_data_get()->contrast = value;
@@ -2673,7 +2673,7 @@ static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_soc
                 if (node != NULL)
                 {
                         int value = (int)atof(mxmlGetText(node, NULL));
-                        if (value != user_data_get()->sharpness)
+                        if ((value < 50) && (value > (-50)) && (value != user_data_get()->sharpness))
                         {
                                 is_need_save = true;
                                 user_data_get()->sharpness = value;
