@@ -60,18 +60,16 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
         if (mode & REC_MODE_TUYA_CALL)
         {
                 printf("======tuya_api_call_event=====\n");
-                printf("ch is %d\n",ch);
-                tuya_api_call_event(1,(const char *)data, size);
+                tuya_api_call_event(monitor_channel_get() + 1,(const char *)data, size);
         }
         if (mode & REC_MODE_TUYA_ALARM)
         {
                 printf("======tuya_api_alarm_event=====\n");
-                printf("ch is %d\n",ch);
-                tuya_api_alarm_event(0, (const char *)data, size);
+                tuya_api_alarm_event(monitor_channel_get() + 1, (const char *)data, size);
         }
         if (mode & REC_MODE_TUYA_MOTION)
         {
-                tuya_api_motion_event(0, (const char *)data, size);
+                tuya_api_motion_event(monitor_channel_get() + 1, (const char *)data, size);
         }
         system("sync");
         return true;

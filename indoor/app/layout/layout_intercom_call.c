@@ -92,7 +92,7 @@ static void intercom_call_abnormal_title_display(lv_obj_t * obj)
 
         int online_num = 0;
         extension_online_check(-1,&online_num);
-        if( online_num == 0)
+        if(0/*online_num == 0*/)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }else
@@ -662,8 +662,8 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_set_style_bg_opa(guard_txt_obj, LV_OPA_TRANSP, LV_STATE_USER_2);
                         lv_obj_add_state(guard_txt_obj, LV_STATE_USER_2);
 
-                        lv_obj_t *btnmatrix = lv_common_number_input_keyboard_create(page_1, intercom_call_obj_id_id_base, 231, 8, 793, 384,
-                                                                                     intercom_id_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00a8ff,
+                        lv_obj_t *btnmatrix = lv_common_number_input_keyboard_create(page_1, intercom_call_obj_id_id_base, 231, 8, 793, 402,
+                                                                                     intercom_id_obj_click, LV_OPA_TRANSP, 0x808080, LV_OPA_TRANSP, 0x00a8ff,
                                                                                      0, 1, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0, 3, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,

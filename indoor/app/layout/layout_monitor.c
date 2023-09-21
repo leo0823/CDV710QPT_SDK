@@ -301,7 +301,7 @@ static void montior_obj_top_icon_display(void)
                 {
                         return;
                 }
-                if (user_data_get()->audio.ring_mute == 0)
+                if (user_data_get()->audio.ring_mute)
                 {
                         lv_obj_set_x(obj, pos_x);
                         pos_x -= 56;
@@ -352,32 +352,42 @@ static void monitor_obj_timeout_label_display(void)
 
 static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 {
-        int num = tuya_api_client_num();
+
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
                 monitor_timeout_sec--;
-        }
-        else if (num == 0)
+        }else
         {
-
                 layout_monitor_goto_layout_process();
         }
-        else
-        {
-                monitor_obj_timeout_label_display();
+        // int num = tuya_api_client_num();
+        // if (monitor_timeout_sec > 0)
+        // {
+        //         monitor_obj_timeout_label_display();
+        //         monitor_timeout_sec--;
+        // }
+        // else if (num == 0)
+        // {
 
-                monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
-                                                                                                                                                            : 3 * 60)
-                                                                      : 30);
-        }
+        //         layout_monitor_goto_layout_process();
+        // }
+        // else
+        // {
+        //         monitor_obj_timeout_label_display();
+
+        //         monitor_timeout_sec_reset(is_monitor_door_camera_talk ? (user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 2 * 60
+        //                                                                                                                                                     : 3 * 60)
+        //                                                               : 30);
+        // }
 }
 
 static void layout_monitor_channel_type_switch_btn_display(void)
 {
         char *door_ch_png[8] = {"btn_call_cam1.png", "btn_call_cam2.png", "btn_call_cam3.png", "btn_call_cam4.png", "btn_call_cam5.png", "btn_call_cam6.png", "btn_call_cam7.png", "btn_call_cam8.png"};
         char *cctv_ch_png[8] = {"btn_call_cctv1.png", "btn_call_cctv2.png", "btn_call_cctv3.png", "btn_call_cctv4.png", "btn_call_cctv5.png", "btn_call_cctv6.png", "btn_call_cctv7.png", "btn_call_cctv8.png"};
-        lv_obj_t *obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont), monitor_obj_id_channel_switch_CCTTV_monitor);
+
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_channel_switch_CCTTV_monitor);
 
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
@@ -389,6 +399,13 @@ static void layout_monitor_channel_type_switch_btn_display(void)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(cctv_ch_png[ch]),
                                             LV_PART_MAIN);
+        }
+        if(is_channel_ipc_camera(monitor_channel_get()) == false)
+        {
+                if(monitor_valid_channel_check(monitor_channel_get() + 8) == false)
+                {
+                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                }
         }
 }
 
@@ -403,12 +420,14 @@ static void monitor_obj_volume_click(lv_event_t *e)
         lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
         lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
         lv_obj_t *right_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+        lv_obj_t *switch_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
         if (lv_obj_has_flag(vol_cont, LV_OBJ_FLAG_HIDDEN) == true)
         {
                 lv_obj_clear_flag(vol_cont, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(left_btn, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(right_btn, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(switch_btn, LV_OBJ_FLAG_HIDDEN);
         }
 }
 static void monitor_obj_volume_display(void)
@@ -438,11 +457,26 @@ static void monitor_obj_volume_display(void)
  ***********************************************/
 static void monitor_obj_display_click(lv_event_t *e)
 {
+
         int channel = monitor_channel_get();
         struct ipcamera_info *device = NULL;
         if (is_channel_ipc_camera(channel) == false)
         {
                 device = &network_data_get()->door_device[channel];
+
+        lv_obj_t *adj_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
+        lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
+        lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
+        lv_obj_t *right_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+        lv_obj_t *switch_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
+        if (lv_obj_has_flag(adj_cont, LV_OBJ_FLAG_HIDDEN) == true)
+        {
+                lv_obj_clear_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(left_btn, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(right_btn, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(switch_btn,LV_OBJ_FLAG_HIDDEN);
+
         }
         else
         {
@@ -474,21 +508,21 @@ static void monitor_obj_display_click(lv_event_t *e)
 }
 static void monitor_obj_dispaly_display(void)
 {
-        lv_obj_t *obj = monitor_buttom_child_obj_get(monitor_obj_id_display_cont);
-        if (obj == NULL)
-        {
-                return;
-        }
-        int ch = monitor_channel_get();
+        // lv_obj_t *obj = monitor_buttom_child_obj_get(monitor_obj_id_display_cont);
+        // if (obj == NULL)
+        // {
+        //         return;
+        // }
+        // int ch = monitor_channel_get();
 
-        if (is_channel_ipc_camera(ch) == false)
-        {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }
+        // if (is_channel_ipc_camera(ch) == false)
+        // {
+        //         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        // }
+        // else
+        // {
+        //         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        // }
 }
 
 /***********************************************
@@ -1103,24 +1137,24 @@ static void layout_monitor_switch_btn_display(void)
         }
 }
 
+
+
 static void layout_monitor_full_screen_display(lv_event_t *e)
 {
 
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_top_cont);
-        lv_obj_t *adj_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
         lv_obj_t *vol_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont);
-
+        lv_obj_t *adj_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
         if ((lv_obj_has_flag(adj_obj, LV_OBJ_FLAG_HIDDEN) == false) || (lv_obj_has_flag(vol_obj, LV_OBJ_FLAG_HIDDEN) == false) || (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == true))
         {
-                lv_obj_add_flag(adj_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(vol_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(adj_obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                layout_monitor_switch_btn_display();
+                layout_monitor_channel_type_switch_btn_display();
+                
         }
         else if (is_channel_ipc_camera(monitor_channel_get()) == true)
         {
@@ -1135,6 +1169,25 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+
+}
+
+static void layout_monitor_setting_brightness_slider_change_cb(lv_event_t *e)
+{
+        //lv_obj_t *obj = lv_event_get_current_target(e);
+
+        if (is_channel_ipc_camera(monitor_channel_get()) == true) // 调铃声音量
+        {
+
+        }
+        else
+        {
+
+
         }
 }
 
@@ -1150,7 +1203,7 @@ static void layout_monitor_brightness_bar_create(lv_obj_t *parent)
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
         lv_common_slider_create(parent, monitor_obj_id_brigrtness_slider_cont, 269, 23, 540, 48,
-                                NULL, LV_OPA_TRANSP, 0X00,
+                                layout_monitor_setting_brightness_slider_change_cb, LV_OPA_TRANSP, 0X00,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 38, 8, 35, 23, 0,
@@ -1193,10 +1246,24 @@ static void layout_monitor_brightness_bar_display(void)
         lv_slider_set_value(slider, monitor_brightness[2], LV_ANIM_OFF);
 }
 
+static void layout_monitor_setting_contrast_slider_change_cb(lv_event_t *e)
+{
+        //lv_obj_t *obj = lv_event_get_current_target(e);
+
+        if (is_channel_ipc_camera(monitor_channel_get()) == true) // 调铃声音量
+        {
+
+        }
+        else
+        {
+
+        }
+}
+
 static void layout_monitor_contrast_bar_create(lv_obj_t *parent)
 {
         lv_common_img_btn_create(parent, monitor_obj_id_contrast_icon, 251, 88, 48, 48,
-                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                 layout_monitor_setting_contrast_slider_change_cb, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                  resource_ui_src_get("ic_contrasst.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -1231,6 +1298,7 @@ static void layout_monitor_contrast_bar_display(void)
 
         parent = lv_obj_get_child_form_id(parent, monitor_obj_id_contrast_slider_cont);
 
+
         lv_obj_t *text = lv_obj_get_child_form_id(parent, 0);
         if (text == NULL)
         {
@@ -1247,10 +1315,26 @@ static void layout_monitor_contrast_bar_display(void)
 
         lv_slider_set_value(slider, monitor_contrast[2], LV_ANIM_OFF);
 }
+
+static void layout_monitor_setting_color_slider_change_cb(lv_event_t *e)
+{
+        //lv_obj_t *obj = lv_event_get_current_target(e);
+
+        if (is_channel_ipc_camera(monitor_channel_get()) == true) // 调铃声音量
+        {
+
+        }
+        else
+        {
+
+        }
+}
+
+
 static void layout_monitor_color_bar_create(lv_obj_t *parent)
 {
         lv_common_img_btn_create(parent, monitor_obj_id_color_icon, 251, 153, 48, 48,
-                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                 layout_monitor_setting_color_slider_change_cb, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                  resource_ui_src_get("ic_saturation.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -1630,7 +1714,6 @@ static void layout_monitor_door_ch_btn_create(void)
 static void sat_layout_enter(monitor)
 {
 
-        sat_linphone_audio_play_stop();
         /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
         user_linphone_call_busy_register(layout_monitor_busy_callback);
 
@@ -1943,21 +2026,21 @@ static void sat_layout_enter(monitor)
                         monitor_obj_record_photo_display();
                 }
 
-                /************************************************************
-                ** 函数说明: 切换到CCTV
-                ** 作者: xiaoxiao
-                ** 日期: 2023-07-05 18:25:47
-                ** 参数说明:
-                ** 注意事项:
-                ************************************************************/
-                {
-                        lv_common_img_btn_create(parent, monitor_obj_id_channel_switch_CCTTV_monitor, 912, 384, 80, 80,
-                                                 layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-                        layout_monitor_channel_type_switch_btn_display();
-                }
+        }
+        /************************************************************
+        ** 函数说明: 切换到CCTV
+        ** 作者: xiaoxiao
+        ** 日期: 2023-07-05 18:25:47
+        ** 参数说明:
+        ** 注意事项:
+        ************************************************************/
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor, 912, 384, 80, 80,
+                                        layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                        NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                layout_monitor_channel_type_switch_btn_display();
         }
 
         {
@@ -2153,7 +2236,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                 network_data_save();
         }
 
-        if (!user_data_get()->audio.ring_mute)
+        if (user_data_get()->audio.ring_mute == false)
         {
                 ring_door_call_play(user_data_get()->audio.door_tone);
         }
@@ -2192,7 +2275,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                         layout_monitor_door_ch_btn_create();
                 }
                 // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
-                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG))
+                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
                 {
                         layout_monitor_goto_layout_process();
                 }
@@ -2235,9 +2318,9 @@ static bool monitor_intercom_extern_call(const char *arg)
         }
         else
         {
-                if (!user_data_get()->audio.ring_mute)
+                if (user_data_get()->audio.ring_mute == false)
                 {
-                        ring_intercom_play(user_data_get()->audio.inter_tone);
+                        ring_intercom_play(user_data_get()->audio.extenion_tone);
                 }
                 intercom_call_status_setting(2);
 
@@ -2398,15 +2481,25 @@ static bool tuya_event_cmd_ch_channge(int channel)
         {
                 if (node_group[i].channel == ch)
                 {
+                        SAT_DEBUG("======channel value========");
                         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(node_group[i].call_id);
                         if (node != NULL)
                         {
-                                linphone_incomming_node_release(node);
+                                SAT_DEBUG("======node not null========");
                                 sat_linphone_incomming_refresh(node_group[i].call_id);
+                                linphone_incomming_node_release(node);
                                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
                         }
                 }
+        }
+        if (is_channel_ipc_camera(ch))
+        {
+                monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
+        }
+        else 
+        {
+                monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
         }
         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
@@ -2472,7 +2565,7 @@ static bool truye_event_cmd_audio_start(void)
 ************************************************************/
 static void tuya_event_cmd_video_stop(void)
 {
-        if (!is_monitor_door_camera_talk || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
+        if (is_monitor_door_camera_talk == false|| monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
         {
                 layout_monitor_goto_layout_process();
         }
@@ -2508,30 +2601,36 @@ static bool tuya_event_cmd_video_start(void)
 ************************************************************/
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
 {
-
+        SAT_DEBUG("receive tuya cmd is %d",cmd);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_VIDEO_START");
                 return tuya_event_cmd_video_start();
                 break;
         case TUYA_EVENT_CMD_VIDEO_STOP:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_VIDEO_STOP");
                 tuya_event_cmd_video_stop();
                 return true;
                 break;
         case TUYA_EVENT_CMD_AUDIO_START:
-
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_AUDIO_START");
                 return truye_event_cmd_audio_start();
                 break;
         case TUYA_EVENT_CMD_ONLINE:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_ONLINE");
                 return layout_monitor_report_vaild_channel();
                 break;
         case TUYA_EVENT_CMD_CH_CHANGE:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_CH_CHANGE");
                 return tuya_event_cmd_ch_channge(arg);
                 break;
         case TUYA_EVENT_CMD_MOTION_ENBALE:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_MOTION_ENBALE");
                 return tuya_event_cmd_motion_enable(arg);
                 break;
         case TUYA_EVENT_CMD_DOOR_OPEN:
+                SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_DOOR_OPEN");
                 return tuya_event_cmd_door_open(arg);
                 break;
         default:

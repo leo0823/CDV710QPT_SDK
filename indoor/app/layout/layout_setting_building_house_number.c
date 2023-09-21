@@ -57,14 +57,14 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
         sscanf(extension_str, "%d", &extension);
         const char *username = network_data_get()->sip_user;
         extension = username[11] - 48;
-        if((strlen(building_str) != 4) || (strlen(household_str) != 4) || (building > 255) || (household % 100) > 24)
+        if ((strlen(building_str) != 4) || (strlen(household_str) != 4) || (building > 255) || (household % 100) > 24)
         {
                 return;
         }
         if (building < 32)
         {
                 char number[64] = {0};
-                sprintf(number, "010%03d%03d%03d", building | 0x80, household /100 , (household % 100) * 10 + extension);
+                sprintf(number, "010%03d%03d%03d", building | 0x80, household / 100, (household % 100) * 10 + extension);
                 if (strcmp(number, network_data_get()->sip_user))
                 {
                         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
@@ -72,18 +72,18 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
 
                         //    automatic_number_setting_deault_ip_and_netmask();
 
-                       /*  char local_uri[128] = {0};
-                        sat_sip_local_user_get(local_uri);
-                        for (int i = 0; i < network_data_get()->door_device_count; i++)
-                        {
-                                if (sat_ipcamera_device_delete(local_uri, i, 1000) == false)
-                                {
-                                        SAT_DEBUG("delete outdoor failed:%s", network_data_get()->door_device[i].door_name);
-                                }
-                        } */
+                        /*  char local_uri[128] = {0};
+                         sat_sip_local_user_get(local_uri);
+                         for (int i = 0; i < network_data_get()->door_device_count; i++)
+                         {
+                                 if (sat_ipcamera_device_delete(local_uri, i, 1000) == false)
+                                 {
+                                         SAT_DEBUG("delete outdoor failed:%s", network_data_get()->door_device[i].door_name);
+                                 }
+                         } */
                         memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
                         network_data_save();
-                     //   setenv("SIP", network_data_get()->sip_user, 1);
+                        //   setenv("SIP", network_data_get()->sip_user, 1);
                         usleep(1000 * 1000);
                         exit(0);
                 }
@@ -188,30 +188,27 @@ static void setting_building_house_number_obj_keyboad_click(lv_event_t *e)
 
 static void setting_building_house_number_item_display(void)
 {
-        lv_obj_t * item1_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_building_number_label);
-        lv_obj_t * item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_building_number_textbox);
+        lv_obj_t *item1_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_building_number_label);
+        lv_obj_t *item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_building_number_textbox);
 
-        lv_obj_t * item2_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_foolr_number_label);
-        
-        lv_obj_t * item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_foolr_number_textbox);
+        lv_obj_t *item2_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_foolr_number_label);
 
-        lv_obj_t * item3_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_household_number_label);
-        lv_obj_t * item3_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_household_number_textbox);
+        lv_obj_t *item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_foolr_number_textbox);
 
-        lv_obj_t * item4_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_extension_number_label);
-        lv_obj_t * item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_building_house_number_obj_id_extension_number_textbox);
+        lv_obj_t *item3_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_household_number_label);
+        lv_obj_t *item3_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_household_number_textbox);
 
+        lv_obj_t *item4_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_extension_number_label);
+        lv_obj_t *item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_extension_number_textbox);
 
-        lv_obj_set_style_y(item1_label,250,LV_PART_MAIN);
-        lv_obj_set_style_y(item1_txt,257,LV_PART_MAIN);
-        lv_obj_set_style_y(item3_label,334,LV_PART_MAIN);
-        lv_obj_set_style_y(item3_txt,341,LV_PART_MAIN);
-        lv_obj_add_flag(item2_label,LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(item2_txt,LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(item4_label,LV_OBJ_FLAG_HIDDEN);
-        lv_obj_add_flag(item4_txt,LV_OBJ_FLAG_HIDDEN);
-
-
+        lv_obj_set_style_y(item1_label, 250, LV_PART_MAIN);
+        lv_obj_set_style_y(item1_txt, 257, LV_PART_MAIN);
+        lv_obj_set_style_y(item3_label, 334, LV_PART_MAIN);
+        lv_obj_set_style_y(item3_txt, 341, LV_PART_MAIN);
+        lv_obj_add_flag(item2_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item2_txt, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item4_label, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(item4_txt, LV_OBJ_FLAG_HIDDEN);
 }
 static void sat_layout_enter(setting_building_house_number)
 {
@@ -253,27 +250,32 @@ static void sat_layout_enter(setting_building_house_number)
         ** 说明: 数字键盘创建
         ***********************************************/
         {
-                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_number_keyboard_btn, 608, 127, 312, 500,
-                                                       setting_building_house_number_obj_keyboad_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_number_keyboard_btn, 608, 127, 312, 402,
+                                                       setting_building_house_number_obj_keyboad_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                        18, 24);
         }
         //"010001001011" -> 010.001.001.011
+        // char building[8] = {0};
+        // char household[8] = {0};
+        // char floor[8] = {0};
+        // char extension[8] = {0};
+        // int loacal_number[8] = {0};
+
+        // const char *username = network_data_get()->sip_user;
+        // printf("===============network_data_get()->sip_user is %s\n",network_data_get()->sip_user);
+        // loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
+        // loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
+
+        // sprintf(building, "%04d", loacal_number[0]);
+        // sprintf(household, "%04d", loacal_number[1]);
+
         char building[8] = {0};
         char household[8] = {0};
-        char floor[8] = {0};
-        char extension[8] = {0};
-        int loacal_number[8] = {0};
-
-        const char *username = network_data_get()->sip_user;
-        loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-        loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
-
-        sprintf(building, "%04d", loacal_number[0]);
-        sprintf(household, "%04d", loacal_number[1]);
-
+        strncpy(building, &network_data_get()->sip_user[3], 4);
+        strncpy(building, &network_data_get()->sip_user[7], 4);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:43:29
@@ -312,7 +314,7 @@ static void sat_layout_enter(setting_building_house_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          floor, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
+                                          "floor", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                           5, 500, 0Xffffff);
         }
         /***********************************************
@@ -365,7 +367,7 @@ static void sat_layout_enter(setting_building_house_number)
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
-                                          extension, 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
+                                          "extension", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 4,
                                           5, 500, 0Xffffff);
         }
         /***********************************************
