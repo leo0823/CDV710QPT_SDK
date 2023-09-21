@@ -24,6 +24,10 @@
 #include "common/user_key.h"
 #include "common/user_linphone.h"
 #include "common/sat_user_time.h"
+#include "anyka/ak_common.h"
+#include "anyka/ak_vi.h"
+#include "anyka/ak_vpss.h"
+#include "mxml-3.3.1/mxml-private.h"
 #include "mxml-3.3.1/mxml.h"
 #include "onvif/onvif.h"
 #include "base64/include/libbase64.h"
@@ -59,6 +63,10 @@
 #define FILE_ONVIF_SNAPSHOT_JPG_PATH ONVIF_XML_PATH "snapshot.jpg"
 #define GET_ONVIF_PROFILE_1_PATH ONVIF_XML_PATH "get_media_profile1.html"
 #define GET_ONVIF_MEDIA_VIDEO_SOURCE_CONFIG_PATH ONVIF_XML_PATH "get_media_video_source_config.html"
+#define GET_ONVIF_IMAGEING_GET_OPTIONS_RESPONSE_PATH ONVIF_XML_PATH "post_onvif_imaging_get_options_response.xml"
+#define GET_ONVIF_IMAGEING_GET_MOVE_OPTIONS_RESPONSE_PATH ONVIF_XML_PATH "post_onvif_imaging_get_move_options_response.xml"
+#define GET_ONVIF_IMAGEING_GET_IMAGING_SETTING_RESPONSE_PATH ONVIF_XML_PATH "post_onvif_imaging_get_imaging_setting_response.xml"
+#define GET_ONVIF_IMAGEING_SET_IMAGING_SETTING_RESPONSE_PATH ONVIF_XML_PATH "post_onvif_imaging_set_imaging_setting_response.xml"
 
 #define DOOR_CAMERA_RECEIVE_BUFFER_MAX (256 * 1024)
 
@@ -291,6 +299,7 @@ static void *user_network_task(void *arg)
 #define POST_ANALYTICS_TEXT "POST /onvif/analytics"
 #define POST_EVENT_TEXT "POST /onvif/event"
 #define GET_SNAPSHOT_JPG_TEXT "GET /images/snapshot.jpg"
+#define GET_ONVIF_IMAGEING_TEXT "POST /onvif/imaging"
 static bool tcp_device_serverce_xml_parsing(const char *xml,
                                             char *username, int username_size,
                                             char *password_digest, int passowrd_digest_size,
@@ -2441,7 +2450,295 @@ static bool tcp_receive_snapshot_jpg_processing(int tcp_socket_fd, const unsigne
         sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)jpeg_buffer, jpeg_buffer_size, 3000);
         return false;
 }
+static bool tcp_receive_onvif_imaging_get_options_processing(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_OPTIONS_RESPONSE_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_OPTIONS_RESPONSE_PATH); \n");
+                return false;
+        }
 
+        char *html_fmt = (char *)malloc(html_size);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(html_size);");
+                return false;
+        }
+
+        memset(html_fmt, 0, html_size);
+        int read_len = sat_file_read(GET_ONVIF_IMAGEING_GET_OPTIONS_RESPONSE_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_ONVIF_IMAGEING_GET_OPTIONS_RESPONSE_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        {
+                SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
+                free(html_fmt);
+                return false;
+        }
+        free(html_fmt);
+        return true;
+}
+static bool tcp_receive_onvif_imaging_get_move_options_processing(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_MOVE_OPTIONS_RESPONSE_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_MOVE_OPTIONS_RESPONSE_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(html_size);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(html_size);");
+                return false;
+        }
+
+        memset(html_fmt, 0, html_size);
+        int read_len = sat_file_read(GET_ONVIF_IMAGEING_GET_MOVE_OPTIONS_RESPONSE_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_ONVIF_IMAGEING_GET_MOVE_OPTIONS_RESPONSE_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        {
+                SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
+                free(html_fmt);
+                return false;
+        }
+        free(html_fmt);
+        return true;
+}
+static bool tcp_receive_onvif_imaging_get_imaging_setting_processing(int tcp_socket_fd)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_IMAGING_SETTING_RESPONSE_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_IMAGEING_GET_IMAGING_SETTING_RESPONSE_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                return false;
+        }
+
+        memset(html_fmt, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        int read_len = sat_file_read(GET_ONVIF_IMAGEING_GET_IMAGING_SETTING_RESPONSE_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(DOOR_CAMERA_RECEIVE_BUFFER_MAX, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (html_buffer == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_fmt = strstr(html_fmt, "<?xml version=\"1.0\"");
+        if (xml_fmt == NULL)
+        {
+                SAT_DEBUG("char *xml_fmt = strstr(html_fmt, \"<?xml version=1.0\n%s\n", html_fmt);
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+
+        char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        if (xml_buffer == NULL)
+        {
+                SAT_DEBUG("char *xml_buffer = (char *)malloc(DOOR_CAMERA_RECEIVE_BUFFER_MAX);");
+                free(html_buffer);
+                free(html_fmt);
+                return false;
+        }
+        char ip[32] = {0};
+        sat_ip_mac_addres_get("eth0", ip, NULL);
+
+        struct tm tm;
+        user_time_read(&tm);
+
+        memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(xml_buffer, xml_fmt, user_data_get()->brightness, user_data_get()->saturation, user_data_get()->contrast, user_data_get()->sharpness);
+        int xml_size = strlen(xml_buffer);
+
+        memset(xml_fmt, 0, strlen(xml_fmt) + 1);
+        strcpy(xml_fmt, xml_buffer);
+
+        memset(html_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+        sprintf(html_buffer, html_fmt, xml_size);
+        sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_buffer, strlen(html_buffer), 3000);
+
+        free(html_buffer);
+        free(html_fmt);
+        free(xml_buffer);
+        return true;
+}
+static bool tcp_receive_onvif_imaging_set_imaging_setting_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+{
+        int html_size = sat_file_size_get(GET_ONVIF_IMAGEING_SET_IMAGING_SETTING_RESPONSE_PATH);
+        if (html_size <= 0)
+        {
+                SAT_DEBUG(" char html_size = sat_file_size_get(GET_ONVIF_IMAGEING_SET_IMAGING_SETTING_RESPONSE_PATH); \n");
+                return false;
+        }
+
+        char *html_fmt = (char *)malloc(html_size);
+        if (html_fmt == NULL)
+        {
+                SAT_DEBUG("char *html_buffer = (char *)malloc(html_size);");
+                return false;
+        }
+
+        memset(html_fmt, 0, html_size);
+        int read_len = sat_file_read(GET_ONVIF_IMAGEING_SET_IMAGING_SETTING_RESPONSE_PATH, html_fmt, html_size);
+        if (read_len < 0)
+        {
+                SAT_DEBUG("int read_len = sat_file_read(GET_ONVIF_IMAGEING_SET_IMAGING_SETTING_RESPONSE_PATH, html_buffer, html_size);");
+                free(html_fmt);
+                return false;
+        }
+        if (sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false)
+        {
+                SAT_DEBUG("sat_socket_tcp_send(tcp_socket_fd, (unsigned char *)html_fmt, read_len, 3000) == false");
+                free(html_fmt);
+                return false;
+        }
+        free(html_fmt);
+        // printf("\n%s\n", recv_data);
+        /*解析获取颜色数值*/
+        const char *pxml = strstr((const char *)recv_data, "<"); // "<?xml version=\"1.0\"");
+        if (pxml == NULL)
+        {
+                return false;
+        }
+        mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
+        if (root != NULL)
+        {
+                bool is_need_save = false;
+                mxml_node_t *node = mxmlFindElementSub(root, root, "Brightness", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        int value = (int)atof(mxmlGetText(node, NULL));
+                        if ((value <= 50) && (value >= (-50)) && (value != user_data_get()->brightness))
+                        {
+                                is_need_save = true;
+                                user_data_get()->brightness = value;
+                                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_BRIGHTNESS, value);
+                                printf("setting brighness:%d\n", value);
+                        }
+                }
+
+                node = mxmlFindElementSub(root, root, "ColorSaturation", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        int value = (int)atof(mxmlGetText(node, NULL));
+                        if ((value <= 50) && (value >= (-50)) && (value != user_data_get()->saturation))
+                        {
+                                is_need_save = true;
+                                user_data_get()->saturation = value;
+                                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SATURATION, value);
+                                printf("setting ColorSaturation:%d\n", value);
+                        }
+                }
+
+                node = mxmlFindElementSub(root, root, "Contrast", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        int value = (int)atof(mxmlGetText(node, NULL));
+                        if ((value <= 50) && (value >= (-50)) && (value != user_data_get()->contrast))
+                        {
+                                is_need_save = true;
+                                user_data_get()->contrast = value;
+                                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_CONTRAST, value);
+                                printf("setting Contrast:%d\n", value);
+                        }
+                }
+
+                node = mxmlFindElementSub(root, root, "Sharpness", NULL, NULL, MXML_DESCEND);
+                if (node != NULL)
+                {
+                        int value = (int)atof(mxmlGetText(node, NULL));
+                        if ((value < 50) && (value > (-50)) && (value != user_data_get()->sharpness))
+                        {
+                                is_need_save = true;
+                                user_data_get()->sharpness = value;
+                                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SHARP, value);
+                                printf("setting Sharpness:%d\n", value);
+                        }
+                }
+                mxmlDelete(root);
+
+                if (is_need_save == true)
+                {
+                        user_data_save();
+                }
+                return true;
+        }
+        return false;
+}
+
+static bool tcp_receive_onvif_imaging_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
+{
+        char username[128] = {0};
+        char password[128] = {0};
+        char nonce[128] = {0};
+        char created[128] = {0};
+        if (tcp_device_serverce_xml_parsing((const char *)recv_data, username, sizeof(username),
+                                            password, sizeof(password),
+                                            nonce, sizeof(nonce),
+                                            created, sizeof(created)) == false)
+        {
+                return tcp_device_serverce_xml_bad_request(tcp_socket_fd);
+        }
+        if (onvif_username_token_check(username, password, nonce, created) == false)
+        {
+                return tcp_device_serverce_xml_bad_request(tcp_socket_fd);
+        }
+
+        char *ptr = strstr((const char *)recv_data, "<");
+        if (ptr == NULL)
+        {
+                SAT_DEBUG("%s", recv_data);
+                return false;
+        }
+        char data[512] = {0};
+        if (discover_devices_data_parsing((const char *)recv_data, "GetOptions", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] GetOptions\n", __func__, __LINE__);
+                return tcp_receive_onvif_imaging_get_options_processing(tcp_socket_fd);
+        }
+        if (discover_devices_data_parsing((const char *)recv_data, "GetMoveOptions", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] GetMoveOptions\n", __func__, __LINE__);
+                return tcp_receive_onvif_imaging_get_move_options_processing(tcp_socket_fd);
+        }
+        if (discover_devices_data_parsing((const char *)recv_data, "GetImagingSettings", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] GetImagingSettings\n", __func__, __LINE__);
+                return tcp_receive_onvif_imaging_get_imaging_setting_processing(tcp_socket_fd);
+        }
+        if (discover_devices_data_parsing((const char *)recv_data, "SetImagingSettings", data, sizeof(data)) == true)
+        {
+                printf("[%s:%d] SetImagingSettings\n", __func__, __LINE__);
+                return tcp_receive_onvif_imaging_set_imaging_setting_processing(tcp_socket_fd, recv_data, recv_size);
+        }
+        return false;
+}
 static bool tcp_receive_data_parsing_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
         if (strncasecmp((const char *)recv_data, POST_ONVIF_DEVICE_HTML_TEXT, strlen(POST_ONVIF_DEVICE_HTML_TEXT)) == 0)
@@ -2467,6 +2764,10 @@ static bool tcp_receive_data_parsing_processing(int tcp_socket_fd, const unsigne
         if (strncasecmp((const char *)recv_data, GET_SNAPSHOT_JPG_TEXT, strlen(GET_SNAPSHOT_JPG_TEXT)) == 0)
         {
                 return tcp_receive_snapshot_jpg_processing(tcp_socket_fd, recv_data, recv_size);
+        }
+        if (strncasecmp((const char *)recv_data, GET_ONVIF_IMAGEING_TEXT, strlen(GET_ONVIF_IMAGEING_TEXT)) == 0)
+        {
+                return tcp_receive_onvif_imaging_processing(tcp_socket_fd, recv_data, recv_size);
         }
 
         SAT_DEBUG("%s", recv_data);
