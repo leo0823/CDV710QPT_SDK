@@ -288,7 +288,6 @@ static bool tcp_device_serverce_xml_get_userdata(int tcp_socket_fd, char *recv_s
         //         printf("=======call time is %d\n",p->etc.call_time);
         //         printf("=======system_mode is %d\n",p->system_mode);
 
-                
         // }
         int send_len = 0;
         int remain = sizeof(user_data_info);
@@ -324,7 +323,7 @@ static bool tcp_device_serverce_xml_get_networkdata(int tcp_socket_fd, char *rec
         //         printf("=======sip_user is %s\n",p->sip_user);
         //         printf("=======mask is %s\n",p->mask);
         //         printf("=======ip is %s\n",p->ip);
-                
+
         // }
         int send_len = 0;
         int remain = sizeof(user_network_info);
@@ -354,7 +353,6 @@ static bool tcp_device_serverce_xml_get_asteriskdata(int tcp_socket_fd, char *re
         }
         base64_decode(recv_string, strlen(recv_string), base64_decode_buffer, &base64_decode_size, 0);
 
-        
         int send_len = 0;
         int remain = sizeof(asterisk_register_info) * 20;
         while (remain > 0)
@@ -457,7 +455,6 @@ static void *user_network_tcp_task(void *arg)
                                 //  printf("%s\n", receive_data);
                                 read_len += recv_len;
                                 remain_len -= recv_len;
-
                         }
                         if (read_len > 0)
                         {
@@ -504,6 +501,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         return false;
 }
+
 static bool obtain_aipddress_based_on_manual(void)
 {
         char cmd[128] = {0};

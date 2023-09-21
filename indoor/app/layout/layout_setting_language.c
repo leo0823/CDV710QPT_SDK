@@ -56,37 +56,37 @@ static int setting_language_list_id_get(LANGUAGE_ID lang, int type)
 {
 	int obj_id[LANGUAGE_ID_TOTAL][3] = {
 
-	    {setting_language_obj_id_language_list_hanguo, setting_language_obj_id_language_list_hanguo_img, setting_language_obj_id_language_list_hanguo_label},
-	    {
-		setting_language_obj_id_language_list_zhongwen,
-		setting_language_obj_id_language_list_zhongwen_img,
-		setting_language_obj_id_language_list_zhongwen_label,
-	    },
-	    {
-		setting_language_obj_id_language_list_yingyu,
-		setting_language_obj_id_language_list_yingyu_img,
-		setting_language_obj_id_language_list_yingyu_label,
-	    },
-	    {
-		setting_language_obj_id_language_list_eluosi,
-		setting_language_obj_id_language_list_eluosi_img,
-		setting_language_obj_id_language_list_eluosi_label,
-	    },
-	    {
-		setting_language_obj_id_language_list_xibanya,
-		setting_language_obj_id_language_list_xibanya_img,
-		setting_language_obj_id_language_list_xibanya_label,
-	    },
-	    {
-		setting_language_obj_id_language_list_yuenan,
-		setting_language_obj_id_language_list_yuenan_img,
-		setting_language_obj_id_language_list_yuenan_label,
-	    },
-		{
-			setting_language_obj_id_language_list_alabo,
-			setting_language_obj_id_language_list_alabo_label,
-			setting_language_obj_id_language_list_alabo_img,
-		}
+			{setting_language_obj_id_language_list_hanguo, setting_language_obj_id_language_list_hanguo_img, setting_language_obj_id_language_list_hanguo_label},
+			{
+					setting_language_obj_id_language_list_zhongwen,
+					setting_language_obj_id_language_list_zhongwen_img,
+					setting_language_obj_id_language_list_zhongwen_label,
+			},
+			{
+					setting_language_obj_id_language_list_yingyu,
+					setting_language_obj_id_language_list_yingyu_img,
+					setting_language_obj_id_language_list_yingyu_label,
+			},
+			{
+					setting_language_obj_id_language_list_eluosi,
+					setting_language_obj_id_language_list_eluosi_img,
+					setting_language_obj_id_language_list_eluosi_label,
+			},
+			{
+					setting_language_obj_id_language_list_xibanya,
+					setting_language_obj_id_language_list_xibanya_img,
+					setting_language_obj_id_language_list_xibanya_label,
+			},
+			{
+					setting_language_obj_id_language_list_yuenan,
+					setting_language_obj_id_language_list_yuenan_img,
+					setting_language_obj_id_language_list_yuenan_label,
+			},
+			{
+					setting_language_obj_id_language_list_alabo,
+					setting_language_obj_id_language_list_alabo_label,
+					setting_language_obj_id_language_list_alabo_img,
+			}
 
 	};
 
@@ -157,7 +157,7 @@ static lv_obj_t *setting_language_list_create(void)
 
 	list = lv_list_create(sat_cur_layout_screen_get());
 	lv_common_style_set_common(list, setting_language_obj_id_language_list, 48, 80, 928, 462, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-	
+
 	// lv_obj_clear_flag(list, LV_OBJ_FLAG_SCROLL_ELASTIC);
 
 	/***********************************************
@@ -172,7 +172,7 @@ static lv_obj_t *setting_language_list_create(void)
 		LANGUAGE_ID old_lang = language_id_get();
 		int item_id, img_id, label_id;
 
-		for (LANGUAGE_ID lang = LANGUAGE_ID_HANYU; lang < LANGUAGE_ID_TOTAL; lang++)
+		for (LANGUAGE_ID lang = LANGUAGE_ID_ENGLISH; lang < LANGUAGE_ID_TOTAL; lang++)
 		{
 
 			language_id_set(lang);
@@ -181,17 +181,17 @@ static lv_obj_t *setting_language_list_create(void)
 			img_id = setting_language_list_id_get(lang, 1);
 			label_id = setting_language_list_id_get(lang, 2);
 			item = lv_common_setting_btn_title_sub_info_img_create(list, item_id, 0, 0, 920, 66,
-									       setting_language_list_client, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-									       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-									       0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-									       52, 0, 160, 30, label_id,
-									       lang_str_get(XLS_LANG_ID_LANGUAGE_TYPE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-									       0, 0, 0, 0, -1,
-									       NULL, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-									       0, 0, 0, 0, -1,
-									       NULL, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-									       0, 0, 32, 32, img_id,
-									       resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+																														 setting_language_list_client, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+																														 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+																														 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+																														 52, 0, 160, 30, label_id,
+																														 lang_str_get(XLS_LANG_ID_LANGUAGE_TYPE), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+																														 0, 0, 0, 0, -1,
+																														 NULL, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+																														 0, 0, 0, 0, -1,
+																														 NULL, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+																														 0, 0, 32, 32, img_id,
+																														 resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
 
 			lv_obj_set_style_pad_top(item, 15, LV_PART_MAIN);
 			lv_obj_set_style_pad_column(item, 10, LV_PART_MAIN);
@@ -220,7 +220,7 @@ static void setting_language_cancel_btn_client(lv_event_t *ev)
 	if (user_data_get()->is_device_init == false)
 	{
 
-		sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT,SAT_VOID);
+		sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 	}
 	else
 	{
@@ -238,10 +238,10 @@ static void sat_layout_enter(setting_language)
 	***********************************************/
 	{
 		lv_common_text_create(sat_cur_layout_screen_get(), setting_language_obj_id_title_label, 0, 20, 1024, 40,
-				      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-				      lang_str_get(SETTING_GENERAL_XLS_LANG_ID_LANG), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+													NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													lang_str_get(SETTING_GENERAL_XLS_LANG_ID_LANG), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 
 	/***********************************************
@@ -251,10 +251,10 @@ static void sat_layout_enter(setting_language)
 	***********************************************/
 	{
 		lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_language_obj_id_cancel_btn, 35, 15, 48, 48,
-					 setting_language_cancel_btn_client, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-					 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-					 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-					 resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+														 setting_language_cancel_btn_client, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
 	setting_language_list_create();
 }

@@ -44,7 +44,6 @@ static const user_data_info user_data_default =
             .door_tone = 1,
             .extenion_tone = 3,
 
-
             .buzzer_tone = 1,
             .buzzer_volume = 50,
             .common_entrance_tone = 1,
@@ -145,7 +144,7 @@ static const user_data_info user_data_default =
             .away_sensor_enable[5] = false,
             .away_sensor_enable[6] = false,
             .away_sensor_enable[7] = false,
-            
+
             .security_sensor_enable[0] = false,
             .security_sensor_enable[1] = false,
             .security_sensor_enable[2] = false,
@@ -160,7 +159,7 @@ static const user_data_info user_data_default =
 
             .away_auto_record = false,
             .security_auto_record = false,
-        
+
             .alarm_gpio_value_group[0] = 0,
             .alarm_gpio_value_group[1] = 0,
             .alarm_gpio_value_group[2] = 0,
@@ -176,7 +175,6 @@ static const user_data_info user_data_default =
         .system_mode = 0x01,
         .always_monitoring = 0,
         .last_call_new = false,
-        
 
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},
@@ -203,11 +201,11 @@ bool user_data_save(void)
         return true;
 }
 
-#define user_data_check_range_out(cur, min, max)                                   \
-        if ((user_##data.cur < min) || (user_##data.cur > max))                    \
-        {                                                                          \
+#define user_data_check_range_out(cur, min, max)                                                  \
+        if ((user_##data.cur < min) || (user_##data.cur > max))                                   \
+        {                                                                                         \
                 printf("user data error %d(%d,%d) \n", (int)user_##data.cur, (int)min, (int)max); \
-                user_##data.cur = user_##data##_default.cur;                       \
+                user_##data.cur = user_##data##_default.cur;                                      \
         }
 
 #define user_data_motion_check_range_out(x, min, max) user_data_check_range_out(motion.x, min, max)
@@ -287,7 +285,6 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(extension_volume, 0, 100);
         user_data_audio_check_range_out(extension_voice, 0, 100);
         user_data_audio_check_range_out(ring_repeat, 0, 1);
-        
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
@@ -349,7 +346,7 @@ static void user_data_check_valid(void)
                 user_data_alarm_check_range_out(alarm_enable[i], 0, 2);
 
                 user_data_alarm_check_range_out(alarm_trigger[i], 0, 1);
- 
+
                 user_data_alarm_check_range_out(away_sensor_enable[i], 0, 1);
 
                 user_data_alarm_check_range_out(security_sensor_enable[i], 0, 1);
@@ -361,7 +358,6 @@ static void user_data_check_valid(void)
                 user_data_alarm_check_range_out(alarm_gpio_value_group[i], 0, 4);
         }
 
-
         user_data_alarm_check_range_out(away_setting_time, 1, 3);
         user_data_alarm_check_range_out(away_release_time, 30, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
@@ -369,9 +365,6 @@ static void user_data_check_valid(void)
         user_data_alarm_check_range_out(buzzer_alarm, 1, 3);
 
         user_data_check_range_out(system_mode, 1, 29);
-
-
-        
 }
 
 bool user_data_init(void)
@@ -416,8 +409,8 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .dhcp = true,
-    .sip_user = {"010001001011"},
-    .ip = {0},
+    .sip_user = {"010000101011"},
+    .ip = {"0"},
     .mask = {"255.0.0.0"},
     .gateway = {"192.168.0.2"},
     .dns = {"192.168.0.2"},
