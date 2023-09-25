@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_intercom_call.h"
+#include "layout_monitor.h"
 enum
 {
         intercom_talk_obj_id_other_call_list,
@@ -20,6 +21,7 @@ static int intercom_talk_timeout = 0;
 /*0:空闲，1：call outgoing 2:incomming 3:talk*/
 static int intercom_call_state = 0;
 static char *intercom_call_user = NULL;
+
 void intercom_call_status_setting(int state)
 {
         intercom_call_state = state;
@@ -52,10 +54,11 @@ static void layout_intercom_goto_layout_process(void)
                         sat_linphone_handup(0xFFFF);
                         if (intercom_call_state == 1)
                         {
-                                sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
                         }
                         else
                         {
+
                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
                         }
                         /*为了直观，加入return*/
@@ -65,8 +68,8 @@ static void layout_intercom_goto_layout_process(void)
                 intercom_call_status_setting(2);
                 char number[128] = {0};
                 sprintf(number, "sip:50%d@%s:5066", node->channel, user_data_get()->mastar_wallpad_ip);
-                intercom_call_username_setting(number);
                 SAT_DEBUG("incomming quit channel:%d/call id:%ld", node->channel, node->call_id);
+                intercom_call_username_setting(number);
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
@@ -240,7 +243,8 @@ static void intercom_talk_call_info_display(void)
         }
         struct tm tm;
         user_time_read(&tm);
-        lv_label_set_text_fmt(obj, "Call: %s    %04d-%02d:%02d %02d:%02d", intercom_call_user, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        int index = extern_index_get_by_user(intercom_call_user);
+        lv_label_set_text_fmt(obj, "Call: Extension %d    %04d-%02d:%02d %02d:%02d", index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
 }
 
 static void intercom_talk_call_time_display(void)
@@ -326,6 +330,7 @@ static void intercom_talk_answer_obj_display(void)
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_handup);");
                 return;
         }
+        SAT_DEBUG("intercom_call_state is %d", intercom_call_state);
         if (intercom_call_state == 2)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -339,7 +344,6 @@ static void intercom_talk_answer_obj_display(void)
 // 呼叫繁忙事件注册
 static bool intercom_talk_call_busy_callback(char *arg)
 {
-        SAT_DEBUG("arg is %s", arg);
         return true;
 }
 
@@ -373,6 +377,7 @@ static bool intercom_doorcamera_end_process(char *arg)
 // 呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
+        SAT_DEBUG("=============+++++++++++++++===================");
         /*sip:5xxx代表室内设备*/
         if (strstr(arg, "sip:50") != NULL)
         {
@@ -392,6 +397,7 @@ static bool intercom_talk_call_end_callback(char *arg)
 // 呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
+        SAT_DEBUG("=============+++++++++++++++===================");
         sat_linphone_audio_play_stop();
         layout_intercom_goto_layout_process();
         return true;
@@ -435,6 +441,7 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
 
 static bool intercom_talk_call_answer_callback(char *args)
 {
+        SAT_DEBUG("=============+++++++++++++++===================");
         if (intercom_call_state == 3)
         {
                 return false;
@@ -509,8 +516,127 @@ static void layout_intercom_talk_call_screen_click(lv_event_t *e)
         }
 }
 
+static bool layout_intercom_inside_call(const char *arg)
+{
+
+        long call_id = 0;
+        int index = extern_index_get_by_user(arg);
+        if (index < 0)
+        {
+
+                printf("[%s:%d] get extention id failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+        SAT_DEBUG("arg is %s\n", arg);
+        SAT_DEBUG("call_id is %ld\n", call_id);
+        SAT_DEBUG("index is %d\n", index);
+        linphone_incomming_info *node = linphone_incomming_unused_node_get(false);
+        if (node != NULL)
+        {
+                node->enable = true;
+                node->channel = index;
+                node->call_id = call_id;
+                // 门呼叫，内线呼叫会话按键刷新
+                extern void layout_intercom_talk_door_ch_btn_create(void);
+                layout_intercom_talk_door_ch_btn_create();
+                SAT_DEBUG("incomming join channel:%d/call id:%ld", node->channel, node->call_id);
+                return true;
+        }
+        return true;
+}
+
+/* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容 id:建立连接的id号*/
+static bool layout_intercom_door_call_process(const char *arg, bool is_extern_call)
+{
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+
+        int index = monitor_index_get_by_user(arg);
+        if (index < 0)
+        {
+
+                printf("[%s:%d] get channel failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        /*获取别名*/
+        char *s = strchr(arg, '"');
+        if (s == NULL)
+        {
+                printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        s += 1;
+        char *e = strchr(s, '"');
+        if (e == NULL)
+        {
+                printf("[%s:%d] get username failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        *e = 0;
+
+        /*获取固定命名通道*/
+        char fulll_name[128] = {0};
+        snprintf(fulll_name, sizeof(fulll_name) - 1, "Door%d(%s)", index, s);
+
+        /*door camera 名称被修改*/
+        if (strcmp(fulll_name, network_data_get()->door_device[index - 1].door_name) != 0)
+        {
+                memset(network_data_get()->door_device[index - 1].door_name, 0, sizeof(network_data_get()->door_device[index - 1].door_name));
+                strncpy(network_data_get()->door_device[index - 1].door_name, fulll_name, sizeof(network_data_get()->door_device[index - 1].door_name) - 1);
+                network_data_save();
+        }
+
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_door_call_play(user_data_get()->audio.door_tone);
+        }
+
+        linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
+        if (node != NULL)
+        {
+                node->enable = true;
+                node->channel = index - 1;
+                node->call_id = call_id;
+                layout_intercom_talk_door_ch_btn_create();
+        }
+        return true;
+}
+
+/* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容*/
+bool layout_intercom_talk_call_incoming_func(char *arg)
+{
+        printf("[%s:%d] sip device incomming:%s\n", __func__, __LINE__, arg);
+        if (user_data_get()->is_device_init == false)
+        {
+                return false;
+        }
+        /*sip:2xxx代表门口机*/
+        if (strstr(arg, "sip:2") != NULL)
+        {
+                return layout_intercom_door_call_process(arg, true);
+        }
+        /*sip:5xxx代表室内设备*/
+        if (strstr(arg, "sip:5") != NULL)
+        {
+                return layout_intercom_inside_call(arg);
+        }
+        return true;
+}
+
 static void sat_layout_enter(intercom_talk)
 {
+        SAT_DEBUG("intercom_call_state is %d", intercom_call_state);
         lv_obj_pressed_func = NULL;
         standby_timer_close();
         intercom_talk_timeout = 30;
@@ -661,6 +787,7 @@ static void sat_layout_enter(intercom_talk)
         {
                 sat_linphone_call(intercom_call_user, false, false, NULL);
         }
+        user_linphone_call_incoming_received_register(layout_intercom_talk_call_incoming_func);
 }
 
 static void sat_layout_quit(intercom_talk)
@@ -670,11 +797,11 @@ static void sat_layout_quit(intercom_talk)
         sat_linphone_audio_play_stop();
         lv_obj_pressed_func = lv_layout_touch_callback;
         standby_timer_restart(true);
-        intercom_call_state = 0;
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
         user_linphone_call_busy_register(NULL);
         user_linphone_call_end_register(NULL);
         user_linphone_call_streams_connected_receive_register(NULL);
+        user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
 }
 
 sat_layout_create(intercom_talk);

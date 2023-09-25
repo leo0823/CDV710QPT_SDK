@@ -21,6 +21,11 @@ typedef struct
         network_device_info device;
 
         char server_ip[16];
+
+        int brightness;
+        int saturation;
+        int contrast;
+        int sharpness;
 } user_data_info;
 /***
 ** 日期: 2022-05-05 08:47

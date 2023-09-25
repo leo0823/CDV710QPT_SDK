@@ -41,52 +41,26 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_building_number_textbox);
         const char *building_str = lv_textarea_get_text(textarea);
 
-        textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_foolr_number_textbox);
-        const char *foolr_str = lv_textarea_get_text(textarea);
+        // textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_foolr_number_textbox);
+        // const char *foolr_str = lv_textarea_get_text(textarea);
 
         textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_household_number_textbox);
         const char *household_str = lv_textarea_get_text(textarea);
 
-        textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_extension_number_textbox);
-        const char *extension_str = lv_textarea_get_text(textarea);
+        // textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_building_house_number_obj_id_extension_number_textbox);
+        // const char *extension_str = lv_textarea_get_text(textarea);
 
-        int building = 0, foolr = 0, household = 0, extension = 0;
-        sscanf(building_str, "%d", &building);
-        sscanf(foolr_str, "%d", &foolr);
-        sscanf(household_str, "%d", &household);
-        sscanf(extension_str, "%d", &extension);
-        const char *username = network_data_get()->sip_user;
-        extension = username[11] - 48;
-        if ((strlen(building_str) != 4) || (strlen(household_str) != 4) || (building > 255) || (household % 100) > 24)
+        if ((strlen(building_str) >= 1) && (strlen(household_str) >= 1))
         {
-                return;
-        }
-        if (building < 32)
-        {
-                char number[64] = {0};
-                sprintf(number, "010%03d%03d%03d", building | 0x80, household / 100, (household % 100) * 10 + extension);
-                if (strcmp(number, network_data_get()->sip_user))
-                {
-                        memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
-                        strcpy(network_data_get()->sip_user, number);
+                memset(&network_data_get()->sip_user[3], '0', 8);
+                strncpy(&network_data_get()->sip_user[7 - strlen(building_str)], building_str, strlen(building_str));
+                strncpy(&network_data_get()->sip_user[11 - strlen(household_str)], household_str, strlen(household_str));
 
-                        //    automatic_number_setting_deault_ip_and_netmask();
-
-                        /*  char local_uri[128] = {0};
-                         sat_sip_local_user_get(local_uri);
-                         for (int i = 0; i < network_data_get()->door_device_count; i++)
-                         {
-                                 if (sat_ipcamera_device_delete(local_uri, i, 1000) == false)
-                                 {
-                                         SAT_DEBUG("delete outdoor failed:%s", network_data_get()->door_device[i].door_name);
-                                 }
-                         } */
-                        memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
-                        network_data_save();
-                        //   setenv("SIP", network_data_get()->sip_user, 1);
-                        usleep(1000 * 1000);
-                        exit(0);
-                }
+                memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
+                network_data_save();
+                //   setenv("SIP", network_data_get()->sip_user, 1);
+                // usleep(1000 * 1000);
+                // exit(0);
         }
 
         sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -275,7 +249,7 @@ static void sat_layout_enter(setting_building_house_number)
         char building[8] = {0};
         char household[8] = {0};
         strncpy(building, &network_data_get()->sip_user[3], 4);
-        strncpy(building, &network_data_get()->sip_user[7], 4);
+        strncpy(household, &network_data_get()->sip_user[7], 4);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:43:29
