@@ -173,8 +173,8 @@ static void sat_layout_enter(setting_guard_station_number)
         ** 说明: 数字键盘创建
         ***********************************************/
         {
-                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_btn, 608, 127, 312, 500,
-                                                       setting_guard_station_number_obj_keyboad_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_btn, 608, 127, 312, 402,
+                                                       setting_guard_station_number_obj_keyboad_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,

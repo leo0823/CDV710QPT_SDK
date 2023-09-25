@@ -253,28 +253,6 @@ void layout_alarm_alarm_channel_set(int ch)
         alarm_ch = ch;
 }
 
-static void (*buzzer_call_fun)(void) = NULL;
-
-void buzzer_call_callback_register(void (*callback)(void))
-{
-        buzzer_call_fun = callback;
-}
-
-
-bool buzzer_call_trigger_check(void)
-{
-        if((user_data_get()->alarm.buzzer_alarm) && (sat_cur_layout_get() != sat_playout_get(buzzer_call)))
-        {
-                if(buzzer_call_fun != NULL)
-                {
-                        buzzer_call_fun();
-                }
-        }else if((!user_data_get()->alarm.buzzer_alarm) && (sat_cur_layout_get() == sat_playout_get(buzzer_call)))
-        {
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, false);
-        }
-        return true;
-}
 
 /************************************************************
 ** 函数说明: 警报处理函数
@@ -294,10 +272,7 @@ void layout_alarm_trigger_default(int arg1,int arg2)
                 sat_linphone_handup(0xFFFF);
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save();
-                if(buzzer_call_fun != NULL)
-                {
-                        buzzer_call_fun();
-                }
+                buzzer_call_trigger_check();
         }else
         {
                 if((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1)))&&(!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
@@ -634,8 +609,8 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void))
             ** 注意事项: 
             ************************************************************/
             {
-                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, common_obj_id_number_keyboard_btn, 128, 90, 312, 500,
-                                                    password_input_keyboard_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                lv_obj_t *obj = lv_common_number_input_keyboard_create(parent, common_obj_id_number_keyboard_btn, 128, 90, 312, 402,
+                                                    password_input_keyboard_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                     360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                     0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
@@ -701,7 +676,7 @@ void common_passwd_check_func_create(int cont_id,void (*callback)(void))
 }
 
 /************************************************************
-** 函数说明: 判断是否是以恶搞合法的ipv4地址
+** 函数说明: 判断是否是一个合法的ipv4地址
 ** 作者: xiaoxiao
 ** 日期: 2023-04-27 17:30:01
 ** 参数说明: 

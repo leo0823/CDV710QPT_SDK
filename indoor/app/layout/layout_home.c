@@ -36,6 +36,7 @@ enum
 
         home_obj_id_monitor_cont,
         home_obj_id_monitor_img,
+        home_obj_id_cctv_monitor_img,
         home_obj_id_monitor_label,
 
         home_obj_id_call_cont,
@@ -44,6 +45,7 @@ enum
 
         home_obj_id_cctv_cont,
         home_obj_id_cctv_img,
+        home_obj_id_cctv_busy_img,
         home_obj_id_cctv_label,
 
         home_obj_id_away_cont,
@@ -252,7 +254,6 @@ static void home_date_obj_display(void)
         char mon_str[64] = {0};
         strcpy(mon_str, lang_str_get(tm.tm_mon - 1 + HOME_XLS_LANG_ID_JAN));
         // layout_home_month_language_get(tm.tm_mon - 1);
-
         LANGUAGE_ID lang = language_id_get();
         if (lang == LANGUAGE_ID_ENGLISH)
         {
@@ -747,22 +748,30 @@ static void home_sd_state_change_callback(void)
 
 static void layout_home_monitor_icon_display()
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_monitor_cont);
-        if (obj == NULL)
+
+        lv_obj_t * obj =lv_obj_get_child_form_id(sat_cur_layout_screen_get(),home_obj_id_monitor_cont);
+
+        if(obj == NULL)
+
+        {
+                return;
+        }
+        lv_obj_t * offline = lv_obj_get_child_form_id(obj,home_obj_id_cctv_monitor_img);
+        if(offline == NULL)
         {
                 return;
         }
         if (door_camera_register_num_get() <= 0)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
-                {
-                        lv_common_img_btn_create(obj, 0, 55, 45, 48, 48,
-                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get("ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                }
-        }
+                
+                lv_obj_clear_flag(offline,LV_OBJ_FLAG_HIDDEN);
+        }else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+                
+                lv_obj_add_flag(offline,LV_OBJ_FLAG_HIDDEN);
+        }       
 }
 
 static void layout_home_cctv_icon_display()
@@ -772,16 +781,17 @@ static void layout_home_cctv_icon_display()
         {
                 return;
         }
+        lv_obj_t * offline = lv_obj_get_child_form_id(obj,home_obj_id_cctv_busy_img);
+        if(offline == NULL)
+        {
+                return;
+        }
         if (cctv_register_num_get() <= 0)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
-                {
-                        lv_common_img_btn_create(obj, 0, 55, 45, 48, 48,
-                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get("ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                }
+                
+                lv_obj_clear_flag(offline,LV_OBJ_FLAG_HIDDEN);
+
         }
 }
 
@@ -794,6 +804,7 @@ static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 
 static void sat_layout_enter(home)
 {
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -845,7 +856,6 @@ static void sat_layout_enter(home)
                                                          resource_ui_src_get("btn_mute_off.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 if (obj == NULL)
                 {
-                        printf("====home_obj_id_mute_icon is null========\n");
                         return;
                 }
 
@@ -864,7 +874,6 @@ static void sat_layout_enter(home)
                                                       lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                 if (obj == NULL)
                 {
-                        printf("====home_obj_id_user_app_label is null========\n");
                         return;
                 }
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
@@ -884,7 +893,6 @@ static void sat_layout_enter(home)
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 if (parent == NULL)
                 {
-                        printf("====home_obj_id_time_cont is null========\n");
                         return;
                 }
                 // 时间
@@ -895,19 +903,16 @@ static void sat_layout_enter(home)
                                                       NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_plus);
                 if (obj == NULL)
                 {
-                        printf("====home_obj_id_time_label is null========\n");
                         return;
                 }
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
                 home_time_obj_display();
-
                 lv_common_text_create(parent, home_obj_id_date_label, 0, 118, 252, 26,
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
                 home_date_obj_display();
-
                 lv_sat_timer_create(home_date_timer, 1000, NULL);
         }
         /***********************************************
@@ -935,13 +940,16 @@ static void sat_layout_enter(home)
                                          8, 0, LV_BORDER_SIDE_BOTTOM, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_text_create(parent, home_obj_id_no_video_title, 18, 80, 180, 72,
-                                      NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
-                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "There is no saved information", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
-                lv_common_text_create(parent, home_obj_id_video_label, 0, 216 - 54, THUMB_WIDTH, 54,
+                lv_common_text_create(parent, home_obj_id_no_video_title, 0, 80, 224, 72,
+                        NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                        "There is no saved information", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+
+
+
+                lv_common_text_create(parent, home_obj_id_video_label, 0, 216 - 54, 224, 54,
                                       NULL, LV_OPA_60, 0, LV_OPA_60, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1012,14 +1020,20 @@ static void sat_layout_enter(home)
                 int sec_x = ((user_data_get()->system_mode & 0xF0) != 0x10) ? 125 : 57; // user_data_get()->system_mode == 1?193:329;
                 int unit_offset = ((user_data_get()->system_mode & 0xF0) == 0x10) ? 136 : 136;
 
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_monitor_cont, sec_x, 436, 103, 121,
-                                              home_monitor_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 83, 103, 27, home_obj_id_monitor_label,
-                                              lang_str_get(HOME_XLS_LANG_ID_MONITORING), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                              13, 0, 77, 77, home_obj_id_monitor_img,
-                                              (const char *)resource_ui_src_get("btn_main_monitoring_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_obj_t *obj = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_monitor_cont, sec_x, 436, 103, 121,
+                                                                  home_monitor_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                  0, 83, 103, 27, home_obj_id_monitor_label,
+                                                                  lang_str_get(HOME_XLS_LANG_ID_MONITORING), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                  13, 0, 77, 77, home_obj_id_monitor_img,
+                                                                  (const char *)resource_ui_src_get("btn_main_monitoring_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_img_btn_create(obj, home_obj_id_cctv_monitor_img, 55, 45, 48, 48,
+                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                resource_ui_src_get("ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
                 layout_home_monitor_icon_display();
 
                 sec_x += unit_offset;
@@ -1035,14 +1049,21 @@ static void sat_layout_enter(home)
                                                       (const char *)resource_ui_src_get("btn_main_interphone_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         sec_x += unit_offset;
                 }
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_cctv_cont, sec_x, 436, 103, 121,
-                                              home_cctv_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 83, 103, 27, home_obj_id_cctv_label,
-                                              lang_str_get(HOME_XLS_LANG_ID_CCTV), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                              13, 0, 77, 77, home_obj_id_cctv_img,
-                                              (const char *)resource_ui_src_get("btn_main_cctv_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                obj = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_cctv_cont, sec_x, 436, 103, 121,
+                                                               home_cctv_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                               0, 83, 103, 27, home_obj_id_cctv_label,
+                                                               lang_str_get(HOME_XLS_LANG_ID_CCTV), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                               13, 0, 77, 77, home_obj_id_cctv_img,
+                                                               (const char *)resource_ui_src_get("btn_main_cctv_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_img_btn_create(obj, home_obj_id_cctv_busy_img, 55, 45, 48, 48,
+                                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                resource_ui_src_get("ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
                 layout_home_cctv_icon_display();
                 sec_x += unit_offset;
                 if (1 /*user_data_get()->system_mode == 0*/)
@@ -1108,7 +1129,6 @@ static void sat_layout_enter(home)
                                               13, 0, 77, 77, home_obj_id_emergency_img,
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
         {
                 /************************************************************
                 ** 函数说明: 网络图标创建
