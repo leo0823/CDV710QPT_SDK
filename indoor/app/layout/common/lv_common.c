@@ -161,7 +161,7 @@ lv_obj_t *lv_common_number_input_keyboard_create(lv_obj_t *parent, int id, int x
                     "1", "2", "3", "\n",
                     "4", "5", "6", "\n",
                     "7", "8", "9", "\n",
-                    ".", "0", " ", "\n", ""};
+                    ".", "0", " ", ""};
 
                 static const char *btnm_img_map[] = {
                     NULL, NULL, NULL,

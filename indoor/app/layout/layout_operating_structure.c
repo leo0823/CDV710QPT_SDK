@@ -40,6 +40,7 @@ static void operating_structure_goto_layout_process(lv_scr_load_anim_t anim)
         }
         else
         {
+                system("reboot");
                 sat_layout_goto(setting_installation, anim, SAT_VOID);
         }
 }

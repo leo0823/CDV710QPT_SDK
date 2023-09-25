@@ -500,12 +500,14 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         return false;
 }
+
 /****************************************************************
 **@日期: 2023-09-18
 **@作者: leo.liu
 **@功能: 手动获取的IP信息
 *****************************************************************/
 static bool obtain_ipddress_based_on_manual(void)
+
 {
         char cmd[128] = {0};
         sprintf(cmd, "ifconfig eth0 %s netmask %s", network_data_get()->ip, network_data_get()->mask[0] != 0 ? network_data_get()->mask : "255.0.0.0");

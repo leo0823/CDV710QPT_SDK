@@ -86,8 +86,8 @@ bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 bool layout_monitor_report_vaild_channel(void)
 {
 	int ch = monitor_channel_get();
-	
-	return tuya_api_channel_report(ch + 1,
+	ch = ch <= 7 ? ch + 1:ch - 6;
+	return tuya_api_channel_report(ch,
 				       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(MON_CH_DOOR1),
 				       monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(MON_CH_DOOR2),
 				       monitor_valid_channel_check(MON_CH_CCTV1), language_common_ch_string_get(MON_CH_CCTV1),
