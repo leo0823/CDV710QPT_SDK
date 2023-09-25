@@ -42,6 +42,7 @@ static const user_data_info user_data_default =
             .key_sound = true,
             .ring_mute = false,
             .door_tone = 1,
+
             .extenion_tone = 3,
 
             .buzzer_tone = 1,
@@ -77,10 +78,6 @@ static const user_data_info user_data_default =
             .night_time_end = 0,
             .frame_list = 0x03,
             .frame_background = false,
-            .door1 = {.bright = 10, .cont = 10, .color = 10},
-            .door2 = {.bright = 10, .cont = 10, .color = 10},
-            .cctv1 = {.bright = 10, .cont = 10, .color = 10},
-            .cctv2 = {.bright = 10, .cont = 10, .color = 10},
 
         },
         .etc = {
@@ -157,7 +154,12 @@ static const user_data_info user_data_default =
             .away_setting_time = 1,
             .away_release_time = 30,
 
+            .away_save_photo = false,
+
+            .bypass_call = false,
+
             .away_auto_record = false,
+
             .security_auto_record = false,
 
             .alarm_gpio_value_group[0] = 0,
@@ -171,11 +173,18 @@ static const user_data_info user_data_default =
 
             .buzzer_alarm = 0,
 
+            .cctv_sensor[0] = 0,
+            .cctv_sensor[1] = 0,
+            .cctv_sensor[2] = 0,
+            .cctv_sensor[3] = 0,
+            .cctv_sensor[4] = 0,
+            .cctv_sensor[5] = 0,
+            .cctv_sensor[6] = 0,
+            .cctv_sensor[7] = 0,
         },
         .system_mode = 0x01,
         .always_monitoring = 0,
         .last_call_new = false,
-
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},
 
@@ -302,22 +311,6 @@ static void user_data_check_valid(void)
         user_data_display_check_range_out(frame_list, 0, 0x1F);
         user_data_display_check_range_out(frame_background, 0, 1);
 
-        user_data_display_check_range_out(door1.bright, 0, 20);
-        user_data_display_check_range_out(door1.cont, 0, 20);
-        user_data_display_check_range_out(door1.color, 0, 20);
-
-        user_data_display_check_range_out(door2.bright, 0, 20);
-        user_data_display_check_range_out(door2.cont, 0, 20);
-        user_data_display_check_range_out(door2.color, 0, 20);
-
-        user_data_display_check_range_out(cctv1.bright, 0, 20);
-        user_data_display_check_range_out(cctv1.cont, 0, 20);
-        user_data_display_check_range_out(cctv1.color, 0, 20);
-
-        user_data_display_check_range_out(cctv2.bright, 0, 20);
-        user_data_display_check_range_out(cctv2.cont, 0, 20);
-        user_data_display_check_range_out(cctv2.color, 0, 20);
-
         /***** etc *****/
         user_data_etc_check_range_out(language, 0, 9);
         user_data_etc_check_range_out(deive_id, 0, 3);
@@ -348,6 +341,8 @@ static void user_data_check_valid(void)
                 user_data_alarm_check_range_out(alarm_trigger[i], 0, 1);
 
                 user_data_alarm_check_range_out(away_sensor_enable[i], 0, 1);
+
+                user_data_alarm_check_range_out(cctv_sensor[i], 0, 8);
 
                 user_data_alarm_check_range_out(security_sensor_enable[i], 0, 1);
 
@@ -408,9 +403,11 @@ void user_data_reset(void)
 static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
+
+    .common_entrance_ip = {"10.0.0.2"},
     .dhcp = true,
     .sip_user = {"010000101011"},
-    .ip = {"0"},
+    .ip = {0},
     .mask = {"255.0.0.0"},
     .gateway = {"192.168.0.2"},
     .dns = {"192.168.0.2"},
@@ -459,6 +456,7 @@ static void printf_register_device(void)
                 printf("door camera :%d\n", i);
                 printf("accout:%s\n", network_data.door_device[i].username);
                 printf("password:%s\n", network_data.door_device[i].password);
+                printf("authr:%d\n", network_data.door_device[i].auther_flag);
                 printf("ipaddr:%s\n", network_data.door_device[i].ipaddr);
                 printf("port:%d\n", network_data.door_device[i].port);
                 printf("sip_url:%s\n", network_data.door_device[i].sip_url);
@@ -476,6 +474,7 @@ static void printf_register_device(void)
                 printf("CCTV  :%d\n", i);
                 printf("accout:%s\n", network_data.cctv_device[i].username);
                 printf("password:%s\n", network_data.cctv_device[i].password);
+                printf("authr:%d\n", network_data.cctv_device[i].auther_flag);
                 printf("ipaddr:%s\n", network_data.cctv_device[i].ipaddr);
                 printf("port:%d\n", network_data.cctv_device[i].port);
                 printf("sip_url:%s\n", network_data.cctv_device[i].sip_url);
@@ -514,7 +513,7 @@ static void network_data_check_valid(void)
         ***********************************************/
         for (int i = 0; i < strlen(network_data.ip); i++)
         {
-                if (network_data.ip[i] != '.')
+                if ((network_data.ip[i] != '.') && (network_data.ip[0] != '\0'))
                 {
                         network_data_check_range_out(ip[i], '0', '9');
                         break;

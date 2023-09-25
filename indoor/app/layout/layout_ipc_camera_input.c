@@ -244,7 +244,6 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
 
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
-
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
 
@@ -301,21 +300,19 @@ static bool ipc_camera_input_new_name_processing(void)
         char input_name[64] = {0};
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         strncpy(input_name, lv_textarea_get_text(textarea), sizeof(input_name));
-
         if (sat_ipcamera_device_name_set(input_name, layout_ipc_camera_edit_index_get(), 1000) == true)
         {
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname, "Door%d(%s)", layout_ipc_camera_edit_index_get() + 1, input_name);
-
+                        sprintf(doorname, "Door%d(%s)", layout_ipc_camera_edit_index_get() + 1, lv_textarea_get_text(textarea));
                         memset(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
                 else
                 {
                         char doorname[128] = {0};
-                        sprintf(doorname, "Door%d(%s)", layout_ipc_camera_edit_index_get() + 1, input_name);
+                        sprintf(doorname, "CCTV%d(%s)", layout_ipc_camera_edit_index_get() + 1, input_name);
                         memset(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name));
                         strcpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].door_name, doorname);
                 }
@@ -402,6 +399,19 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
         }
         return SAT_VOID;
 }
+
+static void ipc_camera_input_hidden_btn_display(void)
+{
+        lv_obj_t *hide_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_password_hidden);
+        if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME)
+        {
+                lv_obj_add_flag(hide_btn, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(hide_btn, LV_OBJ_FLAG_HIDDEN);
+        }
+}
 static void sat_layout_enter(ipc_camera_input)
 {
         lv_obj_t *textarea;
@@ -467,6 +477,7 @@ static void sat_layout_enter(ipc_camera_input)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_list_show.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                ipc_camera_input_hidden_btn_display();
         }
         /***********************************************
          ** 作者: leo.liu
@@ -490,7 +501,6 @@ static void sat_layout_enter(ipc_camera_input)
 }
 static void sat_layout_quit(ipc_camera_input)
 {
-       
 }
 
 sat_layout_create(ipc_camera_input);

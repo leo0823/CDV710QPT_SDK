@@ -19,28 +19,28 @@ typedef enum
 #define THUMB_WIDTH (1024)
 #define THUMB_HIGHT (600)
 
-#define FRAME_1_FILE_PATH "/app/resource/wallpaper/bg_openframe_background01.jpg"	 
+#define FRAME_1_FILE_PATH "/app/resource/wallpaper/bg_openframe_background01.jpg"
 #define FRAME_2_FILE_PATH "/app/resource/wallpaper/bg_openframe_background02.jpg"
-#define FRAME_3_FILE_PATH "/app/resource/wallpaper/bg_openframe_background03.jpg"	 
+#define FRAME_3_FILE_PATH "/app/resource/wallpaper/bg_openframe_background03.jpg"
 #define FRAME_4_FILE_PATH "/app/resource/wallpaper/bg_openframe_background04.jpg"
-#define FRAME_5_FILE_PATH "/app/resource/wallpaper/bg_openframe_background05.jpg"	 
+#define FRAME_5_FILE_PATH "/app/resource/wallpaper/bg_openframe_background05.jpg"
 #define FRAME_6_FILE_PATH "/app/resource/wallpaper/bg_openframe_background06.jpg"
-#define FRAME_7_FILE_PATH "/app/resource/wallpaper/bg_openframe_background07.jpg"	 
+#define FRAME_7_FILE_PATH "/app/resource/wallpaper/bg_openframe_background07.jpg"
 #define FRAME_8_FILE_PATH "/app/resource/wallpaper/bg_openframe_background08.jpg"
-#define FRAME_9_FILE_PATH "/app/resource/wallpaper/bg_openframe_background09.jpg"	 
+#define FRAME_9_FILE_PATH "/app/resource/wallpaper/bg_openframe_background09.jpg"
 #define FRAME_10_FILE_PATH "/app/resource/wallpaper/bg_openframe_background10.jpg"
 
-char * frame_path[10] = {
-	FRAME_1_FILE_PATH,
-	FRAME_2_FILE_PATH,
-	FRAME_3_FILE_PATH,
-	FRAME_4_FILE_PATH,
-	FRAME_5_FILE_PATH,
-	FRAME_6_FILE_PATH,
-	FRAME_7_FILE_PATH,
-	FRAME_8_FILE_PATH,
-	FRAME_9_FILE_PATH,
-	FRAME_10_FILE_PATH,
+char *frame_path[10] = {
+		FRAME_1_FILE_PATH,
+		FRAME_2_FILE_PATH,
+		FRAME_3_FILE_PATH,
+		FRAME_4_FILE_PATH,
+		FRAME_5_FILE_PATH,
+		FRAME_6_FILE_PATH,
+		FRAME_7_FILE_PATH,
+		FRAME_8_FILE_PATH,
+		FRAME_9_FILE_PATH,
+		FRAME_10_FILE_PATH,
 
 };
 static int frame_path_index = 0;
@@ -238,7 +238,6 @@ static bool frame2_show_thumb_media_display_callback(const char *data, int x, in
 				return false;
 			}
 			lv_memcpy_small((uint8_t *)frame_buffer_cur_a->data, data, w * h * 3);
-
 		}
 	}
 	else
@@ -256,7 +255,6 @@ static bool frame2_show_thumb_media_display_callback(const char *data, int x, in
 				return false;
 			}
 			lv_memcpy_small((uint8_t *)frame_buffer_cur_b->data, data, w * h * 3);
-
 		}
 	}
 
@@ -363,7 +361,7 @@ static void frame_show_refresh_wait_task(lv_timer_t *ptimer)
 		if ((frame_show_frame_index == 0x08) || (frame_show_frame_index == 0x09) || (frame_show_frame_index == 0x10) || (frame_show_frame_index == 0x11))
 		{
 			monitor_open(true, true);
-			//sat_linphone_calls_cmd_send();
+			// sat_linphone_calls_cmd_send();
 		}
 		lv_sat_timer_create(frame_show_delay_close_monitor_timer, 10000, NULL);
 	}
@@ -415,19 +413,19 @@ static void frame_show_cancel_btn_display(void)
 	if (obj == NULL)
 	{
 		lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_scr_act_obj_id_cancel_obj, 40, 15, 80, 80,
-								 layout_frame_show_cancel_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+														 layout_frame_show_cancel_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
 	obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_scr_act_obj_id_cancel_obj);
 	if (obj == NULL)
 	{
 		lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_scr_act_obj_id_cancel_obj, 40, 15, 80, 80,
-								 layout_frame_show_cancel_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+														 layout_frame_show_cancel_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
 }
 
@@ -477,19 +475,19 @@ static void frame_show_setting_btn_display(void)
 	if (obj == NULL)
 	{
 		lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_scr_act_obj_id_setting_obj, 904, 15, 80, 80,
-								 layout_frame_show_setting_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 resource_ui_src_get("btn_title_setting.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+														 layout_frame_show_setting_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 resource_ui_src_get("btn_title_setting.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
 	obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_scr_act_obj_id_setting_obj);
 	if (obj == NULL)
 	{
 		lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_scr_act_obj_id_setting_obj, 904, 15, 80, 80,
-								 layout_frame_show_setting_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-								 resource_ui_src_get("btn_title_setting.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+														 layout_frame_show_setting_btn_liick, true, LV_OPA_TRANSP, 0X101010, LV_OPA_TRANSP, 0x808080,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+														 resource_ui_src_get("btn_title_setting.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 	}
 }
 
@@ -547,31 +545,31 @@ static void frame_show_date_obj_display(lv_obj_t *parent)
 	if (lang == LANGUAGE_ID_ENGLISH)
 	{
 		// printf("%d %d %d %d\n",tm.tm_wday,tm.tm_mday,tm.tm_mon,tm.tm_year);
-		lv_label_set_text_fmt(label_date, "%s,%s %d %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
+		lv_label_set_text_fmt(label_date, "%s %s %d %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
 	}
 	else if (lang == LANGUAGE_ID_HANYU)
 	{
-		lv_label_set_text_fmt(label_date, "%04d년%d월%d일,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
+		lv_label_set_text_fmt(label_date, "%04d년%d월%d일%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
 	}
 	else if (lang == LANGUAGE_ID_ELUOSI)
 	{
-		lv_label_set_text_fmt(label_date, "%s,,%d,%s,%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+		lv_label_set_text_fmt(label_date, "%s %d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
 	}
 	else if (lang == LANGUAGE_ID_XIBANYA)
 	{
-		lv_label_set_text_fmt(label_date, "%s,%d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+		lv_label_set_text_fmt(label_date, "%s %d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
 	}
 	else if (lang == LANGUAGE_ID_CHINESE)
 	{
-		lv_label_set_text_fmt(label_date, "%04d年%d月%d日,%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
+		lv_label_set_text_fmt(label_date, "%04d年%d月%d日 %s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
 	}
 	else if (lang == LANGUAGE_ID_YUENAN)
 	{
-		lv_label_set_text_fmt(label_date, "%s,%d,%s,%04d", week_str, tm.tm_mday, mon_str, tm.tm_year );
+		lv_label_set_text_fmt(label_date, "%s %d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
 	}
 	else if (lang == LANGUAGE_ID_ALABOYU)
 	{
-		lv_label_set_text_fmt(label_date, "%d,%s,%04d,%s",  tm.tm_mday, mon_str, tm.tm_year, week_str);
+		lv_label_set_text_fmt(label_date, "%d-%s-%04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
 	}
 }
 
@@ -596,20 +594,20 @@ static void frame_show_setting_time_label_display(void)
 	if (time_obj == NULL)
 	{
 		time_obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_timer_label_obj, 360, 139, 304, 147,
-										 NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
-										 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-										 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-										 NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_plus);
+																		 NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
+																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																		 NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_plus);
 	}
 
 	lv_obj_t *date_obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_date_label_obj);
 	if (date_obj == NULL)
 	{
 		date_obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_date_label_obj, 360, 288, 304, 30,
-										 NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
-										 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-										 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-										 NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+																		 NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
+																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																		 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																		 NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 	frame_show_time_obj_display(parent);
 	frame_show_date_obj_display(parent);
@@ -623,8 +621,8 @@ static void frame_show_setting_time_label_display(void)
 ************************************************************/
 static void frame_show_time_display(void)
 {
-	//frame_show_cancel_btn_display();
-	//frame_show_setting_btn_display();
+	// frame_show_cancel_btn_display();
+	// frame_show_setting_btn_display();
 	frame_show_setting_time_label_display();
 }
 /************************************************************
@@ -684,10 +682,10 @@ static void frame_show_calendar_label_display(void)
 	{
 
 		obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_calendar_year_label, 373, 165, 280, 42,
-									NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									"", 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
+																NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																"", 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 	lv_label_set_text_fmt(obj, "%04d", tm.tm_year);
 
@@ -696,10 +694,10 @@ static void frame_show_calendar_label_display(void)
 	if (obj == NULL)
 	{
 		lv_common_text_create(parent, frame_show_scr_act_obj_id_calendar_week_label, 373, 349, 280, 42,
-							  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-							  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							  lang_str_get(tm.tm_wday - 1 + HOME_XLS_LANG_ID_MON), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
+													NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													lang_str_get(tm.tm_wday - 1 + HOME_XLS_LANG_ID_MON), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 
 	obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_calendar_mon_label);
@@ -707,20 +705,20 @@ static void frame_show_calendar_label_display(void)
 	{
 
 		lv_common_text_create(parent, frame_show_scr_act_obj_id_calendar_mon_label, 373, 399, 280, 42,
-							  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-							  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							  lang_str_get(tm.tm_mon - 1 + HOME_XLS_LANG_ID_JAN), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+													NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													lang_str_get(tm.tm_mon - 1 + HOME_XLS_LANG_ID_JAN), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 	}
 
 	obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_calendar_day_label);
 	if (obj == NULL)
 	{
 		obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_calendar_day_label, 293, 220, 440, 119,
-									NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									"", 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_plus);
+																NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																"", 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_plus);
 	}
 	lv_label_set_text_fmt(obj, "%02d", tm.tm_mday);
 }
@@ -733,8 +731,8 @@ static void frame_show_calendar_label_display(void)
 ************************************************************/
 static void frame_show_clendar_display(void)
 {
-	//frame_show_cancel_btn_display();
-	//frame_show_setting_btn_display();
+	// frame_show_cancel_btn_display();
+	// frame_show_setting_btn_display();
 	frame_show_calendar_label_display();
 }
 static void frame_show_calendar_start(void)
@@ -784,10 +782,10 @@ static void frame_show_playback_name_display(const char *name)
 	if (obj == NULL)
 	{
 		lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_name_label, 200, 35, 624, 80,
-							  NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-							  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-							  name, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+													NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+													name, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 	}
 }
 /***********************************************
@@ -820,14 +818,14 @@ static void frame_show_monitor_channle_display(void)
 	if (obj == NULL)
 	{
 		obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_chann_label, 200, 35, 624, 80,
-									NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-									"", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
-	    if(obj != NULL)
-        {
-            lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
-        }
+																NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																"", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+		if (obj != NULL)
+		{
+			lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
+		}
 	}
 
 	if (is_channel_ipc_camera(channel) == true)
@@ -852,8 +850,8 @@ static void frame_show_monitor_channle_display(void)
 static void frame_show_playback_start(void)
 {
 
-	//frame_show_cancel_btn_display();
-	//frame_show_setting_btn_display();
+	// frame_show_cancel_btn_display();
+	// frame_show_setting_btn_display();
 	frame_show_setting_time_label_display();
 
 	file_type type = FILE_TYPE_FLASH_PHOTO;
@@ -891,8 +889,8 @@ static void frame_show_door_display(void)
 	frame_show_monitor_channle_display();
 	// frame_show_monitor_auto_display();
 	// frame_show_monitor_sd_display();
-	//frame_show_cancel_btn_display();
-	//frame_show_setting_btn_display();
+	// frame_show_cancel_btn_display();
+	// frame_show_setting_btn_display();
 	frame_show_setting_time_label_display();
 }
 
@@ -973,7 +971,7 @@ static void frame_show_restart(void)
 	{
 		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x08;
-		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true))) //没有注册或者是已经显示完最后一个Door camera通道
+		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true))) // 没有注册或者是已经显示完最后一个Door camera通道
 		{
 			frame_show_frame_index = 0x09;
 
@@ -985,7 +983,7 @@ static void frame_show_restart(void)
 	{
 		sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x10;
-		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false))) //没有注册或者是已经显示完最后一个CCTV通道
+		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false))) // 没有注册或者是已经显示完最后一个CCTV通道
 		{
 			frame_show_frame_index = 0x11;
 			return frame_show_restart();
@@ -1039,19 +1037,19 @@ static void sat_layout_enter(frame_show)
 	{
 
 		lv_obj_t *frame1 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame1_id, 0, 0, THUMB_WIDTH, THUMB_HIGHT,
-													NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
-													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-													NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+																								NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
+																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																								NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 		lv_obj_clear_flag(frame1, LV_OBJ_FLAG_HIDDEN);
 	}
 	{
 
 		lv_obj_t *frame2 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame2_id, THUMB_WIDTH, 0, THUMB_WIDTH, THUMB_HIGHT,
-													NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
-													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-													NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+																								NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
+																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+																								NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 		lv_obj_clear_flag(frame2, LV_OBJ_FLAG_HIDDEN);
 	}
 

@@ -167,16 +167,16 @@ static void *asterisk_server_sync_task(void *arg)
                         }
 
                         unsigned long long timestamp = user_timestamp_get();
-                 
+
                         /*上次设备不在线，这次在线，状态发生改变*/
                         if (((is_registers_online[i] == false) || (is_asterisk_server_sync_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
                         {
                                 is_registers_online[i] = true;
                                 is_asterisk_server_sync_data_force = false;
                                 is_need_asterisk_update = true;
-                                for(int i = 0; i < 8 ; i++)
+                                for (int i = 0; i < 8; i++)
                                 {
-                                        user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i) ;
+                                        user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
                                 }
                                 struct tm tm;
                                 user_time_read(&tm);
@@ -192,19 +192,15 @@ static void *asterisk_server_sync_task(void *arg)
                                 /*离线设备需要同步到其他设备*/
                                 p_register_info[i].timestamp = 0;
                                 printf("%s %s offline \n", p_register_info[i].name, p_register_info[i].name);
-                               
                         }
                 }
-                
+
                 /*需要同步注册信息*/
                 if (is_need_asterisk_update == true)
                 {
                         is_need_asterisk_update = false;
 
                         sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 100, network_data_get()->door_device);
-
-
-                        
                 }
                 usleep(1000 * 1000);
         }
@@ -224,8 +220,13 @@ int main(int argc, char *argv[])
         remove("/tmp/.linphonerc");
         sat_kill_task_process("{safe_asterisk} /bin/sh /app/asterisk/sbin/safe_asterisk");
         sat_kill_task_process("/app/asterisk/sbin/asterisk -f -vvvg -c");
-
         user_data_init();
+        if (user_data_get()->is_device_init == false)
+        {
+                system("rm -rf /app/data/user_data.cfg");
+                system("rm -rf /app/data/network_data.cfg");
+                user_data_init();
+        }
         network_data_init();
 
         linux_kerner_init();
@@ -259,7 +260,6 @@ int main(int argc, char *argv[])
          * @注释: 注册输入设备
          */
         lv_port_indev_init();
-
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu
@@ -277,6 +277,7 @@ int main(int argc, char *argv[])
                 pthread_t task_id;
                 pthread_create(&task_id, sat_pthread_attr_get(), asterisk_server_sync_task, NULL);
         }
+
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu

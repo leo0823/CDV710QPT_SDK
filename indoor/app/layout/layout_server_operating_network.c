@@ -70,6 +70,7 @@ enum
 
 static bool setting_server_operation_data_valid_check(void)
 {
+        return true;
         int obj_id[][2] = {
             {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
             {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},

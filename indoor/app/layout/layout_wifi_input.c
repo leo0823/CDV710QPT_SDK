@@ -20,7 +20,7 @@ enum
         wifi_input_obj_id_connect_status,
         wifi_input_obj_id_confirm_btn,
         wifi_input_obj_id_confirm_btn_label,
-        
+
 };
 /***
 ** 日期: 2022-04-26 09:16
@@ -35,8 +35,7 @@ void wifi_input_user_setting(const char *user)
         memset(wifi_input_user_temp, 0, sizeof(wifi_input_user_temp));
         if (user != NULL)
         {
-                strncpy(wifi_input_user_temp, user, strlen(user) - 1);//把换行符去掉
-
+                strncpy(wifi_input_user_temp, user, strlen(user) - 1); // 把换行符去掉
         }
 }
 
@@ -80,8 +79,6 @@ static void wifi_input_textarea_placeholder_setting(void)
         lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_INPUT_USER : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
 }
 
-
-
 static void wifi_input_password_hidden_icon(void)
 {
         lv_obj_t *icon = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_password_hidden);
@@ -100,22 +97,18 @@ static void wifi_input_password_hidden_icon(void)
         }
 }
 
-
-
 static void wifi_input_msg_dialog_error_confirm_up(lv_event_t *ev)
 {
-        lv_obj_del(lv_obj_get_child_form_id(sat_cur_layout_screen_get(),wifi_input_obj_id_msgdialog_bg));
+        lv_obj_del(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_msgdialog_bg));
 }
-
-
 
 static void wifi_input_animation_connecting_task(lv_timer_t *task)
 {
-	bool conneted = 0;
-	wifi_device_connection_stauts(NULL, NULL, NULL, &conneted, NULL);
-	if (conneted == true)
-	{
-		wifi_device_tmp_sync();
+        bool conneted = 0;
+        wifi_device_connection_stauts(NULL, NULL, NULL, &conneted, NULL);
+        if (conneted == true)
+        {
+                wifi_device_tmp_sync();
                 if (user_data_get()->is_device_init == false)
                 {
                         sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -124,29 +117,30 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
                 {
                         sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_BOTTOM, SAT_VOID);
                 }
-	}else
+        }
+        else
         {
                 int *ploop = (int *)task->user_data;
-		int loop = *ploop;
-		if (loop > 30)
-		{
-			wifi_device_conneting();
+                int loop = *ploop;
+                if (loop > 30)
+                {
+                        wifi_device_conneting();
 
-			lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_msgdialog_bg),wifi_input_obj_id_msgdialog);
-			lv_obj_clean(parent);
-			lv_timer_del(task);
+                        lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_msgdialog_bg), wifi_input_obj_id_msgdialog);
+                        lv_obj_clean(parent);
+                        lv_timer_del(task);
 
-                        setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
-                        setting_msgdialog_msg_confirm_btn_create(parent,wifi_input_obj_id_confirm_btn,wifi_input_msg_dialog_error_confirm_up);
-                        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+                        setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
+                        setting_msgdialog_msg_confirm_btn_create(parent, wifi_input_obj_id_confirm_btn, wifi_input_msg_dialog_error_confirm_up);
+                        if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
                         {
                                 standby_timer_restart(true);
                         }
-		}
-		else
-		{
-			(*ploop)++;
-		}
+                }
+                else
+                {
+                        (*ploop)++;
+                }
         }
 }
 
@@ -158,39 +152,38 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
 ***/
 static void wifi_input_animation_task_create(lv_obj_t *parent)
 {
-        //旋转器创建
+        // 旋转器创建
         {
-                static lv_style_t style;                     //创建样式
+                static lv_style_t style; // 创建样式
                 static lv_style_t bc_style;
 
-                lv_style_init(&style);                       //初始化样式
-                lv_style_set_arc_color(&style, lv_color_make(0x00, 0x96, 0xFF)); //设置圆弧颜色
-                lv_style_set_arc_width(&style, 12);            //设置圆弧宽度；
+                lv_style_init(&style);                                           // 初始化样式
+                lv_style_set_arc_color(&style, lv_color_make(0x00, 0x96, 0xFF)); // 设置圆弧颜色
+                lv_style_set_arc_width(&style, 12);                              // 设置圆弧宽度；
 
-                lv_style_init(&bc_style);                       //初始化样式
-                lv_style_set_arc_color(&bc_style, lv_color_make(0xFF, 0xFF, 0xFF)); //设置背景圆环颜色
-                lv_style_set_arc_width(&bc_style, 12);        //设置背景圆环宽度
+                lv_style_init(&bc_style);                                           // 初始化样式
+                lv_style_set_arc_color(&bc_style, lv_color_make(0xFF, 0xFF, 0xFF)); // 设置背景圆环颜色
+                lv_style_set_arc_width(&bc_style, 12);                              // 设置背景圆环宽度
 
-                lv_obj_t * preload = lv_spinner_create(parent, 1000, 45);
+                lv_obj_t *preload = lv_spinner_create(parent, 1000, 45);
 
-                lv_obj_add_style(preload, &style, LV_PART_INDICATOR);//应用到圆弧部分；
-                lv_obj_add_style(preload, &bc_style, LV_PART_MAIN);//应用到背景圆环部分；
+                lv_obj_add_style(preload, &style, LV_PART_INDICATOR); // 应用到圆弧部分；
+                lv_obj_add_style(preload, &bc_style, LV_PART_MAIN);   // 应用到背景圆环部分；
 
-                //lv_obj_t * preload = lv_spinner_create(lv_scr_act(),1000,100);
+                // lv_obj_t * preload = lv_spinner_create(lv_scr_act(),1000,100);
                 lv_obj_set_size(preload, 100, 100);
                 lv_obj_align(preload, LV_ALIGN_CENTER, 0, 70);
         }
-        //连接状态显示
+        // 连接状态显示
         {
-                setting_msgdialog_msg_create(parent,wifi_input_obj_id_connect_status,lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECTING), 0, 110, 460, 80);
+                setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECTING), 0, 110, 460, 80);
         }
 
-
-        static bool loop_count = 0;//wifi最大连接时长标志
+        static bool loop_count = 0; // wifi最大连接时长标志
         loop_count = 0;
         lv_sat_timer_create(wifi_input_animation_connecting_task, 1000, &loop_count);
 
-        wifi_device_user_to_temp((unsigned char *)wifi_input_user_temp,wifi_input_user_passwd[0] == '\0' ? NULL :  (unsigned char *)wifi_input_user_passwd);
+        wifi_device_user_to_temp((unsigned char *)wifi_input_user_temp, wifi_input_user_passwd[0] == '\0' ? NULL : (unsigned char *)wifi_input_user_passwd);
         wifi_device_temp_conneting();
 }
 
@@ -203,30 +196,28 @@ static void wifi_input_animation_task_create(lv_obj_t *parent)
 static void wifi_input_msg_dialog_display(void)
 {
 
-	lv_obj_t *cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_msgdialog_bg);
-	if (cont != NULL)
-	{
-		return;
-	}
-	lv_obj_t * msgbox = setting_msgdialog_msg_bg_create(wifi_input_obj_id_msgdialog_bg,wifi_input_obj_id_msgdialog, 282, 93, 460, 352);
+        lv_obj_t *cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_msgdialog_bg);
+        if (cont != NULL)
+        {
+                return;
+        }
+        lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(wifi_input_obj_id_msgdialog_bg, wifi_input_obj_id_msgdialog, 282, 93, 460, 352);
         wifi_input_animation_task_create(msgbox);
-
 }
-
 
 static void layout_wifi_input_head_display(void)
 {
-        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),0);
-        if(obj != NULL)
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), 0);
+        if (obj != NULL)
         {
-                lv_label_set_text_fmt(obj,"%s",wifi_input_user_temp[0] == 0 ? lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI) : wifi_input_user_temp);
+                lv_label_set_text_fmt(obj, "%s", wifi_input_user_temp[0] == 0 ? lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI) : wifi_input_user_temp);
         }
 }
 static void wifi_input_keyboard_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_target(ev);
         uint16_t btn_id = lv_btnmatrix_get_selected_btn(obj);
-        printf("btn_id is %d\n",btn_id);
+        printf("btn_id is %d\n", btn_id);
         lv_keyboard_mode_t mode = lv_keyboard_get_mode(obj);
         if ((((mode == LV_KEYBOARD_MODE_TEXT_LOWER) || (mode == LV_KEYBOARD_MODE_TEXT_UPPER)) && (btn_id != 41)) ||
             ((mode == LV_KEYBOARD_MODE_SPECIAL) && (btn_id != 43)))
@@ -247,20 +238,19 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
         {
                 int pos = lv_textarea_get_cursor_pos(textarea);
                 if ((pos < 8) && (pos != 0))
-		{
-			return;
-		}
-		memset(wifi_input_user_passwd, 0, sizeof(wifi_input_user_passwd));
-		if (pos != 0)
-		{
-			strcpy((char *)wifi_input_user_passwd, lv_textarea_get_text(textarea));
-		}
-                if(1)
+                {
+                        return;
+                }
+                memset(wifi_input_user_passwd, 0, sizeof(wifi_input_user_passwd));
+                if (pos != 0)
+                {
+                        strcpy((char *)wifi_input_user_passwd, lv_textarea_get_text(textarea));
+                }
+                if (1)
                 {
                         standby_timer_close();
                         wifi_input_msg_dialog_display();
                 }
-
         }
 }
 
@@ -310,6 +300,7 @@ static void sat_layout_enter(wifi_input)
                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                 lv_textarea_set_password_bullet(textarea, "*");
                 wifi_input_textarea_placeholder_setting();
+                lv_textarea_set_password_mode(textarea, true);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -321,7 +312,7 @@ static void sat_layout_enter(wifi_input)
                                          wifi_input_password_hidden_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("btn_list_show.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                         resource_ui_src_get("btn_list_hide.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
                 wifi_input_password_hidden_icon();
         }
@@ -347,7 +338,7 @@ static void sat_layout_enter(wifi_input)
 }
 static void sat_layout_quit(wifi_input)
 {
-        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
                 standby_timer_restart(true);
         }

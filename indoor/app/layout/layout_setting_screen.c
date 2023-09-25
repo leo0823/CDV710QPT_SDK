@@ -33,18 +33,16 @@ static void setting_screen_slider_obj_change_cb(lv_event_t *ev)
 
         user_data_get()->display.lcd_brigtness = value;
         user_data_save();
-        backlight_brightness_set(value == 0 ? 1 : value);
-        	
+        backlight_brightness_set(value <= 4 ? 4 : value);
 }
 static void setting_screen_standby_screen_obj_click(lv_event_t *ev)
 {
-        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_LEFT,SAT_VOID);
+        sat_layout_goto(setting_standby_screen, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_screen_screen_clean_obj_click(lv_event_t *ev)
 {
-     sat_layout_goto(setting_screen_clean, LV_SCR_LOAD_ANIM_MOVE_LEFT,SAT_VOID);   
+        sat_layout_goto(setting_screen_clean, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
-
 
 static lv_obj_t *setting_screen_sub_list_create(void)
 {
@@ -77,9 +75,9 @@ static lv_obj_t *setting_screen_sub_list_create(void)
                 {
                         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
                         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
-                        char light[32] =  {0};
-                        sprintf(light,"%02d",user_data_get()->display.lcd_brigtness);
-                        
+                        char light[32] = {0};
+                        sprintf(light, "%02d", user_data_get()->display.lcd_brigtness);
+
                         lv_common_slider_create(item, setting_screen_obj_id_lcd_screen_slider_cont, 173, 11, 449, 48,
                                                 setting_screen_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -100,11 +98,12 @@ static lv_obj_t *setting_screen_sub_list_create(void)
 
                 if (main_list_group[i].cont_id == setting_screen_obj_id_standby_screen_cont)
                 {
-                        lv_obj_t * sub_obj = lv_obj_get_child_form_id(item,setting_screen_obj_id_standby_screen_sub);
-                        int offset = user_data_get()->display.screen_off_time == 15 ? 0 : user_data_get()->display.screen_off_time == 30 ? 1 : user_data_get()->display.screen_off_time == 60 ? 2 : 3;
-                        lv_label_set_text(sub_obj,lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
+                        lv_obj_t *sub_obj = lv_obj_get_child_form_id(item, setting_screen_obj_id_standby_screen_sub);
+                        int offset = user_data_get()->display.screen_off_time == 15 ? 0 : user_data_get()->display.screen_off_time == 30 ? 1
+                                                                                      : user_data_get()->display.screen_off_time == 60   ? 2
+                                                                                                                                         : 3;
+                        lv_label_set_text(sub_obj, lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
                 }
-
         }
         return list;
 }

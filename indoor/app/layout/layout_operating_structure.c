@@ -26,7 +26,7 @@ static void operating_structure_goto_layout_process(lv_scr_load_anim_t anim)
 
         if (user_data_get()->is_device_init == 0)
         {
-                #if 0
+#if 0
                 if ((user_data_get()->system_mode & 0xF0) == 0x00)
                 {
                         sat_layout_goto(single_operation_network, anim, SAT_VOID);
@@ -35,12 +35,12 @@ static void operating_structure_goto_layout_process(lv_scr_load_anim_t anim)
                 {
                         sat_layout_goto(server_operation_network, anim, SAT_VOID);
                 }
-                #endif
+#endif
                 sat_layout_goto(server_operation_network, anim, SAT_VOID);
         }
         else
         {
-                system("reboot");
+
                 sat_layout_goto(setting_installation, anim, SAT_VOID);
         }
 }
@@ -59,7 +59,7 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         if (strstr((const char *)lv_obj_get_img_src(obj), "btn_radio_s.png"))
         {
                 user_data_get()->system_mode = 0x01;
-                memset(user_data_get()->mastar_wallpad_ip,0,sizeof(user_data_get()->mastar_wallpad_ip));
+                // memset(user_data_get()->mastar_wallpad_ip,0,sizeof(user_data_get()->mastar_wallpad_ip));
         }
         char number[32] = {0};
         memset(number, 0, sizeof(number));
@@ -69,7 +69,7 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         strcpy(network_data_get()->sip_user, number);
         network_data_save();
         user_data_save();
-        operating_structure_goto_layout_process(LV_SCR_LOAD_ANIM_FADE_IN);
+        system("reboot");
 }
 
 static void opearting_strutrue_master_slave_obj_display(lv_obj_t *obj_s, int dst_obj_id)
@@ -98,7 +98,6 @@ static void operating_structrue_next_obj_display(void)
         }
 }
 
-
 static void operating_structure_master_check_click(lv_event_t *e)
 {
         lv_obj_t *obj_s = lv_event_get_current_target(e);
@@ -112,11 +111,12 @@ static void operating_structure_master_check_click(lv_event_t *e)
 
 static void operating_structure_slave_seting_click(lv_event_t *e)
 {
-        extern void slave_typle_setting_update_master_ip_setting(char * master_ip);
+        extern void slave_typle_setting_update_master_ip_setting(char *master_ip);
         extern void slave_typle_setting_update_slave_id_setting(int id);
         slave_typle_setting_update_master_ip_setting(user_data_get()->mastar_wallpad_ip);
         slave_typle_setting_update_slave_id_setting(user_data_get()->system_mode & 0x0f);
-        sat_layout_goto(slave_type_setting , LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        printf("user_data_get()->mastar_wallpad_ip is %s\n", user_data_get()->mastar_wallpad_ip);
+        sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void opearting_strutrue_master_slave_init_display(void)
@@ -129,7 +129,6 @@ static void opearting_strutrue_master_slave_init_display(void)
 
                 lv_obj_set_style_bg_img_src(obj_master, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(obj_slave, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-
         }
         else
         {
@@ -173,7 +172,7 @@ static void sat_layout_enter(operating_structure)
                                                          resource_ui_src_get("btn_title_check.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-        #if 0
+#if 0
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:50
@@ -195,7 +194,7 @@ static void sat_layout_enter(operating_structure)
 
                 operating_structure_sub_info_display((user_data_get()->system_mode & 0xF0) >> 4);
         }
-        #endif
+#endif
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:50

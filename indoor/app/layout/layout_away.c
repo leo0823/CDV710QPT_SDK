@@ -224,14 +224,13 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
     else
     {
 
-        if(user_data_get()->alarm.away_alarm_enable == true)
+        if (user_data_get()->alarm.away_alarm_enable == true)
         {
-            lv_obj_t * cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_passwd_cont);
-            if(cont != NULL)
+            lv_obj_t *cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_passwd_cont);
+            if (cont != NULL)
             {
-                lv_obj_clear_flag(cont,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(cont, LV_OBJ_FLAG_HIDDEN);
             }
-            
         }
     }
 }
@@ -271,7 +270,6 @@ static void layout_away_sensor_select_obj_click(lv_event_t *ev)
         if (cont == obj)
         {
             float value = user_sensor_value_get(i);
-
 
             lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_away_sensor_select_cont_checkbox_id);
             if ((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < ALM_LOW) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_HIGHT)))
@@ -694,6 +692,10 @@ static void layout_away_release_time_msgbox_confirm_click(lv_event_t *e)
         {
             user_data_get()->alarm.away_release_time = i * 10;
             user_data_save();
+            if (user_data_get()->system_mode && 0x0f != 0x01)
+            {
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+            }
             break;
         }
     }
@@ -732,6 +734,10 @@ static void layout_away_setting_time_save(void)
         user_data_get()->alarm.away_setting_time = 3;
     }
     user_data_save();
+    if (user_data_get()->system_mode && 0x0f != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+    }
     layout_away_msgbox_del();
     layout_away_setting_time_display();
 }
@@ -844,7 +850,7 @@ static void layout_away_release_time_click(lv_event_t *ev)
     layout_away_release_time_msgbox_option_create(masgbox, layout_away_release_time_msgbox_checkbox_click);
 }
 
-static void layout_away_auto_record_enable_display(void)
+static void layout_away_save_visitor_photo(void)
 {
     lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo);
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_save_photo_switch_id);
@@ -857,6 +863,35 @@ static void layout_away_auto_record_enable_display(void)
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
     }
 }
+
+static void layout_away_bypass_call_display(void)
+{
+    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call);
+    lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_bypass_call_img_id);
+    if (user_data_get()->alarm.bypass_call == true)
+    {
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+    }
+    else
+    {
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+    }
+}
+
+static void layout_away_cctv_auto_record_display(void)
+{
+    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record);
+    lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
+    if (user_data_get()->alarm.away_auto_record == true)
+    {
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+    }
+    else
+    {
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+    }
+}
+
 /************************************************************
 ** 函数说明: 离家模式自动记录
 ** 作者: xiaoxiao
@@ -864,37 +899,42 @@ static void layout_away_auto_record_enable_display(void)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-static void away_alarm_save_photo_click(lv_event_t *ev)
+static void away_alarm_save_photo_enable_btn_click(lv_event_t *ev)
 {
 
     user_data_get()->alarm.away_save_photo = user_data_get()->alarm.away_save_photo ? false : true;
     user_data_save();
-    layout_away_auto_record_enable_display();
+    if (user_data_get()->system_mode && 0x0f != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+    }
+    layout_away_save_visitor_photo();
 }
 
-static void layout_away_cctv_record_enable_display(void)
+static void away_bypass_call_enable_btn_click(lv_event_t *ev)
 {
-        lv_obj_t * parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),layout_away_obj_id_audto_record);
-        lv_obj_t * obj = lv_obj_get_child_form_id(parent,layout_away_auto_record_img_id);
-        if (user_data_get()->alarm.away_auto_record == true)
-        {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-        }
-        else
-        {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
-        }
+
+    user_data_get()->alarm.bypass_call = user_data_get()->alarm.bypass_call ? false : true;
+    user_data_save();
+    if (user_data_get()->system_mode && 0x0f != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+    }
+    layout_away_bypass_call_display();
 }
-static void layout_away_auto_record_click(lv_event_t *ev)
+
+static void away_cctv_record_enable_btn_click(lv_event_t *ev)
 {
-  
 
     user_data_get()->alarm.away_auto_record = user_data_get()->alarm.away_auto_record ? false : true;
     user_data_save();
-    layout_away_cctv_record_enable_display();
-
-   
+    if (user_data_get()->system_mode && 0x0f != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+    }
+    layout_away_cctv_auto_record_display();
 }
+
 static void layout_away_func_setting_create()
 {
     lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_setting_time, 514, 80, 510, 72,
@@ -926,7 +966,7 @@ static void layout_away_func_setting_create()
     layout_away_release_time_display();
 
     lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_save_photo, 514, 72 * 3, 510, 72,
-                                                    away_alarm_save_photo_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                    away_alarm_save_photo_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                     0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                     0, 17, 300, 43, layout_away_obj_id_save_photo_title,
@@ -937,44 +977,46 @@ static void layout_away_func_setting_create()
                                                     NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                     370, 12, 80, 48, layout_away_save_photo_switch_id,
                                                     (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-    layout_away_auto_record_enable_display();
+    layout_away_save_visitor_photo();
 
-    lv_obj_t *by_pass = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call, 514, 72 * 4, 510, 72,
-                                                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                        0, 17, 300, 43, layout_away_obj_id_bypass_call_title,
-                                                                        lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                        0, 17, 120, 40, -1,
-                                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                        0, 42, 576, 29, -1,
-                                                                        NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                                        370, 12, 80, 48, layout_away_bypass_call_img_id,
-                                                                        (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-    lv_obj_t *auto_record = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 72 * 4, 510, 72,
-                                                                        layout_away_auto_record_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                        0, 17, 300, 43, layout_away_obj_id_auto_record_title,
-                                                                        lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_AUTO_RECORD), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                        0, 17, 120, 40, -1,
-                                                                        "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                        0, 42, 576, 29, -1,
-                                                                        NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                                        370, 12, 80, 48, layout_away_auto_record_img_id,
-                                                                        (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call, 514, 72 * 4, 510, 72,
+                                                    away_bypass_call_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                    0, 17, 300, 43, layout_away_obj_id_bypass_call_title,
+                                                    lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_BYPASS_CALL), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 17, 120, 40, -1,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 42, 576, 29, -1,
+                                                    NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                    370, 12, 80, 48, layout_away_bypass_call_img_id,
+                                                    (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+    layout_away_bypass_call_display();
+    lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record, 514, 72 * 5, 510, 72,
+                                                    away_cctv_record_enable_btn_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                    0, 17, 300, 43, layout_away_obj_id_auto_record_title,
+                                                    lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_AUTO_RECORD), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 17, 120, 40, -1,
+                                                    "", 0x00a8ff, 0x6d6d79, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                    0, 42, 576, 29, -1,
+                                                    NULL, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                    370, 12, 80, 48, layout_away_auto_record_img_id,
+                                                    (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+    layout_away_cctv_auto_record_display();
 
-    if ((user_data_get()->system_mode & 0xF0) != 0x10)
-    {
-        lv_obj_add_flag(by_pass, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(auto_record, LV_OBJ_FLAG_HIDDEN);
-    }else
-    {
-        lv_obj_add_flag(auto_record, LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(by_pass, LV_OBJ_FLAG_HIDDEN);
-    }
+    // if ((user_data_get()->system_mode & 0xF0) != 0x10)
+    // {
+    //     lv_obj_add_flag(by_pass, LV_OBJ_FLAG_HIDDEN);
+    //     lv_obj_clear_flag(auto_record, LV_OBJ_FLAG_HIDDEN);
+    // }
+    // else
+    // {
+    //     lv_obj_add_flag(auto_record, LV_OBJ_FLAG_HIDDEN);
+    //     lv_obj_clear_flag(by_pass, LV_OBJ_FLAG_HIDDEN);
+    // }
 }
-
 
 static void layout_away_passwd_check_success_cb(void)
 {
@@ -982,9 +1024,14 @@ static void layout_away_passwd_check_success_cb(void)
     user_data_get()->alarm.away_alarm_enable = false;
     user_data_get()->alarm.away_alarm_enable_list &= (~list);
     user_data_save();
+    if (user_data_get()->system_mode && 0x0f != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+    }
     extern bool away_alarm_release_det_timer_del(void);
     away_alarm_release_det_timer_del();
-    sat_layout_goto(away,LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+
+    sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(away)
@@ -1000,6 +1047,10 @@ static void sat_layout_enter(away)
             }
         }
         user_data_save();
+        if (user_data_get()->system_mode && 0x0f != 0x01)
+        {
+            sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+        }
     }
     layout_away_alarm_enable_list = 0x00;
     /************************************************************
@@ -1109,7 +1160,7 @@ static void sat_layout_enter(away)
             lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
     }
 
-    common_passwd_check_func_create(layout_away_obj_id_passwd_cont,layout_away_passwd_check_success_cb);
+    common_passwd_check_func_create(layout_away_obj_id_passwd_cont, layout_away_passwd_check_success_cb);
 }
 
 static void sat_layout_quit(away)

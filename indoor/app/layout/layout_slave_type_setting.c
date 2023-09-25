@@ -3,6 +3,7 @@
 enum
 {
         slave_type_setting_obj_id_title,
+        slave_type_setting_obj_id_return,
         slave_type_setting_obj_id_cancel,
         slave_type_setting_obj_id_next,
         slave_type_setting_obj_id_master_indor_cont,
@@ -33,19 +34,19 @@ typedef enum
         slave_type_setting_obj_id_checkbox,
 } slave_type_setting_list;
 
-//定义此变量是为了判断在进入此界面以后，分机的属性值是否被修改了
+// 定义此变量是为了判断在进入此界面以后，分机的属性值是否被修改了
 static char update_master_ip[16] = {0};
-static int  update_slave_id = 0;
+static int update_slave_id = 0;
 
-void slave_typle_setting_update_master_ip_setting(char * master_ip)
+void slave_typle_setting_update_master_ip_setting(char *master_ip)
 {
-        if(master_ip != NULL)
+        if (master_ip != NULL)
         {
-                strncpy(update_master_ip,master_ip,sizeof(update_master_ip));
+                strncpy(update_master_ip, master_ip, sizeof(update_master_ip));
         }
 }
 
-const char * slave_typle_setting_update_master_ip_get(void)
+const char *slave_typle_setting_update_master_ip_get(void)
 {
         return update_master_ip;
 }
@@ -53,7 +54,6 @@ void slave_typle_setting_update_slave_id_setting(int id)
 {
         update_slave_id = id;
 }
-
 
 static void slave_type_setting_cancel_func(lv_event_t *ev)
 {
@@ -96,19 +96,18 @@ static void slave_type_setting_save_confirm(lv_event_t *e)
         network_data_save();
         user_data_save();
         usleep(100 * 1000);
-        system("reboot");
+        // system("reboot");
 }
-
 
 static void slave_type_setting_save_btn_click(lv_event_t *e)
 {
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
-        if(is_valid_ipv4(update_master_ip))
+        if (is_valid_ipv4(update_master_ip))
         {
                 setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_VALID), 0, 120, 460, 120);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_save_confirm);
-
-        }else
+        }
+        else
         {
                 setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_ILLEGAL), 0, 120, 460, 120);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_cancel_func);
@@ -117,8 +116,11 @@ static void slave_type_setting_save_btn_click(lv_event_t *e)
 
 static void slave_type_setting_cancel_click(lv_event_t *e)
 {
+        slave_typle_setting_update_master_ip_setting(user_data_get()->mastar_wallpad_ip);
+        slave_typle_setting_update_slave_id_setting(user_data_get()->system_mode & 0x0f);
         sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
+
 static void slave_type_setting_master_indoor_click(lv_event_t *e)
 {
         sat_layout_goto(setting_master_indoor_unit_ip, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
@@ -127,7 +129,7 @@ static void slave_type_setting_master_indoor_click(lv_event_t *e)
 static void slave_type_setting_extension_number_display(void)
 {
         lv_obj_t *extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_extension_number_cont), slave_type_setting_obj_id_extension_number_sub);
-        if (update_slave_id== 1)
+        if (update_slave_id == 1)
         {
                 lv_label_set_text(extension_number, lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET));
         }
@@ -135,13 +137,17 @@ static void slave_type_setting_extension_number_display(void)
         {
                 lv_label_set_text_fmt(extension_number, "ID %d", update_slave_id);
         }
+        lv_obj_t *master_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_master_indor_cont), slave_type_setting_obj_id_master_indoor_sub);
 
-        extension_number = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_master_indor_cont), slave_type_setting_obj_id_master_indoor_sub);
-        lv_label_set_text(extension_number, update_master_ip);
+        if (strlen(update_master_ip) == 0)
+        {
+                lv_label_set_text(master_number, lang_str_get(LAYOUT_SLAVE_TYPE_SETTING_XLS_LANG_ID_NOT_SET));
+        }
+        else
+        {
+                lv_label_set_text(master_number, update_master_ip);
+        }
 }
-
-
-
 
 static void slave_type_setting_extension_number_list_display(lv_obj_t *parent)
 {
@@ -223,8 +229,40 @@ static void slave_type_setting_extension_number_click(lv_event_t *e)
         setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox, slave_type_setting_obj_id_msgbox_confirm, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_confirm_func, slave_type_setting_cancel_func);
 }
 
+/************************************************************
+** 函数说明:
+** 作者: xiaoxiao
+** 日期：2023-09-21 15:09:06
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void slave_type_setting_cancel_display()
+{
+        lv_obj_t *next_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_next);
+        lv_obj_t *cancel_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_cancel);
+        lv_obj_t *return_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), slave_type_setting_obj_id_return);
+
+        if ((strncmp(update_master_ip, user_data_get()->mastar_wallpad_ip, sizeof(update_master_ip))) || ((user_data_get()->system_mode & 0x0f) != update_slave_id))
+        {
+                lv_obj_clear_flag(cancel_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(return_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(next_obj, LV_OBJ_FLAG_HIDDEN);
+                if ((strlen(update_master_ip) != 0) && ((user_data_get()->system_mode & 0x0f) != update_slave_id))
+                {
+                        lv_obj_clear_flag(next_obj, LV_OBJ_FLAG_HIDDEN);
+                }
+        }
+        else
+        {
+                lv_obj_add_flag(next_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(cancel_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(return_obj, LV_OBJ_FLAG_HIDDEN);
+        }
+}
+
 static void sat_layout_enter(slave_type_setting)
 {
+        printf("user_data_get()->mastar_wallpad_ip is %s\n", user_data_get()->mastar_wallpad_ip);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -244,24 +282,31 @@ static void sat_layout_enter(slave_type_setting)
         ** 说明: 上一步
         ***********************************************/
         {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_cancel, 35, 15, 48, 48,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_return, 35, 15, 48, 48,
                                          slave_type_setting_cancel_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-2 13:42:25
+        ** 说明: 取消设置
+        ***********************************************/
         {
-                //下一步
-                lv_obj_t *obj = lv_common_img_btn_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_next, 912, 15, 80, 48,
-                                                         slave_type_setting_save_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         resource_ui_src_get("btn_title_check.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
-                if((strncmp(update_master_ip,user_data_get()->mastar_wallpad_ip,sizeof(update_master_ip)) == 0) && ((user_data_get()->system_mode & 0x0f) == update_slave_id) )
-                {
-                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
-                }
+                lv_common_text_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_cancel, 0, 20, 100, 40,
+                                      slave_type_setting_cancel_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      "Cancel", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+        }
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_next, 912, 15, 80, 48,
+                                         slave_type_setting_save_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_title_check.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -296,8 +341,7 @@ static void sat_layout_enter(slave_type_setting)
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 slave_type_setting_extension_number_display();
         }
-        
-
+        slave_type_setting_cancel_display();
 }
 static void sat_layout_quit(slave_type_setting)
 {
