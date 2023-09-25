@@ -357,7 +357,8 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         {
                 monitor_obj_timeout_label_display();
                 monitor_timeout_sec--;
-        }else
+        }
+        else
         {
                 layout_monitor_goto_layout_process();
         }
@@ -387,7 +388,7 @@ static void layout_monitor_channel_type_switch_btn_display(void)
         char *door_ch_png[8] = {"btn_call_cam1.png", "btn_call_cam2.png", "btn_call_cam3.png", "btn_call_cam4.png", "btn_call_cam5.png", "btn_call_cam6.png", "btn_call_cam7.png", "btn_call_cam8.png"};
         char *cctv_ch_png[8] = {"btn_call_cctv1.png", "btn_call_cctv2.png", "btn_call_cctv3.png", "btn_call_cctv4.png", "btn_call_cctv5.png", "btn_call_cctv6.png", "btn_call_cctv7.png", "btn_call_cctv8.png"};
 
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),monitor_obj_id_channel_switch_CCTTV_monitor);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
 
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
@@ -400,11 +401,11 @@ static void layout_monitor_channel_type_switch_btn_display(void)
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(cctv_ch_png[ch]),
                                             LV_PART_MAIN);
         }
-        if(is_channel_ipc_camera(monitor_channel_get()) == false)
+        if (is_channel_ipc_camera(monitor_channel_get()) == false)
         {
-                if(monitor_valid_channel_check(monitor_channel_get() + 8) == false)
+                if (monitor_valid_channel_check(monitor_channel_get() + 8) == false)
                 {
-                        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 }
         }
 }
@@ -464,45 +465,45 @@ static void monitor_obj_display_click(lv_event_t *e)
         {
                 device = &network_data_get()->door_device[channel];
 
-        lv_obj_t *adj_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
-        lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
-        lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
-        lv_obj_t *right_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
-        lv_obj_t *switch_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
-        if (lv_obj_has_flag(adj_cont, LV_OBJ_FLAG_HIDDEN) == true)
-        {
-                lv_obj_clear_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(left_btn, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(right_btn, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(switch_btn,LV_OBJ_FLAG_HIDDEN);
-
-        }
-        else
-        {
-                device = &network_data_get()->cctv_device[channel];
-        }
-
-        if (sat_ipcamera_image_get(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness, monitor_saturation, monitor_contrast, 1000) == true)
-        {
-                printf("[%d %d %d] \n", monitor_saturation[0], monitor_saturation[1], monitor_saturation[2]);
                 lv_obj_t *adj_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
                 lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
                 lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
                 lv_obj_t *right_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+                lv_obj_t *switch_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
                 if (lv_obj_has_flag(adj_cont, LV_OBJ_FLAG_HIDDEN) == true)
                 {
                         lv_obj_clear_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(left_btn, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_add_flag(right_btn, LV_OBJ_FLAG_HIDDEN);
-                        layout_monitor_brightness_bar_display();
-                        layout_monitor_contrast_bar_display();
-                        layout_monitor_color_bar_display();
+                        lv_obj_add_flag(switch_btn, LV_OBJ_FLAG_HIDDEN);
                 }
                 else
                 {
-                        lv_obj_add_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                        device = &network_data_get()->cctv_device[channel];
+                }
+
+                if (sat_ipcamera_image_get(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness, monitor_saturation, monitor_contrast, 1000) == true)
+                {
+                        printf("[%d %d %d] \n", monitor_saturation[0], monitor_saturation[1], monitor_saturation[2]);
+                        lv_obj_t *adj_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_adj_cont);
+                        lv_obj_t *buttom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
+                        lv_obj_t *left_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
+                        lv_obj_t *right_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+                        if (lv_obj_has_flag(adj_cont, LV_OBJ_FLAG_HIDDEN) == true)
+                        {
+                                lv_obj_clear_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                                lv_obj_add_flag(buttom_cont, LV_OBJ_FLAG_HIDDEN);
+                                lv_obj_add_flag(left_btn, LV_OBJ_FLAG_HIDDEN);
+                                lv_obj_add_flag(right_btn, LV_OBJ_FLAG_HIDDEN);
+                                layout_monitor_brightness_bar_display();
+                                layout_monitor_contrast_bar_display();
+                                layout_monitor_color_bar_display();
+                        }
+                        else
+                        {
+                                lv_obj_add_flag(adj_cont, LV_OBJ_FLAG_HIDDEN);
+                        }
                 }
         }
 }
@@ -1137,8 +1138,6 @@ static void layout_monitor_switch_btn_display(void)
         }
 }
 
-
-
 static void layout_monitor_full_screen_display(lv_event_t *e)
 {
 
@@ -1154,7 +1153,6 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 layout_monitor_switch_btn_display();
                 layout_monitor_channel_type_switch_btn_display();
-                
         }
         else if (is_channel_ipc_camera(monitor_channel_get()) == true)
         {
@@ -1173,21 +1171,17 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-
 }
 
 static void layout_monitor_setting_brightness_slider_change_cb(lv_event_t *e)
 {
-        //lv_obj_t *obj = lv_event_get_current_target(e);
+        // lv_obj_t *obj = lv_event_get_current_target(e);
 
         if (is_channel_ipc_camera(monitor_channel_get()) == true) // 调铃声音量
         {
-
         }
         else
         {
-
-
         }
 }
 
@@ -1248,15 +1242,13 @@ static void layout_monitor_brightness_bar_display(void)
 
 static void layout_monitor_setting_contrast_slider_change_cb(lv_event_t *e)
 {
-        //lv_obj_t *obj = lv_event_get_current_target(e);
+        // lv_obj_t *obj = lv_event_get_current_target(e);
 
         if (is_channel_ipc_camera(monitor_channel_get()) == true) // 调铃声音量
         {
-
         }
         else
         {
-
         }
 }
 
@@ -1298,7 +1290,6 @@ static void layout_monitor_contrast_bar_display(void)
 
         parent = lv_obj_get_child_form_id(parent, monitor_obj_id_contrast_slider_cont);
 
-
         lv_obj_t *text = lv_obj_get_child_form_id(parent, 0);
         if (text == NULL)
         {
@@ -1318,18 +1309,15 @@ static void layout_monitor_contrast_bar_display(void)
 
 static void layout_monitor_setting_color_slider_change_cb(lv_event_t *e)
 {
-        //lv_obj_t *obj = lv_event_get_current_target(e);
+        // lv_obj_t *obj = lv_event_get_current_target(e);
 
         if (is_channel_ipc_camera(monitor_channel_get()) == true) // 调铃声音量
         {
-
         }
         else
         {
-
         }
 }
-
 
 static void layout_monitor_color_bar_create(lv_obj_t *parent)
 {
@@ -2025,7 +2013,6 @@ static void sat_layout_enter(monitor)
 
                         monitor_obj_record_photo_display();
                 }
-
         }
         /************************************************************
         ** 函数说明: 切换到CCTV
@@ -2036,10 +2023,10 @@ static void sat_layout_enter(monitor)
         ************************************************************/
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor, 912, 384, 80, 80,
-                                        layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+                                         layout_monitor_channel_type_switch_btn_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
                 layout_monitor_channel_type_switch_btn_display();
         }
 
@@ -2497,7 +2484,7 @@ static bool tuya_event_cmd_ch_channge(int channel)
         {
                 monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
         }
-        else 
+        else
         {
                 monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
         }
@@ -2565,7 +2552,7 @@ static bool truye_event_cmd_audio_start(void)
 ************************************************************/
 static void tuya_event_cmd_video_stop(void)
 {
-        if (is_monitor_door_camera_talk == false|| monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
+        if (is_monitor_door_camera_talk == false || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
         {
                 layout_monitor_goto_layout_process();
         }
@@ -2601,7 +2588,7 @@ static bool tuya_event_cmd_video_start(void)
 ************************************************************/
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
 {
-        SAT_DEBUG("receive tuya cmd is %d",cmd);
+        SAT_DEBUG("receive tuya cmd is %d", cmd);
         switch ((cmd))
         {
         case TUYA_EVENT_CMD_VIDEO_START:
