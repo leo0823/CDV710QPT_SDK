@@ -27,7 +27,7 @@ typedef struct
 {
         char file_name[23];
         char mode;
-        char ch[16];
+        char ch[24];
         bool is_new;
         file_type type;
 } file_info;
