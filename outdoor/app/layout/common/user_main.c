@@ -295,6 +295,14 @@ static void video_stream_status_callback(bool en)
         }
         return;
 }
+
+/*呼叫成功后铃声处理*/
+static void call_ring_event_callback(void)
+{
+        sat_linphone_audio_play_stop();
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.mp3", 2);
+}
+
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -345,7 +353,7 @@ int main(int argc, char *argv[])
         key_call_callback_register(key_call_process);
         system_timer_callback_register(sys_timer_callback);
         video_stream_status_callback_register(video_stream_status_callback);
-
+        call_ring_event_fun_register(call_ring_event_callback);
         if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
         {
                 usleep(100 * 1000);

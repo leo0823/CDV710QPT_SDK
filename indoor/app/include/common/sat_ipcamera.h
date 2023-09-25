@@ -17,7 +17,7 @@ struct ipcamera_info
         /*注意此处：因为判断sizeof长度使sip，与rtsp一致，故
         rtsp url与 sip url的数组长度要一致，否则会出现越界处理*/
         char sip_url[128];
-        char door_name[64];
+        char door_name[24];
         int port;
         ipcamera_rtsp_info rtsp[IPCAMERA_PROFILE_MAX];
         int profile_token_num;
