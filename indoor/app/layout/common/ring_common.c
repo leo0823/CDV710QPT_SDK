@@ -12,7 +12,7 @@
 ***********************************************/
 bool ring_touch_play(void)
 {
-        if(user_data_get()->audio.touch_notification_volume == 0)
+        if (user_data_get()->audio.touch_notification_volume == 0)
         {
                 return false;
         }
@@ -29,7 +29,7 @@ bool ring_touch_play(void)
 ***********************************************/
 bool ring_door_call_play(int index)
 {
-        if(user_data_get()->audio.entracne_volume == 0)
+        if (user_data_get()->audio.entracne_volume == 0)
         {
                 return false;
         }
@@ -37,9 +37,8 @@ bool ring_door_call_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entracne_volume);
         sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
-        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0? index == 6 ? 2 :1 : 0xfffff);
+        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0 ? index == 6 ? 2 : 1 : 0xfffff);
 }
-
 
 /***********************************************
 ** 作者: leo.liu
@@ -61,7 +60,7 @@ bool ring_unlock_play(void)
 ***********************************************/
 bool ring_intercom_play(int index)
 {
-        if(user_data_get()->audio.extension_volume == 0)
+        if (user_data_get()->audio.extension_volume == 0)
         {
                 return false;
         }
@@ -69,7 +68,7 @@ bool ring_intercom_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.extension_volume);
         sprintf(cmd, RESOURCE_RING_PATH "extension/extension_call_%d.mp3", index);
-        printf("cmd is %s\n",cmd);
+        printf("cmd is %s\n", cmd);
         return sat_linphone_audio_play_start(cmd, 1);
 }
 
@@ -77,27 +76,26 @@ bool ring_intercom_play(int index)
 ** 函数说明: 警报ling
 ** 作者: xiaoxiao
 ** 日期: 2023-05-16 11:43:00
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool ring_alarm_play(void)
 {
         sat_linphone_audio_play_volume_set(100);
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH"alarm/alarm.mp3", 1);
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm/alarm.mp3", 1);
         return true;
-
 }
 
 /************************************************************
 ** 函数说明: 播放蜂鸣器报警
 ** 作者: xiaoxiao
 ** 日期: 2023-07-05 11:19:41
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool ring_buzzer_play(int index)
 {
-        if(user_data_get()->audio.buzzer_volume == 0)
+        if (user_data_get()->audio.buzzer_volume == 0)
         {
                 return false;
         }
@@ -106,20 +104,18 @@ bool ring_buzzer_play(int index)
         sat_linphone_audio_play_volume_set(user_data_get()->audio.buzzer_volume);
         sprintf(cmd, RESOURCE_RING_PATH "buzzer/buzzer_%d.mp3", index);
         return sat_linphone_audio_play_start(cmd, 1);
-
 }
-
 
 /************************************************************
 ** 函数说明: 播放公共入口铃声
 ** 作者: xiaoxiao
 ** 日期: 2023-07-05 11:19:41
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool ring_common_door_play(int index)
 {
-        if(user_data_get()->audio.common_entrance_volume == 0)
+        if (user_data_get()->audio.common_entrance_volume == 0)
         {
                 return false;
         }
@@ -128,40 +124,37 @@ bool ring_common_door_play(int index)
         sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
         sprintf(cmd, RESOURCE_RING_PATH "common_entrance/Common_entrance_%d.mp3", index);
         return sat_linphone_audio_play_start(cmd, 1);
-
 }
 
 /************************************************************
 ** 函数说明: 播放警卫室call机铃声
 ** 作者: xiaoxiao
 ** 日期: 2023-07-05 11:19:41
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool ring_guard_play(int index)
 {
-        if(user_data_get()->audio.guard_station_volume == 0)
+        if (user_data_get()->audio.guard_station_volume == 0)
         {
                 return false;
         }
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.guard_station_volume);
-        sprintf(cmd, RESOURCE_RING_PATH "security_office/security_office_%d.mp3",index );
-        printf("cmd is %s\n",cmd);
+        sprintf(cmd, RESOURCE_RING_PATH "security_office/security_office_%d.mp3", index);
+        printf("cmd is %s\n", cmd);
         return sat_linphone_audio_play_start(cmd, 1);
-
 }
 
 /************************************************************
 ** 函数说明: 播放繁忙音
 ** 作者: xiaoxiao
 ** 日期: 2023-07-05 11:19:41
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool ring_busy_play(int index)
 {
         return false;
-
 }

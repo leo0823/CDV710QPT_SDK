@@ -24,6 +24,14 @@ struct ipcamera_info
         /*0:token,1:digest*/
         char auther_flag;
 };
+struct ipcamera_network
+{
+        bool udhcp;
+        char ipaddr[24];
+        char mask[24];
+        char dns[24];
+        char gateway[24];
+};
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu

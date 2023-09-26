@@ -1,3 +1,4 @@
+
 #ifndef _USER_MONITOR_H_
 #define _USER_MONITOR_H_
 #include "stdbool.h"
@@ -21,8 +22,6 @@
 #define MON_CH_CCTV6 13
 #define MON_CH_CCTV7 14
 #define MON_CH_CCTV8 15
-
-
 
 typedef enum
 {
@@ -67,7 +66,7 @@ int monitor_door_first_valid_get(bool door_camera);
 /*获取最后一个有效通道*/
 int monitor_door_last_valid_get(bool door_camera);
 
-//获取门口机和CCTV的注册状态
+// 获取门口机和CCTV的注册状态
 bool monitor_door_registered_status_get(void);
 /***
 ** 日期: 2022-05-12 11:33
@@ -99,7 +98,7 @@ void monitor_close(char flag);
 ** 日期: 2022-12-28 9:44:13
 ** 说明: 开启监控
 ***********************************************/
-void monitor_open(bool refresh,bool rtsp);
+void monitor_open(bool refresh, bool rtsp);
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 9:44:13
@@ -146,18 +145,17 @@ bool monitor_valid_channel_check(int channel);
 ** 函数说明: 门口机注册数量获取
 ** 作者: xiaoxiao
 ** 日期: 2023-08-08 14:27:13
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 int door_camera_register_num_get();
-
 
 /************************************************************
 ** 函数说明: CCTV注册数量获取
 ** 作者: xiaoxiao
 ** 日期: 2023-08-08 14:29:29
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 int cctv_register_num_get();
 
@@ -165,8 +163,8 @@ int cctv_register_num_get();
 ** 函数说明: 依据sip消息获取分机号
 ** 作者: xiaoxiao
 ** 日期: 2023-08-10 10:51:32
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 int extern_index_get_by_user(const char *user);
 /************************************************************
@@ -176,7 +174,7 @@ int extern_index_get_by_user(const char *user);
 ** 参数说明:ch:门口机通道
 ** 注意事项:
 ************************************************************/
-bool outdoor_online_check(int ch,int*total);
+bool outdoor_online_check(int ch, int *total);
 /************************************************************
 ** 函数说明: 分机在线查询
 ** 作者: xiaoxiao
@@ -184,4 +182,4 @@ bool outdoor_online_check(int ch,int*total);
 ** 参数说明:ch:分机id1-8；total分机在线个数统计
 ** 注意事项:
 ************************************************************/
-bool extension_online_check(int ch,int *total);
+bool extension_online_check(int ch, int *total);

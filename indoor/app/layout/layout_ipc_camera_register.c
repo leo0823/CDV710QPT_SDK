@@ -148,6 +148,8 @@ static void ipc_camera_register_del_msgbox_confirm_click(lv_event_t *e)
         else
         {
                 memset(&(network_data_get()->cctv_device[device_index]), 0, sizeof(network_data_get()->cctv_device[device_index]));
+                user_data_get()->alarm.cctv_sensor[device_index] = 0;
+                user_data_save();
         }
         network_data_save();
         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
@@ -283,7 +285,7 @@ static void sat_layout_enter(ipc_camera_register)
                                 {
                                         continue;
                                 }
-                                
+
                                 lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
                                                                                                    ipc_camera_registered_register_list_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
@@ -295,7 +297,7 @@ static void sat_layout_enter(ipc_camera_register)
                                                                                                    0, 0, 0, 0, -1,
                                                                                                    NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                                    0, 20, 48, 48, 2,
-                                                                                                   resource_ui_src_get(outdoor_online_check(i,NULL) == true ? "ic_detect.png" : "ic_error.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                                                                                   resource_ui_src_get(outdoor_online_check(i, NULL) == true ? "ic_detect.png" : "ic_error.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                                 lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
                                 if (sub != NULL)
                                 {
