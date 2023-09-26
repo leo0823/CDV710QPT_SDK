@@ -70,6 +70,7 @@ enum
 
 static bool setting_server_operation_data_valid_check(void)
 {
+        return true;
         int obj_id[][2] = {
             {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
             {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
@@ -240,45 +241,54 @@ static void setting_server_operation_network_init(void)
                         }
                         else if (i == 2)
                         {
-                                if (network_data_get()->ip[0] != '0')
+                                char ip[32] = {0};
+                                char mask[32] = {0};
+                                if (sat_ip_mac_addres_get("eth0", ip, NULL, mask) == false)
                                 {
-                                        printf("========%d=========%s=========\n", __LINE__, network_data_get()->ip);
-                                        lv_textarea_set_text(textarea, network_data_get()->ip);
+                                        if (network_data_get()->ip[0] != '\0')
+                                        {
+
+                                                lv_textarea_set_text(textarea, network_data_get()->ip);
+                                        }
+                                        else
+                                        {
+                                                lv_textarea_set_text(textarea, "10.1.1.1");
+                                        }
                                 }
                                 else
                                 {
-                                        printf("========%d=========%s=========\n", __LINE__, __func__);
-                                        lv_textarea_set_text(textarea, "10.1.1.1");
                                 }
                         }
-                }
-                else if (i == 3)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->gateway);
-                }
-                else if (i == 4)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->mask);
-                }
-                else if (i == 5)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->dns);
-                }
-                else if (i == 6)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->local_server);
-                }
-                else if (i == 7)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->sip_server);
-                }
-                else if (i == 8)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->cctv_server);
-                }
-                else if (i == 9)
-                {
-                        lv_textarea_set_text(textarea, network_data_get()->guard_number);
+
+                        else if (i == 3)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->gateway);
+                        }
+                        else if (i == 4)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->mask);
+                                printf(" network_data_get()->mask is %s\n", network_data_get()->mask);
+                        }
+                        else if (i == 5)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->dns);
+                        }
+                        else if (i == 6)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->local_server);
+                        }
+                        else if (i == 7)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->sip_server);
+                        }
+                        else if (i == 8)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->cctv_server);
+                        }
+                        else if (i == 9)
+                        {
+                                lv_textarea_set_text(textarea, network_data_get()->guard_number);
+                        }
                 }
         }
 }

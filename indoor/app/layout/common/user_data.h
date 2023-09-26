@@ -9,7 +9,7 @@ typedef struct
         bool enable;
         /***** 0:door1 ,1:door2 --- 3:cctv2 *****/
         char select_camera;
-        /***** 0:photo 1:video *****/
+        /***** 1:photo 0:video *****/
         char saving_fmt;
         /***** 灵敏度 2：low,1:middle,0:height *****/
         char sensivity;
@@ -104,7 +104,8 @@ typedef struct
 {
         bool auto_record;
 
-        int away_alarm_enable_list;     // 离家警报模式：被监测的传感器列表
+        int away_alarm_enable_list; // 离家警报模式：被监测的传感器列表
+
         int security_alarm_enable_list; // 安全警报模式：被监测的传感器列表
 
         bool security_alarm_enable; // 安全警报模式；0：关闭；1：开启
@@ -129,6 +130,8 @@ typedef struct
 
         bool away_save_photo; // 离家模式报警是否拍照
 
+        bool bypass_call; // 离家模式是否设置旁路呼叫
+
         bool away_auto_record; // 离家模式报警是否启动CCTV录像
 
         bool security_auto_record; // 安全模式报警是否启动CCTV录像
@@ -140,6 +143,10 @@ typedef struct
         bool alarm_ring_play; // 是否需要播放警报铃声（警报同步需要用)
 
         bool is_alarm_return; // 表示当前
+
+        char cctv_sensor[8]; // 0:cctv 不与警报绑定 1-7代表cctv与对应的传感器绑定
+
+        bool away_setting_countdown;
 
 } user_alarm_info;
 
@@ -193,6 +200,7 @@ typedef struct
         char sip_server[32];
         char cctv_server[32];
         char guard_number[32];
+        char common_entrance_ip[32];
 
         struct ipcamera_info door_device[DEVICE_MAX];
 

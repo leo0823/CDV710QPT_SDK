@@ -22,7 +22,9 @@ enum
         setting_time_obj_id_1_obj,
         setting_time_obj_id_2_obj,
         setting_time_obj_id_3_obj,
-        setting_time_obj_id_4_obj
+        setting_time_obj_id_4_obj,
+
+        setting_time_roller_cont,
 };
 // 0x00:first 0x01:home 0x02:setting
 static char setting_timer_layout_first_enter_flag = 0x00;
@@ -65,26 +67,24 @@ static void setting_time_set_date_automatically_enable_display(lv_obj_t *obj)
 
 static void layout_setting_time_save_time(void)
 {
-        if(modify)
+        if (modify)
         {
                 struct tm tm;
                 /***** year *****/
                 char buffer[8] = {0};
                 lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_year_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
-                sscanf(buffer, "%d", &(tm.tm_year));        
-                printf("buffer is %s\n",buffer);
+                sscanf(buffer, "%d", &(tm.tm_year));
+                printf("buffer is %s\n", buffer);
                 /***** month *****/
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_month_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_mon));
 
-
                 /***** day *****/
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_day_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_mday));
-
 
                 /***** hour *****/
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_hour_roller);
@@ -95,7 +95,6 @@ static void layout_setting_time_save_time(void)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_min_roller);
                 lv_roller_get_selected_str(obj, buffer, 8);
                 sscanf(buffer, "%d", &(tm.tm_min));
-
 
                 /***** sec *****/
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
@@ -111,25 +110,25 @@ static void layout_setting_time_save_time(void)
 ** 函数说明: 时间显示初始化
 ** 作者: xiaoxiao
 ** 日期: 2023-05-16 10:17:23
-** 参数说明: 
-** 注意事项:  
+** 参数说明:
+** 注意事项:
 ************************************************************/
 static void setting_time_param_init(void)
 {
-        lv_obj_t * year = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_time_obj_id_year_roller);
-        lv_obj_t * month = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_time_obj_id_month_roller);
-        lv_obj_t * day = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_time_obj_id_day_roller);
-        lv_obj_t * hour = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_time_obj_id_hour_roller);
-        lv_obj_t * min = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_time_obj_id_min_roller);
-        lv_obj_t * sec = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_time_obj_id_sec_roller);
+        lv_obj_t *year = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_year_roller);
+        lv_obj_t *month = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_month_roller);
+        lv_obj_t *day = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_day_roller);
+        lv_obj_t *hour = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_hour_roller);
+        lv_obj_t *min = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_min_roller);
+        lv_obj_t *sec = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller);
         struct tm tm;
         user_time_read(&tm);
-        lv_roller_set_selected(year,tm.tm_year - 2023, false);
-        lv_roller_set_selected(month,tm.tm_mon - 1, false);
-        lv_roller_set_selected(day,tm.tm_mday - 1, false);
-        lv_roller_set_selected(hour,tm.tm_hour - 0, false);
-        lv_roller_set_selected(min,tm.tm_min - 0, false);
-        lv_roller_set_selected(sec,tm.tm_sec - 0, false);
+        lv_roller_set_selected(year, tm.tm_year - 2023, false);
+        lv_roller_set_selected(month, tm.tm_mon - 1, false);
+        lv_roller_set_selected(day, tm.tm_mday - 1, false);
+        lv_roller_set_selected(hour, tm.tm_hour - 0, false);
+        lv_roller_set_selected(min, tm.tm_min - 0, false);
+        lv_roller_set_selected(sec, tm.tm_sec - 0, false);
 }
 
 static void setting_time_set_date_automatically_click(lv_event_t *ev)
@@ -139,24 +138,29 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
 
         user_data_get()->etc.time_automatically = user_data_get()->etc.time_automatically ? false : true;
         user_data_save();
-        if(user_data_get()->etc.time_automatically)
+        if (user_data_get()->etc.time_automatically)
         {
                 layout_setting_time_save_time();
                 extern bool tuya_api_time_sync(void);
-                if(tuya_api_time_sync() == true)
+                if (tuya_api_time_sync() == true)
                 {
                         setting_time_param_init();
                 }
+                lv_obj_clear_flag(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_roller_cont), LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_time_roller_cont), LV_OBJ_FLAG_HIDDEN);
         }
         setting_time_set_date_automatically_enable_display(img);
 }
 static void setting_time_set_roller_click(lv_event_t *ev)
 {
-        printf("ev->code is %d\n",ev->code);
+        printf("ev->code is %d\n", ev->code);
         if (ev->code == LV_EVENT_VALUE_CHANGED)
-	{
+        {
                 modify = true;
-	}
+        }
 }
 
 static void sat_layout_enter(setting_time)
@@ -166,8 +170,8 @@ static void sat_layout_enter(setting_time)
         ** 函数说明: 用来标志时间是否被修改了
         ** 作者: xiaoxiao
         ** 日期: 2023-05-16 09:23:52
-        ** 参数说明: 
-        ** 注意事项: 
+        ** 参数说明:
+        ** 注意事项:
         ************************************************************/
         {
                 modify = false;
@@ -209,22 +213,22 @@ static void sat_layout_enter(setting_time)
 
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:42:50
-        ** 说明: 设置按钮创建
-        ***********************************************/
+         ** 日期: 2023-2-2 13:42:50
+         ** 说明: 设置按钮创建
+         ***********************************************/
         {
                 lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_time_obj_id_setting_cont, 48, 80, 928, 88,
-                                                                                setting_time_set_date_automatically_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                0, 8, 838, 50, setting_time_obj_id_setting_title,
-                                                                                lang_str_get(SETTING_TIME_XLS_LANG_ID_SET_DATE_AND_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                0, 45, 838, 50, setting_time_obj_id_setting_sub,
-                                                                                lang_str_get(SETTING_TIME_XLS_LANG_ID_THE_TIME_IS_SET_AUTOMATICALLY), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                                                0, 0, 0, 0, -1,
-                                                                                NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                840, 20, 80, 48, setting_time_obj_id_setting_img,
-                                                                                resource_ui_src_get("btn_switch_on.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
+                                                                                   setting_time_set_date_automatically_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                                   0, 8, 838, 50, setting_time_obj_id_setting_title,
+                                                                                   lang_str_get(SETTING_TIME_XLS_LANG_ID_SET_DATE_AND_TIME), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                   0, 45, 838, 50, setting_time_obj_id_setting_sub,
+                                                                                   lang_str_get(SETTING_TIME_XLS_LANG_ID_THE_TIME_IS_SET_AUTOMATICALLY), 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                                   0, 0, 0, 0, -1,
+                                                                                   NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                   840, 20, 80, 48, setting_time_obj_id_setting_img,
+                                                                                   resource_ui_src_get("btn_switch_on.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_time_obj_id_setting_img);
                 setting_time_set_date_automatically_enable_display(obj);
@@ -232,56 +236,55 @@ static void sat_layout_enter(setting_time)
 
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:42:50
-        ** 说明: year roller
-        ***********************************************/
+         ** 日期: 2023-2-2 13:42:50
+         ** 说明: year roller
+         ***********************************************/
         {
-                lv_obj_t * roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_year_roller, 110, 275, 104, 201,
-                                        setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        3, 30,2023, 2037, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                        resource_ui_src_get("roller_icon.png"));
+                lv_obj_t *roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_year_roller, 110, 275, 104, 201,
+                                                           setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
+                                                           3, 30, 2023, 2037, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                           resource_ui_src_get("roller_icon.png"));
                 lv_obj_add_event_cb(roller, setting_time_set_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
-                
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:46:56
-        ** 说明: -
-        ***********************************************/
+         ** 日期: 2023-2-2 13:46:56
+         ** 说明: -
+         ***********************************************/
         {
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_time_obj_id_1_obj, 214, 355, 36, 40,
-                                NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                "-", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      "-", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:42:50
-        ** 说明: montth roller
-        ***********************************************/
+         ** 日期: 2023-2-2 13:42:50
+         ** 说明: montth roller
+         ***********************************************/
         {
-                lv_obj_t * roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_month_roller, 250, 275, 104, 201,
-                                        setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        3, 30, 1, 12, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                        resource_ui_src_get("roller_icon.png"));
+                lv_obj_t *roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_month_roller, 250, 275, 104, 201,
+                                                           setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
+                                                           3, 30, 1, 12, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                           resource_ui_src_get("roller_icon.png"));
                 lv_obj_add_event_cb(roller, setting_time_set_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:46:56
-        ** 说明: -
-        ***********************************************/
+         ** 日期: 2023-2-2 13:46:56
+         ** 说明: -
+         ***********************************************/
         {
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_time_obj_id_2_obj, 354, 355, 36, 40,
-                                NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                "-", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      "-", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -289,64 +292,64 @@ static void sat_layout_enter(setting_time)
         ** 说明: day roller
         ***********************************************/
         {
-                lv_obj_t * roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_day_roller, 390, 275, 104, 201,
-                                        setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        3, 30, 1, 31, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                        resource_ui_src_get("roller_icon.png"));
+                lv_obj_t *roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_day_roller, 390, 275, 104, 201,
+                                                           setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
+                                                           3, 30, 1, 31, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                           resource_ui_src_get("roller_icon.png"));
                 lv_obj_add_event_cb(roller, setting_time_set_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:46:56
-        ** 说明: -
-        ***********************************************/
+         ** 日期: 2023-2-2 13:46:56
+         ** 说明: -
+         ***********************************************/
         {
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_time_obj_id_3_obj, 638, 355, 36, 40,
-                                NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:42:50
-        ** 说明: hour roller
-        ***********************************************/
+         ** 日期: 2023-2-2 13:42:50
+         ** 说明: hour roller
+         ***********************************************/
         {
-                lv_obj_t * roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_hour_roller, 534, 275, 104, 201,
-                                        setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        3, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                        resource_ui_src_get("roller_icon.png"));
+                lv_obj_t *roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_hour_roller, 534, 275, 104, 201,
+                                                           setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
+                                                           3, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                           resource_ui_src_get("roller_icon.png"));
                 lv_obj_add_event_cb(roller, setting_time_set_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:46:56
-        ** 说明: -
-        ***********************************************/
+         ** 日期: 2023-2-2 13:46:56
+         ** 说明: -
+         ***********************************************/
         {
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_time_obj_id_4_obj, 778, 355, 36, 40,
-                                NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:42:50
-        ** 说明: min roller
-        ***********************************************/
+         ** 日期: 2023-2-2 13:42:50
+         ** 说明: min roller
+         ***********************************************/
         {
-                lv_obj_t * roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_min_roller, 674, 275, 104, 201,
-                                        setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                        resource_ui_src_get("roller_icon.png"));
+                lv_obj_t *roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_min_roller, 674, 275, 104, 201,
+                                                           setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
+                                                           3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                           resource_ui_src_get("roller_icon.png"));
                 lv_obj_add_event_cb(roller, setting_time_set_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
         }
         /***********************************************
@@ -355,25 +358,34 @@ static void sat_layout_enter(setting_time)
         ** 说明: sec roller
         ***********************************************/
         {
-                lv_obj_t * roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller, 814, 275, 104, 201,
-                                        setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
-                                        resource_ui_src_get("roller_icon.png"));
+                lv_obj_t *roller = lv_common_roller_create(sat_cur_layout_screen_get(), setting_time_obj_id_sec_roller, 814, 275, 104, 201,
+                                                           setting_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
+                                                           3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                           resource_ui_src_get("roller_icon.png"));
                 lv_obj_add_event_cb(roller, setting_time_set_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
         }
         setting_time_param_init();
 
+        {
+                lv_obj_t *roller_bg = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_time_roller_cont, 0, 275, 1024, 201,
+                                                               NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                               false, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
-
+                if (user_data_get()->etc.time_automatically == true)
+                {
+                        lv_obj_clear_flag(roller_bg, LV_OBJ_FLAG_HIDDEN);
+                }
+        }
 }
-
 
 static void sat_layout_quit(setting_time)
 {
         layout_setting_time_save_time();
-        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
                 standby_timer_restart(true);
         }

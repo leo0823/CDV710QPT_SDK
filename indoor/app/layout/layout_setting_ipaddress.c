@@ -34,7 +34,7 @@ enum
 
         setting_ipaddress_obj_id_dhcp,
         setting_ipaddress_obj_id_static,
-   
+
 };
 
 static char ip_setting_flag = 0x00;
@@ -45,22 +45,20 @@ void layout_ip_setting_flag_set(char flag)
 
 char layout_ip_setting_flag_get(void)
 {
-        return ip_setting_flag ;
+        return ip_setting_flag;
 }
-
 
 static void setting_ipaddress_obj_cancel_click(lv_event_t *e)
 {
 
-        if(!ip_setting_flag)
+        if (!ip_setting_flag)
         {
                 sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }else
+        }
+        else
         {
                 sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
-
-        
 }
 
 static void setting_ipaddress_next_obj_display(void)
@@ -109,7 +107,7 @@ static lv_obj_t *setting_ipaddress_textarea_focused_get(void)
 }
 static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 {
-        if(ip_setting_flag == 0x00)
+        if (ip_setting_flag == 0x00)
         {
                 lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_product_ip_textbox);
                 if (textarea == NULL)
@@ -126,15 +124,13 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 strncpy(network_data_get()->mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->mask));
 
                 network_data_save();
-                usleep(10*1000);
+                usleep(10 * 1000);
                 system("reboot");
         }
         else
         {
                 sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
-
-        
 }
 static bool setting_ipaddress_textbox_del(void)
 {
@@ -192,7 +188,7 @@ static void layout_setting_ipaddress_item_disp(void)
         // lv_obj_t * item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_product_ip_textbox);
 
         // lv_obj_t * item2_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_default_gateway_label);
-        
+
         // lv_obj_t * item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_default_gateway_textbox);
 
         // lv_obj_t * item3_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_subnet_mask_label);
@@ -200,7 +196,6 @@ static void layout_setting_ipaddress_item_disp(void)
 
         // lv_obj_t * item4_label = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_dns_label);
         // lv_obj_t * item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_ipaddress_obj_id_dns_textbox);
-
 
         // lv_obj_set_style_y(item1_label,250,LV_PART_MAIN);
         // lv_obj_set_style_y(item1_txt,257,LV_PART_MAIN);
@@ -210,10 +205,7 @@ static void layout_setting_ipaddress_item_disp(void)
         // lv_obj_add_flag(item2_txt,LV_OBJ_FLAG_HIDDEN);
         // lv_obj_add_flag(item4_label,LV_OBJ_FLAG_HIDDEN);
         // lv_obj_add_flag(item4_txt,LV_OBJ_FLAG_HIDDEN);
-
-
 }
-
 
 static void setting_ipaddress_obj_display(lv_obj_t *obj_s, int dst_obj_id)
 {
@@ -222,8 +214,8 @@ static void setting_ipaddress_obj_display(lv_obj_t *obj_s, int dst_obj_id)
         {
                 return;
         }
-        obj_n = lv_obj_get_child_form_id(obj_n,1);
-        obj_s = lv_obj_get_child_form_id(obj_s,1);
+        obj_n = lv_obj_get_child_form_id(obj_n, 1);
+        obj_s = lv_obj_get_child_form_id(obj_s, 1);
         lv_obj_set_style_bg_img_src(obj_s, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
         lv_obj_set_style_bg_img_src(obj_n, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
 }
@@ -237,7 +229,6 @@ static void setting_ipaddress_dhcp_check_click(lv_event_t *e)
         }
         setting_ipaddress_next_obj_display();
         setting_ipaddress_obj_display(obj_s, setting_ipaddress_obj_id_static);
-
 }
 
 static void setting_ipaddress_static_check_click(lv_event_t *e)
@@ -249,12 +240,11 @@ static void setting_ipaddress_static_check_click(lv_event_t *e)
         }
         setting_ipaddress_next_obj_display();
         setting_ipaddress_obj_display(obj_s, setting_ipaddress_obj_id_dhcp);
-
 }
 
 static void setting_ipaddress_dhcp_static_init_display(void)
 {
-        lv_obj_t *dhcp_obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dhcp),1);
+        lv_obj_t *dhcp_obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dhcp), 1);
         lv_obj_t *static_obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_static), 1);
 
         if (network_data_get()->dhcp)
@@ -262,7 +252,6 @@ static void setting_ipaddress_dhcp_static_init_display(void)
 
                 lv_obj_set_style_bg_img_src(dhcp_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(static_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-
         }
         else
         {
@@ -275,21 +264,21 @@ static void sat_layout_enter(setting_ipaddress)
 {
 
         lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dhcp, 60, 118, 201, 48,
-                        setting_ipaddress_dhcp_check_click, LV_OPA_COVER, 0,  LV_OPA_COVER, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        50, 0, 161, 48, 0,
-                        "DHCP", 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                        0, 0, 48, 48, 1,
-                        resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                      setting_ipaddress_dhcp_check_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      50, 0, 161, 48, 0,
+                                      "DHCP", 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                      0, 0, 48, 48, 1,
+                                      resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_static, 277, 118, 201, 48,
-                        setting_ipaddress_static_check_click, LV_OPA_COVER, 0,  LV_OPA_COVER, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        50, 0, 161, 48, 0,
-                        "Static", 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                        0, 0, 48, 48, 1,
-                        resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                      setting_ipaddress_static_check_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      50, 0, 161, 48, 0,
+                                      "Static", 0XFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                      0, 0, 48, 48, 1,
+                                      resource_ui_src_get("btn_radio_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         setting_ipaddress_dhcp_static_init_display();
         /***********************************************
         ** 作者: leo.liu
@@ -444,13 +433,10 @@ static void sat_layout_enter(setting_ipaddress)
                                       lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_DNS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 
-
-
         layout_setting_ipaddress_item_disp();
 }
 static void sat_layout_quit(setting_ipaddress)
 {
-
 }
 
 sat_layout_create(setting_ipaddress);
