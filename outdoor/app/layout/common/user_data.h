@@ -5,9 +5,11 @@
 #define DEVICE_MAX 8
 typedef struct
 {
+        bool udhcp;
         char ip[32];
         char mask[32];
 } user_network_info;
+
 typedef struct
 {
         char number[128];
