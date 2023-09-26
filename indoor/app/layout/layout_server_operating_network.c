@@ -65,12 +65,21 @@ enum
 
         server_operation_network_obj_id_guard_statioon_cont,
         server_operation_network_obj_id_guard_statioon_text,
-        server_operation_network_obj_id_guard_statioon_textarea
+        server_operation_network_obj_id_guard_statioon_textarea,
+
+        server_operation_network_obj_id_msg_bg,
 };
 
-static bool setting_server_operation_data_valid_check(void)
+typedef enum
 {
-        return true;
+        server_operation_network_obj_id_msg,
+        server_operation_network_obj_id_text,
+        server_operation_network_obj_id_confirm,
+} server_operation_network_msg_bg_obj_id;
+
+static bool
+setting_server_operation_data_valid_check(void)
+{
         int obj_id[][2] = {
             {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
             {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
@@ -186,10 +195,7 @@ static bool setting_server_operation_data_valid_check(void)
 
 static void setting_server_operation_network_cancel_btn_click(lv_event_t *e)
 {
-        if (setting_server_operation_data_valid_check())
-        {
-                sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
+        sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 
 static void setting_server_operation_network_init(void)
@@ -257,6 +263,7 @@ static void setting_server_operation_network_init(void)
                                 }
                                 else
                                 {
+                                        SAT_DEBUG("get ip failed");
                                 }
                         }
 
@@ -292,6 +299,32 @@ static void setting_server_operation_network_init(void)
                 }
         }
 }
+
+static void setting_server_operation_network_falid_confirm(lv_event_t *e)
+{
+
+        setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
+}
+
+/************************************************************
+** 函数说明: 数据校验失败提示
+** 作者: xiaoxiao
+** 日期：2023-09-26 14:23:59
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void setting_server_operation_network_falid_tips(void)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_msg_bg);
+        if (masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(server_operation_network_obj_id_msg_bg, server_operation_network_obj_id_msg, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, server_operation_network_obj_id_text, "Please enter it in the correct format", 0, 60, 460, 120);
+        setting_msgdialog_msg_confirm_btn_create(masgbox, server_operation_network_obj_id_confirm, setting_server_operation_network_falid_confirm);
+}
+
 static void setting_server_operation_network_next_btn_click(lv_event_t *e)
 {
         int obj_id[][2] = {
@@ -374,13 +407,14 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
         {
                 sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
+        else
+        {
+                setting_server_operation_network_falid_tips();
+        }
 }
 static void setting_server_operating_btn_click(lv_event_t *e)
 {
-        if (setting_server_operation_data_valid_check())
-        {
-                sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
+        sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 static lv_obj_t *setting_server_textarea_focused_get(void)
 {
