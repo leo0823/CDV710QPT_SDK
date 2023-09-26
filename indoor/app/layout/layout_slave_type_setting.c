@@ -96,7 +96,7 @@ static void slave_type_setting_save_confirm(lv_event_t *e)
         network_data_save();
         user_data_save();
         usleep(100 * 1000);
-        // system("reboot");
+        system("reboot");
 }
 
 static void slave_type_setting_save_btn_click(lv_event_t *e)

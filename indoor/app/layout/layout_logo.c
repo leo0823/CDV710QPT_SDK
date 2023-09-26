@@ -99,8 +99,8 @@ static void sd_state_checking_timer(lv_timer_t *timer)
         {
                 masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
                 setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_IS_VALID), 0, 60, 460, 120);
-                setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
         }
+        setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
         lv_timer_del(timer);
 }
 
@@ -295,6 +295,25 @@ static void alarm_stop_return_status_display_check(void)
 }
 
 /************************************************************
+** 函数说明:
+** 作者: xiaoxiao
+** 日期：2023-09-25 21:23:39
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void away_countdown_enable_sync_check(void)
+{
+        if (user_data_get()->alarm.away_setting_countdown)
+        {
+                sat_linphone_handup(0xFFFF);
+                sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+        else if (sat_cur_layout_get() == sat_playout_get(away_count))
+        {
+                sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+}
+/************************************************************
 ** 函数说明: 文件同步事件回调
 ** 作者: xiaoxiao
 ** 日期：2023-09-12 07:59:42
@@ -348,6 +367,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                                 user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
+                                memcpy(&user_data_get()->alarm.cctv_sensor, &info->alarm.cctv_sensor, sizeof(user_data_get()->alarm.cctv_sensor));
                                 memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                                 memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
@@ -363,7 +383,8 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         user_data_get()->alarm.away_auto_record = info->alarm.away_auto_record;
                         user_data_get()->alarm.away_setting_time = info->alarm.away_setting_time;
                         user_data_get()->alarm.away_release_time = info->alarm.away_release_time;
-
+                        user_data_get()->alarm.away_save_photo = info->alarm.away_save_photo;
+                        user_data_get()->alarm.bypass_call = info->alarm.bypass_call;
                         memcpy(&user_data_get()->alarm.away_alarm_enable_list, &info->alarm.away_alarm_enable_list, sizeof(user_data_get()->alarm.away_alarm_enable_list));
                         memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
                         for (int i = 0; i < 8; i++) // 警报触发取消同步
@@ -385,10 +406,15 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.alarm_ring_play = info->alarm.alarm_ring_play;
                                 alarm_ringtone_play_check();
                         }
-                        if (user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return) // 警报页面内，stop/return状态同步
+                        if (0 /*user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return*/) // 警报页面内，stop/return状态同步(客户取消return状态)
                         {
                                 user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;
                                 alarm_stop_return_status_display_check();
+                        }
+                        if (user_data_get()->alarm.away_setting_countdown != info->alarm.away_setting_countdown) // 警报页面内，铃声播放取消同步
+                        {
+                                user_data_get()->alarm.away_setting_countdown = info->alarm.away_setting_countdown;
+                                away_countdown_enable_sync_check();
                         }
                         user_data_save();
                 }
@@ -661,6 +687,15 @@ static void logo_enter_system_timer(lv_timer_t *t)
         {
                 wifi_device_close();
         }
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                if (user_data_get()->etc.time_automatically)
+                {
+                        extern bool tuya_api_time_sync(void);
+                        tuya_api_time_sync();
+                }
+        }
+
 #endif
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness <= 0 ? 4 : user_data_get()->display.lcd_brigtness);

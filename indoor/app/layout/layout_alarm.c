@@ -565,6 +565,11 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
         {
                 if (user_data_get()->alarm.away_auto_record)
                 {
+
+                        record_video_start(true, REC_MODE_ALARM);
+                }
+                if (user_data_get()->alarm.away_save_photo)
+                {
                         rec_mode |= REC_MODE_ALARM;
                 }
         }

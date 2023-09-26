@@ -181,6 +181,8 @@ static const user_data_info user_data_default =
             .cctv_sensor[5] = 0,
             .cctv_sensor[6] = 0,
             .cctv_sensor[7] = 0,
+
+            .away_setting_countdown = false,
         },
         .system_mode = 0x01,
         .always_monitoring = 0,
