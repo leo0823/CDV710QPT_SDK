@@ -7,6 +7,7 @@ static bool layout_close_motion_dectection_callback(void);
 enum
 {
     motion_scr_act_obj_id_head_cont,
+    motion_scr_act_obj_id_black_bg,
 };
 
 static bool is_motion_snapshot_ing = false;
@@ -177,7 +178,7 @@ static bool motion_timer_timeout_check(void)
 static void layout_motion_monitor_open(void)
 {
     monitor_channel_set(user_data_get()->motion.select_camera);
-    monitor_open(true,true);
+    monitor_open(true, true);
 }
 
 /***
@@ -201,7 +202,7 @@ static void layout_motion_restart_motion_detection(void)
 ***/
 static void motion_timer_check_task(lv_timer_t *ptimer)
 {
-    
+
     if ((motion_timer_timeout_check() == true))
     {
         layout_motion_monitor_open();
@@ -240,7 +241,7 @@ static void motion_obj_timeout_timer(lv_timer_t *ptimer)
         motion_timeout_sec = 10;
         lv_timer_del(ptimer);
         layout_motion_restart_motion_detection();
-    }        
+    }
 }
 
 static bool layout_close_motion_dectection_callback(void)
@@ -292,7 +293,7 @@ static void monitior_obj_channel_info_obj_display(void)
     else
     {
         lv_obj_set_x(obj, 37);
-       lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
     }
 }
 
@@ -335,12 +336,12 @@ static void layout_motion_head_cont_create(void)
      ** 说明: 通道显示
      ***********************************************/
     {
-        lv_obj_t * obj = lv_common_text_create(parent, 1, 0, 23, 950, 42,
-                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                              NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
-        if(obj != NULL)
+        lv_obj_t *obj = lv_common_text_create(parent, 1, 0, 23, 950, 42,
+                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              NULL, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+        if (obj != NULL)
         {
             lv_label_set_long_mode(obj, LV_LABEL_LONG_SCROLL_CIRCULAR);
         }
@@ -461,12 +462,12 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
     }
 }
 
-static void motion_detection_start_timer(lv_timer_t * timer)
+static void motion_detection_start_timer(lv_timer_t *timer)
 {
     int level = user_data_get()->motion.sensivity;
-    sat_linphone_motion_detection_start(100, level == 0 ? 150 : level == 1 ? 400 : 800);
+    sat_linphone_motion_detection_start(100, level == 0 ? 150 : level == 1 ? 400
+                                                                           : 800);
     lv_timer_del(timer);
-                                                                    
 }
 
 static bool layout_motion_streams_running_register_callback(char *arg)
@@ -474,7 +475,7 @@ static bool layout_motion_streams_running_register_callback(char *arg)
 
     lv_timer_reset(lv_sat_timer_create(motion_detection_start_timer, 1000, NULL));
 
-    return true;                                                                      
+    return true;
 }
 
 static void sat_layout_enter(close)
@@ -521,8 +522,11 @@ static void sat_layout_quit(close)
     record_video_stop();
 
     monitor_close(0x02);
-    extern bool tuya_api_time_sync(void);
-    tuya_api_time_sync();
+    if (user_data_get()->etc.time_automatically)
+    {
+        extern bool tuya_api_time_sync(void);
+        tuya_api_time_sync();
+    }
     lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_close_click);
 
     /*记录注册*/

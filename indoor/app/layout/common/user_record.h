@@ -3,16 +3,16 @@
 #include <stdbool.h>
 typedef enum
 {
-        REC_MODE_MANUAL = 0x01,
-        REC_MODE_AUTO = 0x02,
-        REC_MODE_MOTION = 0x04,
-        REC_MODE_ALWAYS = 0X08,
-        REC_MODE_ALARM = 0x10,
-        REC_MODE_TUYA_CALL = 0x20,
-        REC_MODE_TUYA_ALARM = 0x40,
-        REC_MODE_TUYA_MOTION = 0X80,
+    REC_MODE_MANUAL = 0x01,
+    REC_MODE_AUTO = 0x02,
+    REC_MODE_MOTION = 0x04,
+    REC_MODE_ALWAYS = 0X08,
+    REC_MODE_ALARM = 0x10,
+    REC_MODE_TUYA_CALL = 0x20,
+    REC_MODE_TUYA_ALARM = 0x40,
+    REC_MODE_TUYA_MOTION = 0X80,
 
-        REC_MODE_TOTAL = 0XFF
+    REC_MODE_TOTAL = 0XFF
 } REC_MODE;
 /***
 ** 日期: 2022-05-19 10:37

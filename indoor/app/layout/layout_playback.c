@@ -180,7 +180,7 @@ static bool playback_thumb_media_display_callback(const char *data, int x, int y
                         return true;
                 }
         }
-       // SAT_DEBUG("thumb display failed(%d,%d,%d,%d)\n", x, y, w, h);
+        // SAT_DEBUG("thumb display failed(%d,%d,%d,%d)\n", x, y, w, h);
         return false;
 }
 static void playback_thumb_total_display(void)
@@ -272,7 +272,12 @@ static void playabck_media_new_obj_display(lv_obj_t *parent, bool new)
                 SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
                 return;
         }
-
+        obj = lv_obj_get_child_form_id(parent, 2);
+        if (obj == NULL)
+        {
+                SAT_DEBUG("   lv_obj_get_child_form_id(parent, 2);");
+                return;
+        }
         if (new == true)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -362,14 +367,7 @@ static void playabck_media_filename_obj_display(lv_obj_t *parent, const char *fi
 }
 static void playback_media_channel_obj_display(lv_obj_t *parent, const char *ch_name)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 3);
-        if (obj == NULL)
-        {
-                SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
-                return;
-        }
-
-        obj = lv_obj_get_child_form_id(obj, 2);
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
@@ -380,9 +378,9 @@ static void playback_media_channel_obj_display(lv_obj_t *parent, const char *ch_
 }
 static void playback_thumb_left_right_arrow_display(void)
 {
-        lv_obj_t * left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),playback_obj_id_left);
-        lv_obj_t * right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),playback_obj_id_right);
-        if ((playback_media_total < 7) || ((playback_media_total - playback_media_top ) < 7))
+        lv_obj_t *left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), playback_obj_id_left);
+        lv_obj_t *right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), playback_obj_id_right);
+        if ((playback_media_total < 7) || ((playback_media_total - playback_media_top) < 7))
         {
                 lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
         }
@@ -390,14 +388,14 @@ static void playback_thumb_left_right_arrow_display(void)
         {
                 lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
         }
-        if ((playback_media_total < 7) ||( playback_media_top < 6))
+        if ((playback_media_total < 7) || (playback_media_top < 6))
         {
                 lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
-        }else
+        }
+        else
         {
                 lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
         }
-
 }
 static void playback_thumb_decode_all_display(void)
 {
@@ -412,6 +410,7 @@ static void playback_thumb_decode_all_display(void)
                 if (index >= 0)
                 {
                         const file_info *info = media_file_info_get(playback_media_type, index);
+                        printf("name is %s\n", info->ch);
                         sprintf(arry[thumb_count++], "%s%s %d %d %d %d", playback_media_path, info->file_name, media_thumb_point_gorup[i]->x, media_thumb_point_gorup[i]->y, PLAYBACK_THUMB_WIDTH, PLAYBACK_THUMB_HIGHT);
                         playabck_media_new_obj_display(parent, info->is_new);
                         playback_media_mode_obj_display(parent, info->mode);
@@ -522,11 +521,11 @@ static void sat_layout_enter(playback)
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_img_btn_create(parent, 0, 16, 16, 48, 24,
-                                         NULL, false, LV_OPA_TRANSP, 0x242526, LV_OPA_TRANSP, 0x242526,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("ic_main_new.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_common_text_create(parent, 0, 10, 0, 220, 40,
+                                      NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
                 lv_common_img_btn_create(parent, 1, 284, 8, 48, 48,
                                          NULL, false, LV_OPA_TRANSP, 0x242526, LV_OPA_TRANSP, 0x242526,
@@ -558,11 +557,11 @@ static void sat_layout_enter(playback)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_small);
 
-                lv_common_text_create(parent, 2, 254, 18, 70, 28,
-                                      NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
-                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, lv_font_small);
+                lv_common_img_btn_create(parent, 2, 254, 18, 48, 24,
+                                         NULL, false, LV_OPA_TRANSP, 0x242526, LV_OPA_TRANSP, 0x242526,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("ic_main_new.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
 
         /***********************************************
@@ -586,7 +585,7 @@ static void sat_layout_enter(playback)
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                           resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                if ((playback_media_total < 7) ||( playback_media_top < 6))
+                if ((playback_media_total < 7) || (playback_media_top < 6))
                 {
                         lv_obj_add_flag(obj2, LV_OBJ_FLAG_HIDDEN);
                 }
@@ -608,7 +607,6 @@ static void sat_layout_quit(playback)
         thumb_display_refresh_register(NULL);
         sd_state_channge_callback_register(sd_state_change_default_callback);
         lv_img_cache_invalidate_all();
- 
 }
 
 sat_layout_create(playback);

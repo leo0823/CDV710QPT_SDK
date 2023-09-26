@@ -1525,7 +1525,6 @@ static bool tcp_device_serverce_xml_set_networkinterfaces(int tcp_socket_fd, con
         char ip_addr[32] = {0};
         if (discover_devices_data_parsing((const char *)recv_data, "Address", ip_addr, sizeof(ip_addr)) == true)
         {
-                bool is_need_reboot = false;
                 char data_param[10] = {0};
                 if (discover_devices_data_parsing((const char *)recv_data, "PrefixLength", data_param, sizeof(data_param)) == true)
                 {
@@ -1547,22 +1546,18 @@ static bool tcp_device_serverce_xml_set_networkinterfaces(int tcp_socket_fd, con
                                 unsigned int mask = 0xffffffff << (32 - length);
                                 sprintf(user_data_get()->network.mask, "%d.%d.%d.%d", (mask >> 24) & 0xFF, (mask >> 16) & 0xFF, (mask >> 8) & 0xFF, mask & 0xFF);
                         }
-                        is_need_reboot = true;
-                }
-                memset(data_param, 0, sizeof(data_param));
-                if (discover_devices_data_parsing((const char *)recv_data, "DHCP", data_param, sizeof(data_param)) == true)
-                {
-                        bool udhcp = strstr(data_param, "true") ? true : false;
-                        if (udhcp != user_data_get()->network.udhcp)
+
+                        memset(data_param, 0, sizeof(data_param));
+                        if (discover_devices_data_parsing((const char *)recv_data, "DHCP", data_param, sizeof(data_param)) == true)
                         {
-                                user_data_get()->network.udhcp = udhcp;
-                                is_need_reboot = true;
+                                user_data_get()->network.udhcp = strstr(data_param, "true") ? true : false;
                         }
-                }
-                if (is_need_reboot == true)
-                {
                         SAT_DEBUG("modiy ip addr:%s/%s udhcp:%s", user_data_get()->network.ip, user_data_get()->network.mask, user_data_get()->network.udhcp ? "true" : "false");
                         user_data_save();
+
+                        // char cmd[128] = {0};
+                        // sprintf(cmd, "ifconfig eth0 %s netmask %s", user_data_get()->network.ip, user_data_get()->network.mask[0] != 0 ? user_data_get()->network.mask : "255.0.0.0");
+                        // system(cmd);
 
                         usleep(1000 * 100);
                         exit(0);
@@ -2977,12 +2972,12 @@ static bool kill_related_port_process(char *port)
 }
 static bool automatic_ip_setting(void)
 {
-        /*杀死相关的端口进程*/
+        /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         kill_related_port_process("5060");
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if ((user_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
-                sat_kill_task_process("killall udhcpc");
+                sat_kill_task_process("udhcpc");
                 /*手动设置的IP信息*/
                 if (user_data_get()->network.ip[0] != '\0')
                 {

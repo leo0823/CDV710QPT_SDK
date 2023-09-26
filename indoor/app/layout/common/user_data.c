@@ -42,7 +42,8 @@ static const user_data_info user_data_default =
             .key_sound = true,
             .ring_mute = false,
             .door_tone = 1,
-            .inter_tone = 3,
+
+            .extenion_tone = 3,
 
             .buzzer_tone = 1,
             .buzzer_volume = 1,
@@ -153,7 +154,12 @@ static const user_data_info user_data_default =
             .away_setting_time = 1,
             .away_release_time = 30,
 
+            .away_save_photo = false,
+
+            .bypass_call = false,
+
             .away_auto_record = false,
+
             .security_auto_record = false,
 
             .alarm_gpio_value_group[0] = 0,
@@ -167,11 +173,20 @@ static const user_data_info user_data_default =
 
             .buzzer_alarm = 0,
 
+            .cctv_sensor[0] = 0,
+            .cctv_sensor[1] = 0,
+            .cctv_sensor[2] = 0,
+            .cctv_sensor[3] = 0,
+            .cctv_sensor[4] = 0,
+            .cctv_sensor[5] = 0,
+            .cctv_sensor[6] = 0,
+            .cctv_sensor[7] = 0,
+
+            .away_setting_countdown = false,
         },
         .system_mode = 0x01,
         .always_monitoring = 0,
         .last_call_new = false,
-
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},
 
@@ -329,6 +344,8 @@ static void user_data_check_valid(void)
 
                 user_data_alarm_check_range_out(away_sensor_enable[i], 0, 1);
 
+                user_data_alarm_check_range_out(cctv_sensor[i], 0, 8);
+
                 user_data_alarm_check_range_out(security_sensor_enable[i], 0, 1);
 
                 for (int j = 0; j < 2; j++)
@@ -399,6 +416,18 @@ static const user_network_info network_data_default = {
     .local_server = {"10.1.1.1"},
     .sip_server = {"10.1.1.1"},
     .cctv_server = {"10.1.1.1"},
+    .guard_number = {"00000000000"},
+
+    .sip_user = {"010001001011"},
+    .local_server = {"10.1.1.1"},
+    .sip_server = {"10.1.1.1"},
+    .cctv_server = {"10.1.1.1"},
+
+    .common_entrance_ip = {"10.0.0.2"},
+    .sip_user = {"010000101011"},
+    .local_server = {"10.0.0.2"},
+    .sip_server = {"10.0.0.2"},
+    .cctv_server = {"10.0.0.2"},
     .guard_number = {"00000000000"},
 };
 
@@ -500,11 +529,15 @@ static void network_data_check_valid(void)
         ***********************************************/
         for (int i = 0; i < strlen(network_data.network.ipaddr); i++)
         {
+<<<<<<< HEAD
                 if (network_data.network.ipaddr[i] != '.')
-                {
-                        network_data_check_range_out(network.ipaddr[i], '0', '9');
-                        break;
-                }
+                        == == == =
+                                     if ((network_data.ip[i] != '.') && (network_data.ip[0] != '\0'))
+>>>>>>> 244f6b8ca4eb3697b4dc1ef92f8b3d9e121bda11
+                        {
+                                network_data_check_range_out(network.ipaddr[i], '0', '9');
+                                break;
+                        }
         }
         for (int i = 0; i < strlen(network_data.network.mask); i++)
         {

@@ -175,7 +175,7 @@ static void layout_setting_installation_build_house_no_display(lv_obj_t *list)
                 char building[8] = {0};
                 char household[8] = {0};
                 strncpy(building, &network_data_get()->sip_user[3], 4);
-                strncpy(building, &network_data_get()->sip_user[7], 4);
+                strncpy(household, &network_data_get()->sip_user[7], 4);
 
                 lv_label_set_text_fmt(obj, "%s-%s", building, household);
         }
