@@ -43,7 +43,7 @@ void layout_setting_setting_server_ipaddress_flag_set(char flag)
 }
 static void setting_server_ipaddress_obj_cancel_click(lv_event_t *e)
 {
-        if(layout_setting_setting_server_ipaddress_flag_get() != 0)
+        if (layout_setting_setting_server_ipaddress_flag_get() != 0)
         {
                 sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
@@ -51,34 +51,34 @@ static void setting_server_ipaddress_obj_cancel_click(lv_event_t *e)
 }
 static void setting_server_ipaddress_obj_confirm_click(lv_event_t *e)
 {
-        lv_obj_t * local_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_loclal_sever_textbox);
-        if(local_txt != NULL)
+        lv_obj_t *local_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_loclal_sever_textbox);
+        if (local_txt != NULL)
         {
-                if(is_valid_ipv4(lv_textarea_get_text(local_txt)) == false)
+                if (is_valid_ipv4(lv_textarea_get_text(local_txt)) == false)
                 {
                         return;
                 }
         }
-        lv_obj_t *sip_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_sip_server_textbox);
-        if(sip_txt != NULL)
+        lv_obj_t *sip_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_sip_server_textbox);
+        if (sip_txt != NULL)
         {
-                if(is_valid_ipv4(lv_textarea_get_text(sip_txt)) == false)
+                if (is_valid_ipv4(lv_textarea_get_text(sip_txt)) == false)
                 {
                         return;
                 }
         }
-        lv_obj_t *update_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_update_sever_textbox);
-        if(update_txt != NULL)
+        lv_obj_t *update_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_update_sever_textbox);
+        if (update_txt != NULL)
         {
-                if(is_valid_ipv4(lv_textarea_get_text(update_txt)) == false)
+                if (is_valid_ipv4(lv_textarea_get_text(update_txt)) == false)
                 {
                         return;
                 }
         }
-        lv_obj_t *cctv_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_cctv_server_textbox);
-        if(cctv_txt != NULL)
+        lv_obj_t *cctv_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_cctv_server_textbox);
+        if (cctv_txt != NULL)
         {
-                if(is_valid_ipv4(lv_textarea_get_text(cctv_txt)) == false)
+                if (is_valid_ipv4(lv_textarea_get_text(cctv_txt)) == false)
                 {
                         return;
                 }
@@ -86,10 +86,10 @@ static void setting_server_ipaddress_obj_confirm_click(lv_event_t *e)
         memset(network_data_get()->local_server, 0, sizeof(network_data_get()->local_server));
         memset(network_data_get()->sip_server, 0, sizeof(network_data_get()->sip_server));
         memset(network_data_get()->cctv_server, 0, sizeof(network_data_get()->cctv_server));
-        strncpy(network_data_get()->local_server, lv_textarea_get_text(local_txt),sizeof(network_data_get()->local_server));
-        strncpy(network_data_get()->sip_server, lv_textarea_get_text(sip_txt),sizeof(network_data_get()->sip_server));
-        strncpy(network_data_get()->cctv_server, lv_textarea_get_text(cctv_txt),sizeof(network_data_get()->cctv_server));
-        if(layout_setting_setting_server_ipaddress_flag_get() != 0)
+        strncpy(network_data_get()->local_server, lv_textarea_get_text(local_txt), sizeof(network_data_get()->local_server));
+        strncpy(network_data_get()->sip_server, lv_textarea_get_text(sip_txt), sizeof(network_data_get()->sip_server));
+        strncpy(network_data_get()->cctv_server, lv_textarea_get_text(cctv_txt), sizeof(network_data_get()->cctv_server));
+        if (layout_setting_setting_server_ipaddress_flag_get() != 0)
         {
                 sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
@@ -193,20 +193,19 @@ static void setting_server_ipaddress_obj_keyboad_click(lv_event_t *e)
 
 static void setting_server_ipaddress_local_server()
 {
-        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_loclal_sever_textbox);
-        if(obj != NULL)
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_loclal_sever_textbox);
+        if (obj != NULL)
         {
-                lv_textarea_set_text(obj,network_data_get()->local_server);
+                lv_textarea_set_text(obj, network_data_get()->local_server);
         }
-
 }
 
 static void setting_server_ipaddress_sip_server()
 {
-        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_sip_server_textbox);
-        if(obj != NULL)
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_sip_server_textbox);
+        if (obj != NULL)
         {
-                lv_textarea_set_text(obj,network_data_get()->sip_server);
+                lv_textarea_set_text(obj, network_data_get()->sip_server);
         }
 }
 
@@ -223,10 +222,10 @@ static void setting_server_ipaddress_update_server()
 
 static void setting_server_ipaddress_cctv_server()
 {
-        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_server_ipaddress_obj_id_cctv_server_textbox);
-        if(obj != NULL)
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_cctv_server_textbox);
+        if (obj != NULL)
         {
-                lv_textarea_set_text(obj,network_data_get()->cctv_server);
+                lv_textarea_set_text(obj, network_data_get()->cctv_server);
         }
 }
 
@@ -271,7 +270,7 @@ static void sat_layout_enter(setting_server_ipaddress)
         ***********************************************/
         {
                 lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_server_ipaddress_obj_id_number_keyboard_btn, 608, 127, 312, 402,
-                                                       setting_server_ipaddress_obj_keyboad_click, LV_OPA_COVER, 0X101010, LV_OPA_COVER, 0x00a8ff,
+                                                       setting_server_ipaddress_obj_keyboad_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
@@ -330,9 +329,8 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_SIP_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
-                
         }
-        #if 0
+#if 0
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:43:29
@@ -361,7 +359,7 @@ static void sat_layout_enter(setting_server_ipaddress)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_UPDATE_SERVER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
-        #endif
+#endif
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:43:29

@@ -102,7 +102,7 @@ static bool ipc_camera_search_display_register_func(void)
                                         sprintf(doorname, "Door%d(%s)", i + 1, network_data_get()->door_device[i].door_name);
                                         memset(network_data_get()->door_device[i].door_name, 0, sizeof(network_data_get()->door_device[i].door_name));
                                         strncpy(network_data_get()->door_device[i].door_name, doorname, strlen(doorname));
-
+                                        user_data_get()->alarm.cctv_sensor[i] = 0;
                                         network_data_save();
                                         // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
                                         //  struct ipcamera_info *device = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());

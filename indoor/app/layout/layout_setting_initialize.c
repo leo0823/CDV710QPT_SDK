@@ -40,9 +40,7 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
                 //         media_file_delete_all(FILE_TYPE_VIDEO,false);
                 //         media_file_delete_all(FILE_TYPE_PHOTO,false);
                 // }
-                media_file_delete_all(FILE_TYPE_FLASH_PHOTO,false);
-
-
+                media_file_delete_all(FILE_TYPE_FLASH_PHOTO, false);
         }
         else if (setting_initialize_count == 2)
         {
@@ -53,15 +51,17 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_complete);
                 tuay_api_data_reset();
-        }else if (setting_initialize_count == 4)
+        }
+        else if (setting_initialize_count == 4)
         {
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_initiallization_is_complete_label);
         }
         else
         {
+                system("reboot");
                 lv_obj_t *btn = (lv_obj_t *)ptimer->user_data;
                 lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_set_style_bg_color(btn,lv_color_hex(0x00a8ff),LV_PART_MAIN);
+                lv_obj_set_style_bg_color(btn, lv_color_hex(0x00a8ff), LV_PART_MAIN);
                 lv_timer_del(ptimer);
                 return;
         }
@@ -75,18 +75,18 @@ static void setting_initialize_reset_obj_click(lv_event_t *e)
 {
         setting_initialize_count = 0;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_call_log_complete);
-        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_saved_video_complete);
-        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_emergency_reocrd_complete);
-        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_complete);
-        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_initialize_obj_id_initiallization_is_complete_label);
-        lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj = lv_event_get_current_target(e);
         lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
-        lv_obj_set_style_bg_color(obj,lv_color_hex(0x47494A),LV_PART_MAIN);
+        lv_obj_set_style_bg_color(obj, lv_color_hex(0x47494A), LV_PART_MAIN);
         lv_timer_reset(lv_sat_timer_create(setting_initialize_reset_timer, 1000, obj));
 }
 static void sat_layout_enter(setting_initialize)
@@ -236,8 +236,6 @@ static void sat_layout_enter(setting_initialize)
 
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-
-
 
         /***********************************************
          ** 作者: leo.liu

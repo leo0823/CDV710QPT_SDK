@@ -21,14 +21,19 @@ static void emergency_setting_confirm_obj_click(lv_event_t *ev)
         user_data_get()->alarm.emergency_mode = 0;
         if (user_data_get()->alarm.away_auto_record)
                 record_jpeg_start(REC_MODE_AUTO);
+
         struct tm tm;
         user_time_read(&tm);
         layout_alarm_alarm_channel_set(7);
         user_data_get()->alarm.alarm_trigger[7] = true;
 
-        alarm_list_add(emergency_occur,7, &tm);
+        alarm_list_add(emergency_occur, 7, &tm);
 
         user_data_save();
+        if (user_data_get()->system_mode && 0x0f != 0x01)
+        {
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+        }
         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
@@ -39,17 +44,16 @@ static void emergency_setting_list_obj_click(lv_event_t *ev)
 static void sat_layout_enter(emergency_setting)
 {
 
-    /************************************************************
-    ** 函数说明: 背景创建
-    ** 作者: xiaoxiao
-    ** 日期: 2023-04-25 23:12:18
-    ** 参数说明: 
-    ** 注意事项: 
-    ************************************************************/
-    {
+        /************************************************************
+        ** 函数说明: 背景创建
+        ** 作者: xiaoxiao
+        ** 日期: 2023-04-25 23:12:18
+        ** 参数说明:
+        ** 注意事项:
+        ************************************************************/
+        {
                 lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("bg_emergency_occur04.jpg", 1024, 600));
-    }
-
+        }
 
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_back, 35, 15, 48, 48,
@@ -114,7 +118,7 @@ static void sat_layout_enter(emergency_setting)
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), emergency_occupy_obj_id_bell, 392, 70, 240, 240,
 
-                                         NULL, false, LV_OPA_COVER, 0xff5951, LV_OPA_COVER,0,
+                                         NULL, false, LV_OPA_COVER, 0xff5951, LV_OPA_COVER, 0,
                                          180, 30, LV_BORDER_SIDE_FULL, LV_OPA_40, 0xff90bd,
 
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -138,7 +142,6 @@ static void sat_layout_enter(emergency_setting)
                                               3, 0, 77, 77, -1,
                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
-
 }
 
 static void sat_layout_quit(emergency_setting)

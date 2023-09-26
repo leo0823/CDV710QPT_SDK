@@ -2,6 +2,7 @@
 #include "layout_intercom_call.h"
 enum
 {
+        intercom_call_obj_id_btnmatrix_myself,
         intercom_call_obj_id_log_msg_bg,
         intercom_call_obj_id_title,
         intercom_call_obj_id_del_all,
@@ -39,8 +40,8 @@ typedef enum
 
 } call_log_list_cont_obj;
 
-static int checkbox_s_num = 0;//call记录被选中的个数
-static int enter_intercom_mode = 0;//进入intercom_call界面的途径（0：通过点击call机按键；1：通过点击呼叫记录的按键）
+static int checkbox_s_num = 0;      // call记录被选中的个数
+static int enter_intercom_mode = 0; // 进入intercom_call界面的途径（0：通过点击call机按键；1：通过点击呼叫记录的按键）
 void enter_intercomm_call_mode_set(int mode)
 {
         enter_intercom_mode = mode;
@@ -87,52 +88,50 @@ static lv_obj_t *intercom_call_table_view_obj_create(void)
         return tabview;
 }
 
-static void intercom_call_abnormal_title_display(lv_obj_t * obj)
+static void intercom_call_abnormal_title_display(lv_obj_t *obj)
 {
 
         int online_num = 0;
-        extension_online_check(-1,&online_num);
-        if(0/*online_num == 0*/)
+        extension_online_check(-1, &online_num);
+        if (0 /*online_num == 0*/)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        }else
-        {
-                lv_obj_add_flag(obj,LV_OBJ_FLAG_HIDDEN);
         }
-        
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
 }
 
 static void intercom_extension_obj_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_target(e);
-        lv_obj_t * parent = lv_obj_get_parent(obj);
+        lv_obj_t *parent = lv_obj_get_parent(obj);
         lv_obj_add_state(obj, LV_STATE_USER_1);
         lv_obj_clear_state(obj, LV_STATE_USER_2);
-        if(obj->id == intercom_call_obj_id_guard)
+        if (obj->id == intercom_call_obj_id_guard)
         {
-                lv_obj_t * abnormal = lv_obj_get_child_form_id(parent,intercom_call_obj_id_abnormal_title);
-                lv_obj_clear_flag(abnormal,LV_OBJ_FLAG_HIDDEN);;
-                lv_obj_t * extension = lv_obj_get_child_form_id(parent,intercom_call_obj_id_externsion);
-                if(extension != NULL)
+                lv_obj_t *abnormal = lv_obj_get_child_form_id(parent, intercom_call_obj_id_abnormal_title);
+                lv_obj_clear_flag(abnormal, LV_OBJ_FLAG_HIDDEN);
+                ;
+                lv_obj_t *extension = lv_obj_get_child_form_id(parent, intercom_call_obj_id_externsion);
+                if (extension != NULL)
                 {
                         lv_obj_clear_state(extension, LV_STATE_USER_1);
                         lv_obj_add_state(extension, LV_STATE_USER_2);
-                } 
-        }else
+                }
+        }
+        else
         {
-                lv_obj_t * abnormal = lv_obj_get_child_form_id(lv_obj_get_parent(obj),intercom_call_obj_id_abnormal_title);
+                lv_obj_t *abnormal = lv_obj_get_child_form_id(lv_obj_get_parent(obj), intercom_call_obj_id_abnormal_title);
                 intercom_call_abnormal_title_display(abnormal);
-                lv_obj_t * guard = lv_obj_get_child_form_id(parent,intercom_call_obj_id_guard);
-                if(guard != NULL)
+                lv_obj_t *guard = lv_obj_get_child_form_id(parent, intercom_call_obj_id_guard);
+                if (guard != NULL)
                 {
                         lv_obj_clear_state(guard, LV_STATE_USER_1);
                         lv_obj_add_state(guard, LV_STATE_USER_2);
-                } 
+                }
         }
-       
-
-        
-        
 }
 
 static int intercom_call_id_index = 0;
@@ -142,18 +141,18 @@ static void intercom_id_obj_click(lv_event_t *e)
         intercom_call_id_index = lv_btnmatrix_get_selected_btn(obj) + 1;
         char user_name[64] = {0};
         char own_name[64] = {0};
-        sprintf(user_name,"50%d",intercom_call_id_index);
-        sprintf(own_name,"50%d",user_data_get()->system_mode & 0x0F);
-        if(strncmp(user_name,own_name,4) == 0)//不允许打给自己
+        sprintf(user_name, "50%d", intercom_call_id_index);
+        sprintf(own_name, "50%d", user_data_get()->system_mode & 0x0F);
+        if (strncmp(user_name, own_name, 4) == 0) // 不允许打给自己
         {
                 return;
         }
-        if(extension_online_check(intercom_call_id_index,NULL))//对方分机设备是否在线
+        if (extension_online_check(intercom_call_id_index, NULL)) // 对方分机设备是否在线
         {
                 char number[128] = {0};
                 sprintf(number, "sip:%s@%s:5066", user_name, user_data_get()->mastar_wallpad_ip);
                 sat_linphone_call(number, false, false, NULL);
-                //sat_ipcamera_device_discover_search(0x02);
+                // sat_ipcamera_device_discover_search(0x02);
                 return;
         }
 }
@@ -161,11 +160,10 @@ static void intercom_id_obj_click(lv_event_t *e)
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
         intercom_call_username_setting(arg);
+        intercom_call_status_setting(1);
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
-
-
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
@@ -193,23 +191,23 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
         lv_obj_t *del_num = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
         {
-                if(checkbox_s_num == 0)
+                if (checkbox_s_num == 0)
                 {
-                        lv_obj_clear_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                 }
                 checkbox_s_num++;
-                lv_label_set_text_fmt(del_num,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                lv_label_set_text_fmt(del_num, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
 
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
         }
         else
         {
                 checkbox_s_num--;
-                if(checkbox_s_num == 0)
+                if (checkbox_s_num == 0)
                 {
-                        lv_obj_add_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                 }
-                lv_label_set_text_fmt(del_num,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                lv_label_set_text_fmt(del_num, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
 }
@@ -244,12 +242,14 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                                                           NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 {
+                        // char ch_str[64] = {0};
+                        //  sprintf(ch_str, "%s %d", lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), network_data_get()->door_device[ch].door_name);
                         lv_common_img_text_btn_create(cont, call_log_list_cont_obj_titie_id, 0, 0, 350, 86,
                                                       intercom_call_log_check_obj_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       50, 25, 300, 43, 0,
-                                                      lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                      network_data_get()->door_device[ch].door_name, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                       0, 15, 80, 48, 1,
                                                       type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
                                                                                                                                                             : (char *)resource_ui_src_get("ic_list_call_receive.png"),
@@ -293,33 +293,42 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
 ************************************************************/
 static void intercom_call_log_tableview_click(lv_event_t *ev)
 {
+        SAT_DEBUG("===================================");
         lv_obj_t *obj = lv_event_get_current_target(ev);
         lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
         lv_obj_t *del_cancel = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del_cancel);
         lv_obj_t *exit = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_cancel);
-        
+
         lv_obj_t *title = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         int id = lv_tabview_get_tab_act(obj);
+        SAT_DEBUG("===================================");
         if (id == 1)
         {
                 if (strncmp(del_obj->bg_img_src, resource_ui_src_get("btn_title_check.png"), strlen(resource_ui_src_get("btn_title_check.png"))) == 0)
                 {
-                        lv_label_set_text_fmt(title, "%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                        lv_label_set_text_fmt(title, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                        lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                         lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
+                        if (checkbox_s_num)
+                        {
+                                lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
+                        }
                 }
-                if(checkbox_s_num)
+                else
                 {
                         lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 }
                 layout_last_call_new_flag_set(false);
         }
         else
         {
-
+                SAT_DEBUG("===================================");
                 lv_label_set_text(title, lang_str_get(HOME_XLS_LANG_ID_CALL));
                 lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(exit, LV_OBJ_FLAG_HIDDEN);
+                SAT_DEBUG("===================================");
         }
 }
 
@@ -405,11 +414,11 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
         lv_obj_t *del_cancel = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del_cancel);
         lv_obj_t *back = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_cancel);
         lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
-        
+
         if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_title_delete.png"), strlen(resource_ui_src_get("btn_title_delete.png"))) == 0)
         {
 
-                lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                lv_label_set_text_fmt(title, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_title_check.png"), LV_PART_MAIN);
                 lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(del_all, LV_OBJ_FLAG_HIDDEN);
@@ -545,8 +554,8 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
         if (strncmp(obj_img->bg_img_src, resource_ui_src_get("btn_checkbox_s.png"), strlen(resource_ui_src_get("btn_checkbox_s.png"))) == 0)
         {
                 checkbox_s_num = 0;
-                lv_obj_add_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
-                lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_label_set_text_fmt(title, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(obj_img, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
                 for (int i = total - 1; i >= 0; i--)
                 {
@@ -562,8 +571,8 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
 
                 lv_obj_set_style_bg_img_src(obj_img, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
                 checkbox_s_num = total;
-                lv_obj_clear_flag(del_obj,LV_OBJ_FLAG_HIDDEN);
-                lv_label_set_text_fmt(title,"%d %s",checkbox_s_num,lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
+                lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
+                lv_label_set_text_fmt(title, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_clear_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(back, LV_OBJ_FLAG_HIDDEN);
                 for (int i = total - 1; i >= 0; i--)
@@ -579,10 +588,9 @@ static void intercom_call_log_obj_del_all_click(lv_event_t *ev)
         }
 }
 
-
 static void sat_layout_enter(intercom_call)
 {
-        standby_timer_close();
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
@@ -649,7 +657,6 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_set_style_bg_opa(exten_txt_obj, LV_OPA_TRANSP, LV_STATE_USER_2);
                         lv_obj_add_state(exten_txt_obj, LV_STATE_USER_1);
 
-
                         lv_obj_t *guard_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_guard, 0, 231 + 8, 231, 231,
                                                                         intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
@@ -668,7 +675,7 @@ static void sat_layout_enter(intercom_call)
                                                                                      0, 3, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                      0, 0);
-                        if (0/*(user_data_get()->system_mode & 0xF0) != 0xF0*/)
+                        if (0 /*(user_data_get()->system_mode & 0xF0) != 0xF0*/)
                         {
                                 lv_obj_add_flag(exten_txt_obj, LV_OBJ_FLAG_HIDDEN);
                                 lv_obj_add_flag(guard_txt_obj, LV_OBJ_FLAG_HIDDEN);
@@ -676,10 +683,10 @@ static void sat_layout_enter(intercom_call)
                                 lv_obj_set_style_width(btnmatrix, 1024, LV_PART_MAIN);
                         }
 
-                        lv_obj_set_style_bg_color(btnmatrix, lv_color_hex(0x194861), LV_STATE_DISABLED | LV_PART_ITEMS);
-                        lv_obj_set_style_bg_opa(btnmatrix, LV_OPA_COVER, LV_STATE_DISABLED | LV_PART_ITEMS);
+                        lv_obj_set_style_bg_color(btnmatrix, lv_color_hex(0x194861), LV_STATE_PRESSED | LV_PART_ITEMS);
+                        lv_obj_set_style_bg_opa(btnmatrix, LV_OPA_COVER, LV_STATE_PRESSED | LV_PART_ITEMS);
 
-                        static const char *btnm_map[] = { 
+                        static const char *btnm_map[] = {
                             "ID\n1", "ID\n2", "ID\n3", "\n",
                             "ID\n4", "ID\n5", "ID\n6", "\n",
                             "ID\n7", "ID\n8", "ID\n9", ""};
@@ -692,18 +699,29 @@ static void sat_layout_enter(intercom_call)
                             NULL,
                             NULL,
                             NULL,
+                            NULL,
+
                         };
                         lv_btnmatrix_set_map(btnmatrix, btnm_map);
                         lv_btnmatrix_set_btn_bg_map(btnmatrix, btnm_img_map);
                         lv_btnmatrix_set_btn_ctrl(btnmatrix, 8, LV_BTNMATRIX_CTRL_HIDDEN);
-                        lv_btnmatrix_set_btn_ctrl(btnmatrix, network_data_get()->sip_user[11] - 49, LV_BTNMATRIX_CTRL_DISABLED);
+
+                        {
+                                int x = (network_data_get()->sip_user[11] - 49) % 3 * 261 + 231;
+                                int y = (network_data_get()->sip_user[11] - 49) / 3 * 134;
+                                lv_common_img_btn_create(page_1, intercom_call_obj_id_btnmatrix_myself, x, y, 261, 134,
+                                                         NULL, true, LV_OPA_60, 0, LV_OPA_60, 0,
+                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        }
 
                         {
                                 lv_obj_t *adnormal_obj = lv_common_text_create(page_1, intercom_call_obj_id_abnormal_title, 231, 8, 793, 384,
-                                                NULL, LV_OPA_COVER, 0, LV_OPA_COVER, 0x0096ff,
-                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
-                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
-                                                lang_str_get(CALL_XLS_LANG_ID_CANNOT_USE_BEFORE_SYSTEMSETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                                                               NULL, LV_OPA_COVER, 0, LV_OPA_COVER, 0x0096ff,
+                                                                               0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
+                                                                               0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
+                                                                               lang_str_get(CALL_XLS_LANG_ID_CANNOT_USE_BEFORE_SYSTEMSETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                                 intercom_call_abnormal_title_display(adnormal_obj);
                                 lv_obj_set_style_pad_top(adnormal_obj, 180, LV_PART_MAIN);
                         }
@@ -742,13 +760,13 @@ static void sat_layout_enter(intercom_call)
         user_linphone_call_outgoing_call_register(intercom_linphone_outgoing_callback);
 
         user_linphone_call_outgoing_early_media_register(intercom_linphone_outgoing_arly_media_register);
+        intercom_call_status_setting(1);
 }
 
 static void sat_layout_quit(intercom_call)
 {
         user_linphone_call_outgoing_call_register(NULL);
         user_linphone_call_outgoing_early_media_register(NULL);
-        standby_timer_restart(true);
         checkbox_s_num = 0;
 }
 sat_layout_create(intercom_call);

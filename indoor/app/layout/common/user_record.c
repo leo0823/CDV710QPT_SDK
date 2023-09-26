@@ -13,6 +13,7 @@
 #include "common/sat_user_file.h"
 #include "common/sat_linphone_event.h"
 #include "tuya/tuya_api.h"
+#include "string.h"
 /***
 ** 日期: 2022-05-19 10:37
 ** 作者: leo.liu
@@ -60,7 +61,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
         if (mode & REC_MODE_TUYA_CALL)
         {
                 printf("======tuya_api_call_event=====\n");
-                tuya_api_call_event(monitor_channel_get() + 1,(const char *)data, size);
+                tuya_api_call_event(monitor_channel_get() + 1, (const char *)data, size);
         }
         if (mode & REC_MODE_TUYA_ALARM)
         {
@@ -82,6 +83,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 ***/
 bool record_jpeg_start(REC_MODE mode)
 {
+
         jpeg_record_mode = mode;
         return sat_linphone_snap(monitor_channel_get(), jpeg_record_mode, jpeg_write_callback);
 }
@@ -104,7 +106,7 @@ int record_jpeg_mode_get(void)
  */
 static bool record_video_callback(const char *path, int ch, int mode)
 {
-        if((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR))
+        if ((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR))
         {
                 return false;
         }

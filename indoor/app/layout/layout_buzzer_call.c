@@ -15,8 +15,6 @@ enum
 
 static int buzzer_call_timeout = 0;
 
-
-
 static lv_obj_t *buzzer_call_top_obj_item_get(int id)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_obj_top);
@@ -69,8 +67,7 @@ static void buzzer_call_time_timer(lv_timer_t *ptime)
 }
 static void buzzer_call_status_background_display(void)
 {
-   lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("img_calling_backgroud.jpg", 1024, 600));
-
+        lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("img_calling_backgroud.jpg", 1024, 600));
 }
 static void buzzer_call_status_label_display(void)
 {
@@ -80,36 +77,33 @@ static void buzzer_call_status_label_display(void)
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_obj_status_label);");
                 return;
         }
-        lv_label_set_text(obj,"buzzer call");
+        lv_label_set_text(obj, "buzzer call");
 }
 
 static void buzzer_call_handup_obj_click(lv_event_t *e)
 {
         user_data_get()->alarm.buzzer_alarm = false;
         user_data_save();
-        if(user_data_get()->system_mode && 0x0f != 0x01)
+        if (user_data_get()->system_mode && 0x0f != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
         }
         sat_layout_goto(home, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-        
 }
 
 static void buzzer_call_volume_obj_click(lv_event_t *e)
 {
-        lv_obj_t *bottom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_call_bottom_cont);
+        lv_obj_t *bottom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_bottom_cont);
 
-        lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_obj_id_vol_cont);
+        lv_obj_t *vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_obj_id_vol_cont);
 
-
-        lv_obj_add_flag(bottom_cont,LV_OBJ_FLAG_HIDDEN);
-        lv_obj_clear_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
-
+        lv_obj_add_flag(bottom_cont, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(vol_cont, LV_OBJ_FLAG_HIDDEN);
 }
 
 static bool layout_buzzer_call_ringplay_register_callback(int arg)
 {
-        if(arg == 1)
+        if (arg == 1)
         {
                 ring_buzzer_play(user_data_get()->audio.buzzer_tone);
         }
@@ -126,7 +120,6 @@ static void setting_buzzer_call_slider_obj_change_cb(lv_event_t *ev)
         user_data_get()->audio.buzzer_volume = value;
         user_data_save();
         sat_linphone_audio_play_volume_set(value);
-        	
 }
 
 static void layout_buzzer_vol_bar_create(lv_obj_t *parent)
@@ -135,31 +128,31 @@ static void layout_buzzer_vol_bar_create(lv_obj_t *parent)
         void *left_src = resource_ui_src_alloc("btn_control_minus.png", 42, 42);
         void *right_src = resource_ui_src_alloc("btn_control_plus.png", 42, 42);
         lv_common_slider_create(parent, buzzer_vol_obj_id_slider_cont, 97, 23, 831, 48,
-                        setting_buzzer_call_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        38, 8, 35, 23, 0,
-                        "30", 0Xffffff, LV_TEXT_ALIGN_RIGHT, lv_font_normal,
-                        127, 18, 577, 12, 1, LV_OPA_COVER, 0x666666, LV_OPA_COVER, 0x00a8ff,
-                        74, 3, 42, 42, 2,
-                        left_src, LV_OPA_TRANSP, 0X00, LV_ALIGN_CENTER,
-                        715, 3, 42, 42, 3,
-                        right_src, LV_OPA_TRANSP, 0x00, LV_ALIGN_CENTER,
-                        360, 9, 0Xffffff, LV_OPA_COVER, NULL,
-                        0, 100, user_data_get()->display.lcd_brigtness);
-        
+                                setting_buzzer_call_slider_obj_change_cb, LV_OPA_TRANSP, 0X00,
+                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                6, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                38, 8, 35, 23, 0,
+                                "30", 0Xffffff, LV_TEXT_ALIGN_RIGHT, lv_font_normal,
+                                127, 18, 577, 12, 1, LV_OPA_COVER, 0x666666, LV_OPA_COVER, 0x00a8ff,
+                                74, 3, 42, 42, 2,
+                                left_src, LV_OPA_TRANSP, 0X00, LV_ALIGN_CENTER,
+                                715, 3, 42, 42, 3,
+                                right_src, LV_OPA_TRANSP, 0x00, LV_ALIGN_CENTER,
+                                360, 9, 0Xffffff, LV_OPA_COVER, NULL,
+                                0, 100, user_data_get()->display.lcd_brigtness);
+
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
 }
 
 static void layout_buzzer_call_screen_click(lv_event_t *e)
 {
-        lv_obj_t * bottom_cont =  lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_call_bottom_cont);
-        lv_obj_t * vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),buzzer_obj_id_vol_cont);
-        if(lv_obj_has_flag(bottom_cont, LV_OBJ_FLAG_HIDDEN) == true)
+        lv_obj_t *bottom_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_bottom_cont);
+        lv_obj_t *vol_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_obj_id_vol_cont);
+        if (lv_obj_has_flag(bottom_cont, LV_OBJ_FLAG_HIDDEN) == true)
         {
-                lv_obj_clear_flag(bottom_cont,LV_OBJ_FLAG_HIDDEN);
-                lv_obj_add_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(bottom_cont, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(vol_cont, LV_OBJ_FLAG_HIDDEN);
         }
 }
 static void sat_layout_enter(buzzer_call)
@@ -170,15 +163,14 @@ static void sat_layout_enter(buzzer_call)
         buzzer_call_timeout = 30;
         buzzer_call_status_background_display();
 
-        //满屏查看
+        // 满屏查看
         {
-                        
+
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_screen_obj_id, 0, 0, 1024, 600,
-                                layout_buzzer_call_screen_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-        
+                                         layout_buzzer_call_screen_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
         }
         /***********************************************
          ** 作者: leo.liu
@@ -221,11 +213,10 @@ static void sat_layout_enter(buzzer_call)
                 }
         }
         {
-            if(user_data_get()->audio.ring_mute == false)
-            {
-                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
-            }
-
+                if (user_data_get()->audio.ring_mute == false)
+                {
+                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                }
         }
         /***********************************************
          ** 作者: leo.liu
@@ -258,42 +249,41 @@ static void sat_layout_enter(buzzer_call)
         ** 说明:挂断按钮图标显示
         ***********************************************/
         {
-                lv_obj_t * bottom_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_call_bottom_cont, 0, 464, 1024, 120,
-                                NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_obj_t *bottom_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_call_bottom_cont, 0, 464, 1024, 120,
+                                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_common_img_btn_create(bottom_cont, buzzer_call_obj_handup, 460, 0, 104, 104,
-                                        buzzer_call_handup_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        resource_ui_src_get("btn_call_buzzer.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                         buzzer_call_handup_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_call_buzzer.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 /***********************************************
                  ** 作者: leo.liu
-                ** 日期: 2023-2-2 13:46:56
-                ** 说明:音量按钮图标显示
-                ***********************************************/
+                 ** 日期: 2023-2-2 13:46:56
+                 ** 说明:音量按钮图标显示
+                 ***********************************************/
                 {
                         lv_common_img_btn_create(bottom_cont, buzzer_call_obj_volume, 32, 24, 81, 81,
-                                                buzzer_call_volume_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                resource_ui_src_get("btn_call_sound.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                 buzzer_call_volume_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("btn_call_sound.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
         }
         {
-                lv_obj_t * vol_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_obj_id_vol_cont, 0, 504, 1024, 96,
-                NULL, true, LV_OPA_50, 0, LV_OPA_50, 0,
-                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
-                
-                lv_obj_add_flag(vol_cont,LV_OBJ_FLAG_HIDDEN);
+                lv_obj_t *vol_cont = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_obj_id_vol_cont, 0, 504, 1024, 96,
+                                                              NULL, true, LV_OPA_50, 0, LV_OPA_50, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
+
+                lv_obj_add_flag(vol_cont, LV_OBJ_FLAG_HIDDEN);
 
                 layout_buzzer_vol_bar_create(vol_cont);
         }
-
 
         ring_play_event_cmd_register(layout_buzzer_call_ringplay_register_callback);
 }
@@ -305,8 +295,6 @@ static void sat_layout_quit(buzzer_call)
         standby_timer_restart(true);
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
         ring_play_event_cmd_register(NULL);
-
-
 }
 
 sat_layout_create(buzzer_call);
