@@ -26,8 +26,16 @@ typedef enum
     layout_security_obj_id_passwd_input_tx4,
     layout_security_password_input_obj_id_cancel,
     layout_security_password_input_obj_id_tips,
+
+    layout_security_obj_id_msgbox_bg,
 } layout_security_scr_act_obj_id;
 
+typedef enum
+{
+    layout_security_obj_id_msgbox_cont,
+    layout_security_obj_id_msgbox_title,
+    layout_security_obj_id_msgbox_confirm_btn,
+} layout_security_obj_id_msgbox_bg_obj;
 typedef enum
 {
     layout_security_obj_id_confirm_label,
@@ -129,9 +137,8 @@ static void layout_security_sensor_select_obj_click(lv_event_t *ev)
         lv_obj_t *cont = lv_obj_get_child_form_id(lv_obj_get_parent(obj), layout_security_obj_id_cont1 + i);
         if (cont == obj)
         {
-            float value = user_sensor_value_get(i);
             lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, layout_security_sensor_select_cont_checkbox_id);
-            if ((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0) && ((user_data_get()->alarm.alarm_enable[i] == 1 && value < ALM_LOW) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_HIGHT)))
+            if ((strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0))
             {
 
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
@@ -159,6 +166,58 @@ static void layout_security_log_obj_click(lv_event_t *ev)
 }
 
 /************************************************************
+** 函数说明: 关闭消息框
+** 作者: xiaoxiao
+** 日期：2023-09-25 16:22:12
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_security_msgbox_cancel_click(lv_event_t *ev)
+{
+    setting_msgdialog_msg_del(layout_security_obj_id_msgbox_bg);
+}
+
+/************************************************************
+** 函数说明: 安防设置不正常提示
+** 作者: xiaoxiao
+** 日期：2023-09-25 15:38:19
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_security_execution_normal_msgbox_create(char normal_select)
+{
+    lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_security_obj_id_msgbox_bg);
+    if (masgbox != NULL)
+    {
+        setting_msgdialog_msg_del(layout_security_obj_id_msgbox_bg);
+    }
+    masgbox = setting_msgdialog_msg_bg_create(layout_security_obj_id_msgbox_bg, layout_security_obj_id_msgbox_cont, 282, 143, 460, 283);
+    char sensors_str[64] = {0};
+    char index[4] = {0};
+    for (int i = 0; i < 7; i++)
+    {
+        if (normal_select & 0x01 << i)
+        {
+            memset(index, 0, sizeof(index));
+            if (sensors_str[0] == '\0')
+            {
+                sprintf(index, "%d", i + 1);
+            }
+            else
+            {
+                sprintf(index, ",%d", i + 1);
+            }
+            strcat(sensors_str, index);
+        }
+    }
+    SAT_DEBUG("sensors_str is %s", sensors_str);
+    char abnormal_str[128] = {0};
+    sprintf(abnormal_str, "Cannot run.%s sensor is not normal. Please check the sensor.", sensors_str);
+    setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120);
+    setting_msgdialog_msg_confirm_btn_create(masgbox, layout_security_obj_id_msgbox_confirm_btn, layout_security_msgbox_cancel_click);
+}
+
+/************************************************************
 ** 函数说明: 确认警报设备
 ** 作者: xiaoxiao
 ** 日期: 2023-04-27 11:05:55
@@ -174,15 +233,35 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
     }
     else
     {
-        user_data_get()->alarm.security_alarm_enable = user_data_get()->alarm.security_alarm_enable ? false : true;
-        unsigned char list = layout_security_sensor_enable_flag();
-        user_data_get()->alarm.security_alarm_enable_list |= list;
-        user_data_save();
-        if (user_data_get()->system_mode && 0x0f != 0x01)
+        char sensor_select_list = layout_security_sensor_enable_flag();
+        char normal_select = 0;
+        for (int i = 0; i < 7; i++)
         {
-            sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+            if (sensor_select_list & 0x01 << i)
+            {
+                float value = user_sensor_value_get(i);
+                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_LOW))
+                {
+                    normal_select |= 0x01 << i;
+                }
+            }
         }
-        layout_security_ececution_stop_btn_display();
+        if (normal_select) // 是否有不正常的传感器
+        {
+            layout_security_execution_normal_msgbox_create(normal_select);
+        }
+        else
+        {
+            user_data_get()->alarm.security_alarm_enable = user_data_get()->alarm.security_alarm_enable ? false : true;
+            unsigned char list = layout_security_sensor_enable_flag();
+            user_data_get()->alarm.security_alarm_enable_list |= list;
+            user_data_save();
+            if (user_data_get()->system_mode && 0x0f != 0x01)
+            {
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+            }
+            sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
     }
 }
 
@@ -303,7 +382,7 @@ static void layout_security_sensor_select_create()
                                      NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                     (user_data_get()->alarm.security_alarm_enable_list & (0x01 << i)) ? resource_ui_src_get("btn_checkbox_s.png") : (const char *)resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                     ((user_data_get()->alarm.security_alarm_enable_list & (0x01 << i)) || !user_data_get()->alarm.security_alarm_enable) ? resource_ui_src_get("btn_checkbox_s.png") : resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
             j++;
         }
     }

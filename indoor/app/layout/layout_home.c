@@ -36,7 +36,7 @@ enum
 
         home_obj_id_monitor_cont,
         home_obj_id_monitor_img,
-        home_obj_id_cctv_monitor_img,
+        home_obj_id_monitor_busy_img,
         home_obj_id_monitor_label,
 
         home_obj_id_call_cont,
@@ -84,7 +84,7 @@ enum
         home_obj_id_the_monitoring_msgbox_cancel,
         home_obj_id_the_monitoring_msgbox_confirm,
 };
-#define THUMB_WIDTH (256)
+#define THUMB_WIDTH (216)
 #define THUMB_HIGHT (176)
 
 static void home_setting_obj_click(lv_event_t *ev)
@@ -257,32 +257,31 @@ static void home_date_obj_display(void)
         LANGUAGE_ID lang = language_id_get();
         if (lang == LANGUAGE_ID_ENGLISH)
         {
-                // printf("%d %d %d %d\n",tm.tm_wday,tm.tm_mday,tm.tm_mon,tm.tm_year);
-                lv_label_set_text_fmt(label_date, "%s %s %d %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
+                lv_label_set_text_fmt(label_date, "%s%s %d. %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_HANYU)
         {
-                lv_label_set_text_fmt(label_date, "%04d년%d월%d일%s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
+                lv_label_set_text_fmt(label_date, "%04d년 %d월 %d일 %s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
         }
         else if (lang == LANGUAGE_ID_ELUOSI)
         {
-                lv_label_set_text_fmt(label_date, "%s %d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+                lv_label_set_text_fmt(label_date, "%s%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_XIBANYA)
         {
-                lv_label_set_text_fmt(label_date, "%s %d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+                lv_label_set_text_fmt(label_date, "%s%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_CHINESE)
         {
-                lv_label_set_text_fmt(label_date, "%04d年%d月%d日 %s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
+                lv_label_set_text_fmt(label_date, "%04d年 %d月 %d日 %s", tm.tm_year, tm.tm_mon, tm.tm_mday, week_str);
         }
         else if (lang == LANGUAGE_ID_YUENAN)
         {
-                lv_label_set_text_fmt(label_date, "%s %d-%s-%04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+                lv_label_set_text_fmt(label_date, "%s %d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_ALABOYU)
         {
-                lv_label_set_text_fmt(label_date, "%d-%s-%04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
+                lv_label_set_text_fmt(label_date, "%04d %s %d %s", tm.tm_year, mon_str, tm.tm_mday, week_str);
         }
 }
 static void home_date_timer(lv_timer_t *ptimer)
@@ -756,7 +755,7 @@ static void layout_home_monitor_icon_display()
         {
                 return;
         }
-        lv_obj_t *offline = lv_obj_get_child_form_id(obj, home_obj_id_cctv_monitor_img);
+        lv_obj_t *offline = lv_obj_get_child_form_id(obj, home_obj_id_monitor_busy_img);
         if (offline == NULL)
         {
                 return;
@@ -927,13 +926,13 @@ static void sat_layout_enter(home)
         ***********************************************/
         {
 
-                lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_video_cont, 428, 168, 224, 216,
+                lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_video_cont, 428, 168, 216, 216,
                                                             home_latest_video_obj_click, true, LV_OPA_COVER, 0x242526, LV_OPA_COVER, 0x242526,
                                                             8, 0, LV_BORDER_SIDE_BOTTOM, LV_OPA_TRANSP, 0,
                                                             8, 0, LV_BORDER_SIDE_BOTTOM, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_text_create(parent, home_obj_id_video_title, 14, 8, 104, 22,
+                lv_common_text_create(parent, home_obj_id_video_title, 14, 8, 216 - 14, 22,
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -945,7 +944,7 @@ static void sat_layout_enter(home)
                                          8, 0, LV_BORDER_SIDE_BOTTOM, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_text_create(parent, home_obj_id_no_video_title, 0, 80, 224, 72,
+                lv_common_text_create(parent, home_obj_id_no_video_title, 0, 80, 216, 72,
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -975,7 +974,7 @@ static void sat_layout_enter(home)
                                                             8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                lv_common_text_create(parent, home_obj_id_recent_call_title, 14, 8, 104, 22,
+                lv_common_text_create(parent, home_obj_id_recent_call_title, 14, 8, 216 - 14, 22,
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1030,7 +1029,7 @@ static void sat_layout_enter(home)
                                                               lang_str_get(HOME_XLS_LANG_ID_MONITORING), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                               13, 0, 77, 77, home_obj_id_monitor_img,
                                                               (const char *)resource_ui_src_get("btn_main_monitoring_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_common_img_btn_create(obj, home_obj_id_cctv_monitor_img, 55, 45, 48, 48,
+                lv_common_img_btn_create(obj, home_obj_id_monitor_busy_img, 55, 45, 48, 48,
                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1078,13 +1077,17 @@ static void sat_layout_enter(home)
                                                                        lang_str_get(HOME_XLS_LANG_ID_AWAY), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                        13, 0, 77, 77, home_obj_id_away_img,
                                                                        (const char *)resource_ui_src_get("btn_main_away_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                        if (user_data_get()->alarm.away_alarm_enable)
+                        if (user_data_get()->alarm.security_alarm_enable)
+                        {
+                                lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
+                        }
+                        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
                         {
                                 lv_common_img_btn_create(away, 0, 55, 45, 48, 48,
                                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                         resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         }
                         sec_x += unit_offset;
                 }
@@ -1098,13 +1101,17 @@ static void sat_layout_enter(home)
                                                                            lang_str_get(HOME_XLS_LANG_ID_BURGLAR), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                            13, 0, 77, 77, home_obj_id_burglar_img,
                                                                            (const char *)resource_ui_src_get("btn_main_security_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                        if (user_data_get()->alarm.security_alarm_enable)
+                        if (user_data_get()->alarm.away_alarm_enable)
+                        {
+                                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
+                        }
+                        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
                         {
                                 lv_common_img_btn_create(security, 0, 55, 45, 48, 48,
                                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                         resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         }
                         sec_x += unit_offset;
                 }

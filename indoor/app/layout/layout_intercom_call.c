@@ -242,12 +242,14 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                                                           NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 {
+                        // char ch_str[64] = {0};
+                        //  sprintf(ch_str, "%s %d", lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), network_data_get()->door_device[ch].door_name);
                         lv_common_img_text_btn_create(cont, call_log_list_cont_obj_titie_id, 0, 0, 350, 86,
                                                       intercom_call_log_check_obj_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       50, 25, 300, 43, 0,
-                                                      lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                      network_data_get()->door_device[ch].door_name, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                       0, 15, 80, 48, 1,
                                                       type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
                                                                                                                                                             : (char *)resource_ui_src_get("ic_list_call_receive.png"),
