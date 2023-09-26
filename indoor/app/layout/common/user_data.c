@@ -274,7 +274,7 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(key_sound, 0, 1);
         user_data_audio_check_range_out(ring_mute, 0, 1);
         user_data_audio_check_range_out(door_tone, 1, 6);
-        user_data_audio_check_range_out(inter_tone, 4, 4);
+        user_data_audio_check_range_out(extenion_tone, 4, 4);
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
         user_data_audio_check_range_out(buzzer_volume, 1, 6);
@@ -529,19 +529,16 @@ static void network_data_check_valid(void)
         ***********************************************/
         for (int i = 0; i < strlen(network_data.network.ipaddr); i++)
         {
-<<<<<<< HEAD
-                if (network_data.network.ipaddr[i] != '.')
-                        == == == =
-                                     if ((network_data.ip[i] != '.') && (network_data.ip[0] != '\0'))
->>>>>>> 244f6b8ca4eb3697b4dc1ef92f8b3d9e121bda11
-                        {
-                                network_data_check_range_out(network.ipaddr[i], '0', '9');
-                                break;
-                        }
+
+                if ((network_data.network.ipaddr[i] != '.') && (network_data.network.ipaddr[0] != '\0'))
+                {
+                        network_data_check_range_out(network.ipaddr[i], '0', '9');
+                        break;
+                }
         }
         for (int i = 0; i < strlen(network_data.network.mask); i++)
         {
-                if (network_data.network.mask != '.')
+                if (network_data.network.mask[i] != '.')
                 {
                         network_data_check_range_out(network.mask[i], '0', '9');
                         break;
