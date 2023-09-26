@@ -28,7 +28,7 @@ typedef struct
         bool ring_mute;
         /***** 1-6 rings *****/
         int door_tone;
-        int inter_tone;
+        int extenion_tone;
 
         int buzzer_tone;
         int buzzer_volume;
