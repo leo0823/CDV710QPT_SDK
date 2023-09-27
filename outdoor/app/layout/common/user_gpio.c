@@ -54,3 +54,18 @@ bool user_gpio_init(void)
         led_ctrl_init();
         return true;
 }
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-11-9 10:15:48
+** 说明: 控制灯闪烁
+***********************************************/
+void led_ctrl_blink(int num)
+{
+        for (int i = 0; i < num; i++)
+        {
+                led_ctrl_enable(true);
+                usleep(500 * 1000);
+                led_ctrl_enable(false);
+                usleep(500 * 1000);
+        }
+}
