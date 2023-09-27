@@ -8,6 +8,8 @@ typedef struct
         bool udhcp;
         char ip[32];
         char mask[32];
+        char gateway[32];
+        char dns[32];
 } user_network_info;
 
 typedef struct

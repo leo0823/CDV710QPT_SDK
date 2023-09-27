@@ -47,13 +47,7 @@ static void reset_system_gpio_detection(void)
 		if (abs(user_timestamp_get() - timestap) > 3000)
 		{
 			user_data_reset();
-			for (int i = 0; i < 3; i++)
-			{
-				led_ctrl_enable(true);
-				usleep(500 * 1000);
-				led_ctrl_enable(false);
-				usleep(500 * 1000);
-			}
+			led_ctrl_blink(3);
 			system("reboot");
 		}
 		gpio_level_read(KEY_RESET_SYSTEM_PIN, &level);
