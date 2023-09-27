@@ -1,7 +1,7 @@
 HTTP/1.1 200 OK
 Server: gSOAP/2.7
 Content-Type: application/soap+xml; charset=utf-8
-Content-Length: 2989
+Content-Length: %d
 Connection: close
 
 <?xml version="1.0" encoding="UTF-8"?>
@@ -46,11 +46,7 @@ Connection: close
                 <tt:SearchDomain>www.uniview.com</tt:SearchDomain>
                 <tt:DNSManual>
                     <tt:Type>IPv4</tt:Type>
-                    <tt:IPv4Address>8.8.8.8</tt:IPv4Address>
-                </tt:DNSManual>
-                <tt:DNSManual>
-                    <tt:Type>IPv4</tt:Type>
-                    <tt:IPv4Address>8.8.4.4</tt:IPv4Address>
+                    <tt:IPv4Address>%s</tt:IPv4Address>
                 </tt:DNSManual>
             </tds:DNSInformation>
         </tds:GetDNSResponse>

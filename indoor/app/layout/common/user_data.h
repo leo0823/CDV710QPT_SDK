@@ -190,12 +190,9 @@ void user_data_reset(void);
 
 typedef struct
 {
-        bool dhcp;
+        struct ipcamera_network network;
         char sip_user[32];
-        char ip[32];
-        char mask[32];
-        char gateway[32];
-        char dns[32];
+
         char local_server[32];
         char sip_server[32];
         char cctv_server[32];

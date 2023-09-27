@@ -8,9 +8,12 @@
 #include "common/sat_user_common.h"
 #include "common/sat_main_event.h"
 #include "common/sat_user_time.h"
+#include "common/gpio_ctrl.h"
+#include "user_data.h"
+#include "user_gpio.h"
 
 #define KEY_DEVICE_PATH "/sys/bus/iio/devices/iio:device0/in_voltage0_raw"
-
+#define KEY_RESET_SYSTEM_PIN 41
 static int user_key_state = KEY_STATE_RELEASE;
 /***********************************************
 ** 作者: leo.liu
@@ -29,6 +32,29 @@ static int user_key_code_read(int fd)
 	sscanf(key_map_code, "%d", &key_code);
 	return key_code;
 }
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-12-28 11:54:32
+** 说明: 复位系统检测
+***********************************************/
+static void reset_system_gpio_detection(void)
+{
+	GPIO_LEVEL level;
+	gpio_level_read(KEY_RESET_SYSTEM_PIN, &level);
+	unsigned long long timestap = user_timestamp_get();
+	while (level == GPIO_LEVEL_LOW)
+	{
+		if (abs(user_timestamp_get() - timestap) > 3000)
+		{
+			user_data_reset();
+			led_ctrl_blink(3);
+			system("reboot");
+		}
+		gpio_level_read(KEY_RESET_SYSTEM_PIN, &level);
+		usleep(10 * 1000);
+	}
+}
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-12-28 11:54:32
@@ -66,13 +92,15 @@ static void *user_key_task(void *arg)
 				user_key_state = KEY_STATE_LONG_DOWN;
 				SAT_DEBUG("KEY LONG DOWN");
 			}
-                        else if((user_key_state == KEY_STATE_LONG_DOWN)&&((user_timestamp_get() - key_down_timestamp) > 12000))
-                        {
-                                SAT_DEBUG("restart app");
-                                exit(0);
-                        }
+			else if ((user_key_state == KEY_STATE_LONG_DOWN) && ((user_timestamp_get() - key_down_timestamp) > 10000))
+			{
+				SAT_DEBUG("restart app");
+				exit(0);
+			}
 		}
 		close(fd);
+
+		reset_system_gpio_detection();
 		usleep(100 * 1000);
 	}
 	return NULL;
@@ -90,7 +118,7 @@ bool user_key_init(void)
 		printf("%s not find\n", KEY_DEVICE_PATH);
 		return false;
 	}
-
+	gpio_direction_set(KEY_RESET_SYSTEM_PIN, GPIO_DIR_IN);
 	pthread_t thread_id;
 	pthread_create(&thread_id, sat_pthread_attr_get(), user_key_task, NULL);
 	return true;

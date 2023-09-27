@@ -426,8 +426,8 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         strncpy(network_data_get()->sip_server, info->sip_server, sizeof(network_data_get()->sip_server));
                         strncpy(network_data_get()->cctv_server, info->cctv_server, sizeof(network_data_get()->cctv_server));
                         strncpy(network_data_get()->local_server, info->local_server, sizeof(network_data_get()->local_server));
-                        strncpy(network_data_get()->gateway, info->gateway, sizeof(network_data_get()->gateway));
-                        strncpy(network_data_get()->dns, info->dns, sizeof(network_data_get()->dns));
+                        strncpy(network_data_get()->network.gateway, info->network.gateway, sizeof(network_data_get()->network.gateway));
+                        strncpy(network_data_get()->network.dns, info->network.dns, sizeof(network_data_get()->network.dns));
                         strncpy(network_data_get()->guard_number, info->guard_number, sizeof(network_data_get()->guard_number));
                 }
                 else if ((flag == 0x02) && (max == sizeof(asterisk_register_info) * 20))
