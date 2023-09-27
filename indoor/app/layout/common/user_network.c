@@ -492,6 +492,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         if (count < UDHCPC_TIMEOUT_MAX)
         {
+                SAT_DEBUG("==============");
                 if (strcmp(ip, "10.0.0.2"))
                 {
                         SAT_DEBUG("udhcp ip get successs !(%s)", ip);
@@ -685,14 +686,17 @@ static bool automatic_ip_setting(void)
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if ((network_data_get()->dhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
+                SAT_DEBUG("==============");
                 sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->ip[0] != '\0')
                 {
+                        SAT_DEBUG("==============");
                         /*手动设置的IP信息*/
                         obtain_ipddress_based_on_manual();
                 }
                 else
                 {
+                        SAT_DEBUG("==============");
                         /*默认IP*/
                         obtain_ipaddress_based_on_mac(); // obtain_ipaddress_based_on_username();
                 }

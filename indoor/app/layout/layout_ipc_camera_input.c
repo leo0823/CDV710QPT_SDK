@@ -21,6 +21,11 @@ int layout_ipc_camera_input_flag_get(void)
 ipc_camera_password_state = 0,输入旧密码
 ipc_camera_password_state = 1:输入新密码*/
 static int ipc_camera_password_state = 0;
+
+void ipc_camera_password_state_set(int flg)
+{
+        ipc_camera_password_state = flg;
+}
 enum
 {
         ipc_camera_password_input_obj_id_title,
@@ -244,6 +249,12 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
 
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
+                struct ipcamera_info *node = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
+                printf("node passwd is %s\n", node->password);
+                printf("node ipaddr is %s\n", node->ipaddr);
+                printf("node username is %s\n", node->username);
+                printf("node port is %d\n", node->port);
+                printf("node auther_flag is %d\n", node->auther_flag);
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
 
@@ -417,7 +428,7 @@ static void sat_layout_enter(ipc_camera_input)
         lv_obj_t *textarea;
         memset(ipc_camera_password_input_password_temp, 0, sizeof(ipc_camera_password_input_password_temp));
         memset(ipc_camera_password_input_password_old, 0, sizeof(ipc_camera_password_input_password_old));
-        ipc_camera_password_state = 0;
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
@@ -501,6 +512,7 @@ static void sat_layout_enter(ipc_camera_input)
 }
 static void sat_layout_quit(ipc_camera_input)
 {
+        ipc_camera_password_state = 0;
 }
 
 sat_layout_create(ipc_camera_input);

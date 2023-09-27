@@ -92,13 +92,13 @@ static lv_obj_t *setting_recording_msgbox_create(const char *title, lv_event_cb_
                                               item[1], 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, setting_recording_obj_id_msgbox_check_2_img,
                                               (const char *)resource_ui_src_get(select_item == 1 ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                if(((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
+                if (((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
                 {
                         lv_common_img_btn_create(msgbox, setting_recording_obj_id_msgbox_check_2_cover, 48, 145, 365, 48,
-                        NULL, true, LV_OPA_60, 0x242526, LV_OPA_60, 0x242526,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                 NULL, true, LV_OPA_60, 0x242526, LV_OPA_60, 0x242526,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
 
                 lv_common_img_text_btn_create(msgbox, setting_recording_obj_id_msgbox_check_3, 48, 201, 365, 48,
@@ -359,7 +359,7 @@ static bool setting_recording_always_monitoring_sub_display(void)
         //        string =  lang_str_get(RECORDING_XLS_LANG_ID_60_SEC_PER_CAMERA);
         // }
 
-        lv_label_set_text(sub,lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF));
+        lv_label_set_text(sub, lang_str_get(RECORDING_XLS_LANG_ID_SAVE_OFF));
 
         return true;
 }
@@ -368,9 +368,10 @@ static void ssetting_recording_auto_msgbox_confirm_click(lv_event_t *e)
 {
         int mode = setting_recording_checkbox_mode_get();
         if (mode >= 0)
-        {       if((mode == 1) && ((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
+        {
+                if ((mode == 1) && ((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
                 {
-                        return ;
+                        return;
                 }
 
                 user_data_get()->auto_record_mode = (char)mode;
@@ -457,6 +458,11 @@ static void setting_recording_auto_msgbox_item_click(lv_event_t *e)
         }
 }
 
+static void layout_settting_record_auto_record_sd_state_change_callback(void)
+{
+        setting_recording_msgbox_del();
+        sd_state_channge_callback_register(sd_state_change_default_callback);
+}
 static void setting_recording_auto_obj_click(lv_event_t *ev)
 {
         const char *item[3] = {0};
@@ -466,6 +472,7 @@ static void setting_recording_auto_obj_click(lv_event_t *ev)
         setting_recording_msgbox_create(lang_str_get(RECORDING_XLS_LANG_ID_AUTO_RECORIDNG_CALLS),
                                         setting_recording_msgbox_cancel_click, ssetting_recording_auto_msgbox_confirm_click, setting_recording_auto_msgbox_item_click,
                                         item, 3, user_data_get()->auto_record_mode);
+        sd_state_channge_callback_register(layout_settting_record_auto_record_sd_state_change_callback);
 }
 static void setting_recording_motion_obj_click(lv_event_t *ev)
 {
@@ -475,7 +482,7 @@ static void setting_recording_motion_obj_click(lv_event_t *ev)
 static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
 {
         int mode = setting_recording_checkbox_mode_get();
-        user_data_get()->always_monitoring = mode ;
+        user_data_get()->always_monitoring = mode;
 
         user_data_save();
         if (mode > 0)
@@ -486,7 +493,7 @@ static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
 }
 static void setting_recording_always_obj_click(lv_event_t *ev)
 {
-        if(monitor_door_registered_status_get() == false)
+        if (monitor_door_registered_status_get() == false)
         {
                 return;
         }
@@ -528,7 +535,7 @@ static lv_obj_t *setting_recording_sub_list_create(void)
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*此处请斟酌*/
-                if ((((user_data_get()->system_mode & 0xF0) != 0x00) && i == 1 ) || i == 2)
+                if ((((user_data_get()->system_mode & 0xF0) != 0x00) && i == 1) || i == 2)
                 {
                         continue;
                 }
@@ -570,6 +577,7 @@ static void sat_layout_enter(setting_recording)
 }
 static void sat_layout_quit(setting_recording)
 {
+        sd_state_channge_callback_register(sd_state_change_default_callback);
 }
 
 sat_layout_create(setting_recording);

@@ -182,12 +182,13 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 static void intercom_call_log_check_obj_click(lv_event_t *ev)
 {
         lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
+        lv_obj_t *parent = lv_event_get_current_target(ev);
         if (strncmp(del_obj->bg_img_src, resource_ui_src_get("btn_title_delete.png"), strlen(resource_ui_src_get("btn_title_delete.png"))) == 0)
         {
                 return;
         }
 
-        lv_obj_t *checkbox = lv_obj_get_child_form_id(lv_obj_get_parent(lv_event_get_current_target(ev)), call_log_list_cont_obj_checkbox_id);
+        lv_obj_t *checkbox = lv_obj_get_child_form_id(parent, call_log_list_cont_obj_checkbox_id);
         lv_obj_t *del_num = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
         {
@@ -222,21 +223,21 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
 static void intercom_call_list_item_create(lv_obj_t *parent)
 {
         CALL_LOG_TYPE type;
-        int ch;
+        char doorname[24];
         int duration;
         struct tm tm;
         int item_y = 0;
         int total = call_list_total_get();
         for (int i = total - 1; i >= 0; i--)
         {
-                call_list_get(i, &type, &ch, &duration, &tm);
+                call_list_get(i, &type, doorname, &duration, &tm);
                 char tm_buffer[64] = {0};
                 char du_buffer[64];
                 sprintf(du_buffer, "%02d:%02d", duration / 60, duration % 60);
                 sprintf(tm_buffer, "%04d-%02d:%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
                 lv_obj_t *cont = lv_common_img_btn_create(parent, i, 0, item_y, 1024 - 80, 88,
-                                                          NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                          intercom_call_log_check_obj_click, true, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                           0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                           0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                           NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -244,21 +245,22 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                 {
                         // char ch_str[64] = {0};
                         //  sprintf(ch_str, "%s %d", lang_str_get(INTERCOM_XLS_LANG_ID_DOOR_CAMERA), network_data_get()->door_device[ch].door_name);
-                        lv_common_img_text_btn_create(cont, call_log_list_cont_obj_titie_id, 0, 0, 350, 86,
-                                                      intercom_call_log_check_obj_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      50, 25, 300, 43, 0,
-                                                      network_data_get()->door_device[ch].door_name, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                      0, 15, 80, 48, 1,
-                                                      type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
-                                                                                                                                                            : (char *)resource_ui_src_get("ic_list_call_receive.png"),
-                                                      LV_OPA_COVER, 0x00a8ff, LV_ALIGN_LEFT_MID);
+                        lv_obj_t *obj = lv_common_img_text_btn_create(cont, call_log_list_cont_obj_titie_id, 0, 0, 350, 86,
+                                                                      NULL, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                      50, 25, 300, 43, 0,
+                                                                      doorname, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                      0, 15, 80, 48, 1,
+                                                                      type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
+                                                                                                                                                                            : (char *)resource_ui_src_get("ic_list_call_receive.png"),
+                                                                      LV_OPA_COVER, 0x00a8ff, LV_ALIGN_LEFT_MID);
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
                 }
 
                 {
                         lv_obj_t *checkbox = lv_common_img_btn_create(cont, call_log_list_cont_obj_checkbox_id, 0, 0, 32, 86,
-                                                                      intercom_call_log_check_obj_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                      NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                       resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);

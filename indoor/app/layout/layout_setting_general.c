@@ -381,7 +381,7 @@ static void setting_general_door1_open_method_display(void)
         lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_1), setting_general_obj_id_msgbox_check_1_img);
 
         lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_general_obj_id_msgbox_check_2), setting_general_obj_id_msgbox_check_2_img);
-        if (user_data_get()->etc.door1_open_door_mode == 0)
+        if (user_data_get()->etc.open_the_door == 0)
         {
 
                 lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
@@ -575,7 +575,7 @@ static void call_time_obj_sub_display(void)
                 return;
         }
 
-        lv_label_set_text(sub, lang_str_get(SETTING_GENERAL_XLS_LANG_ID_CALL_TIMER_OF_DOORCAMERA + user_data_get()->etc.call_time));
+        lv_label_set_text(sub, lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_1_MINUTE + user_data_get()->etc.call_time - 1));
 }
 static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
 {
@@ -715,7 +715,7 @@ lv_obj_t *setting_main_list_create(int id)
                 {
                         continue;
                 }
-        
+
                 lv_common_img_text_btn_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                               id == i ? NULL : main_list_group[i].click_cb, id == i ? LV_OPA_COVER : LV_OPA_TRANSP, 0x00A8FF, id == i ? LV_OPA_COVER : LV_OPA_TRANSP, 0x00A8FF,
                                               20, 8, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0,
@@ -724,7 +724,7 @@ lv_obj_t *setting_main_list_create(int id)
                                               main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xffffff, id == i ? 0xffffff : 0x00A8FF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                               0, 8, 32, 32, -1,
                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                j ++;
+                j++;
         }
 
         return list;
@@ -759,9 +759,9 @@ static lv_obj_t *setting_sub_list_create(void)
         int j = 0;
         for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
-                
-                //此处请重新判断
-                if (((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7)|| (i == 8)))
+
+                // 此处请重新判断
+                if (((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8)))
                 {
                         continue;
                 }

@@ -88,6 +88,7 @@ static void sd_state_change_msgbox_cancel_click(lv_event_t *ev)
 static void sd_state_checking_timer(lv_timer_t *timer)
 {
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
+
         if (masgbox != NULL)
         {
                 setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
@@ -99,8 +100,9 @@ static void sd_state_checking_timer(lv_timer_t *timer)
         {
                 masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
                 setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_IS_VALID), 0, 60, 460, 120);
+                setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
+                masgbox->user_data = NULL;
         }
-        setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
         lv_timer_del(timer);
 }
 
@@ -113,7 +115,6 @@ static void sd_state_checking_timer(lv_timer_t *timer)
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
-        SAT_DEBUG("================================");
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -121,12 +122,17 @@ void sd_state_change_default_callback(void)
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), sd_state_change_obj_id_format_msgbox_cont);
         if (masgbox != NULL)
         {
+                lv_timer_t *sd_timer = (lv_timer_t *)masgbox->user_data; // 在同一界面多次插拔SD卡，把定时器删了
+                if (sd_timer != NULL)
+                {
+                        SAT_DEBUG("delete the sd timer");
+                        lv_timer_del(sd_timer);
+                }
                 setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
         }
         masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
         setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_CHECKING_SD), 0, 120, 460, 120);
-
-        lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
+        masgbox->user_data = lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
 
 static int buzzer_call_count = 0;            // 蜂鸣器触发时间倒计时
@@ -363,10 +369,13 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
+
                                 user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
                                 user_data_get()->etc.door2_lock_num = info->etc.door2_lock_num;
+                                strncpy(user_data_get()->etc.password, info->etc.password, sizeof(user_data_get()->etc.password));
+                                strncpy(user_data_get()->etc.comm_ent_password, info->etc.comm_ent_password, sizeof(user_data_get()->etc.comm_ent_password));
                                 memcpy(&user_data_get()->alarm.cctv_sensor, &info->alarm.cctv_sensor, sizeof(user_data_get()->alarm.cctv_sensor));
                                 memcpy(&user_data_get()->alarm.away_sensor_enable, &info->alarm.away_sensor_enable, sizeof(user_data_get()->alarm.away_sensor_enable));
                                 memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));

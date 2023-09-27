@@ -161,7 +161,7 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
                                                       (const char *)resource_ui_src_get(user_data_get()->alarm.cctv_sensor[ipc_camera_edit_index] == i ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         continue;
                 }
-                if (user_data_get()->alarm.alarm_enable[i - 1])
+                if (user_data_get()->alarm.alarm_enable[i - 1] && user_data_get()->alarm.alarm_enable_always[0][i - 1] == 0 && user_data_get()->alarm.alarm_enable_always[1][i - 1] == 0)
                 {
 
                         lv_obj_t *obj = lv_common_img_text_btn_create(list, i, 48, 61 + 56 * j, 365, 48,
@@ -173,7 +173,7 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
                                                                       0, 8, 32, 32, 1,
                                                                       (const char *)resource_ui_src_get(user_data_get()->alarm.cctv_sensor[ipc_camera_edit_index] == i ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                        if (user_data_get()->alarm.cctv_sensor[i - 1] && i - 1 != ipc_camera_edit_index)
+                        if (user_data_get()->alarm.cctv_sensor[i - 1] && (i - 1 != ipc_camera_edit_index)) // 传感器被选择了，且不是被当前CCTV选择的
                         {
 
                                 lv_common_img_btn_create(obj, 2, 0, 0, 365, 48,
@@ -183,6 +183,30 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
                                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         }
                         j++;
+                }
+        }
+}
+
+/************************************************************
+** 函数说明: 传感器链接状态显示
+** 作者: xiaoxiao
+** 日期：2023-09-27 08:18:10
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_ipc_edit_sensor_linkage_display(void)
+{
+        lv_obj_t *link_cnt = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_edit_obj_id_list), 2);
+        if (link_cnt)
+        {
+                lv_obj_t *sub = lv_obj_get_child_form_id(link_cnt, 1);
+                if (user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get()] == 0)
+                {
+                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
+                }
+                else
+                {
+                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1 + user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get()]));
                 }
         }
 }
@@ -234,17 +258,22 @@ static void sat_layout_enter(ipc_camera_edit)
                      ipc_camera_edit_channge_password_obj_click, -1},
 
                     {0, 88 * 2, 928, 88,
-                     2, 0, -1,
-                     DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHANGE_TH_CONNETION_PASSWORD, lang_str_get,
+                     2, 0, 1,
+                     DOOR_CAMERA_SEARCH_XLS_LANG_ID_SENSOR_LINKAGE, lang_str_get,
                      -1, NULL,
                      ipc_camera_edit_sensor_linkage_click, -1}};
 
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), ipc_camera_edit_obj_id_list);
                 lv_common_style_set_common(list, ipc_camera_edit_obj_id_list, 48, 88, 928, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-
+                int j = 0;
                 for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
                 {
-                        lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[i].x, main_list_group[i].y, main_list_group[i].w, main_list_group[i].h,
+                        if ((layout_ipc_cmeara_is_doorcamera_get() && i == 2) || (layout_ipc_cmeara_is_doorcamera_get() == false && i == 1))
+                        {
+                                continue;
+                        }
+
+                        lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[i].w, main_list_group[i].h,
                                                                         main_list_group[i].click_cb, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                         0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -256,7 +285,9 @@ static void sat_layout_enter(ipc_camera_edit)
                                                                         NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                         0, 28, 32, 32, main_list_group[i].img_id,
                                                                         NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                        j++;
                 }
+                layout_ipc_edit_sensor_linkage_display();
         }
 }
 static void sat_layout_quit(ipc_camera_edit)

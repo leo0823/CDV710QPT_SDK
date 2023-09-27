@@ -106,7 +106,7 @@ static void setting_language_list_client(lv_event_t *ev)
 	int obj_id = obj->id;
 	LANGUAGE_ID old_lang = language_id_get();
 
-	for (int id = LANGUAGE_ID_HANYU; id < LANGUAGE_ID_TOTAL; id++)
+	for (int id = LANGUAGE_ID_ENGLISH; id < LANGUAGE_ID_TOTAL; id++)
 	{
 
 		if (obj_id == setting_language_list_id_get(id, 0))
