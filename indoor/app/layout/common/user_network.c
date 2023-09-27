@@ -511,7 +511,7 @@ static bool obtain_ipddress_based_on_manual(void)
 
 {
         char cmd[128] = {0};
-        sprintf(cmd, "ifconfig eth0 %s netmask %s", network_data_get()->ip, network_data_get()->mask[0] != 0 ? network_data_get()->mask : "255.0.0.0");
+        sprintf(cmd, "ifconfig eth0 %s netmask %s", network_data_get()->network.ipaddr, network_data_get()->network.mask[0] != 0 ? network_data_get()->network.mask : "255.0.0.0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
         return true;
@@ -684,11 +684,11 @@ static bool automatic_ip_setting(void)
         /*杀死相关的端口进程*/
         kill_related_port_process("5060");
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
-        if ((network_data_get()->dhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
+        if ((network_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
                 SAT_DEBUG("==============");
                 sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
-                if (network_data_get()->ip[0] != '\0')
+                if (network_data_get()->network.ipaddr[0] != '\0')
                 {
                         SAT_DEBUG("==============");
                         /*手动设置的IP信息*/

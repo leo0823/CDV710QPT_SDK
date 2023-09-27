@@ -14,10 +14,10 @@
 
 typedef struct
 {
-	char name[64];
-	char ip[32];
-	unsigned long long timestamp;
-}asterisk_register_info;
+        char name[64];
+        char ip[32];
+        unsigned long long timestamp;
+} asterisk_register_info;
 
 /*
  * @日期: 2022-08-06
@@ -74,7 +74,7 @@ bool sat_sip_local_indoor_number_get(int id, char *dst_number);
 ** 日期: 2022-11-26 9:49:0
 ** 说明: 获取网卡的Ip
 ***********************************************/
-bool sat_ip_mac_addres_get(const char *eth, char *ip, char *mac,char* mask);
+bool sat_ip_mac_addres_get(const char *eth, char *ip, char *mac, char *mask);
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-26 11:25:54
@@ -182,10 +182,16 @@ bool sat_network_ip_pings_check(const char *ip, int pings_count, int one_wait_se
 bool sat_kill_task_process(const char *process_name);
 /***********************************************
 ** 作者: leo.liu
+** 日期: 2023-1-7 14:46:50
+** 说明: 将子网掩码转换成长度
+***********************************************/
+int convert_subnet_mask(char *mask);
+/***********************************************
+** 作者: leo.liu
 ** 日期: 2023-1-5 15:21:6
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/
 #define ASTERISK_REIGSTER_DEVICE_MAX (20)
-asterisk_register_info* asterisk_register_info_get(void);
+asterisk_register_info *asterisk_register_info_get(void);
 
 #endif

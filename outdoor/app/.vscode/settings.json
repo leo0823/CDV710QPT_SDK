@@ -1,5 +1,5 @@
 {
-	"files.associations": {
+        "files.associations": {
                 "mediastream.h": "c",
                 "typeinfo": "c",
                 "waveheader.h": "c",
@@ -71,9 +71,9 @@
                 "sat_user_time.h": "c",
                 "video_input_api.h": "c"
         },
-	"cmake.sourceDirectory": "${workspaceFolder}/build",
-	"window.autoDetectColorScheme": false,
-	"window.closeWhenEmpty": false,
-	"window.zoomLevel": 0,
-	"editor.fontFamily": ""        
+        "cmake.sourceDirectory": "${workspaceFolder}/build",
+        "window.autoDetectColorScheme": false,
+        "window.closeWhenEmpty": false,
+        "window.zoomLevel": -1,
+        "editor.fontFamily": ""
 }

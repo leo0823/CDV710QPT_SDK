@@ -24,6 +24,16 @@ struct ipcamera_info
         /*0:token,1:digest*/
         char auther_flag;
 };
+
+struct ipcamera_network
+{
+        bool udhcp;
+        char ipaddr[24];
+        char mask[24];
+        char dns[24];
+        char gateway[24];
+};
+
 /****************************************************************
 **@日期: 2022-09-21
 **@作者: leo.liu
@@ -179,4 +189,16 @@ bool sat_ipcamera_image_get(const char *ip, int port, const char *user, const ch
 **@功能: 设置图像调整的数值
 *****************************************************************/
 bool sat_ipcamera_image_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, int brightness, int saturation, int contrast, int timeout);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 获取网络信息
+*****************************************************************/
+bool sat_ipcamera_network_get(const char *ip, int port, const char *user, const char *password, char auther_flag, struct ipcamera_network *info, int timeout);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置网络信息
+*****************************************************************/
+bool sat_ipcamera_network_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, struct ipcamera_network *info, int timeout);
 #endif

@@ -33,8 +33,12 @@ static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
 
 static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 {
+        struct ipcamera_info *pinfo = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
+        struct ipcamera_network network;
+        memset(&network, 0, sizeof(struct ipcamera_network));
+        sat_ipcamera_network_get(pinfo->ipaddr, pinfo->port, pinfo->username, pinfo->password, pinfo->auther_flag, &network, 1000);
 
-        layout_ip_setting_flag_set(layout_ipc_cmeara_is_doorcamera_get() ? 0x01 : 0x02);
+        layout_setting_ipaddress_info_get()->network = network;
         sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 

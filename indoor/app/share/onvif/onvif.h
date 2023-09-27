@@ -2,6 +2,7 @@
 #define _ONVIF_H_
 #include <stdbool.h>
 #include <stdlib.h>
+#include "common/sat_ipcamera.h"
 #define XML_FILE_MAX (512 * 1024)
 /****************************************************************
 **@日期: 2022-09-16
@@ -82,4 +83,16 @@ bool ipc_camera_device_get_imaging(const char *ip, int port, const char *user, c
 **@功能: 设置亮度色度对比度数据,百分比
 *****************************************************************/
 bool ipc_camera_device_setting_imaging(const char *ip, int port, const char *user, const char *password, char auther_flag, int brightness, int saturation, int contrast, int timeout);
+/****************************************************************
+**@日期: 2023-09-19
+**@作者: leo.liu
+**@功能: 获取设备的网络信息
+*****************************************************************/
+bool ipc_camera_device_get_network(const char *ip, int port, const char *user, const char *password, char auther_flag, struct ipcamera_network *info, int timeout);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置网络信息
+*****************************************************************/
+bool ipc_camera_device_setting_network(const char *ip, int port, const char *user, const char *password, char auther_flag, struct ipcamera_network *info, int timeout);
 #endif

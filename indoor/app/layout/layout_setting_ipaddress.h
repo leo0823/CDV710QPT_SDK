@@ -1,7 +1,13 @@
 #ifndef LAYOUT_IO_SETTING
 #define LAYOUT_IO_SETTING
+#include "common/sat_ipcamera.h"
+typedef struct
+{
+  char ip_setting_flag;
+  struct ipcamera_network network;
+  struct ipcamera_info pinfo;
 
-void layout_ip_setting_flag_set(char flag);
+} layout_setting_ipaddress_info;
 
-char layout_ip_setting_flag_get(void);
+layout_setting_ipaddress_info *layout_setting_ipaddress_info_get(void);
 #endif

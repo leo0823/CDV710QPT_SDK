@@ -14,16 +14,11 @@
 
 #define USER_DATA_PATH "/etc/config/user_data.cfg"
 
-static user_data_info user_data =
-    {
-        {
-            {0},
-        },
-};
+static user_data_info user_data;
 
 static const user_data_info user_data_default =
     {
-        .network = {.ip = {'\0'}, .mask = "255.0.0.0"},
+        .network = {.udhcp = true, .ip = {'\0'}, .mask = "255.0.0.0"},
         .device = {.name = "CIP-D20YS", .number = "0101001001012", .password = "123456789"},
         .brightness = 0,
         .contrast = 0,

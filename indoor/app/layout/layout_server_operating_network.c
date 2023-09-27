@@ -263,7 +263,7 @@ static void setting_server_operation_network_init(void)
                                 if (sat_ip_mac_addres_get("eth0", ip, NULL, mask) == false)
                                 {
 
-                                        lv_textarea_set_text(textarea, network_data_get()->ip);
+                                        lv_textarea_set_text(textarea, network_data_get()->network.ipaddr);
                                 }
                                 else
                                 {
@@ -273,16 +273,16 @@ static void setting_server_operation_network_init(void)
 
                         else if (i == 3)
                         {
-                                lv_textarea_set_text(textarea, network_data_get()->gateway);
+                                lv_textarea_set_text(textarea, network_data_get()->network.gateway);
                         }
                         else if (i == 4)
                         {
-                                lv_textarea_set_text(textarea, network_data_get()->mask);
-                                printf(" network_data_get()->mask is %s\n", network_data_get()->mask);
+                                lv_textarea_set_text(textarea, network_data_get()->network.mask);
+                                printf(" network_data_get()->mask is %s\n", network_data_get()->network.mask);
                         }
                         else if (i == 5)
                         {
-                                lv_textarea_set_text(textarea, network_data_get()->dns);
+                                lv_textarea_set_text(textarea, network_data_get()->network.dns);
                         }
                         else if (i == 6)
                         {
@@ -375,19 +375,19 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
                         }
                         else if (i == 2)
                         {
-                                strncpy(network_data_get()->ip, lv_textarea_get_text(textarea), sizeof(network_data_get()->ip));
+                                strncpy(network_data_get()->network.ipaddr, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.ipaddr));
                         }
                         else if (i == 3)
                         {
-                                strncpy(network_data_get()->gateway, lv_textarea_get_text(textarea), sizeof(network_data_get()->gateway));
+                                strncpy(network_data_get()->network.gateway, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.gateway));
                         }
                         else if (i == 4)
                         {
-                                strncpy(network_data_get()->mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->mask));
+                                strncpy(network_data_get()->network.mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.mask));
                         }
                         else if (i == 5)
                         {
-                                strncpy(network_data_get()->dns, lv_textarea_get_text(textarea), sizeof(network_data_get()->dns));
+                                strncpy(network_data_get()->network.dns, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.dns));
                         }
                         else if (i == 6)
                         {
