@@ -114,14 +114,14 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 {
                         return;
                 }
-                strncpy(network_data_get()->ip, lv_textarea_get_text(textarea), sizeof(network_data_get()->ip));
+                strncpy(network_data_get()->network.ipaddr, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.ipaddr));
 
                 textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_subnet_mask_textbox);
                 if (textarea == NULL)
                 {
                         return;
                 }
-                strncpy(network_data_get()->mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->mask));
+                strncpy(network_data_get()->network.mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.mask));
 
                 network_data_save();
                 usleep(10 * 1000);
@@ -247,7 +247,7 @@ static void setting_ipaddress_dhcp_static_init_display(void)
         lv_obj_t *dhcp_obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dhcp), 1);
         lv_obj_t *static_obj = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_static), 1);
 
-        if (network_data_get()->dhcp)
+        if (network_data_get()->network.udhcp)
         {
 
                 lv_obj_set_style_bg_img_src(dhcp_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);

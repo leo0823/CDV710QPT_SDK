@@ -226,6 +226,7 @@ static bool asterisk_register_online_check(const char *user)
 ***********************************************/
 static void key_call_process(unsigned int code, unsigned int state)
 {
+
         char user[8] = {0};
         for (int i = 1; i < 9; i++)
         {
@@ -296,13 +297,12 @@ static void video_stream_status_callback(bool en)
         return;
 }
 
-/*呼叫成功后铃声处理*/
+/*铃声回调*/
 static void call_ring_event_callback(void)
 {
         sat_linphone_audio_play_stop();
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.mp3", 2);
+        sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.wav", 2);
 }
-
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -343,8 +343,8 @@ int main(int argc, char *argv[])
         ** 日期: 2022-12-28 11:47:47
         ** 说明: 呼叫按钮检测
         ***********************************************/
-        user_key_init();
         user_gpio_init();
+        user_key_init();
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2022-12-28 13:47:0
@@ -363,6 +363,7 @@ int main(int argc, char *argv[])
         }
         pthread_t thread_id;
         pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
+
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu
