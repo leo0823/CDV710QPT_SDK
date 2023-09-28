@@ -74,6 +74,6 @@
         "cmake.sourceDirectory": "${workspaceFolder}/build",
         "window.autoDetectColorScheme": false,
         "window.closeWhenEmpty": false,
-        "window.zoomLevel": -1,
+        "window.zoomLevel": 0,
         "editor.fontFamily": ""
 }

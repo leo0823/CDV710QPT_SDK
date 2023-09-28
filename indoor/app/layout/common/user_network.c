@@ -610,6 +610,60 @@ static bool obtain_ipaddress_based_on_mac(void)
         return true;
 }
 
+static bool local_network_config_get_remote(char *ip, char *mask, int length)
+{
+        if (network_data_get()->network.mask[0] == '\0')
+        {
+                strncpy(mask, "255.0.0.0", length);
+        }
+        else
+        {
+                strncpy(mask, network_data_get()->network.mask, length);
+        }
+
+        if (network_data_get()->network.ipaddr[0] == '\0')
+        {
+                strncpy(ip, "10.1.1.1", length);
+        }
+        else
+        {
+                strncpy(ip, network_data_get()->network.ipaddr, length);
+        }
+
+        int num = convert_subnet_mask(mask) / 8;
+
+        char *p = ip;
+        for (int i = 0; i < num; i++)
+        {
+                p = strchr(p, '.');
+                if ((p == NULL) || ((p + 1) == NULL))
+                {
+                        return false;
+                }
+                p++;
+        }
+
+        if (num == 1)
+        {
+                memset(p, 0, 7);
+                strcpy(p, ".0.0.0");
+                return true;
+        }
+        if (num == 2)
+        {
+                memset(p, 0, 5);
+                strcpy(p, ".0.0");
+                return true;
+        }
+        if (num == 3)
+        {
+                memset(p, 0, 3);
+                strcpy(p, ".0");
+                return true;
+        }
+        return false;
+}
+
 static bool add_multicase_routing_addres(void)
 {
         char cmd[128] = {0};
@@ -627,6 +681,15 @@ static bool add_multicase_routing_addres(void)
         system(cmd);
         SAT_DEBUG("%s ", cmd);
 
+        memset(cmd, 0, sizeof(cmd));
+        char mask[32] = {0};
+        char ip[32] = {0};
+        if (local_network_config_get_remote(ip, mask, sizeof(ip)) == true)
+        {
+                sprintf(cmd, "route add -net %s netmask %s eth0", ip, mask);
+                system(cmd);
+                SAT_DEBUG("%s ", cmd);
+        }
         sprintf(cmd, "ip route add 10.0.0.0/8 via 10.0.0.1 dev eth0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
@@ -686,7 +749,6 @@ static bool automatic_ip_setting(void)
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if ((network_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
-                SAT_DEBUG("==============");
                 sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->network.ipaddr[0] != '\0')
                 {

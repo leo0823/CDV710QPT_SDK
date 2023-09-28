@@ -174,6 +174,13 @@ int sat_socket_udp_receive(int socket_fd, char *data, size_t data_len, struct so
 ** 日期: 2023-1-5 15:21:6
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/
+
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-7 14:46:50
+** 说明: 将子网掩码转换成长度
+***********************************************/
+int convert_subnet_mask(char *mask);
 #define ASTERISK_REIGSTER_DEVICE_MAX (20)
 asterisk_register_info *asterisk_register_info_get(void);
 #endif

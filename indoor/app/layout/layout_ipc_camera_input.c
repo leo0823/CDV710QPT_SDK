@@ -76,15 +76,16 @@ static lv_obj_t *ipc_camera_password_input_msgbox_create(const char *title, cons
 static void ipc_camera_password_input_cancel_click(lv_event_t *e)
 {
         int flag = layout_ipc_camera_input_flag_get();
+
         if ((flag == IPC_CAMERA_FLAG_CHANGE_NAME) || (flag == IPC_CAMERA_FLAG_CHANGE_PWD))
         {
-                if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
+                if ((layout_ipc_cmeara_is_doorcamera_get() == true) && network_data_get()->door_device[layout_ipc_camera_edit_index_get()].sip_url[0] == '\0')
                 {
-                        sat_layout_goto(ipc_camera_edit, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                        sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
                 else
                 {
-                        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                        sat_layout_goto(ipc_camera_edit, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
         }
         else if (flag & IPC_CAMERA_FLAG_SEARCH)

@@ -143,7 +143,18 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 usleep(10 * 1000);
                 system("reboot");
         }
+        else if (!strncmp((const char *)dhcp->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+        {
+                layout_setting_ipaddress_info_get()->network.udhcp = true;
+        }
         else
+        {
+                layout_setting_ipaddress_info_get()->network.udhcp = false;
+                strncpy(layout_setting_ipaddress_info_get()->network.ipaddr, ipaddr, sizeof(network_data_get()->network.ipaddr));
+                strncpy(layout_setting_ipaddress_info_get()->network.mask, mask, sizeof(network_data_get()->network.mask));
+                strncpy(layout_setting_ipaddress_info_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
+                strncpy(layout_setting_ipaddress_info_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
+        }
         {
                 sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
                                              layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1000);
