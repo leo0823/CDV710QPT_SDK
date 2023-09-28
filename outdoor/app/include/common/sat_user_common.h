@@ -171,6 +171,12 @@ bool sat_kill_task_process(const char *process_name);
 int sat_socket_udp_receive(int socket_fd, char *data, size_t data_len, struct sockaddr_in *client_addr, int timeout_ms);
 /***********************************************
 ** 作者: leo.liu
+** 日期: 2023-1-7 14:46:50
+** 说明: 将子网掩码转换成长度
+***********************************************/
+int convert_subnet_mask(char *mask);
+/***********************************************
+** 作者: leo.liu
 ** 日期: 2023-1-5 15:21:6
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/

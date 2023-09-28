@@ -64,7 +64,7 @@ static void setting_installation_building_house_no_obj_click(lv_event_t *ev)
 static void setting_installation_ipaddres_obj_click(lv_event_t *ev)
 {
 
-        layout_ip_setting_flag_set(0x00);
+        layout_setting_ipaddress_info_get()->ip_setting_flag = 0x00;
         sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_installation_operation_server_ip_obj_click(lv_event_t *ev)

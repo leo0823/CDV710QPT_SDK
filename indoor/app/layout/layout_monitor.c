@@ -2159,7 +2159,8 @@ static void sat_layout_quit(monitor)
         lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_monitor_full_screen_display);
         lv_obj_pressed_func = lv_layout_touch_callback;
         MON_ENTER_FLAG flag = monitor_enter_flag_get();
-        int ch = monitor_channel_get();
+        char doorname[24] = {0};
+        strncpy(doorname, network_data_get()->door_device[monitor_channel_get()].door_name, sizeof(doorname));
         CALL_LOG_TYPE type;
 
         if (flag == MON_ENTER_CALL_FLAG)
@@ -2170,7 +2171,7 @@ static void sat_layout_quit(monitor)
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
                 user_time_read(tm_val);
-                call_list_add(type, ch, call_duration, tm_val);
+                call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
         else if (flag == MON_ENTER_MANUAL_TALK_FLAG)
@@ -2181,7 +2182,7 @@ static void sat_layout_quit(monitor)
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
                 user_time_read(tm_val);
-                call_list_add(type, ch, call_duration, tm_val);
+                call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
         else if (flag == MON_ENTER_CALL_TALK_FLAG)
@@ -2192,7 +2193,7 @@ static void sat_layout_quit(monitor)
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
                 user_time_read(tm_val);
-                call_list_add(type, ch, call_duration, tm_val);
+                call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
         else if (flag == MON_ENTER_TUYA_TALK_FLAG)
@@ -2203,7 +2204,7 @@ static void sat_layout_quit(monitor)
                 time_val -= call_duration;
                 struct tm *tm_val = localtime(&time_val);
                 user_time_read(tm_val);
-                call_list_add(type, ch, call_duration, tm_val);
+                call_list_add(type, doorname, call_duration, tm_val);
                 layout_last_call_new_flag_set(true);
         }
 
