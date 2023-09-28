@@ -33,6 +33,15 @@ static short int alarm_idel_time = 0;                // 警报铃声空闲时间
 static lv_timer_t *alarm_ring_idel_timer = 0;        // 警报铃声空闲时间计时
 static void alarm_alarm_cont_display(lv_timer_t *ptimer)
 {
+        lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
+        if (passwd_cont)
+        {
+                if (lv_obj_has_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN) == false)
+                {
+                        return;
+                }
+        }
+
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         lv_obj_t *bg2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_bg_2);
         lv_disp_t *disp = lv_disp_get_default();

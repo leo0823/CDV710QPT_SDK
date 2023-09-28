@@ -16,6 +16,7 @@ enum
         setting_password_obj_id_modiy_cont,
         setting_password_obj_id_modiy_cancel,
         setting_password_obj_id_modiy_input_btnatirx,
+        setting_password_obj_id_modiy_password_head_label,
         setting_password_obj_id_modiy_password_reset_label,
         setting_password_obj_id_modiy_password_new_label,
         setting_password_obj_id_modiy_passowrd_verify_label,
@@ -31,6 +32,9 @@ enum
         setting_password_obj_id_confirm,
         setting_password_obj_id_confirm_img,
 };
+
+static bool reset_unit = false;
+
 static void setting_password_modiy_cancel_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_cont);
@@ -92,22 +96,22 @@ static void setting_password_modiy_confirm_enable(bool en)
         }
 }
 
-static bool setting_password_check_passowrd_easy(char * passwd)
+static bool setting_password_check_passowrd_easy(char *passwd)
 {
-	char easy_password[3][4] = {{"0000"}, {"1234"}, {"4321"}};
+        char easy_password[3][4] = {{"0000"}, {"1234"}, {"4321"}};
 
-        if(passwd == NULL)
+        if (passwd == NULL)
         {
                 return true;
         }
-	for (int i = 0; i < 3; i++)
-	{
-		if (strncmp(easy_password[i], passwd, 4) == 0)
-		{
-			return true;
-		}
-	}
-	return false;
+        for (int i = 0; i < 3; i++)
+        {
+                if (strncmp(easy_password[i], passwd, 4) == 0)
+                {
+                        return true;
+                }
+        }
+        return false;
 }
 
 static void setting_password_modiy_confirm_click(lv_event_t *ev)
@@ -129,15 +133,17 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
         }
         else
         {
-                if(setting_password_check_passowrd_easy(verify_buffer) == true)
+                if (setting_password_check_passowrd_easy(verify_buffer) == true)
                 {
                         return;
-                }else
+                }
+                else
                 {
-                        strncpy(user_data_get()->etc.password, buffer, 4);
+
+                        strncpy(reset_unit ? user_data_get()->etc.password : user_data_get()->etc.comm_ent_password, buffer, 4);
+                        user_data_save();
                         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
-
         }
 }
 /***********************************************
@@ -311,6 +317,16 @@ static void setting_password_modiy_obj_create(void)
                                                     NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         {
                 /***********************************************
+                 ** 作者: leo.liu
+                 ** 日期: 2023-2-3 14:13:25
+                 ** 说明: 标题显示
+                 ***********************************************/
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_password_head_label, 0, 20, 1024, 40,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(reset_unit ? SETTING_PASSWORD_XLS_LANG_ID_RESET_UNIT_DOOR : SETTING_PASSWORD_XLS_LANG_ID_RESET_COMMON_ENTRANCE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                /***********************************************
                 ** 作者: leo.liu
                 ** 日期: 2023-2-3 14:13:25
                 ** 说明: 返回按钮
@@ -430,12 +446,14 @@ static void setting_password_cancel_obj_click(lv_event_t *ev)
 }
 static void setting_password_reset_household_obj_click(lv_event_t *ev)
 {
+        reset_unit = false;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_reset_cont);
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         setting_password_modiy_obj_create();
 }
 static void setting_password_reset_common_entrance_obj_click(lv_event_t *ev)
 {
+        reset_unit = true;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_reset_cont);
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         setting_password_modiy_obj_create();

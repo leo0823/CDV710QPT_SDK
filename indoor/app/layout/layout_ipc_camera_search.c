@@ -8,10 +8,42 @@ enum
 
         ipc_camera_search_obj_id_searched_door_camera_title,
         ipc_camera_search_obj_id_door_camera_list,
+
+        ipc_camera_search_obj_id_msg_bg,
 };
+
+typedef enum
+{
+        ipc_camera_search_msg_obj_id_msg,
+        ipc_camera_search_msg_obj_id_text,
+        ipc_camera_search_msg_obj_id_confirm,
+        ipc_camera_search_msg_obj_id_cancel,
+} ipc_camera_search_msg_bg_obj_id;
 static void ipc_camera_search_cancel_click(lv_event_t *ev)
 {
         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+static void ipc_search_door_camera_modify_default_passwd_confirm(lv_event_t *ev)
+{
+        layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_CHANGE_PWD);
+        ipc_camera_password_state_set(1);
+        sat_layout_goto(ipc_camera_input, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+static void ipc_search_door_camera_modify_default_passwd_concel(lv_event_t *ev)
+{
+        setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
+}
+
+static void ipc_search_door_camera_modify_default_passwd_check()
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_msg_bg);
+        if (masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_obj_id_msg_bg, ipc_camera_search_msg_obj_id_msg, 282, 123, 460, 323);
+        setting_msgdialog_msg_create(masgbox, ipc_camera_search_msg_obj_id_text, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_MODIFY_DEFAULT_PASSWD), 20, 40, 420, 180);
+        setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, ipc_camera_search_msg_obj_id_confirm, ipc_camera_search_msg_obj_id_cancel, ipc_search_door_camera_modify_default_passwd_confirm, ipc_search_door_camera_modify_default_passwd_concel);
 }
 static void ipc_camera_serarch_list_click(lv_event_t *ev)
 {
@@ -20,9 +52,17 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         {
                 return;
         }
-
         layout_ipc_camera_edit_index_set(parent->id);
-        if (layout_ipc_cmeara_is_doorcamera_get() == true)//if(1)
+        if (layout_ipc_cmeara_is_doorcamera_get())
+        {
+                sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
+                if (sat_ipcamera_device_name_get(parent->id, 1000) == true)
+                {
+                        ipc_search_door_camera_modify_default_passwd_check();
+                        return;
+                }
+        }
+        if (layout_ipc_cmeara_is_doorcamera_get() == true) // if(1)
         {
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
         }
@@ -40,7 +80,7 @@ static lv_obj_t *ipc_camera_search_list_create(void)
                 return list;
         }
         list = lv_list_create(sat_cur_layout_screen_get());
-        lv_common_style_set_common(list, ipc_camera_search_obj_id_door_camera_list, 48, layout_ipc_cmeara_is_doorcamera_get()?184:136, 928, (600 - 200), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+        lv_common_style_set_common(list, ipc_camera_search_obj_id_door_camera_list, 48, layout_ipc_cmeara_is_doorcamera_get() ? 184 : 136, 928, (600 - 200), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
         return list;
 }
 
@@ -107,16 +147,15 @@ static void sat_layout_enter(ipc_camera_search)
         }
 
         {
-                if(layout_ipc_cmeara_is_doorcamera_get())
+                if (layout_ipc_cmeara_is_doorcamera_get())
                 {
                         lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_tips, 0, 88, 1024, 40,
-                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_PRESS),
-                        0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_PRESS),
+                                              0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
                 }
-
         }
         /***********************************************
          ** 作者: leo.liu
@@ -137,7 +176,7 @@ static void sat_layout_enter(ipc_camera_search)
          ** 说明: 显示搜索的设备
          ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_searched_door_camera_title, 16, layout_ipc_cmeara_is_doorcamera_get()?146:88, 584, 48,
+                lv_common_text_create(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_searched_door_camera_title, 16, layout_ipc_cmeara_is_doorcamera_get() ? 146 : 88, 584, 48,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -151,7 +190,7 @@ static void sat_layout_enter(ipc_camera_search)
 }
 static void sat_layout_quit(ipc_camera_search)
 {
-        if(user_data_get()->is_device_init == true)//启动设置会有机会进入这里，所以要加判断
+        if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
         {
                 standby_timer_restart(true);
         }
@@ -169,4 +208,3 @@ static void sat_layout_quit(ipc_camera_search)
 }
 
 sat_layout_create(ipc_camera_search);
-
