@@ -16,6 +16,8 @@ enum
 
         home_obj_id_user_app_label,
 
+        home_obj_id_slave_time_sync_label,
+
         home_obj_id_time_cont,
         home_obj_id_time_label,
         home_obj_id_date_label,
@@ -884,6 +886,26 @@ static void sat_layout_enter(home)
                 home_use_mobile_app_obj_display(obj);
         }
 
+        /************************************************************
+        ** 函数说明:分机时间同步显示
+        ** 作者: xiaoxiao
+        ** 日期：2023-10-05 17:30:22
+        ** 参数说明:
+        ** 注意事项：
+        ************************************************************/
+        {
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_label, 327, 66, 370, 60,
+                                                      NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
+                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      "home_obj_id_slave_time_sync_label", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                if (obj == NULL)
+                {
+                        return;
+                }
+                lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
+                home_use_mobile_app_obj_display(obj);
+        }
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25

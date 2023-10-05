@@ -66,7 +66,7 @@ static void user_data_check_valid(void)
         ** 说明: 本机IP,和掩码
         ***********************************************/
         user_data_network_check_range_out(udhcp, 0, 1);
-        SAT_DEBUG("udhcp:%d", user_data.network.udhcp);
+        SAT_DEBUG("UDHCP:%s", user_data.network.udhcp ? "true" : "false");
 
         for (int i = 0; i < strlen(user_data.network.ip); i++)
         {

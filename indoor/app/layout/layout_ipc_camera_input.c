@@ -421,7 +421,7 @@ static void ipc_camera_input_hidden_btn_display(void)
         }
         else
         {
-                lv_obj_add_flag(hide_btn, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(hide_btn, LV_OBJ_FLAG_HIDDEN);
         }
 }
 static void sat_layout_enter(ipc_camera_input)

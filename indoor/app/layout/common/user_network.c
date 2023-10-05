@@ -629,36 +629,43 @@ static bool local_network_config_get_remote(char *ip, char *mask, int length)
         {
                 strncpy(ip, network_data_get()->network.ipaddr, length);
         }
-
-        int num = convert_subnet_mask(mask) / 8;
+        printf("mask %s\n", mask);
+        char tmp[32] = {0};
+        strncpy(tmp, mask, sizeof(tmp));
+        int num = convert_subnet_mask(tmp) / 8;
+        if ((num != 1) && (num != 2) && (num != 3))
+        {
+                num = 3;
+        }
+        printf("length:%d\n ", num);
 
         char *p = ip;
         for (int i = 0; i < num; i++)
         {
-                p = strchr(p, '.');
-                if ((p == NULL) || ((p + 1) == NULL))
+                char *dot = strchr(p, '.');
+                if ((dot == NULL) || ((dot + 1) == NULL))
                 {
                         return false;
                 }
-                p++;
+                p = dot + 1;
         }
 
         if (num == 1)
         {
                 memset(p, 0, 7);
-                strcpy(p, ".0.0.0");
+                strcpy(p, "0.0.0");
                 return true;
         }
         if (num == 2)
         {
                 memset(p, 0, 5);
-                strcpy(p, ".0.0");
+                strcpy(p, "0.0");
                 return true;
         }
         if (num == 3)
         {
                 memset(p, 0, 3);
-                strcpy(p, ".0");
+                strcpy(p, "0");
                 return true;
         }
         return false;

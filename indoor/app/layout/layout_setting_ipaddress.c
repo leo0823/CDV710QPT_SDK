@@ -112,6 +112,7 @@ static lv_obj_t *setting_ipaddress_textarea_focused_get(void)
 }
 static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 {
+        /*这个地方id寻找的控件与实际意义不符*/
         lv_obj_t *item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_product_ip_textbox);
 
         lv_obj_t *item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_default_gateway_textbox);
@@ -122,9 +123,9 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 
         lv_obj_t *dhcp = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dhcp), 1);
         const char *ipaddr = lv_textarea_get_text(item1_txt);
-        const char *mask = lv_textarea_get_text(item2_txt);
-        const char *dns = lv_textarea_get_text(item3_txt);
-        const char *gateway = lv_textarea_get_text(item4_txt);
+        const char *mask = lv_textarea_get_text(item3_txt);
+        const char *dns = lv_textarea_get_text(item4_txt);
+        const char *gateway = lv_textarea_get_text(item2_txt);
         if (layout_setting_ipaddress_info_get()->ip_setting_flag == 0x00)
         {
                 if (!strncmp((const char *)dhcp->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
@@ -158,6 +159,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
         {
                 sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
                                              layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1000);
+
                 sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
 }

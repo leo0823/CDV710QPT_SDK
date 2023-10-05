@@ -2971,12 +2971,20 @@ static bool local_network_config_get_remote(char *ip, char *mask, int length)
         {
                 strncpy(ip, user_data_get()->network.ip, length);
         }
+<<<<<<< HEAD
 
         int num = convert_subnet_mask(mask) / 8;
+=======
+        printf("mask %s\n", mask);
+        char tmp[32] = {0};
+        strncpy(tmp, mask, sizeof(tmp));
+        int num = convert_subnet_mask(tmp) / 8;
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
         if ((num != 1) && (num != 2) && (num != 3))
         {
                 num = 3;
         }
+<<<<<<< HEAD
         printf("[%s:%d]==============mask=%d ==\n", __func__, __LINE__, num);
         char *p = ip;
         for (int i = 0; i < num; i++)
@@ -2987,24 +2995,49 @@ static bool local_network_config_get_remote(char *ip, char *mask, int length)
                         return false;
                 }
                 p++;
+=======
+        printf("length:%d\n ", num);
+
+        char *p = ip;
+        for (int i = 0; i < num; i++)
+        {
+                char *dot = strchr(p, '.');
+                if ((dot == NULL) || ((dot + 1) == NULL))
+                {
+                        return false;
+                }
+                p = dot + 1;
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
         }
 
         if (num == 1)
         {
                 memset(p, 0, 7);
+<<<<<<< HEAD
                 strcpy(p, ".0.0.0");
+=======
+                strcpy(p, "0.0.0");
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
                 return true;
         }
         if (num == 2)
         {
                 memset(p, 0, 5);
+<<<<<<< HEAD
                 strcpy(p, ".0.0");
+=======
+                strcpy(p, "0.0");
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
                 return true;
         }
         if (num == 3)
         {
                 memset(p, 0, 3);
+<<<<<<< HEAD
                 strcpy(p, ".0");
+=======
+                strcpy(p, "0");
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
                 return true;
         }
         return false;

@@ -76,7 +76,7 @@ static void wifi_input_textarea_placeholder_setting(void)
 
                 return;
         }
-        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_INPUT_USER : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
+        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_ENTET_WIFI_NAME : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
 }
 
 static void wifi_input_password_hidden_icon(void)
@@ -267,7 +267,7 @@ static void sat_layout_enter(wifi_input)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      wifi_input_user_temp[0] == 0 ? lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI) : wifi_input_user_temp, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      wifi_input_user_temp[0] == 0 ? lang_str_get(WIFI_INPUT_XLS_LANG_ID_ADD_WIFI) : wifi_input_user_temp, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         /***********************************************
          ** 作者: leo.liu
