@@ -147,6 +147,18 @@ bool sat_linphone_video_play_duration_get(void);
 ** 说明: 铃声播放
 ***********************************************/
 bool sat_linphone_audio_play_start(const char *file, int volume);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 铃声音量
+***********************************************/
+bool sat_linphone_audio_play_volume_set(int volume);
+/***********************************************
+** 作者: leo.liu
+** 日期: 2022-10-19 8:57:42
+** 说明: 通话音量
+***********************************************/
+bool sat_linphone_audio_talk_volume_set(int volume);
 
 /***********************************************
 ** 作者: leo.liu

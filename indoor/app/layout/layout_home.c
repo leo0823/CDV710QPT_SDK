@@ -882,6 +882,7 @@ static void sat_layout_enter(home)
                 {
                         return;
                 }
+<<<<<<< HEAD
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 home_use_mobile_app_obj_display(obj);
         }
@@ -903,9 +904,12 @@ static void sat_layout_enter(home)
                 {
                         return;
                 }
+=======
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 home_use_mobile_app_obj_display(obj);
         }
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
