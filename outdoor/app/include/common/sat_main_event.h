@@ -82,8 +82,8 @@ bool sat_mian_task_init(void);
 ** 返回参数说明：
 ***/
 #define sat_layout_create(x) sat_layout_info layout_##x = {   \
-				 .enter = layout_##x##_enter, \
-				 .quit = layout_##x##_quit};
+																 .enter = layout_##x##_enter, \
+																 .quit = layout_##x##_quit};
 
 /***
 ** 日期: 2022-04-25 16:14
