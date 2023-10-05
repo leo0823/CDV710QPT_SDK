@@ -257,7 +257,7 @@ static void home_date_obj_display(void)
         LANGUAGE_ID lang = language_id_get();
         if (lang == LANGUAGE_ID_ENGLISH)
         {
-                lv_label_set_text_fmt(label_date, "%s%s %d. %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
+                lv_label_set_text_fmt(label_date, "%s %s %d. %04d", week_str, mon_str, tm.tm_mday, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_HANYU)
         {
@@ -269,7 +269,7 @@ static void home_date_obj_display(void)
         }
         else if (lang == LANGUAGE_ID_XIBANYA)
         {
-                lv_label_set_text_fmt(label_date, "%s%d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
+                lv_label_set_text_fmt(label_date, "%s %d %s %04d", week_str, tm.tm_mday, mon_str, tm.tm_year);
         }
         else if (lang == LANGUAGE_ID_CHINESE)
         {
@@ -281,7 +281,7 @@ static void home_date_obj_display(void)
         }
         else if (lang == LANGUAGE_ID_ALABOYU)
         {
-                lv_label_set_text_fmt(label_date, "%04d %s %d %s", tm.tm_year, mon_str, tm.tm_mday, week_str);
+                lv_label_set_text_fmt(label_date, "%d %s %04d %s", tm.tm_mday, mon_str, tm.tm_year, week_str);
         }
 }
 static void home_date_timer(lv_timer_t *ptimer)
@@ -567,14 +567,14 @@ static void home_emergency_obj_click(lv_event_t *ev)
 static void home_call_list_item_create(lv_obj_t *parent)
 {
         CALL_LOG_TYPE type;
-        int ch;
+        char doorname[24] = {0};
         int duration;
         struct tm tm;
         int item_y = 0;
         int total = call_list_total_get();
         for (int i = total - 1; i >= 0; i--)
         {
-                call_list_get(i, &type, &ch, &duration, &tm);
+                call_list_get(i, &type, doorname, &duration, &tm);
                 char buffer[64] = {0};
                 sprintf(buffer, "%04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
                 lv_common_text_create(parent, i, 0, item_y, 180, 39,
@@ -948,7 +948,7 @@ static void sat_layout_enter(home)
                                       NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "There is no saved information", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                      lang_str_get(XLS_LANG_ID_NO_DATA_SAVE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
                 lv_common_text_create(parent, home_obj_id_video_label, 0, 216 - 54, 224, 54,
                                       NULL, LV_OPA_60, 0, LV_OPA_60, 0,
@@ -999,7 +999,7 @@ static void sat_layout_enter(home)
                                             NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                            "There is no saved information", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                            lang_str_get(XLS_LANG_ID_NO_DATA_SAVE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
                 if (call_list_total_get())
                 {
                         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);

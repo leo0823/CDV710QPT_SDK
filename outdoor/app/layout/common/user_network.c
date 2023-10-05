@@ -735,6 +735,7 @@ static bool tcp_device_servrce_xml_get_register(int tcp_socket_fd, const char *x
         {
                 user_data_save();
                 led_ctrl_blink(3);
+
                 system("reboot");
         }
         return true;
@@ -2951,6 +2952,67 @@ static bool obtain_ipaddress_based_on_mac(void)
         return true;
 }
 
+static bool local_network_config_get_remote(char *ip, char *mask, int length)
+{
+        if (user_data_get()->network.mask[0] == '\0')
+        {
+                strncpy(mask, "255.0.0.0", length);
+        }
+        else
+        {
+                strncpy(mask, user_data_get()->network.mask, length);
+        }
+
+        if (user_data_get()->network.ip[0] == '\0')
+        {
+                strncpy(ip, "10.1.1.1", length);
+        }
+        else
+        {
+                strncpy(ip, user_data_get()->network.ip, length);
+        }
+        printf("mask %s\n", mask);
+        char tmp[32] = {0};
+        strncpy(tmp, mask, sizeof(tmp));
+        int num = convert_subnet_mask(tmp) / 8;
+        if ((num != 1) && (num != 2) && (num != 3))
+        {
+                num = 3;
+        }
+        printf("length:%d\n ", num);
+
+        char *p = ip;
+        for (int i = 0; i < num; i++)
+        {
+                char *dot = strchr(p, '.');
+                if ((dot == NULL) || ((dot + 1) == NULL))
+                {
+                        return false;
+                }
+                p = dot + 1;
+        }
+
+        if (num == 1)
+        {
+                memset(p, 0, 7);
+                strcpy(p, "0.0.0");
+                return true;
+        }
+        if (num == 2)
+        {
+                memset(p, 0, 5);
+                strcpy(p, "0.0");
+                return true;
+        }
+        if (num == 3)
+        {
+                memset(p, 0, 3);
+                strcpy(p, "0");
+                return true;
+        }
+        return false;
+}
+
 static bool add_multicase_routing_addres(void)
 {
         char cmd[128] = {0};
@@ -2967,6 +3029,16 @@ static bool add_multicase_routing_addres(void)
         sprintf(cmd, "route add -net %s netmask %s eth0", "224.0.0.0", "255.0.0.0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
+
+        memset(cmd, 0, sizeof(cmd));
+        char mask[32] = {0};
+        char ip[32] = {0};
+        if (local_network_config_get_remote(ip, mask, sizeof(ip)) == true)
+        {
+                sprintf(cmd, "route add -net %s netmask %s eth0", ip, mask);
+                system(cmd);
+                SAT_DEBUG("%s ", cmd);
+        }
         /*   sprintf(cmd, "route add -net %s netmask %s eth0", "10.0.0.0", "255.0.0.0");
          system(cmd);
          SAT_DEBUG("%s ", cmd); */

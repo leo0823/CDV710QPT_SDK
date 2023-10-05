@@ -9,7 +9,6 @@
 #define IPC_CAMERA_FLAG_CHANGE_PWD 0X20
 #define IPC_CAMERA_FLAG_SEARCH 0X40
 
-
 void layout_ipc_camera_input_flag_set(int flg);
 int layout_ipc_camera_input_flag_get(void);
 /*进入模式设置:door camera /ipc*/
@@ -19,4 +18,5 @@ void layout_ipc_cmeara_is_doorcamera_set(bool yeno);
 /*当前编辑的索引号*/
 void layout_ipc_camera_edit_index_set(int index);
 int layout_ipc_camera_edit_index_get(void);
+void ipc_camera_password_state_set(int flg);
 #endif

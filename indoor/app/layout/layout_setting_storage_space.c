@@ -127,7 +127,7 @@ static void setting_storage_space_msgbox_internale_confirm_click(lv_event_t *e)
         // {
         //         return;
         // }
-        media_file_delete_all(FILE_TYPE_FLASH_PHOTO,true);
+        media_file_delete_all(FILE_TYPE_FLASH_PHOTO, true);
         sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 static void setting_storage_space_msgbox_external_confirm_click(lv_event_t *e)
@@ -137,16 +137,17 @@ static void setting_storage_space_msgbox_external_confirm_click(lv_event_t *e)
         {
                 return;
         }
-        lv_obj_t * msgbox = lv_obj_get_child_form_id(obj,setting_storage_space_obj_id_msgbox_parent);
-        lv_obj_t * chckbox1_img = lv_obj_get_child_form_id(lv_obj_get_child_form_id(msgbox,setting_storage_space_obj_id_msgbox_check_1),setting_storage_space_obj_id_msgbox_check_1_img);
+        lv_obj_t *msgbox = lv_obj_get_child_form_id(obj, setting_storage_space_obj_id_msgbox_parent);
+        lv_obj_t *chckbox1_img = lv_obj_get_child_form_id(lv_obj_get_child_form_id(msgbox, setting_storage_space_obj_id_msgbox_check_1), setting_storage_space_obj_id_msgbox_check_1_img);
         if (strncmp(chckbox1_img->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
         {
-                media_file_delete_all(FILE_TYPE_PHOTO,false);
-        }else
-        {
-                media_file_delete_all(FILE_TYPE_VIDEO,false);
+                media_file_delete_all(FILE_TYPE_PHOTO, false);
         }
-                sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        else
+        {
+                media_file_delete_all(FILE_TYPE_VIDEO, false);
+        }
+        sat_layout_goto(setting_storage_space, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 static void setting_storage_space_msgbox_external_checkbox_click(lv_event_t *e)
 {
@@ -181,9 +182,8 @@ static void setting_storage_space_msgbox_external_checkbox_click(lv_event_t *e)
         }
 }
 
-static lv_obj_t * setting_storage_space_msgbox_format_process_display(lv_obj_t * parent)
+static lv_obj_t *setting_storage_space_msgbox_format_process_display(lv_obj_t *parent)
 {
-
 
         static lv_style_t style_bg;
         static lv_style_t style_indic;
@@ -211,33 +211,32 @@ static lv_obj_t * setting_storage_space_msgbox_format_process_display(lv_obj_t *
         return bar;
 }
 
-static void setting_storage_space_msgbox_external_fmatsd_finish_confirm(lv_event_t * ev)
+static void setting_storage_space_msgbox_external_fmatsd_finish_confirm(lv_event_t *ev)
 {
         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 
 static void format_sd_process_timer(lv_timer_t *ptime)
 {
-        lv_obj_t * bar = ptime->user_data;
+        lv_obj_t *bar = ptime->user_data;
         int value = lv_bar_get_value(bar);
-        if (value == 20)//
+        if (value == 20) //
         {
-                lv_bar_set_value(bar, value * 3/2, LV_ANIM_OFF);
-        }else if( media_format_sd_state() == false)
+                lv_bar_set_value(bar, value * 3 / 2, LV_ANIM_OFF);
+        }
+        else if (media_format_sd_state() == false)
         {
                 value = lv_bar_get_value(bar);
-                lv_bar_set_value(bar, value * 3/2, LV_ANIM_OFF);
- 
-        }else
+                lv_bar_set_value(bar, value * 3 / 2, LV_ANIM_OFF);
+        }
+        else
         {
-                lv_bar_set_value(bar,100, LV_ANIM_OFF);
+                lv_bar_set_value(bar, 100, LV_ANIM_OFF);
                 lv_timer_del(ptime);
-                lv_obj_t * msgbox = lv_obj_get_parent(bar);
+                lv_obj_t *msgbox = lv_obj_get_parent(bar);
                 lv_obj_clean(msgbox);
                 setting_msgdialog_msg_create(msgbox, setting_storage_space_obj_id_format_text, "Format is complete.", 0, 60, 460, 120);
-                setting_msgdialog_msg_confirm_btn_create(msgbox,setting_storage_space_obj_id_format_completed,setting_storage_space_msgbox_external_fmatsd_finish_confirm);
-
-                
+                setting_msgdialog_msg_confirm_btn_create(msgbox, setting_storage_space_obj_id_format_completed, setting_storage_space_msgbox_external_fmatsd_finish_confirm);
         }
 }
 static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
@@ -250,11 +249,9 @@ static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
         lv_obj_del(obj);
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_storage_space_obj_id_format_msgbox_cont, setting_storage_space_obj_id_format_msgbox, 282, 143, 460, 283);
         setting_msgdialog_msg_create(masgbox, setting_storage_space_obj_id_format_text, "Formatting SD card... \nDuring formatting,\n never turn off power or romove SD card.\n", 0, 60, 460, 120);
-        lv_obj_t * bar = setting_storage_space_msgbox_format_process_display(masgbox);
-        lv_sat_timer_create(format_sd_process_timer, 500  , bar);
+        lv_obj_t *bar = setting_storage_space_msgbox_format_process_display(masgbox);
+        lv_sat_timer_create(format_sd_process_timer, 500, bar);
         media_format_sd();
-        
-
 }
 static void setting_storage_space_internal_del_click(lv_event_t *e)
 {
@@ -372,16 +369,15 @@ static void sat_layout_enter(setting_storage_space)
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          resource_ui_src_get("btn_list_delete.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_obj_set_ext_click_area(obj, 30);
-                if(0)
+                if (0)
                 {
                         obj = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external_del, 968, 90, 32, 32,
-                                                setting_storage_space_external_del_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                resource_ui_src_get("btn_list_delete.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                                       setting_storage_space_external_del_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                       resource_ui_src_get("btn_list_delete.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                         lv_obj_set_ext_click_area(obj, 30);
                 }
-
         }
 
         /***********************************************
@@ -397,14 +393,13 @@ static void sat_layout_enter(setting_storage_space)
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
 
-
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
          ** 说明: internal storage arc
          ***********************************************/
         {
-               unsigned long long total = 0, free = 0;
+                unsigned long long total = 0, free = 0;
                 unsigned long long use_data = 360;
                 if (media_capacity_get(FILE_TYPE_FLASH_PHOTO, &total, &free) == true)
                 {
@@ -437,13 +432,13 @@ static void sat_layout_enter(setting_storage_space)
                 lv_anim_set_values(&a, 0, use_data);
                 lv_anim_start(&a);
         }
-	if((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
         {
                 /***********************************************
                  ** 作者: leo.liu
-                ** 日期: 2023-2-2 13:46:56
-                ** 说明: internal storage arc
-                ***********************************************/
+                 ** 日期: 2023-2-2 13:46:56
+                 ** 说明: internal storage arc
+                 ***********************************************/
                 {
                         unsigned long long total = 0, free = 0;
                         unsigned long long use_data = 360;
@@ -452,16 +447,16 @@ static void sat_layout_enter(setting_storage_space)
                                 use_data = (360 * (total - free)) / (total + 0.1);
                         }
                         lv_obj_t *obj = setting_storage_space_arc_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external_arc, 640, 192, 260, 260,
-                                                                        0xd9d9d9, 0x3a7dff, 45, 45, use_data);
+                                                                         0xd9d9d9, 0x3a7dff, 45, 45, use_data);
 
                         lv_common_text_create(obj, setting_storage_space_obj_id_external_remaining_data, 77, 65, 104, 52,
-                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        lang_str_get(SETTING_STORAGE_XLS_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                                              NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              lang_str_get(SETTING_STORAGE_XLS_LANG_ID_REMAINING_DATA), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
 
                         char buffer[64] = {0};
-                        sprintf(buffer, "%llu%%", (360 - use_data)*100 / 360);
+                        sprintf(buffer, "%llu%%", (360 - use_data) * 100 / 360);
                         lv_obj_t *label = lv_common_text_create(obj, setting_storage_space_obj_id_external_per_label, 69, 135, 121, 63,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -479,28 +474,28 @@ static void sat_layout_enter(setting_storage_space)
                         lv_anim_start(&a);
                         /***********************************************
                          ** 作者: leo.liu
-                        ** 日期: 2023-2-2 13:46:56
-                        ** 说明: sd format
-                        ***********************************************/
+                         ** 日期: 2023-2-2 13:46:56
+                         ** 说明: sd format
+                         ***********************************************/
                         {
                                 lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_external_format, 513, 528, 511, 72,
-                                                                setting_storage_space_fmatsd_click, LV_OPA_COVER, 0x00a8ff, LV_OPA_COVER, 0x00a8ff,
-                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                                lang_str_get(SETTING_STORAGE_XLS_LANG_ID_SD_FORMAT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                                                      setting_storage_space_fmatsd_click, LV_OPA_COVER, 0x00a8ff, LV_OPA_COVER, 0x00a8ff,
+                                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_SD_FORMAT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 
                                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
                         }
                 }
-        }else
+        }
+        else
         {
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_extern_no_exit, 640, 336, 260, 40,
-                                        NULL, LV_OPA_TRANSP, 0x00a8ff, LV_OPA_TRANSP, 0x00a8ff,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        lang_str_get(SETTING_STORAGE_XLS_LANG_ID_SD_NOT_RECOGNIZED), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      NULL, LV_OPA_TRANSP, 0x00a8ff, LV_OPA_TRANSP, 0x00a8ff,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(SETTING_STORAGE_XLS_LANG_ID_SD_NOT_RECOGNIZED), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
-
 
         sd_state_channge_callback_register(setting_storage_space_sd_status_channge_callback);
 }
