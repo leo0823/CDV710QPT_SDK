@@ -9,7 +9,7 @@ typedef enum
     CALL_OUT,
     IN_AND_ANSWER
 
-}CALL_LOG_TYPE;
+} CALL_LOG_TYPE;
 /***
 **   日期:2022-06-20 09:56:23
 **   作者: leo.liu
@@ -23,7 +23,7 @@ bool call_list_init(void);
 **   函数作用：添加一个警报信息
 **   参数说明:
 ***/
-bool call_list_add(int type, int ch, int duration, struct tm *tm);
+bool call_list_add(int type, char *doorname, int duration, struct tm *tm);
 /***
 **   日期:2022-06-20 10:02:35
 **   作者: leo.liu
@@ -46,7 +46,7 @@ bool call_list_del(int index);
 **   函数作用：获取列表
 **   参数说明:
 ***/
-bool call_list_get(int index, CALL_LOG_TYPE * type, int * ch, int *duration,struct tm *tm);
+bool call_list_get(int index, CALL_LOG_TYPE *type, char *doorname, int *duration, struct tm *tm);
 /***
 **   日期:2022-06-20 10:20:05
 **   作者: leo.liu

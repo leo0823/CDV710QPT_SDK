@@ -135,9 +135,9 @@ char ***lang_xls_init(int sheet_num)
                 strcpy(buffer[i][j], (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
                 str_replace(buffer[i][j], "\\n", "\n");
             }
-            //printf("%s\t", (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
+            // printf("%s\t", (char *)((&(pWs->rows.row[i]))->cells.cell[j].str));
         }
-       // printf("\n");
+        // printf("\n");
     }
     xls_close_WS(pWs);
     xls_close_WB(pWb);
@@ -192,9 +192,14 @@ char *lang_xls_str_get(int str_num, int lang_type)
 {
     // if (buffer[str_num][lang_type] == NULL)
     //     return "NULL";
-    // printf("%d!!!!!!!!!!!!!!!!!行\n", str_num);
+    // printf("%d!!!!!%d\n", str_num, xls_info.row_total);
     // printf("%d!!!!!!!!!!!!!!!!!列\n", lang_type);
     // printf("====buffer[2][1] is %s\n", buffer[2][1]);
+    if (str_num >= xls_info.row_total)
+    {
+        return "language error";
+    }
+
     return buffer[str_num][lang_type];
 }
 

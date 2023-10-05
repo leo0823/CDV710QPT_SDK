@@ -492,6 +492,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         if (count < UDHCPC_TIMEOUT_MAX)
         {
+                SAT_DEBUG("==============");
                 if (strcmp(ip, "10.0.0.2"))
                 {
                         SAT_DEBUG("udhcp ip get successs !(%s)", ip);
@@ -609,6 +610,67 @@ static bool obtain_ipaddress_based_on_mac(void)
         return true;
 }
 
+static bool local_network_config_get_remote(char *ip, char *mask, int length)
+{
+        if (network_data_get()->network.mask[0] == '\0')
+        {
+                strncpy(mask, "255.0.0.0", length);
+        }
+        else
+        {
+                strncpy(mask, network_data_get()->network.mask, length);
+        }
+
+        if (network_data_get()->network.ipaddr[0] == '\0')
+        {
+                strncpy(ip, "10.1.1.1", length);
+        }
+        else
+        {
+                strncpy(ip, network_data_get()->network.ipaddr, length);
+        }
+        printf("mask %s\n", mask);
+        char tmp[32] = {0};
+        strncpy(tmp, mask, sizeof(tmp));
+        int num = convert_subnet_mask(tmp) / 8;
+        if ((num != 1) && (num != 2) && (num != 3))
+        {
+                num = 3;
+        }
+        printf("length:%d\n ", num);
+
+        char *p = ip;
+        for (int i = 0; i < num; i++)
+        {
+                char *dot = strchr(p, '.');
+                if ((dot == NULL) || ((dot + 1) == NULL))
+                {
+                        return false;
+                }
+                p = dot + 1;
+        }
+
+        if (num == 1)
+        {
+                memset(p, 0, 7);
+                strcpy(p, "0.0.0");
+                return true;
+        }
+        if (num == 2)
+        {
+                memset(p, 0, 5);
+                strcpy(p, "0.0");
+                return true;
+        }
+        if (num == 3)
+        {
+                memset(p, 0, 3);
+                strcpy(p, "0");
+                return true;
+        }
+        return false;
+}
+
 static bool add_multicase_routing_addres(void)
 {
         char cmd[128] = {0};
@@ -626,6 +688,15 @@ static bool add_multicase_routing_addres(void)
         system(cmd);
         SAT_DEBUG("%s ", cmd);
 
+        memset(cmd, 0, sizeof(cmd));
+        char mask[32] = {0};
+        char ip[32] = {0};
+        if (local_network_config_get_remote(ip, mask, sizeof(ip)) == true)
+        {
+                sprintf(cmd, "route add -net %s netmask %s eth0", ip, mask);
+                system(cmd);
+                SAT_DEBUG("%s ", cmd);
+        }
         sprintf(cmd, "ip route add 10.0.0.0/8 via 10.0.0.1 dev eth0");
         system(cmd);
         SAT_DEBUG("%s ", cmd);
@@ -688,11 +759,13 @@ static bool automatic_ip_setting(void)
                 sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->network.ipaddr[0] != '\0')
                 {
+                        SAT_DEBUG("==============");
                         /*手动设置的IP信息*/
                         obtain_ipddress_based_on_manual();
                 }
                 else
                 {
+                        SAT_DEBUG("==============");
                         /*默认IP*/
                         obtain_ipaddress_based_on_mac(); // obtain_ipaddress_based_on_username();
                 }

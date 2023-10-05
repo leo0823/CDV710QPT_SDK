@@ -21,6 +21,11 @@ int layout_ipc_camera_input_flag_get(void)
 ipc_camera_password_state = 0,输入旧密码
 ipc_camera_password_state = 1:输入新密码*/
 static int ipc_camera_password_state = 0;
+
+void ipc_camera_password_state_set(int flg)
+{
+        ipc_camera_password_state = flg;
+}
 enum
 {
         ipc_camera_password_input_obj_id_title,
@@ -71,15 +76,16 @@ static lv_obj_t *ipc_camera_password_input_msgbox_create(const char *title, cons
 static void ipc_camera_password_input_cancel_click(lv_event_t *e)
 {
         int flag = layout_ipc_camera_input_flag_get();
+
         if ((flag == IPC_CAMERA_FLAG_CHANGE_NAME) || (flag == IPC_CAMERA_FLAG_CHANGE_PWD))
         {
-                if (1) //(layout_ipc_cmeara_is_doorcamera_get() == true)
+                if ((layout_ipc_cmeara_is_doorcamera_get() == true) && network_data_get()->door_device[layout_ipc_camera_edit_index_get()].sip_url[0] == '\0')
                 {
-                        sat_layout_goto(ipc_camera_edit, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                        sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
                 else
                 {
-                        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                        sat_layout_goto(ipc_camera_edit, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
         }
         else if (flag & IPC_CAMERA_FLAG_SEARCH)
@@ -244,6 +250,12 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
 
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
+                struct ipcamera_info *node = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
+                printf("node passwd is %s\n", node->password);
+                printf("node ipaddr is %s\n", node->ipaddr);
+                printf("node username is %s\n", node->username);
+                printf("node port is %d\n", node->port);
+                printf("node auther_flag is %d\n", node->auther_flag);
                 if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
                 {
 
@@ -417,7 +429,7 @@ static void sat_layout_enter(ipc_camera_input)
         lv_obj_t *textarea;
         memset(ipc_camera_password_input_password_temp, 0, sizeof(ipc_camera_password_input_password_temp));
         memset(ipc_camera_password_input_password_old, 0, sizeof(ipc_camera_password_input_password_old));
-        ipc_camera_password_state = 0;
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:46:56
@@ -501,6 +513,7 @@ static void sat_layout_enter(ipc_camera_input)
 }
 static void sat_layout_quit(ipc_camera_input)
 {
+        ipc_camera_password_state = 0;
 }
 
 sat_layout_create(ipc_camera_input);

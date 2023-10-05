@@ -253,7 +253,7 @@ static void layout_away_execution_normal_msgbox_create(char normal_select)
     }
     SAT_DEBUG("sensors_str is %s", sensors_str);
     char abnormal_str[128] = {0};
-    sprintf(abnormal_str, "Cannot run.%s sensor is not normal. Please check the sensor.", sensors_str);
+    sprintf(abnormal_str, "%s%s%s", lang_str_get(SENSOR_SETTING_XLS_LANG_ID_CANNOT), sensors_str, lang_str_get(SENSOR_SETTING_XLS_LANG_ID_SENSOR_IS_NORMAL));
     setting_msgdialog_msg_create(masgbox, layout_away_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120);
     setting_msgdialog_msg_confirm_btn_create(masgbox, layout_away_obj_id_msgbox_confirm, layout_away_msgbox_cancel_click);
 }

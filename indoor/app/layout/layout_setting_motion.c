@@ -457,6 +457,11 @@ static void setting_motion_lcd_on_msgbox_confim_click(lv_event_t *e)
         }
         setting_motion_msgbox_del();
 }
+static void setting_motion_save_format_sd_state_change_callback(void)
+{
+        setting_motion_msgbox_del();
+        sd_state_channge_callback_register(sd_state_change_default_callback);
+}
 static void setting_motion_list_item_click(lv_event_t *e)
 {
         lv_obj_t *item = lv_event_get_current_target(e);
@@ -475,6 +480,7 @@ static void setting_motion_list_item_click(lv_event_t *e)
         }
         else if (item->id == setting_motion_obj_id_storage_format_cont)
         {
+                sd_state_channge_callback_register(setting_motion_save_format_sd_state_change_callback);
                 const char *item[2] = {0};
                 item[0] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_VIDEO);
                 item[1] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_PICTURE);

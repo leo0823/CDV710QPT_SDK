@@ -4,9 +4,9 @@
 
 typedef struct
 {
-	int type;
-    CALL_LOG_TYPE ch;
-    int duration;
+	CALL_LOG_TYPE type;
+	char doorname[24];
+	int duration;
 	struct tm time;
 } call_list_info;
 
@@ -15,13 +15,13 @@ static call_list_info call_list[128];
 
 static bool call_list_sync(void)
 {
-    system("rm -rf " USER_CALL_LIST_PATH);
+	system("rm -rf " USER_CALL_LIST_PATH);
 	int fd = open(USER_CALL_LIST_PATH, O_CREAT | O_WRONLY);
 	if (fd < 0)
 	{
 		return false;
 	}
-	if(write(fd, call_list, sizeof(call_list_info) * call_list_total) < 0)
+	if (write(fd, call_list, sizeof(call_list_info) * call_list_total) < 0)
 	{
 		perror("write failed\n");
 	}
@@ -54,7 +54,7 @@ bool call_list_init(void)
 			break;
 		}
 	}
-	printf("call_list_total is %d\n",call_list_total);
+	printf("call_list_total is %d\n", call_list_total);
 	close(fd);
 	call_list_sync();
 	return true;
@@ -65,16 +65,23 @@ bool call_list_init(void)
 **   函数作用：添加一个呼叫信息
 **   参数说明:
 ***/
-bool call_list_add(int type, int ch,int duration,struct tm *tm)
+bool call_list_add(int type, char *name, int duration, struct tm *tm)
 {
+
 	if (call_list_total == 128)
 	{
-		memmove(&call_list[0], &call_list[1], ((call_list_total) - 1) * sizeof(call_list_info));
-        call_list_total--;
+		memmove(&call_list[0], &call_list[1], ((call_list_total)-1) * sizeof(call_list_info));
+		call_list_total--;
 	}
 	call_list[call_list_total].type = type;
-	call_list[call_list_total].ch = ch;
-	call_list[call_list_total].time = *tm;
+	if (name != NULL)
+	{
+		strncpy(call_list[call_list_total].doorname, name, sizeof(call_list[call_list_total].doorname));
+	}
+	if (tm != NULL)
+	{
+		call_list[call_list_total].time = *tm;
+	}
 	call_list[call_list_total].duration = duration;
 	call_list_total++;
 	call_list_sync();
@@ -103,10 +110,10 @@ bool call_list_del_all(void)
 ***/
 bool call_list_del(int index)
 {
-    memmove(&call_list[index], &call_list[index + 1], (((call_list_total) - 1) - index) * sizeof(call_list_info));
-    call_list_total-- ;
-    call_list_sync();
-    return true;
+	memmove(&call_list[index], &call_list[index + 1], (((call_list_total)-1) - index) * sizeof(call_list_info));
+	call_list_total--;
+	call_list_sync();
+	return true;
 }
 /***
 **   日期:2022-06-20 10:14:01
@@ -114,16 +121,25 @@ bool call_list_del(int index)
 **   函数作用：获取列表
 **   参数说明:
 ***/
-bool call_list_get(int index, CALL_LOG_TYPE * type, int *ch,int *duration,struct tm *tm)
+bool call_list_get(int index, CALL_LOG_TYPE *type, char *name, int *duration, struct tm *tm)
 {
 	if (index >= call_list_total)
 	{
 		return false;
 	}
 	*type = call_list[index].type;
-    *ch = call_list[index].ch;
-	*tm = call_list[index].time;
-	*duration = call_list[index].duration;
+	if (name != NULL)
+	{
+		strcpy(name, call_list[index].doorname);
+	}
+	if (tm != NULL)
+	{
+		*tm = call_list[index].time;
+	}
+	if (duration != NULL)
+	{
+		*duration = call_list[index].duration;
+	}
 	return true;
 }
 /***
