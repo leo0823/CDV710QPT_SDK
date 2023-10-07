@@ -1,7 +1,7 @@
 #ifndef _SAT_IPCAMERA_H_
 #define _SAT_IPCAMERA_H_
 #include <stdbool.h>
-
+#include <time.h>
 #define IPCAMERA_NUM_MAX 8
 #define IPCAMERA_PROFILE_MAX 4
 typedef struct
@@ -201,4 +201,22 @@ bool sat_ipcamera_network_get(const char *ip, int port, const char *user, const 
 **@功能: 设置网络信息
 *****************************************************************/
 bool sat_ipcamera_network_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, struct ipcamera_network *info, int timeout);
+/****************************************************************
+**@日期: 2022-09-21
+**@作者: leo.liu
+**@功能:获取工作状态
+*****************************************************************/
+bool sat_ipcamera_device_status_get(void);
+/****************************************************************
+**@日期: 2022-09-21
+**@作者: leo.liu
+**@功能:设置工作状态
+*****************************************************************/
+void sat_ipcamera_device_status_reset(void);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 请求时间信息
+*****************************************************************/
+bool sat_ipcamera_system_time_get(const char *ip, int port, const char *user, const char *password, char auther_flag, struct tm *tm, int timeout);
 #endif
