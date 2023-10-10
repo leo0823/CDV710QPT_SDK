@@ -240,7 +240,7 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             if (sensor_select_list & 0x01 << i)
             {
                 float value = user_sensor_value_get(i);
-                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_LOW))
+                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < ALM_LOW))
                 {
                     normal_select |= 0x01 << i;
                 }
@@ -256,7 +256,7 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             unsigned char list = layout_security_sensor_enable_flag();
             user_data_get()->alarm.security_alarm_enable_list |= list;
             user_data_save();
-            if (user_data_get()->system_mode && 0x0f != 0x01)
+            if ((user_data_get()->system_mode & 0x0f ) != 0x01)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
             }
@@ -402,6 +402,26 @@ static void emergenct_occupy_cctv_record_enable_display(void)
     }
 }
 
+/************************************************************
+** 函数说明: 设置CCTV自动记录失败
+** 作者: xiaoxiao
+** 日期：2023-10-06 14:49:18
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_security_cctv_record_enable_failed_display(void)
+{
+    lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_security_obj_id_msgbox_bg);
+    if (masgbox != NULL)
+    {
+        setting_msgdialog_msg_del(layout_security_obj_id_msgbox_bg);
+    }
+    masgbox = setting_msgdialog_msg_bg_create(layout_security_obj_id_msgbox_bg, layout_security_obj_id_msgbox_cont, 282, 143, 460, 283);
+
+    setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_NO_AVAILABLE), 0, 70, 460, 120);
+    setting_msgdialog_msg_confirm_btn_create(masgbox, layout_security_obj_id_msgbox_confirm_btn, layout_security_msgbox_cancel_click);
+}
+
 static void emergency_occupy_audo_record_click(lv_event_t *ev)
 {
 
@@ -409,9 +429,38 @@ static void emergency_occupy_audo_record_click(lv_event_t *ev)
     {
         return;
     }
+    if (user_data_get()->alarm.security_auto_record == false)
+    {
+        bool cctv_linkage = false;
+        // 判断是否所选中的传感器有绑定CCTV
+        char sensor_select_list = layout_security_sensor_enable_flag();
+        for (int i = 0; i < 7; i++)
+        {
+            if (sensor_select_list & 0x01 << i)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    if (user_data_get()->alarm.cctv_sensor[j] == i + 1)
+                    {
+                        cctv_linkage = true;
+                        break;
+                    }
+                }
+                if (cctv_linkage)
+                {
+                    break;
+                }
+            }
+        }
+        if (cctv_linkage == false)
+        {
+            layout_security_cctv_record_enable_failed_display();
+            return;
+        }
+    }
     user_data_get()->alarm.security_auto_record = user_data_get()->alarm.security_auto_record ? false : true;
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f ) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
@@ -431,7 +480,7 @@ static void layout_security_passwd_check_success_cb(void)
     unsigned char list = layout_security_sensor_enable_flag();
     user_data_get()->alarm.security_alarm_enable_list &= (~list);
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f ) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }

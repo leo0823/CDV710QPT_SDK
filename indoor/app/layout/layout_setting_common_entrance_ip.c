@@ -133,6 +133,16 @@ static void setting_common_entrance_ip_obj_keyboad_click(lv_event_t *e)
         }
         setting_common_entrance_ip_next_obj_display();
 }
+
+static void layout_common_entrance_ip_display(void)
+{
+        lv_obj_t *text_ip = setting_common_entrance_ip_textarea_focused_get();
+        if (text_ip == NULL)
+        {
+                return;
+        }
+        lv_textarea_set_text(text_ip, network_data_get()->common_entrance_ip);
+}
 static void sat_layout_enter(setting_common_entrance_ip)
 {
         /***********************************************
@@ -193,6 +203,7 @@ static void sat_layout_enter(setting_common_entrance_ip)
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
                                           "1234", 0Xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal, 15,
                                           5, 500, 0Xffffff);
+                layout_common_entrance_ip_display();
         }
         /***********************************************
         ** 作者: leo.liu

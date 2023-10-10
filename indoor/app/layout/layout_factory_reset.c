@@ -35,6 +35,8 @@ static void layout_factory_reset_timer(lv_timer_t *t)
                 lv_bar_set_value(bar, result, LV_ANIM_ON);
                 if (result == 6)
                 {
+                        backlight_enable(false);
+                        usleep(100 * 1000);
                         system("reboot");
                 }
         }

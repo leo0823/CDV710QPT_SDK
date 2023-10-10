@@ -77,7 +77,7 @@ static lv_obj_t *intercom_call_table_view_obj_create(void)
         lv_obj_t *btnmatrix = lv_tabview_get_tab_btns(tabview);
         lv_common_style_set_common(btnmatrix, 1, 0, 8, 1024, 40, LV_ALIGN_CENTER, LV_PART_MAIN);
         lv_common_style_set_text(btnmatrix, NULL, 0XFFFFFF, 0XFFFFFF, LV_ALIGN_CENTER, lv_font_normal, LV_STATE_PRESSED | LV_STATE_CHECKED, LV_PART_MAIN);
-        lv_common_style_set_event(btnmatrix, NULL, true, LV_OPA_TRANSP, 0XFFFFFF, LV_PART_ITEMS, LV_OPA_COVER, 0x101010, LV_PART_ITEMS | LV_STATE_CHECKED);
+        lv_common_style_set_event(btnmatrix, NULL, true, LV_OPA_TRANSP, 0XFFFFFF, LV_PART_ITEMS, LV_OPA_COVER, 0X47494A, LV_PART_ITEMS | LV_STATE_CHECKED);
 
         lv_common_style_set_boader(btnmatrix, 20, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0XFFFFFF, LV_PART_ITEMS);
         lv_common_style_set_boader(btnmatrix, 20, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0XFFFFFF, LV_PART_ITEMS | LV_STATE_CHECKED);
@@ -182,14 +182,17 @@ static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 static void intercom_call_log_check_obj_click(lv_event_t *ev)
 {
         lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
-        lv_obj_t *parent = lv_event_get_current_target(ev);
+        lv_obj_t *obj = lv_event_get_current_target(ev);
         if (strncmp(del_obj->bg_img_src, resource_ui_src_get("btn_title_delete.png"), strlen(resource_ui_src_get("btn_title_delete.png"))) == 0)
         {
                 return;
         }
 
-        lv_obj_t *checkbox = lv_obj_get_child_form_id(parent, call_log_list_cont_obj_checkbox_id);
+        lv_obj_t *checkbox = lv_obj_get_child_form_id(obj, call_log_list_cont_obj_checkbox_id);
         lv_obj_t *del_num = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
+        lv_obj_t *tabview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_tabview);
+        lv_obj_t *del_all = lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_obj_get_child_form_id(lv_tabview_get_content(tabview), 1), intercom_call_obj_id_del_all), intercom_call_obj_id_del_all_img);
+        int total = call_list_total_get();
         if (strncmp(checkbox->bg_img_src, resource_ui_src_get("btn_checkbox_n.png"), strlen(resource_ui_src_get("btn_checkbox_n.png"))) == 0)
         {
                 if (checkbox_s_num == 0)
@@ -197,6 +200,10 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
                         lv_obj_clear_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                 }
                 checkbox_s_num++;
+                if (total == checkbox_s_num)
+                {
+                        lv_obj_set_style_bg_img_src(del_all, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+                }
                 lv_label_set_text_fmt(del_num, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
 
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
@@ -210,6 +217,7 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
                 }
                 lv_label_set_text_fmt(del_num, "%d %s", checkbox_s_num, lang_str_get(INTERCOM_XLS_LANG_ID_CAll_LOG_SELECTED));
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+                lv_obj_set_style_bg_img_src(del_all, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
 }
 
@@ -295,7 +303,6 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
 ************************************************************/
 static void intercom_call_log_tableview_click(lv_event_t *ev)
 {
-        SAT_DEBUG("===================================");
         lv_obj_t *obj = lv_event_get_current_target(ev);
         lv_obj_t *del_obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del);
         lv_obj_t *del_cancel = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_del_cancel);
@@ -303,7 +310,6 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
 
         lv_obj_t *title = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_call_obj_id_title);
         int id = lv_tabview_get_tab_act(obj);
-        SAT_DEBUG("===================================");
         if (id == 1)
         {
                 if (strncmp(del_obj->bg_img_src, resource_ui_src_get("btn_title_check.png"), strlen(resource_ui_src_get("btn_title_check.png"))) == 0)
@@ -325,12 +331,10 @@ static void intercom_call_log_tableview_click(lv_event_t *ev)
         }
         else
         {
-                SAT_DEBUG("===================================");
                 lv_label_set_text(title, lang_str_get(HOME_XLS_LANG_ID_CALL));
                 lv_obj_add_flag(del_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(del_cancel, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(exit, LV_OBJ_FLAG_HIDDEN);
-                SAT_DEBUG("===================================");
         }
 }
 
@@ -647,7 +651,7 @@ static void sat_layout_enter(intercom_call)
                 lv_obj_t *cont = lv_tabview_get_content(tabview);
                 lv_obj_t *page_1 = lv_obj_get_child_form_id(cont, 0);
                 {
-                        lv_obj_t *exten_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_externsion, 0, 8, 231, 231,
+                        lv_obj_t *exten_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_externsion, 0, 2, 231, 231,
                                                                         intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -659,7 +663,7 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_set_style_bg_opa(exten_txt_obj, LV_OPA_TRANSP, LV_STATE_USER_2);
                         lv_obj_add_state(exten_txt_obj, LV_STATE_USER_1);
 
-                        lv_obj_t *guard_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_guard, 0, 231 + 8, 231, 231,
+                        lv_obj_t *guard_txt_obj = lv_common_text_create(page_1, intercom_call_obj_id_guard, 0, 231 + 2, 231, 231,
                                                                         intercom_extension_obj_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x0096ff,
                                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                                         0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
@@ -677,6 +681,7 @@ static void sat_layout_enter(intercom_call)
                                                                                      0, 3, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x101010,
                                                                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                      0, 0);
+
                         if (0 /*(user_data_get()->system_mode & 0xF0) != 0xF0*/)
                         {
                                 lv_obj_add_flag(exten_txt_obj, LV_OBJ_FLAG_HIDDEN);

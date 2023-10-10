@@ -32,6 +32,8 @@ enum
         setting_ipaddress_obj_id_subnet_mask_label,
         setting_ipaddress_obj_id_dns_label,
 
+        setting_ipaddress_obj_id_msg_bg,
+
         setting_ipaddress_obj_id_dhcp,
         setting_ipaddress_obj_id_static,
 
@@ -110,6 +112,105 @@ static lv_obj_t *setting_ipaddress_textarea_focused_get(void)
 
         return textarea;
 }
+
+static void setting_ipaddress_falid_confirm(lv_event_t *e)
+{
+
+        setting_msgdialog_msg_del(setting_ipaddress_obj_id_msg_bg);
+}
+
+/************************************************************
+** 函数说明: 数据校验失败提示
+** 作者: xiaoxiao
+** 日期：2023-09-26 14:23:59
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void setting_ipaddress_falid_tips(void)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_msg_bg);
+        if (masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(setting_ipaddress_obj_id_msg_bg);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(setting_ipaddress_obj_id_msg_bg, 0, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
+        setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_ipaddress_falid_confirm);
+}
+static void layout_setting_ipaddress_textarea_focus_state_clear(void)
+{
+        int obj_id[4] =
+            {setting_ipaddress_obj_id_product_ip_textbox, setting_ipaddress_obj_id_default_gateway_textbox, setting_ipaddress_obj_id_subnet_mask_textbox, setting_ipaddress_obj_id_dns_textbox};
+
+        int total = sizeof(obj_id) / (sizeof(int));
+        for (int i = 0; i < total; i++)
+        {
+                lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), obj_id[i]);
+
+                if ((textarea != NULL))
+                {
+
+                        lv_obj_clear_state(textarea, LV_STATE_FOCUSED);
+                }
+        }
+}
+
+/************************************************************
+** 函数说明: 数据合法检查
+** 作者: xiaoxiao
+** 日期：2023-10-06 19:10:52
+** 参数说明:
+** 注意事项：
+************************************************************/
+static bool layout_setting_ipaddress_data_valid_check(void)
+{
+        layout_setting_ipaddress_textarea_focus_state_clear();
+        int obj_id[4] =
+            {setting_ipaddress_obj_id_product_ip_textbox, setting_ipaddress_obj_id_default_gateway_textbox, setting_ipaddress_obj_id_subnet_mask_textbox, setting_ipaddress_obj_id_dns_textbox};
+
+        int total = sizeof(obj_id) / (sizeof(int));
+
+        for (int i = 0; i < total; i++)
+        {
+                lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), obj_id[i]);
+                if (textarea != NULL)
+                {
+                        if (i == 0)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                                        return false;
+                                }
+                        }
+                        else if (i == 1)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                                        return false;
+                                }
+                        }
+                        else if (i == 2)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                                        return false;
+                                }
+                        }
+                        else if (i == 3)
+                        {
+                                if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+                                {
+                                        lv_obj_add_state(textarea, LV_STATE_FOCUSED);
+                                        return false;
+                                }
+                        }
+                }
+        }
+        return true;
+}
 static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 {
         /*这个地方id寻找的控件与实际意义不符*/
@@ -134,14 +235,22 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 }
                 else
                 {
-                        strncpy(network_data_get()->network.ipaddr, ipaddr, sizeof(network_data_get()->network.ipaddr));
-                        strncpy(network_data_get()->network.mask, mask, sizeof(network_data_get()->network.mask));
-                        strncpy(network_data_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
-                        strncpy(network_data_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
+                        if (layout_setting_ipaddress_data_valid_check())
+                        {
+                                strncpy(network_data_get()->network.ipaddr, ipaddr, sizeof(network_data_get()->network.ipaddr));
+                                strncpy(network_data_get()->network.mask, mask, sizeof(network_data_get()->network.mask));
+                                strncpy(network_data_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
+                                strncpy(network_data_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
+                        }
+                        else
+                        {
+                                setting_ipaddress_falid_tips();
+                                return;
+                        }
                 }
-
                 network_data_save();
-                usleep(10 * 1000);
+                backlight_enable(false);
+                usleep(100 * 1000);
                 system("reboot");
         }
         else if (!strncmp((const char *)dhcp->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
@@ -160,7 +269,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
                                              layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1000);
 
-                sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
 }
 static bool setting_ipaddress_textbox_del(void)
@@ -358,6 +467,22 @@ static void setting_ipaddress_static_check_click(lv_event_t *e)
         layout_setting_ipaddress_textarea_click_enable();
 }
 
+/************************************************************
+** 函数说明: 在进行下一步的时候，会校验数据，数据不合法，输入会停留在第一个不合法的文本区域，需要把不合法的文本区域输入状态取消，变更到最新一次点击的文本区域去
+** 作者: xiaoxiao
+** 日期：2023-09-26 16:52:11
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_setting_ipaddress_textarea_click(lv_event_t *ev)
+{
+        layout_setting_ipaddress_textarea_focus_state_clear();
+
+        lv_obj_t *cur_textarea = lv_event_get_current_target(ev);
+
+        lv_obj_add_state(cur_textarea, LV_STATE_FOCUSED);
+}
+
 static void sat_layout_enter(setting_ipaddress)
 {
 
@@ -434,7 +559,7 @@ static void sat_layout_enter(setting_ipaddress)
         sat_ip_mac_addres_get("eth0", ip, NULL, mask);
         {
                 lv_common_textarea_create(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_product_ip_textbox, 298, 206, 250, 50,
-                                          NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
+                                          layout_setting_ipaddress_textarea_click, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
@@ -460,7 +585,7 @@ static void sat_layout_enter(setting_ipaddress)
          ***********************************************/
         {
                 lv_common_textarea_create(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_default_gateway_textbox, 298, 290, 250, 50,
-                                          NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
+                                          layout_setting_ipaddress_textarea_click, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
@@ -486,7 +611,7 @@ static void sat_layout_enter(setting_ipaddress)
          ***********************************************/
         {
                 lv_common_textarea_create(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_subnet_mask_textbox, 298, 374, 250, 50,
-                                          NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
+                                          layout_setting_ipaddress_textarea_click, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,
@@ -512,7 +637,7 @@ static void sat_layout_enter(setting_ipaddress)
          ***********************************************/
         {
                 lv_common_textarea_create(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dns_textbox, 298, 458, 250, 50,
-                                          NULL, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
+                                          layout_setting_ipaddress_textarea_click, LV_OPA_TRANSP, 0, LV_OPA_COVER, 0X101010,
                                           LV_OPA_TRANSP, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0X101010,
                                           9, 2, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0x00a8ff,

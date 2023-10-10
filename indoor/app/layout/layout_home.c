@@ -18,6 +18,8 @@ enum
 
         home_obj_id_slave_time_sync_label,
 
+        home_obj_id_slave_time_sync_failed,
+
         home_obj_id_time_cont,
         home_obj_id_time_label,
         home_obj_id_date_label,
@@ -85,6 +87,7 @@ enum
 
         home_obj_id_the_monitoring_msgbox_cancel,
         home_obj_id_the_monitoring_msgbox_confirm,
+
 };
 #define THUMB_WIDTH (216)
 #define THUMB_HIGHT (176)
@@ -118,34 +121,36 @@ static void home_mute_obj_click(lv_event_t *ev)
 static void home_obj_top_icon_display(void)
 {
         lv_obj_t *obj = NULL;
-        int pos_x = 852;
+        int pos_x = 960;
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
          ** 说明: 网络状态图标显示
          ***********************************************/
         {
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_network_icon);
-                if (obj == NULL)
+                if ((user_data_get()->system_mode & 0x1f) == 0x01)
                 {
-                        return;
-                }
-                char state = tuya_api_network_status();
-                if ((state == 0x00) || (user_data_get()->wifi_enable == false))
-                {
-                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                }
-                else if (state == 0x01)
-                {
+                        obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_network_icon);
+                        if (obj == NULL)
+                        {
+                                return;
+                        }
+                        char state = tuya_api_network_status();
                         pos_x -= 56;
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_wifi.png"), LV_PART_MAIN);
-                }
-                else
-                {
-                        pos_x -= 56;
-                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
+                        if ((state == 0x00) || (user_data_get()->wifi_enable == false))
+                        {
+                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_off.png"), LV_PART_MAIN);
+                        }
+                        else if (state == 0x01)
+                        {
+
+                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_wifi.png"), LV_PART_MAIN);
+                        }
+                        else
+                        {
+                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
+                        }
                 }
         }
         /***********************************************
@@ -159,17 +164,17 @@ static void home_obj_top_icon_display(void)
                 {
                         return;
                 }
+                lv_obj_set_x(obj, pos_x);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                pos_x -= 56;
                 if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
                 {
-                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_monitoring_sdcard.png" : "ic_monitoring_sdcard_full.png"), LV_PART_MAIN);
-                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_set_x(obj, pos_x);
-                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        pos_x -= 56;
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(media_sdcard_insert_check() == SD_STATE_INSERT ? "ic_system_sdcard.png" : "ic_system_sdcard_full.png"), LV_PART_MAIN);
                 }
                 else
                 {
-                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_sdcard_empty.png"), LV_PART_MAIN);
                 }
         }
 
@@ -206,6 +211,53 @@ static void home_use_mobile_app_obj_display(lv_obj_t *obj)
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
 }
 
+static void home_slave_sync_time_obj_display_timer(lv_timer_t *ptimer)
+{
+        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_timer_del(ptimer);
+        obj->user_data = NULL;
+}
+
+/************************************************************
+** 函数说明: 分机时间提示显示
+** 作者: xiaoxiao
+** 日期：2023-10-05 19:17:55
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void home_slave_sync_time_obj_display()
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_label);
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        if (obj->user_data == NULL)
+        {
+                obj->user_data = (void *)lv_sat_timer_create(home_slave_sync_time_obj_display_timer, 3000, obj);
+        }
+}
+
+static void home_slave_sync_time_request_timer(lv_timer_t *ptimer)
+{
+        struct tm tm;
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed);
+        if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 1000) == false)
+        {
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                standby_timer_close();
+                user_time_set(&tm);
+
+                standby_timer_restart(true);
+                if (ptimer != NULL)
+                {
+                        lv_timer_del(ptimer);
+                }
+        }
+}
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -215,6 +267,8 @@ static void home_date_obj_click(lv_event_t *ev)
 {
         if ((user_data_get()->system_mode & 0x0F) != 0x01)
         {
+                home_slave_sync_time_request_timer(NULL);
+                home_slave_sync_time_obj_display();
                 return;
         }
         setting_time_first_enter_set_flag(0x01);
@@ -589,6 +643,7 @@ static void home_call_list_item_create(lv_obj_t *parent)
         }
 }
 static lv_img_dsc_t *home_thumb_img_dsc = NULL;
+
 static bool home_thumb_media_display_callback(const char *data, int x, int y, int w, int h)
 {
         if ((home_thumb_img_dsc != NULL) && (home_thumb_img_dsc->data != NULL))
@@ -604,6 +659,27 @@ static bool home_thumb_media_display_callback(const char *data, int x, int y, in
                         return false;
                 }
                 lv_memcpy_small((uint8_t *)home_thumb_img_dsc->data, data, w * h * 3);
+
+                // char filename[128] = {0};
+                // struct tm date;
+                // user_time_read(&date);
+
+                // sprintf(filename, "/tmp/nfs/%02d%02d%02d-%02d%02d%02d-%dx%d",
+                //         date.tm_year % 100,
+                //         date.tm_mon,
+                //         date.tm_mday,
+                //         date.tm_hour,
+                //         date.tm_min,
+                //         date.tm_sec, w, h);
+                // int fd = open(filename, O_CREAT | O_WRONLY);
+                // if (fd < 0)
+                // {
+                //         printf("open %s failed \n", filename);
+                //         return false;
+                // }
+
+                // write(fd, data, w * h * 3);
+                // close(fd);
                 // SAT_DEBUG("thumb media data copy (%dx%d) ", w, h);
                 return true;
         }
@@ -625,14 +701,15 @@ static void home_thumb_refresh_display_callback(void)
                 SAT_DEBUG("v_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_video_img);");
                 return;
         }
-        // 创建一个样式并设置圆角半径
-        static lv_style_t style;
-        lv_style_init(&style);
-        lv_style_set_radius(&style, 20); // 设置圆角半径
-        lv_obj_add_style(obj, &style, LV_PART_MAIN);
-        lv_obj_refresh_style(obj, LV_PART_MAIN, LV_STYLE_RADIUS); // 刷新样式以反映更改
+        // // 创建一个样式并设置圆角半径
+        // static lv_style_t style;
+        // lv_style_init(&style);
+        // lv_style_set_radius(&style, 20); // 设置圆角半径
+        // lv_obj_add_style(obj, &style, LV_PART_MAIN);
+        // lv_obj_refresh_style(obj, LV_PART_MAIN, LV_STYLE_RADIUS); // 刷新样式以反映更改
 
         lv_obj_set_style_bg_img_src(obj, home_thumb_img_dsc, LV_PART_MAIN);
+        lv_img_cache_invalidate_src(obj->bg_img_src);
 }
 
 static void layout_home_video_call_title_param_init(void)
@@ -653,18 +730,19 @@ static void layout_home_video_call_title_param_init(void)
         int total = 0;
         if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
         {
-                type = FILE_TYPE_VIDEO;
+                type = FILE_TYPE_PHOTO;
         }
         media_file_total_get(type, &total, NULL);
         if (total <= 0)
         {
+
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_set_style_bg_opa(video_date, LV_OPA_TRANSP, LV_PART_MAIN);
+                lv_obj_add_flag(video_date, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_set_style_bg_opa(video_date, LV_OPA_60, LV_PART_MAIN);
+                lv_obj_clear_flag(video_date, LV_OBJ_FLAG_HIDDEN);
         }
 }
 
@@ -716,6 +794,7 @@ static void home_media_thumb_new_display(bool new)
 
 static void home_media_thumb_display(void)
 {
+
         file_type type = FILE_TYPE_FLASH_PHOTO;
         char arry[1][128] = {0}; //{"/tmp/tf/media/300116-1911038.JPG 1 42 216 174"};
         int total = 0, new_total = 0;
@@ -723,6 +802,20 @@ static void home_media_thumb_display(void)
         {
                 type = FILE_TYPE_VIDEO;
         }
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_video_cont);
+        if (parent == NULL)
+        {
+                SAT_DEBUG(" lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_video_cont);");
+                return;
+        }
+
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, home_obj_id_video_img);
+        if (obj == NULL)
+        {
+                SAT_DEBUG("v_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_video_img);");
+                return;
+        }
+        lv_obj_set_style_bg_img_src(obj, NULL, LV_PART_MAIN);
         // SAT_DEBUG("file type is %d\n", type);
         media_file_total_get(type, &total, &new_total);
         if (total <= 0)
@@ -742,6 +835,7 @@ static void home_media_thumb_display(void)
 
 static void home_sd_state_change_callback(void)
 {
+
         layout_home_video_call_title_param_init();
         home_media_thumb_display();
         home_obj_top_icon_display();
@@ -882,7 +976,6 @@ static void sat_layout_enter(home)
                 {
                         return;
                 }
-<<<<<<< HEAD
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 home_use_mobile_app_obj_display(obj);
         }
@@ -895,19 +988,14 @@ static void sat_layout_enter(home)
         ** 注意事项：
         ************************************************************/
         {
-                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_label, 327, 66, 370, 60,
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_label, 277, 66, 480, 60,
                                                       NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      "home_obj_id_slave_time_sync_label", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
-                if (obj == NULL)
-                {
-                        return;
-                }
-=======
->>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
+                                                      lang_str_get(HOME_XLS_LANG_TIME_SET_BY_MASTER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
-                home_use_mobile_app_obj_display(obj);
         }
 
         /***********************************************
@@ -1165,6 +1253,23 @@ static void sat_layout_enter(home)
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         {
+                {
+                        /************************************************************
+                        ** 函数说明: 时间同步提示
+                        ** 作者: xiaoxiao
+                        ** 日期: 2023-06-28 10:45:40
+                        ** 参数说明:
+                        ** 注意事项:
+                        ************************************************************/
+                        lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed, 68, 173, 346, 28,
+                                                              NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              lang_str_get(HOME_XLS_LANG_TIME_MISMATCH), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                }
+        }
+        {
                 /************************************************************
                 ** 函数说明: 网络图标创建
                 ** 作者: xiaoxiao
@@ -1172,11 +1277,12 @@ static void sat_layout_enter(home)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon, 852, 77, 35, 35,
-                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_obj_t *obj = lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_network_icon, 960, 12, 35, 35,
+                                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                         resource_ui_src_get("ic_system_network_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
         {
                 /************************************************************
@@ -1186,7 +1292,7 @@ static void sat_layout_enter(home)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_door_icon, 736, 79, 32, 32,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_door_icon, 854, 15, 32, 32,
                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1198,17 +1304,23 @@ static void sat_layout_enter(home)
          ** 说明: SD状态图标显示
          ***********************************************/
         {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_sd_icon, 787, 69, 48, 48,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_sd_icon, 895, 5, 48, 48,
                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("ic_monitoring_sdcard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                         resource_ui_src_get("ic_system_sdcard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         lv_timer_ready(lv_sat_timer_create(home_obj_top_icon_display_timer, 1000, NULL));
 
         home_media_thumb_display();
 
         linphone_incomming_node_release_all();
+
+        if ((user_data_get()->system_mode & 0x0f) != 0x01)
+        {
+
+                lv_timer_set_repeat_count(lv_sat_timer_create(home_slave_sync_time_request_timer, 1000, NULL), 3);
+        }
 }
 
 static void sat_layout_quit(home)

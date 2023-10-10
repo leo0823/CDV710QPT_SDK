@@ -244,7 +244,7 @@ static void intercom_talk_call_info_display(void)
         struct tm tm;
         user_time_read(&tm);
         int index = extern_index_get_by_user(intercom_call_user);
-        lv_label_set_text_fmt(obj, "Call: Extension %d    %04d-%02d:%02d %02d:%02d", index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        lv_label_set_text_fmt(obj, "Call: %s %d    %04d-%02d:%02d %02d:%02d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
 }
 
 static void intercom_talk_call_time_display(void)

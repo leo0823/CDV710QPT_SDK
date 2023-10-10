@@ -95,6 +95,7 @@ static void slave_type_setting_save_confirm(lv_event_t *e)
         user_data_get()->is_device_init = true;
         network_data_save();
         user_data_save();
+        backlight_enable(false);
         usleep(100 * 1000);
         system("reboot");
 }
@@ -102,7 +103,7 @@ static void slave_type_setting_save_confirm(lv_event_t *e)
 static void slave_type_setting_save_btn_click(lv_event_t *e)
 {
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
-        if (is_valid_ipv4(update_master_ip))
+        if (is_valid_ipv4(update_master_ip) && (update_slave_id != 1))
         {
                 setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_VALID), 0, 120, 460, 120);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_save_confirm);
@@ -160,7 +161,7 @@ static void slave_type_setting_extension_number_list_display(lv_obj_t *parent)
                 {
                         lv_label_set_text_fmt(numb, "ID %d", i + 2);
                 }
-                if (obj->id == ((user_data_get()->system_mode & 0x0F) - 2))
+                if (obj->id == ((update_slave_id)-2))
                 {
                         lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 }
@@ -247,7 +248,7 @@ static void slave_type_setting_cancel_display()
                 lv_obj_clear_flag(cancel_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(return_obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(next_obj, LV_OBJ_FLAG_HIDDEN);
-                if ((strlen(update_master_ip) != 0) && ((user_data_get()->system_mode & 0x0f) != update_slave_id))
+                if ((strlen(update_master_ip) != 0) && (update_slave_id != 1))
                 {
                         lv_obj_clear_flag(next_obj, LV_OBJ_FLAG_HIDDEN);
                 }
@@ -299,7 +300,7 @@ static void sat_layout_enter(slave_type_setting)
                                       slave_type_setting_cancel_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "Cancel", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_CACCEL), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), slave_type_setting_obj_id_next, 912, 15, 80, 48,

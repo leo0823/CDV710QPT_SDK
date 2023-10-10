@@ -53,15 +53,14 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
                 return;
         }
         layout_ipc_camera_edit_index_set(parent->id);
-        if (layout_ipc_cmeara_is_doorcamera_get())
+        sat_ipcamera_device_status_reset();
+        sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
+        if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
         {
-                sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
-                if (sat_ipcamera_device_name_get(parent->id, 1000) == true)
-                {
-                        ipc_search_door_camera_modify_default_passwd_check();
-                        return;
-                }
+                ipc_search_door_camera_modify_default_passwd_check();
+                return;
         }
+
         if (layout_ipc_cmeara_is_doorcamera_get() == true) // if(1)
         {
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
@@ -123,7 +122,7 @@ static void ipc_camera_state_func(unsigned int type, unsigned int num)
                 cctv_search_list_display();
                 if (p_ipc_camera_search_timer != NULL)
                 {
-                        lv_timer_set_period(p_ipc_camera_search_timer, 5 * 1000);
+                        lv_timer_set_period(p_ipc_camera_search_timer, 10 * 1000);
                         lv_timer_reset(p_ipc_camera_search_timer);
                 }
         }

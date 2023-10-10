@@ -183,9 +183,9 @@ static void photo_thumb_decode_all_display(void)
         memset(arry[0], 0, sizeof(arry[0]));
         sprintf(arry[0], "%s%s %d %d %d %d", playback_pview_path_get(), pinfo->file_name, photo_thumb_point->x, photo_thumb_point->y, PHOTO_WIDTH, PHOTO_HIGHT);
 
-        lv_obj_t * obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_thumb);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), photo_obj_id_thumb);
 
-        if(obj == NULL)
+        if (obj == NULL)
         {
                 SAT_DEBUG("lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_thumb) failed");
                 return;
@@ -196,6 +196,29 @@ static void photo_thumb_decode_all_display(void)
         if (pinfo->is_new == true)
         {
                 media_file_new_clear(pinfo->type, playback_pview_item_get());
+        }
+}
+
+static void photo_thumb_left_right_arrow_display(void)
+{
+        lv_obj_t *left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), photo_obj_id_left);
+        lv_obj_t *right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), photo_obj_id_right);
+        if ((playback_media_total_get() < 2) || (playback_media_total_get() == (playback_pview_item_get() + 1)))
+        {
+
+                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        if ((playback_media_total_get() < 2) || (playback_pview_item_get() == 0))
+        {
+                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
         }
 }
 
@@ -211,10 +234,7 @@ static void photo_media_thumb_obj_click(lv_event_t *e)
         if (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == true)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), photo_obj_id_left);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), photo_obj_id_right);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                photo_thumb_left_right_arrow_display();
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), photo_obj_id_buttom);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -295,28 +315,6 @@ static void photo_obj_del_click(lv_event_t *e)
                             photo_msgbox_del_cancel_click, photo_del_msgbox_confirm_click);
 }
 
-static void photo_thumb_left_right_arrow_display(void)
-{
-        lv_obj_t * left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_left);
-        lv_obj_t * right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_right);
-        if ((playback_media_total_get() < 2) || (playback_media_total_get() == (playback_pview_item_get() + 1)))
-        {
-
-                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
-        }
-        if ((playback_media_total_get() < 2) ||( playback_pview_item_get() == 0))
-        {
-                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
-        }else
-        {
-                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
-        }
-
-}
 static void photo_obj_left_click(lv_event_t *e)
 {
         int item = playback_pview_item_get();
@@ -327,11 +325,14 @@ static void photo_obj_left_click(lv_event_t *e)
         }
         playback_pview_item_set(item);
         const file_info *info = playback_media_info_get();
-        if (info->type == FILE_TYPE_VIDEO)
+        if (info->type != FILE_TYPE_VIDEO)
+        {
+                sat_layout_goto(photo, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        }
+        else
         {
                 sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
-
         photo_thumb_decode_all_display();
         photo_thumb_left_right_arrow_display();
 }
@@ -345,17 +346,21 @@ static void photo_obj_right_click(lv_event_t *e)
         }
         playback_pview_item_set(item);
         const file_info *info = playback_media_info_get();
-        if (info->type == FILE_TYPE_VIDEO)
+        if (info->type != FILE_TYPE_VIDEO)
+        {
+                sat_layout_goto(photo, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        }
+        else
         {
                 sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
-
         photo_thumb_decode_all_display();
         photo_thumb_left_right_arrow_display();
 }
 static void sat_layout_enter(photo)
 {
-        
+
+        printf("int item = playback_pview_item_get() is %d\n", playback_pview_item_get());
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -379,8 +384,6 @@ static void sat_layout_enter(photo)
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
 
-
-              
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -482,7 +485,6 @@ static void sat_layout_enter(photo)
                                               " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
                 }
         }
- 
 
         /***********************************************
          ** 作者: leo.liu
@@ -491,8 +493,8 @@ static void sat_layout_enter(photo)
          ***********************************************/
 
         photo_thumb_decode_all_display();
-        
 
+        photo_thumb_left_right_arrow_display();
 }
 static void sat_layout_quit(photo)
 {

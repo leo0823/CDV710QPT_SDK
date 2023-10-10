@@ -720,8 +720,8 @@ lv_obj_t *setting_main_list_create(int id)
                                               id == i ? NULL : main_list_group[i].click_cb, id == i ? LV_OPA_COVER : LV_OPA_TRANSP, 0x00A8FF, id == i ? LV_OPA_COVER : LV_OPA_TRANSP, 0x00A8FF,
                                               20, 8, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0,
                                               20, 8, LV_BORDER_SIDE_FULL, LV_OPA_COVER, 0,
-                                              31, 22, 241, 28, main_list_group[i].title_id,
-                                              main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xffffff, id == i ? 0xffffff : 0x00A8FF, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                              31, 0, 241, 70, main_list_group[i].title_id,
+                                              main_list_group[i].title_language_cb(main_list_group[i].title_language_id), 0xffffff, id == i ? 0xffffff : 0x00A8FF, LV_TEXT_ALIGN_LEFT_CENTER, lv_font_normal,
                                               0, 8, 32, 32, -1,
                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 j++;

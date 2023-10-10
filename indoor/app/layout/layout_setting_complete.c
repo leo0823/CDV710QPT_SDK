@@ -25,6 +25,7 @@ static void setting_complete_confirm_click(lv_event_t *ev)
 
         user_data_get()->is_device_init = 1;
         user_data_save();
+        backlight_enable(false);
         usleep(100 * 1000);
         system("reboot");
         // standby_timer_restart(true);
@@ -71,12 +72,11 @@ static void sat_layout_enter(setting_complete)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_START_SETTING_IS_COMPLETE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_complete_obj_id_reboot, 68, 275, 888, 70,
-                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_START_SETTING_REBOOT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(SETTING_COMPLETE_XLS_LANG_ID_START_SETTING_REBOOT), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
 
         /***********************************************

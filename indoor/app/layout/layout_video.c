@@ -108,7 +108,7 @@ static void video_info_obj_display(void)
 
         const file_info *info = playback_media_info_get();
         lv_label_set_long_mode(label, LV_LABEL_LONG_SCROLL_CIRCULAR);
-        lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch,  playback_media_total_get() - playback_pview_item_get(), playback_media_total_get());
+        lv_label_set_text_fmt(label, "%s [%05d/%05d]", info->ch, playback_media_total_get() - playback_pview_item_get(), playback_media_total_get());
 }
 static void video_time_obj_display(void)
 {
@@ -199,6 +199,29 @@ static void video_thumb_decode_all_display(void)
         }
 }
 
+static void video_thumb_left_right_arrow_display(void)
+{
+        lv_obj_t *left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_left);
+        lv_obj_t *right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_right);
+        if ((playback_media_total_get() < 2) || (playback_media_total_get() == (playback_pview_item_get() + 1)))
+        {
+
+                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
+        }
+        if ((playback_media_total_get() < 2) || (playback_pview_item_get() == 0))
+        {
+                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
+        }
+}
+
 static void video_media_thumb_obj_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_top);
@@ -211,13 +234,10 @@ static void video_media_thumb_obj_click(lv_event_t *e)
         if (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == true)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_left);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_right);
+                video_thumb_left_right_arrow_display();
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_buttom);
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
         else
@@ -302,28 +322,6 @@ static void video_obj_del_click(lv_event_t *e)
                             video_msgbox_del_cancel_click, video_del_msgbox_confirm_click);
 }
 
-static void video_thumb_left_right_arrow_display(void)
-{
-        lv_obj_t * left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),video_obj_id_left);
-        lv_obj_t * right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),video_obj_id_right);
-        if ((playback_media_total_get() < 2) || (playback_media_total_get() == (playback_pview_item_get() + 1)))
-        {
-
-                lv_obj_add_flag(left, LV_OBJ_FLAG_HIDDEN);
-        }
-        else
-        {
-                lv_obj_clear_flag(left, LV_OBJ_FLAG_HIDDEN);
-        }
-        if ((playback_media_total_get() < 2) ||( playback_pview_item_get() == 0))
-        {
-                lv_obj_add_flag(right, LV_OBJ_FLAG_HIDDEN);
-        }else
-        {
-                lv_obj_clear_flag(right, LV_OBJ_FLAG_HIDDEN);
-        }
-
-}
 static void video_obj_left_click(lv_event_t *e)
 {
         int item = playback_pview_item_get();
@@ -337,6 +335,10 @@ static void video_obj_left_click(lv_event_t *e)
         if (info->type != FILE_TYPE_VIDEO)
         {
                 sat_layout_goto(photo, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        }
+        else
+        {
+                sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 
         video_thumb_decode_all_display();
@@ -355,6 +357,10 @@ static void video_obj_right_click(lv_event_t *e)
         if (info->type != FILE_TYPE_VIDEO)
         {
                 sat_layout_goto(photo, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        }
+        else
+        {
+                sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 
         video_thumb_decode_all_display();
@@ -383,7 +389,19 @@ static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
                 SAT_DEBUG("lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);");
                 return;
         }
-
+        lv_obj_t *play = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
+        if (play == NULL)
+        {
+                return;
+        }
+        if (strncmp(play->bg_img_src, resource_ui_src_get("btn_thumbnail_pause_l.png"), strlen(play->bg_img_src)))
+        {
+                return;
+        }
+        // if (cur == total)
+        // {
+        //         sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
+        // }
         lv_slider_set_value(slider, cur * 100 / total, LV_ANIM_ON);
 
         lv_obj_t *label = lv_obj_get_child_form_id(parent, 0);
@@ -396,9 +414,39 @@ static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
 }
 static void video_thumb_play_state_callback(unsigned int sate)
 {
+        SAT_DEBUG("=========================")
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
 
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(sate == 0x01 ? "btn_thumbnail_pause_l.png" : "btn_thumbnail_play_l.png"), LV_PART_MAIN);
+        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_thumbnail_pause_l.png"), strlen(obj->bg_img_src)) == 0)
+        {
+                video_media_thumb_obj_click(NULL);
+        }
+        else if (sate == 0x02)
+        {
+                video_media_thumb_obj_click(NULL);
+                lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_buttom);
+                if (parent == NULL)
+                {
+                        SAT_DEBUG("lv_obj_t* parent=  lv_obj_get_child_form_id(sat_cur_layout_screen_get(),video_obj_id_buttom);");
+                        return;
+                }
+
+                parent = lv_obj_get_child_form_id(parent, 1);
+                if (parent == NULL)
+                {
+                        SAT_DEBUG(" parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), 1);");
+                        return;
+                }
+
+                lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);
+                if (slider == NULL)
+                {
+                        SAT_DEBUG("lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);");
+                        return;
+                }
+                lv_slider_set_value(slider, 100, LV_ANIM_ON);
+        }
 }
 
 static void video_thumb_duration_timer(lv_timer_t *ptimer)
@@ -508,16 +556,16 @@ static void sat_layout_enter(video)
         ***********************************************/
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_left, 24, 300, 80, 80,
-                                                          video_obj_left_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                          resource_ui_src_get("btn_thumbnail_arrow_left_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                         video_obj_left_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_thumbnail_arrow_left_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_right, 919, 300, 80, 80,
-                                                          video_obj_right_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                          resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                                         video_obj_right_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("btn_thumbnail_arrow_right_n.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 video_thumb_left_right_arrow_display();
         }
         /***********************************************

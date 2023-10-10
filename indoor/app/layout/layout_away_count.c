@@ -8,6 +8,8 @@ typedef enum
     layout_away_count_obj_id_end_btn_label,
     layout_away_count_obj_id_end_time_label,
     layout_away_count_obj_id_main_bg,
+    layout_away_count_obj_id_passwd_cont,
+
 } layout_away_count_scr_act_obj_id;
 
 typedef enum
@@ -25,6 +27,23 @@ layout_away_count_info *layout_away_count_data_get(void)
     return &layout_away_count_default_info;
 }
 /************************************************************
+** 函数说明: 密码校验成功，把标志清了，重新刷新ui
+** 作者: xiaoxiao
+** 日期: 2023-08-05 17:23:49
+** 参数说明:
+** 注意事项:
+************************************************************/
+static void layout_away_count_passwd_check_success_cb(void)
+{
+    user_data_get()->alarm.away_setting_countdown = false;
+    user_data_save();
+    lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
+    layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
+    layout_away_count_data_get()->away_count_sec = 0;
+    sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+}
+
+/************************************************************
 ** 函数说明: 离家模式设防倒计时结束按键事件
 ** 作者: xiaoxiao
 ** 日期: 2023-05-04 19:52:19
@@ -33,11 +52,8 @@ layout_away_count_info *layout_away_count_data_get(void)
 ************************************************************/
 static void layout_away_count_end_btn_obj_click(lv_event_t *ev)
 {
-    user_data_get()->alarm.away_setting_countdown = false;
-    user_data_save();
-    lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
-    layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
-    sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+    lv_obj_t *keyboard = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_count_obj_id_passwd_cont);
+    lv_obj_clear_flag(keyboard, LV_OBJ_FLAG_HIDDEN);
 }
 
 /************************************************************
@@ -74,7 +90,6 @@ static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
 
 static void layout_away_count_timer(lv_timer_t *ptimer)
 {
-
     if (layout_away_count_data_get()->away_count_sec != 0)
     {
         layout_away_count_data_get()->away_count_sec--;
@@ -82,21 +97,23 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
         {
             layout_away_count_timer_obj_display();
         }
-        else
-        {
-            lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
-            layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
-            user_data_get()->alarm.away_alarm_enable = true;
-            extern unsigned char layout_away_sensor_enable_flag(void);
-            user_data_get()->alarm.away_alarm_enable_list |= layout_away_sensor_enable_flag();
-            user_data_save();
+    }
+    else
+    {
+        lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
 
-            layout_away_count_data_get()->away_release_time_countdown_timer = lv_sat_timer_create(layout_away_alarm_release_det_timer, user_data_get()->alarm.away_release_time * 1000, NULL);
-            layout_away_count_data_get()->away_release_time_countdown_timer->lock = true; // 退出界面，定时器不关闭
-            if (sat_cur_layout_get() == sat_playout_get(away_count))
-            {
-                sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-            }
+        layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
+
+        user_data_get()->alarm.away_alarm_enable = true;
+        extern unsigned char layout_away_sensor_enabel_flag_get(void);
+        user_data_get()->alarm.away_alarm_enable_list |= layout_away_sensor_enabel_flag_get();
+        user_data_save();
+
+        layout_away_count_data_get()->away_release_time_countdown_timer = lv_sat_timer_create(layout_away_alarm_release_det_timer, user_data_get()->alarm.away_release_time * 1000, NULL);
+        layout_away_count_data_get()->away_release_time_countdown_timer->lock = true; // 退出界面，定时器不关闭
+        if (sat_cur_layout_get() == sat_playout_get(away_count))
+        {
+            sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
 }
@@ -115,7 +132,10 @@ static void layout_alarm_count_param_init(void)
         lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
         layout_away_count_data_get()->away_release_time_countdown_timer = NULL;
     }
-    layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
+    if (layout_away_count_data_get()->away_count_sec == 0)
+    {
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
+    }
 }
 
 static void sat_layout_enter(away_count)
@@ -195,7 +215,7 @@ static void sat_layout_enter(away_count)
     ************************************************************/
     {
         lv_common_img_text_btn_create(sat_cur_layout_screen_get(), layout_away_count_obj_id_end_btn, 0, 528, 1024, 72,
-                                      layout_away_count_end_btn_obj_click, LV_OPA_COVER, 0X47494A, LV_OPA_COVER, 0X101010,
+                                      layout_away_count_end_btn_obj_click, LV_OPA_COVER, 0x00A8FF, LV_OPA_COVER, 0X101010,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 17, 1024, 46, layout_away_count_obj_id_end_btn_label,
@@ -203,6 +223,7 @@ static void sat_layout_enter(away_count)
                                       3, 0, 77, 77, -1,
                                       NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
     }
+    common_passwd_check_func_create(layout_away_count_obj_id_passwd_cont, layout_away_count_passwd_check_success_cb);
 }
 
 static void sat_layout_quit(away_count)

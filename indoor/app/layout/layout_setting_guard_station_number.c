@@ -32,14 +32,13 @@ static void setting_guard_station_number_obj_cancel_click(lv_event_t *e)
 }
 static void setting_guard_station_number_obj_confirm_click(lv_event_t *e)
 {
-        lv_obj_t * txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_guard_station_number_obj_id_building_number_textbox);
-        if(txt != NULL)
+        lv_obj_t *txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_building_number_textbox);
+        if (txt != NULL)
         {
-                strncpy(network_data_get()->guard_number ,lv_textarea_get_text(txt),sizeof(network_data_get()->guard_number));
+                strncpy(network_data_get()->guard_number, lv_textarea_get_text(txt), sizeof(network_data_get()->guard_number));
                 network_data_save();
                 sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
-
 }
 
 static void setting_guard_station_number_next_obj_display(void)
@@ -65,7 +64,8 @@ static lv_obj_t *setting_guard_station_number_textarea_focused_get(void)
 {
 
         int obj_id[] = {
-            setting_guard_station_number_obj_id_building_number_textbox,};
+            setting_guard_station_number_obj_id_building_number_textbox,
+        };
 
         lv_obj_t *textarea = NULL;
 
@@ -173,12 +173,13 @@ static void sat_layout_enter(setting_guard_station_number)
         ** 说明: 数字键盘创建
         ***********************************************/
         {
-                lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_btn, 608, 127, 312, 402,
-                                                       setting_guard_station_number_obj_keyboad_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
-                                                       360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                       360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                       0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
-                                                       18, 24);
+                lv_obj_t *obj = lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_btn, 608, 127, 312, 402,
+                                                                       setting_guard_station_number_obj_keyboad_click, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
+                                                                       360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                       360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                       0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                                                       18, 24);
+                lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN);
         }
         /***********************************************
         ** 作者: leo.liu
@@ -204,7 +205,7 @@ static void sat_layout_enter(setting_guard_station_number)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                        lang_str_get(INSTALLATION_XLS_LANG_ID_GUARD_STATION_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
+                                      lang_str_get(INSTALLATION_XLS_LANG_ID_GUARD_STATION_NUMBER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_LEFT, lv_font_normal);
         }
 }
 static void sat_layout_quit(setting_guard_station_number)

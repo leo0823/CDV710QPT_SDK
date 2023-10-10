@@ -77,8 +77,7 @@ typedef enum
         server_operation_network_obj_id_confirm,
 } server_operation_network_msg_bg_obj_id;
 
-static bool
-setting_server_operation_data_valid_check(void)
+static bool setting_server_operation_data_valid_check(void)
 {
         int obj_id[][2] = {
             {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
