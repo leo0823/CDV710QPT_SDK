@@ -55,7 +55,7 @@ static int user_linphone_multicast_fd = -1;
 static bool discover_devices_data_parsing(const char *buf, const char *type, char *data, int size)
 {
         bool reslut = false;
-        char *pxml = strstr(buf, "<"); // xml version=\"1.0\"
+        char *pxml = strstr(buf, "<?xml"); // version=\"1.0\"
         if (pxml == NULL)
         {
                 printf("%s\n", buf);
