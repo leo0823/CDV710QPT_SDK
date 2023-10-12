@@ -305,7 +305,7 @@ static void setting_user_wifi_discovered_network_display(void)
         ** 说明:添加wifi
         ***********************************************/
         {
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, user_data_get()->is_device_init ? 306 : 0, list_item_y + 10, user_data_get()->is_device_init ? 718 : 1024, 48,
+                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, user_data_get()->is_device_init ? 306 : 0, list_item_y, user_data_get()->is_device_init ? 718 : 1024, 48,
                                               settign_wifi_add_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -462,23 +462,6 @@ static void sat_layout_enter(setting_user_wifi)
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 2);
                 wifi_setting_user_wifi_enable_display(obj);
         }
-
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2023-2-2 13:42:50
-         ** 说明: 显示搜索的文本
-         ***********************************************/
-        {
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_add_cont, user_data_get()->is_device_init ? 306 : 0, 168, user_data_get()->is_device_init ? 718 : 1024, 48,
-                                              NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              16, 13, 300, 27, 0,
-                                              lang_str_get(WIFI_SETTING_XLS_LANG_ID_ADD_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                              590, 16, 80, 32, -1,
-                                              NULL, LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
-        }
-
         setting_user_wifi_discovered_network_display();
 
         if (user_data_get()->wifi_enable == false)

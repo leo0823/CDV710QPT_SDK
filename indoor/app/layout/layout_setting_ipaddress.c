@@ -241,6 +241,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                 strncpy(network_data_get()->network.mask, mask, sizeof(network_data_get()->network.mask));
                                 strncpy(network_data_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
                                 strncpy(network_data_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
+                                network_data_get()->network.udhcp = false;
                         }
                         else
                         {
@@ -324,7 +325,6 @@ static void setting_ipaddress_obj_keyboad_click(lv_event_t *e)
 
 static void layout_setting_ipaddress_textarea_click_enable()
 {
-        SAT_DEBUG("============================");
         lv_obj_t *item1_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_product_ip_textbox);
 
         lv_obj_t *item2_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_default_gateway_textbox);
@@ -334,10 +334,8 @@ static void layout_setting_ipaddress_textarea_click_enable()
         lv_obj_t *item4_txt = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dns_textbox);
 
         lv_obj_t *dhcp = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_dhcp), 1);
-        SAT_DEBUG("============================");
         if (!strncmp((const char *)dhcp->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
-                SAT_DEBUG("============================");
                 lv_obj_clear_flag(item1_txt, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_clear_flag(item2_txt, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_clear_flag(item3_txt, LV_OBJ_FLAG_CLICKABLE);
@@ -349,7 +347,6 @@ static void layout_setting_ipaddress_textarea_click_enable()
         }
         else
         {
-                SAT_DEBUG("============================");
                 lv_obj_add_flag(item1_txt, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(item2_txt, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(item3_txt, LV_OBJ_FLAG_CLICKABLE);
@@ -359,7 +356,6 @@ static void layout_setting_ipaddress_textarea_click_enable()
                 lv_obj_set_style_text_color(item3_txt, lv_color_hex(0Xffffff), LV_PART_MAIN);
                 lv_obj_set_style_text_color(item4_txt, lv_color_hex(0Xffffff), LV_PART_MAIN);
         }
-        SAT_DEBUG("============================");
 }
 
 static void layout_setting_ipaddress_item_init_display()
@@ -376,8 +372,8 @@ static void layout_setting_ipaddress_item_init_display()
         {
                 lv_textarea_set_text(item1_txt, layout_setting_ipaddress_info_get()->network.ipaddr);
                 lv_textarea_set_text(item3_txt, layout_setting_ipaddress_info_get()->network.mask);
-                lv_textarea_set_text(item4_txt, layout_setting_ipaddress_info_get()->network.dns);
                 lv_textarea_set_text(item2_txt, layout_setting_ipaddress_info_get()->network.gateway);
+                lv_textarea_set_text(item4_txt, layout_setting_ipaddress_info_get()->network.dns);
         }
         else
         {
@@ -386,6 +382,7 @@ static void layout_setting_ipaddress_item_init_display()
                         char ip[32] = {0};
                         char mask[32] = {0};
                         sat_ip_mac_addres_get("eth0", ip, NULL, mask);
+
                         lv_textarea_set_text(item1_txt, ip);
                         lv_textarea_set_text(item3_txt, mask);
                         lv_textarea_set_text(item4_txt, network_data_get()->network.dns);
@@ -394,7 +391,7 @@ static void layout_setting_ipaddress_item_init_display()
                 else
                 {
                         lv_textarea_set_text(item1_txt, network_data_get()->network.ipaddr);
-                        lv_textarea_set_text(item3_txt, network_data_get()->network.gateway);
+                        lv_textarea_set_text(item3_txt, network_data_get()->network.mask);
                         lv_textarea_set_text(item4_txt, network_data_get()->network.dns);
                         lv_textarea_set_text(item2_txt, network_data_get()->network.gateway);
                 }

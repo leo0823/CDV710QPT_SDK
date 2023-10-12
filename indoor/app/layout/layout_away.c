@@ -300,13 +300,13 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
             }
             away_sensor_enabel_flag = sensor_select_list;
-
+            user_data_get()->alarm.away_alarm_enable_list = sensor_select_list;
             sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
     else
     {
-        if (user_data_get()->alarm.away_alarm_enable == true)
+        if (user_data_get()->alarm.away_alarm_enable)
         {
             lv_obj_t *cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_passwd_cont);
             if (cont != NULL)

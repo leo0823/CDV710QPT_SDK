@@ -97,7 +97,7 @@ static void layout_security_ececution_stop_btn_display(void)
     if (user_data_get()->alarm.security_alarm_enable)
     {
         printf("set false");
-        lv_obj_set_style_bg_color(obj, lv_color_hex(0x47494a), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(obj, lv_color_hex(0x00A8FF), LV_PART_MAIN);
         lv_obj_t *label = lv_obj_get_child_form_id(obj, layout_security_obj_id_confirm_label);
         lv_label_set_text(label, lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_END));
     }
@@ -256,7 +256,7 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             unsigned char list = layout_security_sensor_enable_flag();
             user_data_get()->alarm.security_alarm_enable_list |= list;
             user_data_save();
-            if ((user_data_get()->system_mode & 0x0f ) != 0x01)
+            if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
             }
@@ -460,7 +460,7 @@ static void emergency_occupy_audo_record_click(lv_event_t *ev)
     }
     user_data_get()->alarm.security_auto_record = user_data_get()->alarm.security_auto_record ? false : true;
     user_data_save();
-    if ((user_data_get()->system_mode & 0x0f ) != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
@@ -480,7 +480,7 @@ static void layout_security_passwd_check_success_cb(void)
     unsigned char list = layout_security_sensor_enable_flag();
     user_data_get()->alarm.security_alarm_enable_list &= (~list);
     user_data_save();
-    if ((user_data_get()->system_mode & 0x0f ) != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }

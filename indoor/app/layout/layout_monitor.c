@@ -130,7 +130,10 @@ void layout_monitor_goto_layout_process(void)
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
-        sat_linphone_incomming_refresh(node->call_id);
+        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        {
+                sat_linphone_incomming_refresh(node->call_id);
+        }
         monitor_channel_set(node->channel);
         layout_monitor_report_vaild_channel();
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
@@ -1069,19 +1072,17 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
                         mode |= REC_MODE_AUTO;
                 }
         }
-
         record_jpeg_start(mode);
 
         lv_timer_del(ptimer);
 }
 
-static bool layout_monitor_streams_running_register_callback(char *arg)
+static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
                 lv_sat_timer_create(monitor_call_record_delay_task, 500, NULL);
         }
-        return true;
 }
 
 /************************************************************
@@ -1123,9 +1124,22 @@ static void home_use_mobile_app_obj_display(void)
                 {
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+                lv_obj_clear_flag(obj, HOME_XLS_LANG_ID_USE_MOBILE_APP);
                 obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
         }
+}
+
+/************************************************************
+** 函数说明: 获取tuya用户在线状态接口有延迟
+** 作者: xiaoxiao
+** 日期：2023-10-11 16:36:09
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void monitor_app_use_delay_display_task(lv_timer_t *ptimer)
+{
+        home_use_mobile_app_obj_display();
 }
 
 /************************************************************
@@ -1137,8 +1151,7 @@ static void home_use_mobile_app_obj_display(void)
 ************************************************************/
 static void layout_monitor_timer_task(lv_timer_t *ptimer)
 {
-        home_use_mobile_app_obj_display(); // 获取涂鸦用户在线接口有延迟，放在任务里让定时刷新
-        call_duration++;                   // 记录call时间
+        call_duration++; // 记录call时间
 }
 
 /***********************************************
@@ -1873,17 +1886,18 @@ static void layout_monitor_door_ch_btn_create(void)
 ************************************************************/
 static void layout_monitor_buzzer_alarm_call_callback(void)
 {
+        buzzer_call_timestamp_set(user_timestamp_get());
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
         if (obj == NULL)
         {
                 return;
         }
-        if ((strncmp(lv_label_get_text(obj), lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
+        if ((strncmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
         {
                 return;
         }
         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        lv_label_set_text(obj, lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL));
+        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
         if (obj->user_data)
         {
                 lv_timer_del((lv_timer_t *)obj->user_data);
@@ -2043,7 +2057,7 @@ static void sat_layout_enter(monitor)
                                                       lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                home_use_mobile_app_obj_display();
+                lv_timer_set_repeat_count(lv_sat_timer_create(monitor_app_use_delay_display_task, 500, obj), 1);
         }
 
         /***********************************************
@@ -2251,8 +2265,6 @@ static void sat_layout_enter(monitor)
                 lv_obj_add_flag(vol_cont, LV_OBJ_FLAG_HIDDEN);
         }
 
-        buzzer_call_callback_register(layout_monitor_buzzer_alarm_call_callback);
-
         if (user_data_get()->alarm.buzzer_alarm)
         {
                 lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
@@ -2261,15 +2273,18 @@ static void sat_layout_enter(monitor)
                         return;
                 }
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                lv_label_set_text(obj, lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL));
+                lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
                 if (obj->user_data)
                 {
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
-                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, user_timestamp_get() - buzzer_call_timestamp_get(), obj);
+                int time = user_timestamp_get() - buzzer_call_timestamp_get();
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, time > 6000 ? 6000 : time, obj);
         }
 
-        user_linphone_call_streams_running_receive_register(layout_monitor_streams_running_register_callback);
+        buzzer_call_callback_register(layout_monitor_buzzer_alarm_call_callback);
+
+        first_refresh_lcd_cmd_callback_register(layout_monitor_streams_running_register_callback);
 
         monitor_open(true, is_channel_ipc_camera(monitor_channel_get()) ? true : false);
 
@@ -2355,7 +2370,7 @@ static void sat_layout_quit(monitor)
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
 
-        user_linphone_call_streams_running_receive_register(NULL);
+        first_refresh_lcd_cmd_callback_register(NULL);
         /*sd卡状态处理 */
         sd_state_channge_callback_register(sd_state_change_default_callback);
 
@@ -2740,11 +2755,17 @@ static bool truye_event_cmd_audio_start(void)
 
         tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
-        if (obj != NULL)
+        if (obj == NULL)
         {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_TALK_MOBILE_APP));
+                return false;
         }
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_TALK_MOBILE_APP));
+        if (obj->user_data)
+        {
+                lv_timer_del((lv_timer_t *)obj->user_data);
+        }
+        obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
         if (is_monitor_door_camera_talk == false)
         {
                 sat_linphone_audio_play_stop();

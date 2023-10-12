@@ -668,12 +668,12 @@ static void layout_alarm_buzzer_alarm_call_callback(void)
         {
                 return;
         }
-        if ((strncmp(lv_label_get_text(obj), lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
+        if ((strncmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
         {
                 return;
         }
         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        lv_label_set_text(obj, lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL));
+        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
         if (obj->user_data)
         {
                 lv_timer_del((lv_timer_t *)obj->user_data);
@@ -822,7 +822,7 @@ static void sat_layout_enter(alarm)
                 lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_buzzer_call_label);
                 if (obj != NULL)
                 {
-                        lv_label_set_text(obj, lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL));
+                        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
                 }
                 if (obj->user_data)
                 {

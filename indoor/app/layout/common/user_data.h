@@ -107,9 +107,9 @@ typedef struct
 
         int security_alarm_enable_list; // 安全警报模式：被监测的传感器列表
 
-        bool security_alarm_enable; // 安全警报模式；0：关闭；1：开启
+        char security_alarm_enable; // 安全警报模式；0：关闭；1：开启
 
-        bool away_alarm_enable; // 离家警报模式；0：关闭；1：开启
+        char away_alarm_enable; // 离家警报模式；0：关闭；1：准备(已设置，还没生效)； 2：生效
 
         char emergency_mode; // 0:手动触发警报 1:安防系统自动触发警报
 

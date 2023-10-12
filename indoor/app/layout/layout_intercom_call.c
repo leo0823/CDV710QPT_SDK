@@ -231,14 +231,24 @@ static void intercom_call_log_check_obj_click(lv_event_t *ev)
 static void intercom_call_list_item_create(lv_obj_t *parent)
 {
         CALL_LOG_TYPE type;
-        char doorname[24];
+        char doorname[24] = {0};
         int duration;
         struct tm tm;
         int item_y = 0;
         int total = call_list_total_get();
+        char obj_name[32] = {0};
         for (int i = total - 1; i >= 0; i--)
         {
                 call_list_get(i, &type, doorname, &duration, &tm);
+                if (strstr(doorname, "Door") == NULL)
+                {
+                        sprintf(obj_name, "%s %s", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), doorname);
+                }
+                else
+                {
+                        strcpy(obj_name, doorname);
+                }
+
                 char tm_buffer[64] = {0};
                 char du_buffer[64];
                 sprintf(du_buffer, "%02d:%02d", duration / 60, duration % 60);
@@ -258,7 +268,7 @@ static void intercom_call_list_item_create(lv_obj_t *parent)
                                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                       50, 25, 300, 43, 0,
-                                                                      doorname, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                      obj_name, 0XFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                       0, 15, 80, 48, 1,
                                                                       type == IN_AND_NO_ANSWER ? (char *)resource_ui_src_get("ic_list_call_absence.png") : type == CALL_OUT ? (char *)resource_ui_src_get("ic_list_call_transmit.png")
                                                                                                                                                                             : (char *)resource_ui_src_get("ic_list_call_receive.png"),

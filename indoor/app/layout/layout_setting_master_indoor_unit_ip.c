@@ -25,16 +25,41 @@ enum
         ** 说明: ip文本显示
         ***********************************************/
         setting_master_indoor_unit_ip_obj_id_ip_label,
+
+        setting_master_indoor_unit_ip_obj_id_msg_bg,
 };
 extern const char *slave_typle_setting_update_master_ip_get(void);
-extern void slave_typle_setting_update_master_ip_setting(char * master_ip);
+extern void slave_typle_setting_update_master_ip_setting(char *master_ip);
 
 static void setting_master_indoor_unit_ip_obj_cancel_click(lv_event_t *e)
 {
         sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 
+static void setting_master_indoor_unit_ip_falid_confirm(lv_event_t *e)
+{
 
+        setting_msgdialog_msg_del(setting_master_indoor_unit_ip_obj_id_msg_bg);
+}
+
+/************************************************************
+** 函数说明: 数据校验失败提示
+** 作者: xiaoxiao
+** 日期：2023-09-26 14:23:59
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void setting_master_indoor_unit_ip_falid_tips(void)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_master_indoor_unit_ip_obj_id_msg_bg);
+        if (masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(setting_master_indoor_unit_ip_obj_id_msg_bg);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(setting_master_indoor_unit_ip_obj_id_msg_bg, 0, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
+        setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_master_indoor_unit_ip_falid_confirm);
+}
 
 static void setting_master_indoor_unit_ip_obj_confirm_click(lv_event_t *e)
 {
@@ -43,11 +68,16 @@ static void setting_master_indoor_unit_ip_obj_confirm_click(lv_event_t *e)
         {
                 return;
         }
-        slave_typle_setting_update_master_ip_setting((char *)lv_textarea_get_text(textarea));
+        if (is_valid_ipv4(lv_textarea_get_text(textarea)) == false)
+        {
+                setting_master_indoor_unit_ip_falid_tips();
+        }
+        else
+        {
+                slave_typle_setting_update_master_ip_setting((char *)lv_textarea_get_text(textarea));
 
-        sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        
-
+                sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
 }
 
 static void setting_master_indoor_unit_ip_next_obj_display(void)

@@ -196,8 +196,10 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
 
 static void layout_ipc_display_register_display(lv_timer_t *ptimer)
 {
-        lv_obj_t *check = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont), ipc_camera_search_display_obj_id_if_you);
-        lv_obj_t *edit = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_ip_edit);
+
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont);
+        lv_obj_t *check = lv_obj_get_child_form_id(parent, ipc_camera_search_display_obj_id_if_you);
+        lv_obj_t *edit = lv_obj_get_child_form_id(parent, ipc_camera_search_display_obj_id_ip_edit);
         lv_obj_t *reg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_register_label);
 
         lv_label_set_text(check, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHECK_CONNECTION_INFO));

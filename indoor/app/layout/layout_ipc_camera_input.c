@@ -186,9 +186,9 @@ static void ipc_camera_password_input_msgbox_confirm_click(lv_event_t *e)
 }
 static void ipc_camera_password_success_msgbox_confirm_click(lv_event_t *e)
 {
-        if (sat_pre_layout_get() == sat_playout_get(ipc_camera_input)) //(layout_ipc_cmeara_is_doorcamera_get() == true)
+        if (sat_pre_layout_get() == sat_playout_get(ipc_camera_search)) //(layout_ipc_cmeara_is_doorcamera_get() == true)
         {
-                sat_layout_goto(ipc_camera_input, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else
         {
@@ -354,6 +354,16 @@ static bool ipc_camera_input_new_name_processing(void)
 static void ipc_camera_input_hidden_btn_display(void)
 {
         lv_obj_t *hide_btn = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_password_hidden);
+        lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
+        bool password_mode = lv_textarea_get_password_mode(textarea);
+        if (password_mode == true)
+        {
+                lv_obj_set_style_bg_img_src(hide_btn, resource_ui_src_get("btn_list_hide.png"), LV_PART_MAIN);
+        }
+        else
+        {
+                lv_obj_set_style_bg_img_src(hide_btn, resource_ui_src_get("5_list_show.png"), LV_PART_MAIN);
+        }
         if ((ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME) || (ipc_camera_input_flag & IPC_CAMERA_FLAG_INPUT_USER))
         {
                 lv_obj_add_flag(hide_btn, LV_OBJ_FLAG_HIDDEN);
@@ -409,12 +419,14 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);
                 ipc_camera_password_input_textarea_placeholder_setting();
                 lv_textarea_set_text(textarea, "");
+                lv_textarea_set_password_mode(textarea, true);
                 ipc_camera_input_hidden_btn_display();
                 return SAT_VOID;
         }
 
         if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)
         {
+                lv_textarea_set_max_length(textarea, 32);
                 if (ipc_camera_password_state == 0x01)
                 {
                         ipc_camera_input_new_password_processing(txt);
@@ -479,7 +491,7 @@ static void sat_layout_enter(ipc_camera_input)
                                                      LV_OPA_COVER, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 17 : 32,
+                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 17 : 32,
                                                      30, 500, 0Xffffff);
 
                 lv_obj_set_style_text_color(textarea, lv_color_hex(0x929292), LV_PART_TEXTAREA_PLACEHOLDER);
@@ -487,6 +499,7 @@ static void sat_layout_enter(ipc_camera_input)
                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                 lv_textarea_set_password_bullet(textarea, "*");
                 ipc_camera_password_input_textarea_placeholder_setting();
+                lv_textarea_set_password_mode(textarea, true);
         }
         /***********************************************
         ** 作者: leo.liu

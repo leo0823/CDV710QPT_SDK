@@ -545,7 +545,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
-        sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
+        sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script &");
         system("ifconfig eth0 0.0.0.0");
         system("ifconfig eth0 down");
         usleep(10 * 1000);
@@ -824,12 +824,13 @@ static bool kill_related_port_process(char *port)
 
 static bool automatic_ip_setting(void)
 {
+        SAT_DEBUG("network_data_get()->network.ipaddr is %s", network_data_get()->network.ipaddr);
         /*杀死相关的端口进程*/
         kill_related_port_process("5060");
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if ((network_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
-                sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
+                sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script &");
                 if (network_data_get()->network.ipaddr[0] != '\0')
                 {
                         SAT_DEBUG("==============");

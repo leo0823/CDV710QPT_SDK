@@ -184,7 +184,8 @@ static bool setting_server_operation_data_valid_check(void)
                         }
                         else if (i == 9)
                         {
-                                if (strlen(lv_textarea_get_text(textarea)) != 11)
+                                int len = strlen(lv_textarea_get_text(textarea));
+                                if ((len < 1) || (len > 11))
                                 {
                                         lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                                         return false;
@@ -276,8 +277,17 @@ static void setting_server_operation_network_init(void)
                         }
                         else if (i == 4)
                         {
-                                lv_textarea_set_text(textarea, network_data_get()->network.mask);
-                                printf(" network_data_get()->mask is %s\n", network_data_get()->network.mask);
+                                char ip[32] = {0};
+                                char mask[32] = {0};
+                                if (sat_ip_mac_addres_get("eth0", ip, NULL, mask) == false)
+                                {
+
+                                        lv_textarea_set_text(textarea, network_data_get()->network.mask);
+                                }
+                                else
+                                {
+                                        lv_textarea_set_text(textarea, mask);
+                                }
                         }
                         else if (i == 5)
                         {
