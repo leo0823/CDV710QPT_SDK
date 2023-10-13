@@ -108,12 +108,13 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
         if (y == 8) // 调铃声音量
         {
                 int value = lv_slider_get_value(obj);
+                sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.buzzer_volume = value;
                 user_data_save();
 
                 if ((user_data_get()->audio.buzzer_volume != 0))
                 {
-                        if ((playing_index != 0) && is_setting_volume_ring_play_runing)
+                        if ((playing_index != 0) || is_setting_volume_ring_play_runing == false)
                                 ring_buzzer_play(user_data_get()->audio.buzzer_tone);
                 }
                 else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.buzzer_volume == 0))
@@ -122,7 +123,7 @@ static void setting_buzzer_volume_slider_change_cb(lv_event_t *e)
                         is_setting_volume_ring_play_runing = false;
                 }
                 playing_index = 0;
-                sat_linphone_audio_play_volume_set(value);
+
                 // printf("setting valume is %d\n",value);
         }
         else if (y == 78) // 调通话声音
@@ -153,12 +154,12 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
         {
 
                 int value = lv_slider_get_value(obj);
-
+                sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.entracne_volume = value;
                 user_data_save();
                 if ((user_data_get()->audio.entracne_volume != 0))
                 {
-                        if ((playing_index != 1) && is_setting_volume_ring_play_runing)
+                        if ((playing_index != 1) || is_setting_volume_ring_play_runing == false)
                                 ring_door_call_play(user_data_get()->audio.door_tone);
                 }
                 else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.entracne_volume == 0))
@@ -167,7 +168,6 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
                         is_setting_volume_ring_play_runing = false;
                 }
                 playing_index = 1;
-                sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
         {
@@ -207,11 +207,12 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
         {
 
                 int value = lv_slider_get_value(obj);
+                sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.common_entrance_volume = value;
                 user_data_save();
                 if ((user_data_get()->audio.common_entrance_volume != 0))
                 {
-                        if ((playing_index != 2) && is_setting_volume_ring_play_runing)
+                        if ((playing_index != 2) || is_setting_volume_ring_play_runing == false)
                                 ring_common_door_play(user_data_get()->audio.common_entrance_tone);
                 }
                 else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.common_entrance_volume == 0))
@@ -220,7 +221,6 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
                         is_setting_volume_ring_play_runing = false;
                 }
                 playing_index = 2;
-                sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
         {
@@ -266,11 +266,12 @@ static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
         {
 
                 int value = lv_slider_get_value(obj);
+                sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.guard_station_volume = value;
                 user_data_save();
                 if ((user_data_get()->audio.guard_station_volume != 0))
                 {
-                        if ((playing_index != 3) && is_setting_volume_ring_play_runing)
+                        if ((playing_index != 3) || is_setting_volume_ring_play_runing == false)
                                 ring_guard_play(user_data_get()->audio.securirty_office_tone);
                 }
                 else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.guard_station_volume == 0))
@@ -279,7 +280,6 @@ static void setting_guard_station_volume_slider_change_cb(lv_event_t *e)
                         is_setting_volume_ring_play_runing = false;
                 }
                 playing_index = 3;
-                sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
         {
@@ -324,11 +324,12 @@ static void setting_extension_volume_slider_change_cb(lv_event_t *e)
         if (y == 8) // 调铃声音量
         {
                 int value = lv_slider_get_value(obj);
+                sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.extension_volume = value;
                 user_data_save();
                 if ((user_data_get()->audio.extension_volume != 0))
                 {
-                        if ((playing_index != 4) && is_setting_volume_ring_play_runing)
+                        if ((playing_index != 4) || is_setting_volume_ring_play_runing == false)
                                 ring_intercom_play(user_data_get()->audio.extenion_tone);
                 }
                 else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.extension_volume == 0))
@@ -337,7 +338,6 @@ static void setting_extension_volume_slider_change_cb(lv_event_t *e)
                         is_setting_volume_ring_play_runing = false;
                 }
                 playing_index = 4;
-                sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
         {
@@ -377,11 +377,12 @@ static void setting_touch_notification_volume_slider_change_cb(lv_event_t *e)
         if (y == 8) // 调铃声音量
         {
                 int value = lv_slider_get_value(obj);
+                sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.touch_notification_volume = value;
                 user_data_save();
                 if ((user_data_get()->audio.touch_notification_volume != 0))
                 {
-                        if ((playing_index != 5) && is_setting_volume_ring_play_runing)
+                        if ((playing_index != 5) || is_setting_volume_ring_play_runing == false)
                                 ring_touch_play();
                 }
                 else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.touch_notification_volume == 0))
@@ -390,7 +391,6 @@ static void setting_touch_notification_volume_slider_change_cb(lv_event_t *e)
                         is_setting_volume_ring_play_runing = false;
                 }
                 playing_index = 5;
-                sat_linphone_audio_play_volume_set(value);
         }
         else if (y == 78) // 调通话声音
         {
