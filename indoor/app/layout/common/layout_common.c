@@ -274,7 +274,17 @@ void layout_alarm_trigger_default(int arg1, int arg2)
         }
         else
         {
+
                 if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
+                {
+                        return;
+                }
+                // if (((user_data_get()->alarm.away_alarm_enable == false) && user_data_get()->alarm.alarm_enable_always[0][arg1] == false) ||
+                //     ((user_data_get()->alarm.security_alarm_enable == false) && user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
+                // {
+                //         return;
+                // }
+                if (user_data_get()->alarm.away_alarm_enable == 0X01)
                 {
                         return;
                 }

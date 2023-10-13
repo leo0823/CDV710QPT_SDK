@@ -35,6 +35,8 @@ static void layout_factory_reset_timer(lv_timer_t *t)
                 lv_bar_set_value(bar, result, LV_ANIM_ON);
                 if (result == 6)
                 {
+                        backlight_enable(false);
+                        usleep(100 * 1000);
                         system("reboot");
                 }
         }
@@ -116,6 +118,7 @@ static void layout_factory_reset_confirm(lv_event_t *ev)
         lv_timer_ready(lv_sat_timer_create(layout_factory_reset_timer, 100, masgbox));
         pthread_t task_id;
         pthread_create(&task_id, sat_pthread_attr_get(), layout_factory_reset_process, &reseted);
+        pthread_detach(task_id);
 }
 
 static void sat_layout_enter(factory_reset)

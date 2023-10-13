@@ -83,7 +83,6 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 ***/
 bool record_jpeg_start(REC_MODE mode)
 {
-
         jpeg_record_mode = mode;
         return sat_linphone_snap(monitor_channel_get(), jpeg_record_mode, jpeg_write_callback);
 }

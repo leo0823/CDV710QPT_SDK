@@ -13,7 +13,7 @@
 #include "common/user_record.h"
 #include "common/user_network.h"
 #include "common/user_linphone.h"
-
+#include "layout_away_count.h"
 static int input_index = 0;
 
 enum
@@ -135,9 +135,12 @@ void sd_state_change_default_callback(void)
         masgbox->user_data = lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
 
-static int buzzer_call_count = 0;            // 蜂鸣器触发时间倒计时
 static lv_timer_t *buzzer_call_timer = NULL; // 蜂鸣器呼叫定时器任务
 
+lv_timer_t *buzzer_call_timer_get()
+{
+        return buzzer_call_timer;
+}
 static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
 {
         lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
@@ -145,28 +148,23 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
         {
                 user_data_get()->alarm.buzzer_alarm = false;
                 user_data_save();
-                lv_timer_del(buzzer_call_timer);
-                buzzer_call_timer = NULL;
-                buzzer_call_count = 0;
+                if ((user_data_get()->system_mode & 0X0f) != 0x01)
+                {
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+                }
+
+                // lv_timer_del(buzzer_call_timer);
+                // buzzer_call_timer = NULL;
                 lv_obj_del(bg);
+                sat_linphone_audio_play_stop();
         }
 }
 
 static void buzzer_call_trigger_ui_create(void)
 {
-        if ((sat_cur_layout_get() == sat_playout_get(alarm)) || (sat_cur_layout_get() == sat_playout_get(monitor)))
-        {
-                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), buzzer_alarm_screen_id, 109, 284, 247, 68,
-                                                      NULL, LV_OPA_80, 0x474747, LV_OPA_80, 0,
-                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL), 0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
-                lv_obj_set_style_pad_top(obj, 23, LV_PART_MAIN);
-        }
-        else
         {
                 lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_alarm_screen_id, 0, 0, 1024, 600,
-                                                            NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                            NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -180,7 +178,7 @@ static void buzzer_call_trigger_ui_create(void)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(CALL_XLS_LANG_ID_BUZZER_CALL), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
 
                 lv_common_img_btn_create(parent, buzzer_call_icon_id, 303, 142, 418, 314,
                                          NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
@@ -193,7 +191,6 @@ static void buzzer_call_trigger_ui_create(void)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_buzzer_confrim.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
         }
 }
 
@@ -206,15 +203,21 @@ static void buzzer_call_trigger_ui_create(void)
 ************************************************************/
 static void default_buzzer_call_timer(lv_timer_t *timer)
 {
-        lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
-        buzzer_call_count++;
-        if (buzzer_call_count == 12)
+        if (user_data_get()->alarm.buzzer_alarm == true)
         {
-                buzzer_alarm_confirm_btn_click(NULL);
-        }
-        else if (bg == NULL)
-        {
-                buzzer_call_trigger_ui_create();
+                lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
+                if ((sat_cur_layout_get() != sat_playout_get(monitor)) && (sat_cur_layout_get() != sat_playout_get(intercom_talk)) && (sat_cur_layout_get() != sat_playout_get(alarm)))
+                {
+                        if (bg == NULL)
+                        {
+                                buzzer_call_trigger_ui_create();
+                                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                        }
+                        if (user_timestamp_get() - buzzer_call_timestamp_get() >= 6000)
+                        {
+                                buzzer_alarm_confirm_btn_click(NULL);
+                        }
+                }
         }
 }
 
@@ -234,10 +237,22 @@ bool buzzer_call_trigger_check(void)
                         buzzer_call_fun();
                 }
         }
-        else if (buzzer_call_timer != NULL)
+        else
         {
                 buzzer_alarm_confirm_btn_click(NULL);
         }
+        return true;
+}
+
+unsigned long long buzzer_call_timestamp = 0;
+unsigned long long buzzer_call_timestamp_get()
+{
+        return buzzer_call_timestamp;
+}
+
+bool buzzer_call_timestamp_set(unsigned long long timestamp)
+{
+        buzzer_call_timestamp = timestamp;
         return true;
 }
 
@@ -248,18 +263,15 @@ bool buzzer_call_trigger_check(void)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void buzzer_alarm_trigger_default(void)
+void buzzer_alarm_trigger_default(void)
 {
         if (user_data_get()->is_device_init == false)
         {
                 return;
         }
-        if (buzzer_call_timer)
-        {
-                return;
-        }
+        buzzer_call_timestamp = user_timestamp_get();
         buzzer_call_trigger_ui_create();
-        buzzer_call_timer = lv_timer_create(default_buzzer_call_timer, 500, NULL);
+        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
 }
 
 /************************************************************
@@ -316,6 +328,13 @@ static void away_countdown_enable_sync_check(void)
         }
         else if (sat_cur_layout_get() == sat_playout_get(away_count))
         {
+                if (layout_away_count_data_get()->away_setting_time_countdown_timer)
+                {
+                        lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
+                }
+
+                layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
+                layout_away_count_data_get()->away_count_sec = 0;
                 sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
 }
@@ -381,11 +400,8 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group, &info->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
-                                standby_timer_close();
-                                user_data_get()->etc.cur_time = info->etc.cur_time;
-                                user_time_set(&user_data_get()->etc.cur_time);
-                                standby_timer_restart(true);
                         }
+                        SAT_DEBUG("=====================================");
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
                         user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                         user_data_get()->alarm.security_auto_record = info->alarm.security_auto_record;
@@ -420,7 +436,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;
                                 alarm_stop_return_status_display_check();
                         }
-                        if (user_data_get()->alarm.away_setting_countdown != info->alarm.away_setting_countdown) // 警报页面内，铃声播放取消同步
+                        if (user_data_get()->alarm.away_setting_countdown != info->alarm.away_setting_countdown) // 离家设防同步
                         {
                                 user_data_get()->alarm.away_setting_countdown = info->alarm.away_setting_countdown;
                                 away_countdown_enable_sync_check();
@@ -704,8 +720,10 @@ static void logo_enter_system_timer(lv_timer_t *t)
                         tuya_api_time_sync();
                 }
         }
-
 #endif
+        // 蜂鸣器警报执行任务
+        lv_timer_create(default_buzzer_call_timer, 500, NULL);
+
         /***** 设置背光使能亮度 *****/
         backlight_brightness_set(user_data_get()->display.lcd_brigtness <= 0 ? 4 : user_data_get()->display.lcd_brigtness);
 
@@ -721,7 +739,9 @@ static void logo_enter_system_timer(lv_timer_t *t)
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
 
         alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
+
         sd_state_channge_callback_register(sd_state_change_default_callback);
 
         sync_data_cmd_callback_register(asterisk_server_sync_data_callback);

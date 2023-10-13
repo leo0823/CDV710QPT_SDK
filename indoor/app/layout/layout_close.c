@@ -477,13 +477,20 @@ static bool layout_motion_streams_running_register_callback(char *arg)
 
     return true;
 }
+static void layout_close_buzzer_alarm_trigger_default(void)
+{
+    layout_close_click(NULL);
+    buzzer_alarm_trigger_default();
+}
 
 static void sat_layout_enter(close)
 {
+    SAT_DEBUG("QUIT the close layut");
     standby_timer_close();
     backlight_enable(true);
     backlight_enable(false);
     close_cancel_btn_create();
+    buzzer_call_callback_register(layout_close_buzzer_alarm_trigger_default);
     if (user_data_get()->motion.enable)
     {
         motion_timeout_sec = 10;
@@ -518,6 +525,7 @@ static void sat_layout_enter(close)
 
 static void sat_layout_quit(close)
 {
+    buzzer_call_callback_register(buzzer_alarm_trigger_default);
 
     record_video_stop();
 

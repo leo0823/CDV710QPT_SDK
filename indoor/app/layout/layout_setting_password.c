@@ -321,7 +321,7 @@ static void setting_password_modiy_obj_create(void)
                  ** 日期: 2023-2-3 14:13:25
                  ** 说明: 标题显示
                  ***********************************************/
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_password_obj_id_modiy_password_head_label, 0, 20, 1024, 40,
+                lv_common_text_create(parent, setting_password_obj_id_modiy_password_head_label, 0, 20, 1024, 40,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -446,14 +446,14 @@ static void setting_password_cancel_obj_click(lv_event_t *ev)
 }
 static void setting_password_reset_household_obj_click(lv_event_t *ev)
 {
-        reset_unit = false;
+        reset_unit = true;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_reset_cont);
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         setting_password_modiy_obj_create();
 }
 static void setting_password_reset_common_entrance_obj_click(lv_event_t *ev)
 {
-        reset_unit = true;
+        reset_unit = false;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_password_obj_id_reset_cont);
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         setting_password_modiy_obj_create();

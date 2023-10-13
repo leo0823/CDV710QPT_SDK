@@ -55,7 +55,7 @@ static int user_linphone_multicast_fd = -1;
 static bool discover_devices_data_parsing(const char *buf, const char *type, char *data, int size)
 {
         bool reslut = false;
-        char *pxml = strstr(buf, "<?xml"); // version=\"1.0\"
+        char *pxml = strstr(buf, "<"); //?xml version=\"1.0\"
         if (pxml == NULL)
         {
                 printf("%s\n", buf);
@@ -545,7 +545,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
-        sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
+        sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script &");
         system("ifconfig eth0 0.0.0.0");
         system("ifconfig eth0 down");
         usleep(10 * 1000);

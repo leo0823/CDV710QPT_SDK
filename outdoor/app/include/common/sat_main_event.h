@@ -57,7 +57,9 @@ enum
 	** 日期: 2022-12-28 13:41:34
 	** 说明:视频流状态
 	***********************************************/
-	MSG_EVNET_CMD_VIDEO_STREAM,
+<<<<<<< HEAD
+	MSG_EVNET_CMD_VIDEO_STREAM == == == =
+																					MSG_EVNET_CMD_VIDEO_STREAM,
 	/***********************************************
 	 ** 作者: leo.liu
 	 ** 日期: 2022-12-28 13:41:34
@@ -68,6 +70,7 @@ enum
 	 2022-09-21 author:leo.liu ring play:arg1:0,start,1:finish
 	*****************************************************************/
 	MSG_EVENT_CMD_AUDIO_RING_PLAY,
+>>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
 };
 
 typedef struct

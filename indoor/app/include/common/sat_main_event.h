@@ -162,8 +162,6 @@ bool _sat_layout_goto(sat_layout_info *layout, lv_scr_load_anim_t anim);
         _sat_layout_goto(sat_playout_get(x), a); \
         return r;
 
-
-
 /***
 **	 日期:2022-05-23 13:41:22
 **	 作者: leo.liu
@@ -215,7 +213,6 @@ void sd_state_channge_callback_register(void (*callback)(void));
  * @注释: bool ,true,开始，false 完成
  */
 void snapshot_state_callback_register(void (*callback)(bool ready));
-
 /*
  * @日期: 2022-09-15
  * @作者: leo.liu

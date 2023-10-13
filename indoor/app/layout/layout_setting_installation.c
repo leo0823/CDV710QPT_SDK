@@ -108,7 +108,8 @@ static void setting_installation_factory_reset_confirm_func(lv_event_t *ev)
         alarm_list_del_all();
         call_list_del_all();
         wifi_api_reset_default();
-        usleep(1000 * 1000);
+        backlight_enable(false);
+        usleep(100 * 1000);
         system("reboot");
         // setting_msgdialog_msg_del(setting_installation_obj_id_factory_reset_msg_bg);
 }
@@ -148,7 +149,7 @@ static void layout_setting_installation_open_structure_dispaly(lv_obj_t *list)
         }
         else
         {
-                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_NETWORK_XLS_LANG_ID_SLAVE));
+                lv_label_set_text(obj, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_SLAVE));
         }
 }
 
