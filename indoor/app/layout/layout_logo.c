@@ -150,7 +150,7 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
                 user_data_save();
                 if ((user_data_get()->system_mode & 0X0f) != 0x01)
                 {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
                 }
 
                 // lv_timer_del(buzzer_call_timer);
@@ -388,7 +388,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
-
+                                user_data_get()->auto_record_mode = info->auto_record_mode;
                                 user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
@@ -401,7 +401,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group, &info->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                         }
-                        SAT_DEBUG("=====================================");
+
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
                         user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                         user_data_get()->alarm.security_auto_record = info->alarm.security_auto_record;

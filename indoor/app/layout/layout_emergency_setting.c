@@ -35,7 +35,7 @@ static void emergency_setting_confirm_obj_click(lv_event_t *ev)
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
 
-                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
         }
         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }

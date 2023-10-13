@@ -871,7 +871,7 @@ static void sat_layout_quit(intercom_talk)
         int index = extern_index_get_by_user(intercom_call_user);
         sprintf(extension, "%d", index);
         CALL_LOG_TYPE type;
-        if (intercom_call_state == 0X01 || intercom_call_state == 0x03)
+        if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
         {
                 type = CALL_OUT;
                 time_t time_val;
@@ -893,7 +893,7 @@ static void sat_layout_quit(intercom_talk)
                 call_list_add(type, extension, intercom_talk_timeout, tm_val);
                 layout_last_call_new_flag_set(true);
         }
-        else if (intercom_call_state == 0X04)
+        else if (intercom_call_state == 0X03)
         {
                 type = IN_AND_ANSWER;
                 time_t time_val;
