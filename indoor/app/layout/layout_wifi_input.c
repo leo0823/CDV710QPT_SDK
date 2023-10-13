@@ -300,7 +300,7 @@ static void sat_layout_enter(wifi_input)
                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                 lv_textarea_set_password_bullet(textarea, "*");
                 wifi_input_textarea_placeholder_setting();
-                lv_textarea_set_password_mode(textarea, true);
+                lv_textarea_set_password_mode(textarea, wifi_input_user_temp[0] == 0 ? false : true);
         }
         /***********************************************
         ** 作者: leo.liu

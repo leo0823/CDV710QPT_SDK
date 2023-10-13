@@ -485,6 +485,7 @@ static void layout_close_buzzer_alarm_trigger_default(void)
 
 static void sat_layout_enter(close)
 {
+    SAT_DEBUG("QUIT the close layut");
     standby_timer_close();
     backlight_enable(true);
     backlight_enable(false);

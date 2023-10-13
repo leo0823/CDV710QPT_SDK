@@ -654,6 +654,68 @@ static void monitor_obj_handup_display(void)
         }
 }
 
+typedef struct layout_monitor
+{
+        int ch;
+        int mode;
+        bool en;
+} door_lock_info;
+static pthread_mutex_t door_lock_mutex = PTHREAD_MUTEX_INITIALIZER;
+/***********************************************
+ ** 作者: leo.liu
+ ** 日期: 2023-2-2 13:42:25
+ ** 说明: 开锁指令
+ ***********************************************/
+static void *monitor_unlock_ctrl_task(void *arg)
+{
+        door_lock_info *info = (door_lock_info *)arg;
+        if ((info->ch == MON_CH_DOOR1) && (info->mode == 2))
+        {
+                SAT_DEBUG("=====ctrl ddl");
+                door1_lock1_pin_ctrl(info->en);
+        }
+        else if ((info->ch == MON_CH_DOOR2) && (info->mode == 2))
+        {
+                // const char *user = monitor_channel_get_url(ch, false);
+                char *cmd[3] = {
+                    "echo 32 > /sys/class/gpio/export",
+                    "echo out > /sys/class/gpio/gpio32/direction",
+                    "echo 1 > /sys/class/gpio/gpio32/value"};
+
+                if (info->en == false)
+                {
+                        cmd[2] = "echo 0 > /sys/class/gpio/gpio32/value";
+                }
+
+                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                {
+
+                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, network_data_get()->door_device[info->ch].port, network_data_get()->door_device[info->ch].username, network_data_get()->door_device[info->ch].password, cmd[i], 1000);
+                }
+        }
+        else
+        {
+                // const char *user = monitor_channel_get_url(ch, false);
+                char *cmd[3] = {
+                    "echo 32 > /sys/class/gpio/export",
+                    "echo out > /sys/class/gpio/gpio33/direction",
+                    "echo 1 > /sys/class/gpio/gpio33/value"};
+
+                if (info->en == false)
+                {
+                        cmd[2] = "echo 0 > /sys/class/gpio/gpio33/value";
+                }
+
+                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
+                {
+                        printf("cmd[%d] is %s\n", i, cmd[i]);
+                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[info->ch].ipaddr, 80, "admiin", network_data_get()->door_device[info->ch].password, cmd[i], 1000);
+                }
+        }
+        pthread_mutex_unlock(&door_lock_mutex);
+        return NULL;
+}
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -703,6 +765,14 @@ static void monitor_unlock_ctrl(int ch, int mode, bool en)
                         sat_ipcamera_report_shellcmd(network_data_get()->door_device[ch].ipaddr, 80, "admiin", network_data_get()->door_device[ch].password, cmd[i], 1000);
                 }
         }
+        door_lock_info info;
+        info.ch = ch;
+        info.en = en;
+        info.mode = mode;
+        pthread_mutex_lock(&door_lock_mutex);
+        pthread_t task_id;
+        pthread_create(&task_id, sat_pthread_attr_get(), monitor_unlock_ctrl_task, (void *)&info);
+        pthread_detach(task_id);
 }
 
 void monitor_lock_close(void)

@@ -692,9 +692,7 @@ static void sat_layout_enter(alarm)
 {
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        user_data_get()->alarm.is_alarm_return = false;
-        user_data_get()->alarm.alarm_ring_play = true;
-        user_data_save();
+
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);

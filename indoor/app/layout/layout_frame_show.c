@@ -932,13 +932,13 @@ static void frame_show_restart(void)
 		if (pre_frame_diplay_light_value != 0)
 		{
 			pre_frame_diplay_light_value = 0;
-			backlight_brightness_set(1);
+			backlight_brightness_set(4);
 		}
 	}
 	else
 	{
 		pre_frame_diplay_light_value = user_data_get()->display.lcd_brigtness;
-		backlight_brightness_set(user_data_get()->display.lcd_brigtness);
+		backlight_brightness_set(user_data_get()->display.lcd_brigtness < 4 ? 4 : user_data_get()->display.lcd_brigtness);
 	}
 	lv_obj_t *frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
 	lv_obj_t *frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
@@ -1079,7 +1079,7 @@ static void sat_layout_quit(frame_show)
 		frame_buffer_cur_b = NULL;
 	}
 	monitor_close(0x02);
-	backlight_brightness_set(user_data_get()->display.lcd_brigtness);
+	backlight_brightness_set(user_data_get()->display.lcd_brigtness < 4 ? 4 : user_data_get()->display.lcd_brigtness);
 	lv_img_cache_invalidate_all();
 }
 

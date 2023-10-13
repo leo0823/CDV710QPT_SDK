@@ -425,7 +425,7 @@ static void layout_intercom_talk_vol_bar_display(void)
         lv_obj_t *silder_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_vol_cont), intercom_talk_vol_obj_id_slider_cont);
         lv_obj_t *slider_obj = lv_obj_get_child_form_id(silder_cont, 1);
         lv_obj_t *value_obj = lv_obj_get_child_form_id(silder_cont, 0);
-        int cur_volume = intercom_call_state == 0x03 ? user_data_get()->audio.extension_voice : user_data_get()->audio.extension_volume;
+        int cur_volume = (intercom_call_state == 0x03 || intercom_call_state == 0x04) ? user_data_get()->audio.extension_voice : user_data_get()->audio.extension_volume;
         char value_str[32] = {0};
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);

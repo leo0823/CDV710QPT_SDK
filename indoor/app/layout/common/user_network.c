@@ -55,7 +55,7 @@ static int user_linphone_multicast_fd = -1;
 static bool discover_devices_data_parsing(const char *buf, const char *type, char *data, int size)
 {
         bool reslut = false;
-        char *pxml = strstr(buf, "<?xml"); // version=\"1.0\"
+        char *pxml = strstr(buf, "<"); //?xml version=\"1.0\"
         if (pxml == NULL)
         {
                 printf("%s\n", buf);
@@ -565,7 +565,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         if (count < UDHCPC_TIMEOUT_MAX)
         {
-                // SAT_DEBUG("==============");
+                SAT_DEBUG("==============");
                 if (strcmp(ip, "10.0.0.2"))
                 {
                         SAT_DEBUG("udhcp ip get successs !(%s)", ip);
@@ -824,13 +824,12 @@ static bool kill_related_port_process(char *port)
 
 static bool automatic_ip_setting(void)
 {
-        SAT_DEBUG("network_data_get()->network.ipaddr is %s", network_data_get()->network.ipaddr);
         /*杀死相关的端口进程*/
         kill_related_port_process("5060");
         /* 在开机脚本已经做了udhcpc后台运行，此处检测3sec，如果没有获取到IP，将执行下一步动作*/
         if ((network_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
-                sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script &");
+                sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 if (network_data_get()->network.ipaddr[0] != '\0')
                 {
                         SAT_DEBUG("==============");

@@ -260,17 +260,16 @@ static void setting_server_operation_network_init(void)
                         {
                                 char ip[32] = {0};
                                 char mask[32] = {0};
-                                if (sat_ip_mac_addres_get("eth0", ip, NULL, mask) == false)
+                                if (network_data_get()->network.ipaddr[0] != 0)
                                 {
-
                                         lv_textarea_set_text(textarea, network_data_get()->network.ipaddr);
                                 }
                                 else
                                 {
+                                        sat_ip_mac_addres_get("eth0", ip, NULL, mask);
                                         lv_textarea_set_text(textarea, ip);
                                 }
                         }
-
                         else if (i == 3)
                         {
                                 lv_textarea_set_text(textarea, network_data_get()->network.gateway);
@@ -279,13 +278,13 @@ static void setting_server_operation_network_init(void)
                         {
                                 char ip[32] = {0};
                                 char mask[32] = {0};
-                                if (sat_ip_mac_addres_get("eth0", ip, NULL, mask) == false)
+                                if (network_data_get()->network.ipaddr[0] != 0)
                                 {
-
                                         lv_textarea_set_text(textarea, network_data_get()->network.mask);
                                 }
                                 else
                                 {
+                                        sat_ip_mac_addres_get("eth0", ip, NULL, mask);
                                         lv_textarea_set_text(textarea, mask);
                                 }
                         }

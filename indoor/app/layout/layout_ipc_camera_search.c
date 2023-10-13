@@ -182,9 +182,15 @@ static void sat_layout_enter(ipc_camera_search)
                                       lang_str_get(layout_ipc_cmeara_is_doorcamera_get() == true ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_SEARCHED_DOOR_CAMERA : DOOR_CAMERA_SEARCH_XLS_LANG_ID_SEARCHED_CCTV),
                                       0X00A8ff, 0X00A8ff, LV_TEXT_ALIGN_LEFT, lv_font_small);
         }
-        p_ipc_camera_search_timer = lv_sat_timer_create(ipc_camera_emty_timer, 3000, NULL);
-        lv_timer_reset(p_ipc_camera_search_timer);
-
+        if (sat_pre_layout_get() == sat_playout_get(ipc_camera_register))
+        {
+                p_ipc_camera_search_timer = lv_sat_timer_create(ipc_camera_emty_timer, 3000, NULL);
+                lv_timer_reset(p_ipc_camera_search_timer);
+        }
+        else
+        {
+                cctv_search_list_display();
+        }
         ipcamera_state_callback_register(ipc_camera_state_func);
 }
 static void sat_layout_quit(ipc_camera_search)

@@ -20,6 +20,8 @@ enum
         setting_sensor_usage_obj_id_sensor_security_mode_cont,
         setting_sensor_usage_obj_id_sensor_security_mode_title,
 
+        setting_sensor_usage_obj_id_msgbox_bg,
+
 };
 static void setting_sensor_usage_cancel_click(lv_event_t *e)
 {
@@ -35,6 +37,34 @@ static void setting_sensor_usage_security_mode(lv_event_t *e)
         sensor_usage_setting = false;
         sat_layout_goto(setting_sensor_switch, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
+
+// 获取传感器势能数量
+static int sensor_connect_num_get(void)
+{
+        int num = 0;
+        for (int i = 0; i < 7; i++)
+        {
+                if (user_data_get()->alarm.alarm_enable[i] == false)
+                {
+                        continue;
+                }
+                num++;
+        }
+        return num;
+}
+
+/************************************************************
+** 函数说明: 关闭消息框
+** 作者: xiaoxiao
+** 日期：2023-09-25 16:22:12
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void setting_sensor_usage_msgbox_cancel_click(lv_event_t *ev)
+{
+        setting_msgdialog_msg_del(setting_sensor_usage_obj_id_msgbox_bg);
+}
+
 static void sat_layout_enter(setting_sensor_usage)
 {
         /***********************************************
@@ -98,6 +128,20 @@ static void sat_layout_enter(setting_sensor_usage)
                                                                         NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                         0, 0, 0, 0, -1,
                                                                         NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                }
+        }
+
+        {
+                if (sensor_connect_num_get() == 0)
+                {
+                        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_sensor_usage_obj_id_msgbox_bg);
+                        if (masgbox != NULL)
+                        {
+                                setting_msgdialog_msg_del(setting_sensor_usage_obj_id_msgbox_bg);
+                        }
+                        masgbox = setting_msgdialog_msg_bg_create(setting_sensor_usage_obj_id_msgbox_bg, 0, 282, 159, 460, 283);
+                        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(XLS_LANG_ID_NO_SENSOR_CONNECT), 0, 70, 460, 120);
+                        setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_sensor_usage_msgbox_cancel_click);
                 }
         }
 }

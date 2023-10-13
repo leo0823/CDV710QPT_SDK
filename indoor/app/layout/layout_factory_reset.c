@@ -118,6 +118,7 @@ static void layout_factory_reset_confirm(lv_event_t *ev)
         lv_timer_ready(lv_sat_timer_create(layout_factory_reset_timer, 100, masgbox));
         pthread_t task_id;
         pthread_create(&task_id, sat_pthread_attr_get(), layout_factory_reset_process, &reseted);
+        pthread_detach(task_id);
 }
 
 static void sat_layout_enter(factory_reset)
