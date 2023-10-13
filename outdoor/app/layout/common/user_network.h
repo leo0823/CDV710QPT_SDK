@@ -25,4 +25,5 @@ char *user_linphone_local_multicast_get(void);
 **@功能:向doorcamera 查询是否在线
 *****************************************************************/
 bool sat_ipcamera_device_name_get(const char *sip_uri, int timeout);
+
 #endif

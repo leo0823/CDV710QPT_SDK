@@ -69,6 +69,7 @@ static void buzzer_call_status_background_display(void)
 {
         lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("img_calling_backgroud.jpg", 1024, 600));
 }
+
 static void buzzer_call_status_label_display(void)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_call_obj_status_label);
@@ -84,7 +85,7 @@ static void buzzer_call_handup_obj_click(lv_event_t *e)
 {
         user_data_get()->alarm.buzzer_alarm = false;
         user_data_save();
-        if (user_data_get()->system_mode && 0x0f != 0x01)
+        if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
         }

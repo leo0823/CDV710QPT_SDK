@@ -15,10 +15,12 @@ enum
         intercom_talk_obj_id_vol_cont,
         intercom_talk_vol_obj_id_slider_cont,
         intercom_talk_obj_id_other_call_bg,
+
+        intercom_talk_obj_id_buzzer_call_label
 };
 
 static int intercom_talk_timeout = 0;
-/*0:空闲，1：call outgoing 2:incomming 3:talk*/
+/*0:空闲，1：call outgoing 2:incomming 3:out_talk 4:in_talk*/
 static int intercom_call_state = 0;
 static char *intercom_call_user = NULL;
 
@@ -244,7 +246,7 @@ static void intercom_talk_call_info_display(void)
         struct tm tm;
         user_time_read(&tm);
         int index = extern_index_get_by_user(intercom_call_user);
-        lv_label_set_text_fmt(obj, "Call: Extension %d    %04d-%02d:%02d %02d:%02d", index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        lv_label_set_text_fmt(obj, "Call: %s %d    %04d-%02d:%02d %02d:%02d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
 }
 
 static void intercom_talk_call_time_display(void)
@@ -272,7 +274,7 @@ static void intercom_talk_call_time_timer(lv_timer_t *ptime)
 
 static void intercom_talk_status_background_display(void)
 {
-        if (intercom_call_state != 3)
+        if ((intercom_call_state != 3) || (intercom_call_state != 4))
         {
                 lv_disp_set_bg_image(lv_disp_get_default(), resource_wallpaper_src_get("img_calling_backgroud.jpg", 1024, 600));
         }
@@ -303,7 +305,7 @@ static void intercom_talk_call_status_icon_display(void)
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_status_icon);");
                 return;
         }
-        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(intercom_call_state == 3 ? "img_calling_voice.png" : "img_calling.png"), LV_PART_MAIN);
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get((intercom_call_state == 3 || intercom_call_state == 4) ? "img_calling_voice.png" : "img_calling.png"), LV_PART_MAIN);
 }
 
 static void intercom_talk_handup_obj_click(lv_event_t *e)
@@ -377,7 +379,6 @@ static bool intercom_doorcamera_end_process(char *arg)
 // 呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
-        SAT_DEBUG("=============+++++++++++++++===================");
         /*sip:5xxx代表室内设备*/
         if (strstr(arg, "sip:50") != NULL)
         {
@@ -397,7 +398,6 @@ static bool intercom_talk_call_end_callback(char *arg)
 // 呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
-        SAT_DEBUG("=============+++++++++++++++===================");
         sat_linphone_audio_play_stop();
         layout_intercom_goto_layout_process();
         return true;
@@ -417,7 +417,19 @@ static void intercom_talk_call_volume_obj_display(void)
                 SAT_DEBUG("   lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_volume);");
                 return;
         }
-        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(intercom_call_state == 3 ? "btn_call_sound_voice.png" : "btn_call_sound.png"), LV_PART_MAIN);
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get((intercom_call_state == 3 || intercom_call_state == 4) ? "btn_call_sound_voice.png" : "btn_call_sound.png"), LV_PART_MAIN);
+}
+
+static void layout_intercom_talk_vol_bar_display(void)
+{
+        lv_obj_t *silder_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_vol_cont), intercom_talk_vol_obj_id_slider_cont);
+        lv_obj_t *slider_obj = lv_obj_get_child_form_id(silder_cont, 1);
+        lv_obj_t *value_obj = lv_obj_get_child_form_id(silder_cont, 0);
+        int cur_volume = (intercom_call_state == 0x03 || intercom_call_state == 0x04) ? user_data_get()->audio.extension_voice : user_data_get()->audio.extension_volume;
+        char value_str[32] = {0};
+        sprintf(value_str, "%02d", cur_volume);
+        lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
+        lv_label_set_text(value_obj, value_str);
 }
 
 static void intercom_talk_answer_obj_click(lv_event_t *e)
@@ -437,17 +449,17 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
         intercom_talk_answer_obj_display();
 
         sat_linphone_answer(-1, false);
+        layout_intercom_talk_vol_bar_display();
 }
 
 static bool intercom_talk_call_answer_callback(char *args)
 {
-        SAT_DEBUG("=============+++++++++++++++===================");
-        if (intercom_call_state == 3)
+        if (intercom_call_state == 4)
         {
                 return false;
         }
         sat_linphone_audio_play_stop();
-        intercom_call_state = 3;
+        intercom_call_state = 4;
 
         intercom_talk_timeout = 60; /*user_data_get()->etc.call_time == 1 ? 1 * 60 : user_data_get()->etc.call_time == 2 ? 3 * 60
                                                                                                             : 5 * 60;*/
@@ -458,8 +470,8 @@ static bool intercom_talk_call_answer_callback(char *args)
         intercom_talk_call_status_icon_display();
         intercom_talk_status_background_display();
         intercom_talk_answer_obj_display();
-
         sat_linphone_answer(-1, false);
+        layout_intercom_talk_vol_bar_display();
         return true;
 }
 
@@ -469,7 +481,7 @@ static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
         lv_obj_t *parent = lv_event_get_current_target(ev);
 
         int value = lv_slider_get_value(parent);
-        if (intercom_call_state == 3)
+        if ((intercom_call_state == 3 || intercom_call_state == 4))
         {
                 user_data_get()->audio.entrancr_voice = value;
                 sat_linphone_audio_talk_volume_set(value);
@@ -503,6 +515,7 @@ static void layout_intercom_talk_vol_bar_create(lv_obj_t *parent)
 
         resouce_file_src_free(left_src);
         resouce_file_src_free(right_src);
+        layout_intercom_talk_vol_bar_display();
 }
 
 static void layout_intercom_talk_call_screen_click(lv_event_t *e)
@@ -632,6 +645,43 @@ bool layout_intercom_talk_call_incoming_func(char *arg)
                 return layout_intercom_inside_call(arg);
         }
         return true;
+}
+
+static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+{
+        user_data_get()->alarm.buzzer_alarm = false;
+        user_data_save();
+        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        obj->user_data = NULL;
+        lv_timer_del(ptimer);
+}
+
+/************************************************************
+** 函数说明: 蜂鸣器呼叫回调
+** 作者: xiaoxiao
+** 日期：2023-10-07 09:23:50
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void intercom_talk_buzzer_alarm_call_callback(void)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_buzzer_call_label);
+        if (obj == NULL)
+        {
+                return;
+        }
+        if ((strncmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
+        {
+                return;
+        }
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+        if (obj->user_data)
+        {
+                lv_timer_del((lv_timer_t *)obj->user_data);
+        }
+        obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, obj);
 }
 
 static void sat_layout_enter(intercom_talk)
@@ -788,10 +838,25 @@ static void sat_layout_enter(intercom_talk)
                 sat_linphone_call(intercom_call_user, false, false, NULL);
         }
         user_linphone_call_incoming_received_register(layout_intercom_talk_call_incoming_func);
+        if (user_data_get()->alarm.buzzer_alarm)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_buzzer_call_label);
+                if (obj != NULL)
+                {
+                        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+                }
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, user_timestamp_get() - buzzer_call_timestamp_get(), obj);
+        }
+        buzzer_call_callback_register(intercom_talk_buzzer_alarm_call_callback);
 }
 
 static void sat_layout_quit(intercom_talk)
 {
+        buzzer_call_callback_register(buzzer_alarm_trigger_default);
         lv_obj_remove_event_cb(sat_cur_layout_screen_get(), layout_intercom_talk_call_screen_click);
         user_linphone_call_error_register(NULL);
         sat_linphone_audio_play_stop();
@@ -802,6 +867,43 @@ static void sat_layout_quit(intercom_talk)
         user_linphone_call_end_register(NULL);
         user_linphone_call_streams_connected_receive_register(NULL);
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
+        char extension[32] = {0};
+        int index = extern_index_get_by_user(intercom_call_user);
+        sprintf(extension, "%d", index);
+        CALL_LOG_TYPE type;
+        if (intercom_call_state == 0X01 || intercom_call_state == 0x03)
+        {
+                type = CALL_OUT;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= intercom_talk_timeout;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type, extension, intercom_talk_timeout, tm_val);
+                layout_last_call_new_flag_set(true);
+        }
+        else if (intercom_call_state == 0X02)
+        {
+                type = IN_AND_NO_ANSWER;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= intercom_talk_timeout;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type, extension, intercom_talk_timeout, tm_val);
+                layout_last_call_new_flag_set(true);
+        }
+        else if (intercom_call_state == 0X04)
+        {
+                type = IN_AND_ANSWER;
+                time_t time_val;
+                time_val = time(NULL);
+                time_val -= intercom_talk_timeout;
+                struct tm *tm_val = localtime(&time_val);
+                user_time_read(tm_val);
+                call_list_add(type, extension, intercom_talk_timeout, tm_val);
+                layout_last_call_new_flag_set(true);
+        }
 }
 
 sat_layout_create(intercom_talk);

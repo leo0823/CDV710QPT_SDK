@@ -124,6 +124,11 @@ static void layout_away_back_obj_click(lv_event_t *ev)
     sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
+static unsigned char away_sensor_enabel_flag = 0x00;
+unsigned char layout_away_sensor_enabel_flag_get(void)
+{
+    return away_sensor_enabel_flag;
+}
 /************************************************************
 ** 函数说明: 获取传感器使能选项
 ** 作者: xiaoxiao
@@ -131,7 +136,8 @@ static void layout_away_back_obj_click(lv_event_t *ev)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-unsigned char layout_away_sensor_enable_flag(void)
+unsigned char
+layout_away_sensor_enable_flag(void)
 {
     lv_obj_t *tableview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_tabview);
     lv_obj_t *cont = lv_tabview_get_content(tableview);
@@ -275,7 +281,7 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
             if (sensor_select_list & 0x01 << i)
             {
                 float value = user_sensor_value_get(i);
-                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_LOW))
+                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < ALM_LOW))
                 {
                     normal_select |= 0x01 << i;
                 }
@@ -289,16 +295,18 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
         {
             user_data_get()->alarm.away_setting_countdown = true;
             user_data_save();
-            if (user_data_get()->system_mode && 0x0f != 0x01)
+            if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
             }
+            away_sensor_enabel_flag = sensor_select_list;
+            user_data_get()->alarm.away_alarm_enable_list = sensor_select_list;
             sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
     else
     {
-        if (user_data_get()->alarm.away_alarm_enable == true)
+        if (user_data_get()->alarm.away_alarm_enable)
         {
             lv_obj_t *cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_passwd_cont);
             if (cont != NULL)
@@ -627,7 +635,7 @@ static void layout_away_setting_time_msgbox_option_create(lv_obj_t *msgbox, lv_e
                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                   48, 8, 365 - 94, 32, away_obj_id_t_msgbox_checkbox_label,
-                                  "1 minute", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                  lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_1_MINUTE), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                   0, 8, 32, 32, away_obj_id_t_msgbox_checkbox_img,
                                   user_data_get()->alarm.away_setting_time == 1 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -636,7 +644,7 @@ static void layout_away_setting_time_msgbox_option_create(lv_obj_t *msgbox, lv_e
                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                   48, 8, 365 - 94, 32, away_obj_id_t_msgbox_checkbox_label,
-                                  "2 minute", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                  lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_2_MINUTE), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                   0, 8, 32, 32, away_obj_id_t_msgbox_checkbox_img,
                                   user_data_get()->alarm.away_setting_time == 2 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -645,7 +653,7 @@ static void layout_away_setting_time_msgbox_option_create(lv_obj_t *msgbox, lv_e
                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                   48, 8, 365 - 94, 32, away_obj_id_t_msgbox_checkbox_label,
-                                  "3 minute", 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                  lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_3_MINUTE), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                   0, 8, 32, 32, away_obj_id_t_msgbox_checkbox_img,
                                   user_data_get()->alarm.away_setting_time == 3 ? (char *)resource_ui_src_get("btn_radio_s.png") : (char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 }
@@ -690,8 +698,6 @@ static lv_obj_t *layout_away_msgbox_create(const char *title, int x, int y, int 
                              resource_ui_src_get("btn_title_confirm.png"), LV_OPA_TRANSP, 0x0096FF, LV_ALIGN_CENTER);
 
     return msgbox;
-
-    return NULL;
 }
 
 static void layout_away_msgbox_del(void)
@@ -713,15 +719,15 @@ static void layout_away_setting_time_display(void)
     }
     if (user_data_get()->alarm.away_setting_time == 1)
     {
-        lv_label_set_text(time, "1 minute");
+        lv_label_set_text(time, lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_1_MINUTE));
     }
     if (user_data_get()->alarm.away_setting_time == 2)
     {
-        lv_label_set_text(time, "2 minute");
+        lv_label_set_text(time, lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_2_MINUTE));
     }
     if (user_data_get()->alarm.away_setting_time == 3)
     {
-        lv_label_set_text(time, "3 minute");
+        lv_label_set_text(time, lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_SETTING_TIME_3_MINUTE));
     }
 }
 
@@ -749,20 +755,12 @@ static void layout_away_release_time_msgbox_confirm_click(lv_event_t *e)
     for (int i = 0; i < 10; i++)
     {
         lv_obj_t *list = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, layout_away_obj_id_msgbox_cont), layout_away_obj_id_msgbox_list);
-        if (list == NULL)
-        {
-            printf("list is null\n");
-        }
         lv_obj_t *checkbox = lv_obj_get_child_form_id(lv_obj_get_child_form_id(list, i), away_obj_id_t_msgbox_checkbox_img);
-        if (checkbox == NULL)
-        {
-            printf("check box is null\n");
-        }
         if (!strncmp((const char *)checkbox->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
             user_data_get()->alarm.away_release_time = i * 10;
             user_data_save();
-            if (user_data_get()->system_mode && 0x0f != 0x01)
+            if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
             }
@@ -804,7 +802,7 @@ static void layout_away_setting_time_save(void)
         user_data_get()->alarm.away_setting_time = 3;
     }
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
@@ -878,7 +876,7 @@ static void layout_away_release_time_msgbox_checkbox_click(lv_event_t *ev)
 ************************************************************/
 static void layout_away_setting_time_click(lv_event_t *ev)
 {
-    lv_obj_t *masgbox = layout_away_msgbox_create("Outgoing time setting?", 282, 131, 460, 343,
+    lv_obj_t *masgbox = layout_away_msgbox_create(lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_OUT_GOING), 282, 131, 460, 343,
                                                   layout_away_setting_time_msgbox_cancel_click, layout_away_setting_time_msgbox_confirm_click);
     layout_away_setting_time_msgbox_option_create(masgbox, away_setting_time_msgbox_checkbox_click);
 }
@@ -915,7 +913,7 @@ static void layout_away_release_time_msgbox_option_create(lv_obj_t *msgbox, lv_e
 ************************************************************/
 static void layout_away_release_time_click(lv_event_t *ev)
 {
-    lv_obj_t *masgbox = layout_away_msgbox_create("release time Setting", 282, 131, 460, 343,
+    lv_obj_t *masgbox = layout_away_msgbox_create(lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_RELEASE), 282, 131, 460, 343,
                                                   layout_away_setting_time_msgbox_cancel_click, layout_away_release_time_msgbox_confirm_click);
     layout_away_release_time_msgbox_option_create(masgbox, layout_away_release_time_msgbox_checkbox_click);
 }
@@ -938,6 +936,10 @@ static void layout_away_bypass_call_display(void)
 {
     lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_bypass_call);
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_bypass_call_img_id);
+    lv_obj_t *text = lv_obj_get_child_form_id(parent, layout_away_obj_id_bypass_call_title);
+
+    lv_obj_clear_flag(parent, LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_style_text_color(text, lv_color_hex(0x242526), LV_PART_MAIN);
     if (user_data_get()->alarm.bypass_call == true)
     {
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
@@ -974,7 +976,7 @@ static void away_alarm_save_photo_enable_btn_click(lv_event_t *ev)
 
     user_data_get()->alarm.away_save_photo = user_data_get()->alarm.away_save_photo ? false : true;
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
@@ -986,19 +988,71 @@ static void away_bypass_call_enable_btn_click(lv_event_t *ev)
 
     user_data_get()->alarm.bypass_call = user_data_get()->alarm.bypass_call ? false : true;
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
     layout_away_bypass_call_display();
 }
 
+/************************************************************
+** 函数说明: 设置CCTV自动记录失败
+** 作者: xiaoxiao
+** 日期：2023-10-06 14:49:18
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_away_cctv_record_enable_failed_display(void)
+{
+    lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_msgbox_bg);
+    if (masgbox != NULL)
+    {
+        setting_msgdialog_msg_del(layout_away_obj_id_msgbox_bg);
+    }
+    masgbox = setting_msgdialog_msg_bg_create(layout_away_obj_id_msgbox_bg, layout_away_obj_id_msgbox_cont, 282, 143, 460, 283);
+
+    setting_msgdialog_msg_create(masgbox, layout_away_obj_id_msgbox_title, lang_str_get(LAYOUT_AWAY_XLS_LANG_ID_NO_AVAILABLE), 0, 70, 460, 120);
+    setting_msgdialog_msg_confirm_btn_create(masgbox, layout_away_obj_id_msgbox_confirm, layout_away_msgbox_cancel_click);
+}
+
 static void away_cctv_record_enable_btn_click(lv_event_t *ev)
 {
-
+    if (user_data_get()->alarm.away_alarm_enable)
+    {
+        return;
+    }
+    if (user_data_get()->alarm.away_auto_record == false)
+    {
+        bool cctv_linkage = false;
+        // 判断是否所选中的传感器有绑定CCTV
+        char sensor_select_list = layout_away_sensor_enable_flag();
+        for (int i = 0; i < 7; i++)
+        {
+            if (sensor_select_list & 0x01 << i)
+            {
+                for (int j = 0; j < 7; j++)
+                {
+                    if (user_data_get()->alarm.cctv_sensor[j] == i + 1)
+                    {
+                        cctv_linkage = true;
+                        break;
+                    }
+                }
+                if (cctv_linkage)
+                {
+                    break;
+                }
+            }
+        }
+        if (cctv_linkage == false)
+        {
+            layout_away_cctv_record_enable_failed_display();
+            return;
+        }
+    }
     user_data_get()->alarm.away_auto_record = user_data_get()->alarm.away_auto_record ? false : true;
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
@@ -1083,7 +1137,7 @@ static void layout_away_passwd_check_success_cb(void)
     user_data_get()->alarm.away_alarm_enable = false;
     user_data_get()->alarm.away_alarm_enable_list &= (~list);
     user_data_save();
-    if (user_data_get()->system_mode && 0x0f != 0x01)
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
     }
@@ -1110,7 +1164,7 @@ static void sat_layout_enter(away)
             }
         }
         user_data_save();
-        if (user_data_get()->system_mode && 0x0f != 0x01)
+        if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
             sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
         }

@@ -235,7 +235,7 @@ static void format_sd_process_timer(lv_timer_t *ptime)
                 lv_timer_del(ptime);
                 lv_obj_t *msgbox = lv_obj_get_parent(bar);
                 lv_obj_clean(msgbox);
-                setting_msgdialog_msg_create(msgbox, setting_storage_space_obj_id_format_text, "Format is complete.", 0, 60, 460, 120);
+                setting_msgdialog_msg_create(msgbox, setting_storage_space_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_FORMAT_COMPLETE), 0, 60, 460, 120);
                 setting_msgdialog_msg_confirm_btn_create(msgbox, setting_storage_space_obj_id_format_completed, setting_storage_space_msgbox_external_fmatsd_finish_confirm);
         }
 }
@@ -248,24 +248,24 @@ static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
         }
         lv_obj_del(obj);
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_storage_space_obj_id_format_msgbox_cont, setting_storage_space_obj_id_format_msgbox, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, setting_storage_space_obj_id_format_text, "Formatting SD card... \nDuring formatting,\n never turn off power or romove SD card.\n", 0, 60, 460, 120);
+        setting_msgdialog_msg_create(masgbox, setting_storage_space_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_FORMATING_SD), 0, 60, 460, 120);
         lv_obj_t *bar = setting_storage_space_msgbox_format_process_display(masgbox);
         lv_sat_timer_create(format_sd_process_timer, 500, bar);
         media_format_sd();
 }
 static void setting_storage_space_internal_del_click(lv_event_t *e)
 {
-        setting_storage_space_msgbox_create(lang_str_get(SETTING_STORAGE_XLS_LANG_ID_INTERNAL_STORAGE), lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL),
+        setting_storage_space_msgbox_create(lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
                                             setting_storage_space_msgbox_cancel_click, setting_storage_space_msgbox_internale_confirm_click, NULL, false);
 }
 static void setting_storage_space_external_del_click(lv_event_t *e)
 {
-        setting_storage_space_msgbox_create(lang_str_get(SETTING_STORAGE_XLS_LANG_ID_EXTERNAL_STORAGE), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_DEL),
+        setting_storage_space_msgbox_create(lang_str_get(SD_XLS_LANG_ID_FORMAT), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_FORMAT),
                                             setting_storage_space_msgbox_cancel_click, setting_storage_space_msgbox_external_confirm_click, setting_storage_space_msgbox_external_checkbox_click, true);
 }
 static void setting_storage_space_fmatsd_click(lv_event_t *e)
 {
-        setting_storage_space_msgbox_create(lang_str_get(SETTING_STORAGE_XLS_LANG_ID_INTERNAL_STORAGE), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_FORMAT),
+        setting_storage_space_msgbox_create(lang_str_get(SD_XLS_LANG_ID_FORMAT), lang_str_get(SETTING_STORAGE_XLS_LANG_ID_WOULD_YOU_LIKE_FORMAT),
                                             setting_storage_space_msgbox_cancel_click, setting_storage_space_msgbox_external_fmatsd_click, NULL, false);
 }
 static lv_obj_t *setting_storage_space_arc_create(lv_obj_t *parent, int id, int x, int y, int w, int h,

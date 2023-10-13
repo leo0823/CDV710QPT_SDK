@@ -14,6 +14,8 @@ enum
 
         layout_alarm_obj_id_passwd_cont,
 
+        layout_alarm_obj_id_buzzer_call_label,
+
 };
 
 typedef enum
@@ -47,21 +49,34 @@ static void alarm_alarm_cont_display(lv_timer_t *ptimer)
         lv_disp_t *disp = lv_disp_get_default();
         if (strncmp((char *)disp->bg_img, (char *)resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600), strlen((char *)disp->bg_img)) == 0)
         {
-                lv_common_style_set_common(obj, layout_alarm_obj_id_bell, 392, 70, 240, 240, LV_ALIGN_DEFAULT, LV_PART_MAIN);
+                lv_obj_set_style_x(obj, 392, LV_PART_MAIN);
+                lv_obj_set_style_y(obj, 70, LV_PART_MAIN);
+                lv_obj_set_style_width(obj, 240, LV_PART_MAIN);
+                lv_obj_set_style_height(obj, 240, LV_PART_MAIN);
+                lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN);
                 lv_common_style_set_boader(obj, 180, LV_OPA_40, 30, LV_BORDER_SIDE_FULL, 0xff90bd, LV_PART_MAIN);
                 lv_disp_set_bg_image(disp, resource_wallpaper_src_get("bg_emergency_occur02.jpg", 1024, 600));
                 lv_obj_add_flag(bg2, LV_OBJ_FLAG_HIDDEN);
         }
         else if (strncmp((char *)disp->bg_img, (char *)resource_wallpaper_src_get("bg_emergency_occur02.jpg", 1024, 600), strlen((char *)disp->bg_img)) == 0)
         {
-                lv_common_style_set_common(obj, layout_alarm_obj_id_bell, 392, 70, 240, 240, LV_ALIGN_DEFAULT, LV_PART_MAIN);
+
+                lv_obj_set_style_x(obj, 392, LV_PART_MAIN);
+                lv_obj_set_style_y(obj, 70, LV_PART_MAIN);
+                lv_obj_set_style_width(obj, 240, LV_PART_MAIN);
+                lv_obj_set_style_height(obj, 240, LV_PART_MAIN);
+                lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN);
                 lv_common_style_set_boader(obj, 180, LV_OPA_40, 30, LV_BORDER_SIDE_FULL, 0xff90bd, LV_PART_MAIN);
                 lv_disp_set_bg_image(disp, resource_wallpaper_src_get("bg_emergency_occur03.jpg", 1024, 600));
                 lv_obj_clear_flag(bg2, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
-                lv_common_style_set_common(obj, layout_alarm_obj_id_bell, 422, 100, 180, 180, LV_ALIGN_DEFAULT, LV_PART_MAIN);
+                lv_obj_set_style_x(obj, 422, LV_PART_MAIN);
+                lv_obj_set_style_y(obj, 100, LV_PART_MAIN);
+                lv_obj_set_style_width(obj, 180, LV_PART_MAIN);
+                lv_obj_set_style_height(obj, 180, LV_PART_MAIN);
+                lv_obj_set_style_align(obj, LV_ALIGN_DEFAULT, LV_PART_MAIN);
                 lv_disp_set_bg_image(disp, resource_wallpaper_src_get("bg_emergency_occur01.jpg", 1024, 600));
                 lv_common_style_set_boader(obj, 0, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0xff90bd, LV_PART_MAIN);
                 lv_obj_add_flag(bg2, LV_OBJ_FLAG_HIDDEN);
@@ -121,7 +136,7 @@ static void alarm_ring_idel_check(lv_timer_t *ptimer)
                 alarm_idel_time = 0;
                 lv_timer_del(alarm_ring_idel_timer);
                 alarm_ring_idel_timer = NULL;
-                if (user_data_get()->system_mode && 0x0f != 0x01)
+                if ((user_data_get()->system_mode & 0x0f) != 0x01)
                 {
                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                 }
@@ -139,7 +154,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
         alarm_ring_idel_timer = lv_sat_timer_create(alarm_ring_idel_check, 1000, NULL);
         user_data_get()->alarm.alarm_ring_play = false;
         user_data_save();
-        if (user_data_get()->system_mode && 0x0f != 0x01)
+        if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
         }
@@ -189,7 +204,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                         user_time_read(&tm);
                         alarm_list_add(emergency_return, 7, &tm);
                 }
-                if (user_data_get()->system_mode && 0x0f != 0x01)
+                if ((user_data_get()->system_mode & 0x0f) != 0x01)
                 {
                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                 }
@@ -404,7 +419,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 // user_time_read(&tm);
                                                 // alarm_list_add(emergency_stop, 8, &tm);
                                         }
-                                        if (user_data_get()->system_mode && 0x0f != 0x01)
+                                        if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                         {
                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                         }
@@ -424,7 +439,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         user_data_get()->alarm.alarm_ring_play = true;
                                         user_data_save();
                                         ring_alarm_play();
-                                        if (user_data_get()->system_mode && 0x0f != 0x01)
+                                        if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                         {
                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
                                         }
@@ -528,7 +543,7 @@ static void layout_alarm_close_keyboard_obj_click(lv_event_t *ev)
         user_data_get()->alarm.alarm_ring_play = true;
         user_data_save();
         ring_alarm_play();
-        if (user_data_get()->system_mode && 0x0f != 0x01)
+        if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
         }
@@ -554,10 +569,21 @@ static void layout_alarm_alarm_time_label_display(void)
 {
         struct tm tm;
         int ch = layout_alarm_alarm_channel_get();
-        SAT_DEBUG("ch is %d\n", ch);
+
         alarm_occur_time_get(ch, &tm);
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_time);
-        lv_label_set_text_fmt(obj, "%04d.%02d.%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+        char time_str[64] = {0};
+        sprintf(time_str, "%04d.%02d.%02d  %02d:%02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour > 12 ? tm.tm_hour - 12 : tm.tm_hour, tm.tm_min, tm.tm_sec);
+        if (tm.tm_hour >= 12)
+        {
+                strcat(time_str, " PM");
+        }
+        else
+        {
+                strcat(time_str, " AM");
+        }
+
+        lv_label_set_text(obj, time_str);
 }
 
 static bool layout_alarm_streams_running_register_callback(char *arg)
@@ -617,6 +643,44 @@ bool layout_call_extern_func(char *arg)
         sat_linphone_handup(0XFFFF);
         return false;
 }
+
+static void layout_alarm_buzzer_call_delay_close_task(lv_timer_t *ptimer)
+{
+        user_data_get()->alarm.buzzer_alarm = false;
+        user_data_save();
+        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        obj->user_data = NULL;
+        lv_timer_del(ptimer);
+}
+
+/************************************************************
+** 函数说明: 蜂鸣器呼叫回调
+** 作者: xiaoxiao
+** 日期：2023-10-07 09:23:50
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_alarm_buzzer_alarm_call_callback(void)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_buzzer_call_label);
+        if (obj == NULL)
+        {
+                return;
+        }
+        if ((strncmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
+        {
+                return;
+        }
+        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+        if (obj->user_data)
+        {
+                lv_timer_del((lv_timer_t *)obj->user_data);
+        }
+        obj->user_data = lv_sat_timer_create(layout_alarm_buzzer_call_delay_close_task, 6000, obj);
+}
+
 /************************************************************
 ** 函数说明:
 ** 作者: xiaoxiao
@@ -628,9 +692,7 @@ static void sat_layout_enter(alarm)
 {
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        user_data_get()->alarm.is_alarm_return = false;
-        user_data_get()->alarm.alarm_ring_play = true;
-        user_data_save();
+
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
@@ -683,7 +745,7 @@ static void sat_layout_enter(alarm)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_EMERHENCY), 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                              lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_EMERHENCY), 0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large_s);
                 }
 
                 /************************************************************
@@ -698,7 +760,7 @@ static void sat_layout_enter(alarm)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              "", 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                              "", 0xb8b8b8, 0xb8b8b8, LV_TEXT_ALIGN_CENTER, lv_font_normal);
                         layout_alarm_alarm_mode_label_display();
                 }
 
@@ -714,7 +776,7 @@ static void sat_layout_enter(alarm)
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              "", 0XE40A00, 0XE40A00, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                              "", 0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                         layout_alarm_alarm_time_label_display();
                 }
 
@@ -736,6 +798,37 @@ static void sat_layout_enter(alarm)
                                                       NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
         }
+
+        /************************************************************
+        ** 函数说明: 蜂鸣器呼叫显示
+        ** 作者: xiaoxiao
+        ** 日期：2023-10-07 09:28:53
+        ** 参数说明:
+        ** 注意事项：
+        ************************************************************/
+        {
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), layout_alarm_obj_id_buzzer_call_label, 327, 66, 370, 60,
+                                                      NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
+                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        if (user_data_get()->alarm.buzzer_alarm)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_buzzer_call_label);
+                if (obj != NULL)
+                {
+                        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+                }
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                obj->user_data = lv_sat_timer_create(layout_alarm_buzzer_call_delay_close_task, user_timestamp_get() - buzzer_call_timestamp_get(), obj);
+        }
+
         {
                 /************************************************************
                 ** 函数说明: 警报铃声任务
@@ -828,10 +921,13 @@ static void sat_layout_enter(alarm)
                                                  resource_ui_src_get("btn_close.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 }
         }
+        buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
         lv_obj_pressed_func = NULL;
 }
 static void sat_layout_quit(alarm)
 {
+        buzzer_call_callback_register(buzzer_alarm_trigger_default);
+
         alarm_ring_idel_timer = NULL;
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
         alarm_power_out_ctrl(false);

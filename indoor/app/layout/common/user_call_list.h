@@ -5,7 +5,6 @@
 typedef enum
 {
     IN_AND_NO_ANSWER,
-    OUT_AND_NO_ANSWER,
     CALL_OUT,
     IN_AND_ANSWER
 

@@ -81,7 +81,7 @@ static const user_data_info user_data_default =
 
         },
         .etc = {
-            .language = 2,
+            .language = 0,
             .deive_id = 0,
             .open_the_door = 0,
             .door1_open_door_mode = 0,
@@ -329,7 +329,7 @@ static void user_data_check_valid(void)
         /*****	alarm *****/
         user_data_alarm_check_range_out(away_save_photo, 0, 1);
         user_data_alarm_check_range_out(auto_record, 0, 1);
-        user_data_alarm_check_range_out(away_alarm_enable, 0, 1);
+        user_data_alarm_check_range_out(away_alarm_enable, 0, 2);
         user_data_alarm_check_range_out(security_alarm_enable, 0, 1);
         user_data_alarm_check_range_out(emergency_mode, 0, 1);
 
@@ -424,11 +424,11 @@ static const user_network_info network_data_default = {
     .cctv_server = {"10.1.1.1"},
 
     .common_entrance_ip = {"10.0.0.2"},
-    .sip_user = {"010000101011"},
+    .sip_user = {"010123456781"},
     .local_server = {"10.0.0.2"},
     .sip_server = {"10.0.0.2"},
     .cctv_server = {"10.0.0.2"},
-    .guard_number = {"00000000000"},
+    .guard_number = {"700000051"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \

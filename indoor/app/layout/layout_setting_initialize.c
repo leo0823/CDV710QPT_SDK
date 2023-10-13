@@ -58,11 +58,13 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
         }
         else
         {
-                system("reboot");
                 lv_obj_t *btn = (lv_obj_t *)ptimer->user_data;
                 lv_obj_add_flag(btn, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_set_style_bg_color(btn, lv_color_hex(0x00a8ff), LV_PART_MAIN);
                 lv_timer_del(ptimer);
+                backlight_enable(false);
+                usleep(100 * 1000);
+                system("reboot");
                 return;
         }
         if (obj)
@@ -207,7 +209,7 @@ static void sat_layout_enter(setting_initialize)
         ** 说明: app_link
         ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_label, 273, 310, 234, 29,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_initialize_obj_id_app_link_label, 73, 310, 434, 29,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

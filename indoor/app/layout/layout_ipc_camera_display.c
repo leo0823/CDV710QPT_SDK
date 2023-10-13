@@ -113,7 +113,7 @@ static bool ipc_camera_search_display_register_func(void)
                                         sprintf(doorname, "Door%d(%s)", i + 1, network_data_get()->door_device[i].door_name);
                                         memset(network_data_get()->door_device[i].door_name, 0, sizeof(network_data_get()->door_device[i].door_name));
                                         strncpy(network_data_get()->door_device[i].door_name, doorname, strlen(doorname));
-                                        user_data_get()->alarm.cctv_sensor[i] = 0;
+
                                         network_data_save();
                                         // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
                                         //  struct ipcamera_info *device = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
@@ -137,7 +137,7 @@ static bool ipc_camera_search_display_register_func(void)
                                 sprintf(doorname, "CCTV%d(%s)", i + 1, network_data_get()->cctv_device[i].door_name);
                                 memset(network_data_get()->cctv_device[i].door_name, 0, sizeof(network_data_get()->cctv_device[i].door_name));
                                 strncpy(network_data_get()->cctv_device[i].door_name, doorname, strlen(doorname));
-
+                                user_data_get()->alarm.cctv_sensor[i] = 0;
                                 network_data_save();
 
                                 return true;
@@ -175,6 +175,17 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
                 const char *rtsp = sat_ipcamera_rtsp_addr_get(layout_ipc_camera_edit_index_get(), 0);
                 if ((rtsp != NULL) && (strstr(rtsp, "rtsp://")))
                 {
+                        if (sat_cur_layout_screen_get()->user_data)
+                        {
+                                lv_timer_del((lv_timer_t *)sat_cur_layout_screen_get()->user_data);
+                                sat_cur_layout_screen_get()->user_data = NULL;
+                        }
+                        lv_obj_t *check = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont), ipc_camera_search_display_obj_id_if_you);
+                        lv_obj_t *reg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_register_label);
+
+                        lv_label_set_text(check, lang_str_get(layout_ipc_cmeara_is_doorcamera_get() ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_SEE : DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_REGISTER));
+                        lv_obj_set_style_bg_color(reg, lv_color_hex(0X00A8FF), LV_PART_MAIN);
+                        lv_obj_add_flag(reg, LV_OBJ_FLAG_CLICKABLE);
                         sprintf(buffer, "%s %s %s", rtsp, sat_ipcamera_username_get(layout_ipc_camera_edit_index_get()), sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()));
                         // SAT_DEBUG("%s", buffer);
                         sat_linphone_ipcamera_start(buffer);
@@ -182,6 +193,23 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
                 }
         }
 }
+
+static void layout_ipc_display_register_display(lv_timer_t *ptimer)
+{
+
+        lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont);
+        lv_obj_t *check = lv_obj_get_child_form_id(parent, ipc_camera_search_display_obj_id_if_you);
+        // lv_obj_t *edit = lv_obj_get_child_form_id(parent, ipc_camera_search_display_obj_id_ip_edit);
+        lv_obj_t *reg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_register_label);
+
+        lv_label_set_text(check, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHECK_CONNECTION_INFO));
+        lv_obj_set_style_bg_color(reg, lv_color_hex(0x47494A), LV_PART_MAIN);
+        lv_obj_clear_flag(reg, LV_OBJ_FLAG_CLICKABLE);
+        // lv_obj_add_flag(edit, LV_OBJ_FLAG_HIDDEN);
+        lv_timer_del(ptimer);
+        sat_cur_layout_screen_get()->user_data = NULL;
+}
+
 static void sat_layout_enter(ipc_camera_display)
 {
         standby_timer_close();
@@ -232,11 +260,15 @@ static void sat_layout_enter(ipc_camera_display)
                          ***********************************************/
 
                         {
-                                lv_common_img_btn_create(parent, ipc_camera_search_display_obj_id_ip_edit, 952, 15, 48, 48,
-                                                         ipc_camera_search_display_ip_edit_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         resource_ui_src_get("btn_title_IPset.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                lv_obj_t *obj = lv_common_img_btn_create(parent, ipc_camera_search_display_obj_id_ip_edit, 952, 15, 48, 48,
+                                                                         ipc_camera_search_display_ip_edit_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                         resource_ui_src_get("btn_title_IPset.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                if (layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER)
+                                {
+                                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                                }
                         }
 
                         /***********************************************
@@ -266,7 +298,9 @@ static void sat_layout_enter(ipc_camera_display)
                                                       lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTRATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
+
         sat_ipcamera_rtsp_url_get(layout_ipc_camera_edit_index_get());
+        sat_cur_layout_screen_get()->user_data = lv_sat_timer_create(layout_ipc_display_register_display, 5000, NULL);
         ipcamera_state_callback_register(ipc_camera_display_ipcamera_state_func);
 }
 static void sat_layout_quit(ipc_camera_display)

@@ -93,8 +93,7 @@ typedef struct
         char comm_ent_password[4];
         /****** 时间设置模式 0:手动； 1：自动***/
         char time_automatically;
-        /****** 时间字符串格式 2023-09-20 13:30:25***/
-        struct tm cur_time;
+
         /****** 通话时间 1:1分钟 2:2分钟 3:3分钟***/
         int call_time;
 
@@ -108,9 +107,9 @@ typedef struct
 
         int security_alarm_enable_list; // 安全警报模式：被监测的传感器列表
 
-        bool security_alarm_enable; // 安全警报模式；0：关闭；1：开启
+        char security_alarm_enable; // 安全警报模式；0：关闭；1：开启
 
-        bool away_alarm_enable; // 离家警报模式；0：关闭；1：开启
+        char away_alarm_enable; // 离家警报模式；0：关闭；1：准备(已设置，还没生效)； 2：生效
 
         char emergency_mode; // 0:手动触发警报 1:安防系统自动触发警报
 

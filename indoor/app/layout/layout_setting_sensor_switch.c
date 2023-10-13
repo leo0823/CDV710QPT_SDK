@@ -40,103 +40,109 @@ static void setting_sensor_switch_list_click(lv_event_t *e)
         }
         if (strncmp((const char *)obj->bg_img_src, resource_ui_src_get("btn_switch_off.png"), strlen(resource_ui_src_get("btn_switch_off.png"))))
         {
-                if(layout_sensor_usage_setting_is_going_out())
+                if (layout_sensor_usage_setting_is_going_out())
                 {
-                        user_data_get()->alarm.away_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = false;
-                }else
+                        user_data_get()->alarm.away_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] = false;
+                }
+                else
                 {
-                        user_data_get()->alarm.security_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = false;
+                        user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] = false;
                 }
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
-                obj =  lv_obj_get_child_form_id(cont, 1);
-                if(obj != NULL)
+                obj = lv_obj_get_child_form_id(cont, 1);
+                if (obj != NULL)
                 {
-                        lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
-                }                                            
-
+                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
+                }
         }
         else
         {
-                if(layout_sensor_usage_setting_is_going_out())
+                if (layout_sensor_usage_setting_is_going_out())
                 {
-                        user_data_get()->alarm.away_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = true;
-                }else
+                        user_data_get()->alarm.away_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] = true;
+                }
+                else
                 {
-                        user_data_get()->alarm.security_sensor_enable[cont->id-setting_sensor_switch_obj_id_item1_cont] = true;
+                        user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] = true;
                 }
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-                obj =  lv_obj_get_child_form_id(cont, 1);
-                if(obj != NULL)
+                obj = lv_obj_get_child_form_id(cont, 1);
+                if (obj != NULL)
                 {
-                        lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
+                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
                 }
-                            
-                
         }
         user_data_save();
 }
 
 static void layout_sensor_usage_setting_display()
 {
-        lv_obj_t * list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(),setting_sensor_switch_obj_id_list);
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_sensor_switch_obj_id_list);
         lv_obj_t *sensor_item = NULL;
-        for(int i = 0; i < 7; i++)
+        for (int i = 0; i < 7; i++)
         {
-                sensor_item = lv_obj_get_child_form_id(list,setting_sensor_switch_obj_id_item1_cont+i);
-                if(sensor_item != NULL)
+                sensor_item = lv_obj_get_child_form_id(list, setting_sensor_switch_obj_id_item1_cont + i);
+                if (sensor_item != NULL)
                 {
-                        if(layout_sensor_usage_setting_is_going_out())
+                        if (layout_sensor_usage_setting_is_going_out())
                         {
-                                if(user_data_get()->alarm.away_sensor_enable[i])
+                                if (user_data_get()->alarm.away_sensor_enable[i])
                                 {
                                         lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
                                         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-                                }else
-                                {
-                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
-                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);      
                                 }
-                                
-                                lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 1);
-                                
-                                if(user_data_get()->alarm.away_sensor_enable[i] == false)
-                                {
-                                        lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
-                                }else
-                                {
-                                        lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
-                                }
-                        }else
-                        {
-                                if(user_data_get()->alarm.security_sensor_enable[i])
+                                else
                                 {
                                         lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
-                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-                                }else
-                                {
-                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
-                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);      
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
                                 }
 
-                        
                                 lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 1);
-                                
-                                if(user_data_get()->alarm.security_sensor_enable[i] == false)
+
+                                if (user_data_get()->alarm.away_sensor_enable[i] == false)
                                 {
-                                        lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
-                                }else
+                                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
+                                }
+                                else if (user_data_get()->alarm.alarm_enable[i] == 1)
                                 {
-                                        lv_label_set_text(obj,lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
+                                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NO));
+                                }
+                                else if (user_data_get()->alarm.alarm_enable[i] == 2)
+                                {
+                                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC));
                                 }
                         }
+                        else
+                        {
+                                if (user_data_get()->alarm.security_sensor_enable[i])
+                                {
+                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+                                }
+                                else
+                                {
+                                        lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 2);
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+                                }
 
-                
+                                lv_obj_t *obj = lv_obj_get_child_form_id(sensor_item, 1);
+
+                                if (user_data_get()->alarm.security_sensor_enable[i] == false)
+                                {
+                                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
+                                }
+                                else if (user_data_get()->alarm.alarm_enable[i] == 1)
+                                {
+                                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NO));
+                                }
+                                else if (user_data_get()->alarm.alarm_enable[i] == 2)
+                                {
+                                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC));
+                                }
+                        }
                 }
         }
 }
-
-        
-        
 
 static void sat_layout_enter(setting_sensor_switch)
 {
@@ -150,7 +156,7 @@ static void sat_layout_enter(setting_sensor_switch)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(layout_sensor_usage_setting_is_going_out() ? SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTINGS_WHEN_GOING_OUT : SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_SETTING_WHEN_SECURITY_MODE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
 
         /***********************************************
@@ -213,11 +219,11 @@ static void sat_layout_enter(setting_sensor_switch)
 
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_sensor_switch_obj_id_list);
                 lv_common_style_set_common(list, setting_sensor_switch_obj_id_list, 48, 88, 928, 512, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-                
+
                 int j = 0;
                 for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
                 {
-                        if(user_data_get()->alarm.alarm_enable[i] == 0 || user_data_get()->alarm.alarm_enable_always[0][i] || user_data_get()->alarm.alarm_enable_always[1][i])
+                        if (user_data_get()->alarm.alarm_enable[i] == 0 || user_data_get()->alarm.alarm_enable_always[0][i] || user_data_get()->alarm.alarm_enable_always[1][i])
                         {
                                 continue;
                         }
@@ -232,8 +238,8 @@ static void sat_layout_enter(setting_sensor_switch)
                                                                         0, 0, 0, 0, -1,
                                                                         NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                         840, 10, 80, 48, main_list_group[i].img_id,
-                                                                        (user_data_get()->alarm.away_alarm_enable_list & (0x01 << i))?resource_ui_src_get("btn_switch_on.png"):resource_ui_src_get("btn_switch_off.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                                                                        j ++;
+                                                                        (user_data_get()->alarm.away_alarm_enable_list & (0x01 << i)) ? resource_ui_src_get("btn_switch_on.png") : resource_ui_src_get("btn_switch_off.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                        j++;
                 }
                 layout_sensor_usage_setting_display();
         }
