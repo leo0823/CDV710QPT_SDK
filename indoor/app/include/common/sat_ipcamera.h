@@ -219,4 +219,10 @@ void sat_ipcamera_device_status_reset(void);
 **@功能: 请求时间信息
 *****************************************************************/
 bool sat_ipcamera_system_time_get(const char *ip, int port, const char *user, const char *password, char auther_flag, struct tm *tm, int timeout);
+/****************************************************************
+**@日期: 2022-09-21
+**@作者: leo.liu
+**@功能:向doorcamera 删除
+*****************************************************************/
+bool sat_ipcamera_device_delete(int index, int timeout);
 #endif
