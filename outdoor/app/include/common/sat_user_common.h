@@ -177,7 +177,6 @@ int sat_socket_udp_receive(int socket_fd, char *data, size_t data_len, struct so
 int convert_subnet_mask(char *mask);
 /***********************************************
 ** 作者: leo.liu
->>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
 ** 日期: 2023-1-5 15:21:6
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/
