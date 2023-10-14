@@ -68,7 +68,6 @@ enum
 	 2022-09-21 author:leo.liu ring play:arg1:0,start,1:finish
 	*****************************************************************/
 	MSG_EVENT_CMD_AUDIO_RING_PLAY,
-
 };
 
 typedef struct

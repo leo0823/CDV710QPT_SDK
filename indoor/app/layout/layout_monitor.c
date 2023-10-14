@@ -99,7 +99,11 @@ static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(void)
 {
-        monitor_close(0x03);
+        if (is_channel_ipc_camera(monitor_channel_get() == false))
+        {
+                monitor_close(0x03);
+        }
+
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
 
         if (node == NULL)
@@ -130,10 +134,9 @@ void layout_monitor_goto_layout_process(void)
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
-        if (is_channel_ipc_camera(monitor_channel_get()) == false)
-        {
-                sat_linphone_incomming_refresh(node->call_id);
-        }
+
+        sat_linphone_incomming_refresh(node->call_id);
+
         monitor_channel_set(node->channel);
         layout_monitor_report_vaild_channel();
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);

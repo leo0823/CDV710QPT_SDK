@@ -157,14 +157,12 @@ bool sat_socket_udp_open(int *socket_fd, int port, bool broadcast);
 **@功能:发送探测消息
 *****************************************************************/
 bool sat_socket_udp_send(int socket_fd, const char *data, size_t data_len, const char *ip, int port, int timeout_ms);
-
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-1-7 14:46:50
  ** 说明: 杀死指定的进程
  ***********************************************/
 bool sat_kill_task_process(const char *process_name);
-
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
@@ -183,6 +181,9 @@ int convert_subnet_mask(char *mask);
 ** 说明: 通过连接asterisk 获取注册设备信息
 ***********************************************/
 #define ASTERISK_REIGSTER_DEVICE_MAX (20)
+
+asterisk_register_info *
+asterisk_register_info_get(void);
 
 asterisk_register_info *asterisk_register_info_get(void);
 
