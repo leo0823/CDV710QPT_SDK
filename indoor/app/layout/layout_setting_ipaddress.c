@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_setting_ipaddress.h"
+#include "layout_ipc_camera.h"
 enum
 {
         setting_ipaddress_obj_id_titile_label,
@@ -211,6 +212,19 @@ static bool layout_setting_ipaddress_data_valid_check(void)
         }
         return true;
 }
+
+void modify_rtsp_url(const char *original_url, const char *new_ip_address, char *modified_url)
+{
+        // 查找原始URL中的IP地址部分
+        const char *ip_start = strstr(original_url, "://") + 3;
+        const char *ip_end = strchr(ip_start, ':');
+
+        // 构建新的URL
+        strncpy(modified_url, original_url, ip_start - original_url);     // 复制 "rtsp://"
+        strcpy(modified_url + (ip_start - original_url), new_ip_address); // 添加新IP地址
+        strcat(modified_url, ip_end);                                     // 添加端口号和路径
+}
+
 static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 {
         /*这个地方id寻找的控件与实际意义不符*/
@@ -267,8 +281,24 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 strncpy(layout_setting_ipaddress_info_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
         }
         {
-                sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
-                                             layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1000);
+                if (sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
+                                                 layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1000) == true)
+                {
+                        char newurl[128] = {0};
+                        if (layout_ipc_cmeara_is_doorcamera_get() && monitor_valid_channel_check(layout_ipc_camera_edit_index_get()))
+                        {
+
+                                modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, layout_setting_ipaddress_info_get()->pinfo.ipaddr, newurl);
+                                strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, newurl, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url));
+                                strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->pinfo.ipaddr, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr));
+                        }
+                        else if (monitor_valid_channel_check(layout_ipc_camera_edit_index_get() + 8))
+                        {
+                                modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, layout_setting_ipaddress_info_get()->pinfo.ipaddr, newurl);
+                                strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, newurl, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url));
+                                strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->pinfo.ipaddr, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr));
+                        }
+                }
 
                 sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }

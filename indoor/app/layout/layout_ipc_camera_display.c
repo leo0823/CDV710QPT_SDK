@@ -115,6 +115,7 @@ static bool ipc_camera_search_display_register_func(void)
                                         strncpy(network_data_get()->door_device[i].door_name, doorname, strlen(doorname));
 
                                         network_data_save();
+
                                         // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
                                         //  struct ipcamera_info *device = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
                                         // printf("ip:%s,port=%d,username:%s,password:%s,auther=%d\n", device->ipaddr, device->port, device->username, device->password, device->auther_flag);

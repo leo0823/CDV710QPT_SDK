@@ -17,15 +17,11 @@ enum
         ipc_camera_registered_obj_id_msgbox,
 };
 
-
 static void ipc_camera_registered_cancel_click(lv_event_t *ev)
 {
 
-    sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        
+        sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
-
-
 
 static lv_obj_t *ipc_camera_registered_list_create(void)
 {
@@ -66,9 +62,7 @@ static void sat_layout_enter(indoor_register)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_title_back.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-
         }
-
 
         {
                 //   int camera_count = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device_count : network_data_get()->door_device_count;
@@ -89,8 +83,6 @@ static void sat_layout_enter(indoor_register)
 
                         lv_obj_set_style_pad_left(obj, 16, LV_PART_MAIN);
 
-
-
                         lv_obj_t *list = ipc_camera_registered_list_create();
                         int item_y = 0;
 
@@ -102,33 +94,41 @@ static void sat_layout_enter(indoor_register)
                                 {
                                         continue;
                                 }
-                        
 
-                                char * ip = strstr(p_register_info[i].ip,":");
-                                if(ip != NULL)
+                                if (p_register_info[i].name[0] == '2')
+                                {
+                                        int index = p_register_info[i].name[2] - '0';
+                                        if (index < 1 || index > 9 || (network_data_get()->door_device[index - 1].sip_url[0] == 0))
+                                        {
+                                                continue;
+                                        }
+                                }
+
+                                char *ip = strstr(p_register_info[i].ip, ":");
+                                if (ip != NULL)
                                 {
                                         ip[0] = '\0';
                                 }
 
-                                        lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
-                                                                                                        NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                                                                        0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                                        10, 8, 838, 50, 0,
-                                                                                                        p_register_info[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                                        10, 45, 838, 50, 1,
-                                                                                                        p_register_info[i].ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                                                                                        0, 0, 0, 0, -1,
-                                                                                                        NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                                        0, 20, 48, 48, 2,
-                                                                                                        NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
-                                        lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
-                                        if (sub != NULL)
-                                        {
-                                                lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
-                                        }
+                                lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, item_y, 928, 88,
+                                                                                                   NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                                                   10, 8, 838, 50, 0,
+                                                                                                   p_register_info[i].name, 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                                   10, 45, 838, 50, 1,
+                                                                                                   p_register_info[i].ip, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                                                   0, 0, 0, 0, -1,
+                                                                                                   NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                                                   0, 20, 48, 48, 2,
+                                                                                                   NULL, LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
+                                if (sub != NULL)
+                                {
+                                        lv_label_set_long_mode(sub, LV_LABEL_LONG_DOT);
+                                }
 
-                                        item_y += 88;
+                                item_y += 88;
                         }
                 }
         }

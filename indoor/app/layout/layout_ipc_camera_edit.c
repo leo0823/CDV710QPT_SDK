@@ -121,12 +121,36 @@ static int ipc_camera_edit_sensor_linkage_select_index_get()
         }
         return -1;
 }
+/************************************************************
+** 函数说明: 传感器链接状态显示
+** 作者: xiaoxiao
+** 日期：2023-09-27 08:18:10
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_ipc_edit_sensor_linkage_display(void)
+{
+        lv_obj_t *link_cnt = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_edit_obj_id_list), 2);
+        if (link_cnt)
+        {
+                lv_obj_t *sub = lv_obj_get_child_form_id(link_cnt, 1);
+                if (user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get()] == 0)
+                {
+                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
+                }
+                else
+                {
+                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1 + user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get() - 1]));
+                }
+        }
+}
 
 static void ipc_camera_edit_sensor_linkage_click_confirm(lv_event_t *e)
 {
         user_data_get()->alarm.cctv_sensor[ipc_camera_edit_index] = ipc_camera_edit_sensor_linkage_select_index_get();
         user_data_save();
         setting_msgdialog_msg_del(ipc_camera_edit_obj_id_sensor_linkage_msg_bg);
+        layout_ipc_edit_sensor_linkage_display();
 }
 
 static void ipc_camera_edit_sensor_linkage_click_cancel(lv_event_t *e)
@@ -186,29 +210,6 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
         }
 }
 
-/************************************************************
-** 函数说明: 传感器链接状态显示
-** 作者: xiaoxiao
-** 日期：2023-09-27 08:18:10
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void layout_ipc_edit_sensor_linkage_display(void)
-{
-        lv_obj_t *link_cnt = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_edit_obj_id_list), 2);
-        if (link_cnt)
-        {
-                lv_obj_t *sub = lv_obj_get_child_form_id(link_cnt, 1);
-                if (user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get()] == 0)
-                {
-                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
-                }
-                else
-                {
-                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1 + user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get()]));
-                }
-        }
-}
 static void sat_layout_enter(ipc_camera_edit)
 {
         /***********************************************

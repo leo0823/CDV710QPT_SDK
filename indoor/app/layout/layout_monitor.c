@@ -99,10 +99,8 @@ static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(void)
 {
-        if (is_channel_ipc_camera(monitor_channel_get() == false))
-        {
-                monitor_close(0x03);
-        }
+
+        monitor_close(is_channel_ipc_camera(monitor_channel_get() ? 0x02 : 0x01));
 
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
 
