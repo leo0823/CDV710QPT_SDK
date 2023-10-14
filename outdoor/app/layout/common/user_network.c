@@ -19,11 +19,6 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <errno.h>
-<<<<<<< HEAD
-#include "common/sat_user_common.h"
-=======
-
->>>>>>> 0ec3f53aadd78618447311d2685909ef41b560e5
 #include "common/sat_user_time.h"
 #include "common/user_data.h"
 #include "common/user_key.h"
