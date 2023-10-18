@@ -87,7 +87,7 @@ static void *user_key_task(void *arg)
 				user_key_state = KEY_STATE_SLOT_DOWN;
 				SAT_DEBUG("KEY SLOT DOWN");
 			}
-			else if ((user_key_state == KEY_STATE_SLOT_DOWN) && ((user_timestamp_get() - key_down_timestamp) > 3000))
+			else if ((user_key_state == KEY_STATE_SLOT_DOWN) && ((user_timestamp_get() - key_down_timestamp) > 1500))
 			{
 				user_key_state = KEY_STATE_LONG_DOWN;
 				SAT_DEBUG("KEY LONG DOWN");
