@@ -65,7 +65,7 @@ bool sat_sip_local_user_get(char *user);
 ** 日期: 2022-11-26 9:49:0
 ** 说明: 获取网卡的Ip
 ***********************************************/
-bool sat_ip_mac_addres_get(const char *eth, char *ip, char *mac);
+bool sat_ip_mac_addres_get(const char *eth, char *ip, char *mac, char *mask);
 
 /***********************************************
 ** 作者: leo.liu
