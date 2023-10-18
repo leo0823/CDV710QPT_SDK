@@ -849,7 +849,8 @@ static void sat_layout_enter(intercom_talk)
                 {
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
-                obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, user_timestamp_get() - buzzer_call_timestamp_get(), obj);
+                int time = user_timestamp_get() - buzzer_call_timestamp_get();
+                obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, time > 6000 ? 6000 : time, obj);
         }
         buzzer_call_callback_register(intercom_talk_buzzer_alarm_call_callback);
 }

@@ -185,7 +185,7 @@ static void linux_kerner_init(void)
         ***********************************************/
         /*读取mac地址*/
         char mac[128] = {0};
-        if (sat_ip_mac_addres_get("eth0", NULL, mac) == true)
+        if (sat_ip_mac_addres_get("eth0", NULL, mac, NULL) == true)
         { // C0:25:A5:A1:27:F5
                 mac[2] = mac[5] = mac[8] = mac[11] = mac[14] = 'A';
                 setenv("SIP", mac, 1);

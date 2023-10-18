@@ -46,22 +46,22 @@ static const user_data_info user_data_default =
             .extenion_tone = 3,
 
             .buzzer_tone = 1,
-            .buzzer_volume = 1,
+            .buzzer_volume = 50,
             .common_entrance_tone = 1,
-            .common_entrance_volume = 1,
-            .common_entrance_voice = 1,
+            .common_entrance_volume = 50,
+            .common_entrance_voice = 50,
 
             .securirty_office_tone = 1,
 
-            .entracne_volume = 1,
-            .entrancr_voice = 1,
+            .entracne_volume = 50,
+            .entrancr_voice = 50,
 
-            .guard_station_volume = 1,
-            .guard_station_voice = 1,
-            .extension_volume = 1,
-            .extension_voice = 4,
-            .touch_notification_volume = 1,
-            .touch_notification_voice = 1,
+            .guard_station_volume = 50,
+            .guard_station_voice = 50,
+            .extension_volume = 50,
+            .extension_voice = 50,
+            .touch_notification_volume = 50,
+            .touch_notification_voice = 50,
             .ring_repeat = 0,
         },
 

@@ -16,8 +16,8 @@ typedef enum
 	frame_show_scr_act_obj_id_playback_chann_label
 
 } frame_show_id;
-#define THUMB_WIDTH (1024)
-#define THUMB_HIGHT (600)
+#define THUMB_WIDTH (1024) // 1024
+#define THUMB_HIGHT (608)	 // 600
 
 #define FRAME_1_FILE_PATH "/app/resource/wallpaper/bg_openframe_background01.jpg"
 #define FRAME_2_FILE_PATH "/app/resource/wallpaper/bg_openframe_background02.jpg"
@@ -1035,7 +1035,7 @@ static void sat_layout_enter(frame_show)
 	monitor_channel_set(MON_CH_NONE);
 	{
 
-		lv_obj_t *frame1 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame1_id, 0, 0, THUMB_WIDTH, THUMB_HIGHT,
+		lv_obj_t *frame1 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame1_id, 0, 0, 1024, 600,
 																								NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
 																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1044,7 +1044,7 @@ static void sat_layout_enter(frame_show)
 	}
 	{
 
-		lv_obj_t *frame2 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame2_id, THUMB_WIDTH, 0, THUMB_WIDTH, THUMB_HIGHT,
+		lv_obj_t *frame2 = lv_common_img_btn_create(sat_cur_layout_screen_get(), frame_show_frame2_id, 1024, 0, 1024, 600,
 																								NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
 																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

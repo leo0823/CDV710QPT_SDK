@@ -352,6 +352,7 @@ bool alarm_trigger_check(void)
                         }
                 }
         }
+
         if ((alarm_occur == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
         {
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);

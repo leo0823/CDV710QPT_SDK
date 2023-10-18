@@ -19,7 +19,7 @@
 #include <arpa/inet.h>
 #include <string.h>
 #include <errno.h>
-#include "common/sat_user_common.h"
+
 #include "common/sat_user_time.h"
 #include "common/user_data.h"
 #include "common/user_key.h"
@@ -216,7 +216,7 @@ static bool doorcamera_device_discover_processing(struct sockaddr_in *client_add
         }
 
         sprintf(local_uuid, "urn:uuid:00010010-0001-1020-8000-%s", username);
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
         sprintf(xml_buffer_fmt, xml_buffer, msg_count++, local_uuid, relatesto_uuid, local_uuid, regist_id, username, user_data_get()->device.name, ip);
         //    SAT_DEBUG("%s", xml_buffer_fmt);
         /****************************************************************
@@ -598,7 +598,7 @@ static bool tcp_device_servrce_xml_get_capabilities(int tcp_socket_fd)
                 return false;
         }
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(xml_buffer, xml_fmt, ip, ip, ip, ip, ip, ip, ip, ip, ip, ip, ip);
         int xml_size = strlen(xml_buffer);
@@ -677,7 +677,7 @@ static bool tcp_device_servrce_xml_get_scopes(int tcp_socket_fd)
                 }
         }
         char mac[64] = {0};
-        sat_ip_mac_addres_get("eth0", NULL, mac);
+        sat_ip_mac_addres_get("eth0", NULL, mac, NULL);
 
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(xml_buffer, xml_fmt, regist_id, mac, user_data_get()->device.name);
@@ -753,6 +753,8 @@ static bool tcp_device_servrce_xml_get_delete(int tcp_socket_fd, const char *xml
         memset(user_data_get()->device.number, 0, sizeof(user_data_get()->device.number));
         memset(user_data_get()->server_ip, 0, sizeof(user_data_get()->server_ip));
         user_data_save();
+        led_ctrl_blink(3);
+        system("reboot");
         return true;
 }
 
@@ -920,9 +922,10 @@ static bool tcp_device_serverce_xml_get_networkinterface(int tcp_socket_fd)
         } // mac  ip
         char mac[64] = {0};
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, mac);
+        char mask[32] = {0};
+        sat_ip_mac_addres_get("eth0", ip, mac, mask);
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
-        sprintf(xml_buffer, xml_fmt, mac, ip, user_data_get()->network.udhcp == true ? "true" : "false");
+        sprintf(xml_buffer, xml_fmt, mac, ip, mask, user_data_get()->network.udhcp == true ? "true" : "false");
         int xml_size = strlen(xml_buffer);
 
         memset(xml_fmt, 0, strlen(xml_fmt) + 1);
@@ -990,7 +993,7 @@ static bool tcp_device_serverce_xml_get_includecapability(int tcp_socket_fd)
         } // mac  ip
         char mac[64] = {0};
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, mac);
+        sat_ip_mac_addres_get("eth0", ip, mac, NULL);
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(xml_buffer, xml_fmt, ip, ip, ip, ip, ip, ip, ip, ip, ip, ip, ip);
         int xml_size = strlen(xml_buffer);
@@ -1978,7 +1981,7 @@ static bool tcp_receive_onvif_media_get_streamuri_processing(int tcp_socket_fd)
                 return false;
         }
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(xml_buffer, xml_fmt, ip, user_data_get()->device.number, user_data_get()->server_ip);
         int xml_size = strlen(xml_buffer);
@@ -2081,7 +2084,7 @@ static bool tcp_receive_onvif_media_get_snapshoturi_processing(int tcp_socket_fd
                 return false;
         }
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
         sprintf(xml_buffer, xml_fmt, ip);
         int xml_size = strlen(xml_buffer);
@@ -2366,7 +2369,7 @@ static bool tcp_receive_onvif_event_get_initialterminationtime_processing(int tc
                 return false;
         }
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
 
         struct tm tm;
         user_time_read(&tm);
@@ -2622,7 +2625,7 @@ static bool tcp_receive_onvif_imaging_get_imaging_setting_processing(int tcp_soc
                 return false;
         }
         char ip[32] = {0};
-        sat_ip_mac_addres_get("eth0", ip, NULL);
+        sat_ip_mac_addres_get("eth0", ip, NULL, NULL);
 
         struct tm tm;
         user_time_read(&tm);
@@ -2860,7 +2863,7 @@ static bool ipaddr_udhcp_server_get_wait(void)
         int count = 0;
         char ip[32] = {0};
         char mac[128] = {0};
-        while (sat_ip_mac_addres_get("eth0", ip, mac) == false)
+        while (sat_ip_mac_addres_get("eth0", ip, mac, NULL) == false)
         {
                 usleep(10 * 1000);
                 count++;
@@ -2913,7 +2916,7 @@ static int convert_a_string_to_an_integer_number(const char *str, int len)
 static bool obtain_ipaddress_based_on_mac(void)
 {
         char mac[64] = {0};
-        if (sat_ip_mac_addres_get("eth0", NULL, mac) == false)
+        if (sat_ip_mac_addres_get("eth0", NULL, mac, NULL) == false)
         {
                 SAT_DEBUG("if(sat_ip_mac_addres_get(\"eth0\",NULL,mac) == false)");
                 return false;

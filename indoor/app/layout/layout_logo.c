@@ -777,7 +777,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
-        lv_timer_del(t);
 }
 
 /************************************************************
@@ -941,7 +940,7 @@ static void sat_layout_enter(logo)
                 {
                         system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
                 }
-                }
+        }
         if (tuya_key_and_uuid_init() == false)
         {
                 logo_serial_numbe_txt_create();
