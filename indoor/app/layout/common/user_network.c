@@ -565,7 +565,6 @@ static bool ipaddr_udhcp_server_get_wait(void)
         }
         if (count < UDHCPC_TIMEOUT_MAX)
         {
-                SAT_DEBUG("==============");
                 if (strcmp(ip, "10.0.0.2"))
                 {
                         SAT_DEBUG("udhcp ip get successs !(%s)", ip);
