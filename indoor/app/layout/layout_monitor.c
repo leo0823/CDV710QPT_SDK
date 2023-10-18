@@ -17,7 +17,7 @@ enum
 
         monitor_obj_id_vol_adj_cont,
 
-        monitor_obj_id_user_app_label,
+        monitor_obj_id_user_state_label,
 
         monitor_obj_id_channel_switch_left_btn,
         monitor_obj_id_channel_switch_right_btn,
@@ -99,11 +99,17 @@ static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(void)
 {
-
-        monitor_close(is_channel_ipc_camera(monitor_channel_get() ? 0x02 : 0x01));
-
+        // MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        // if (flag == MON_ENTER_MANUAL_TALK_FLAG || flag == MON_ENTER_MANUAL_DOOR_FLAG || flag == MON_ENTER_MANUAL_CCTV_FLAG)
+        // {
+        //         monitor_close(is_channel_ipc_camera(monitor_channel_get() ? 0x02 : 0x01));
+        // }
+        // else
+        // {
+        // }
+        monitor_close(is_channel_ipc_camera(monitor_channel_get()) ? 0x02 : 0x01);
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
-
+        SAT_DEBUG("==============================================");
         if (node == NULL)
         { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
                 if (tuya_api_client_num() > 0)
@@ -122,6 +128,7 @@ void layout_monitor_goto_layout_process(void)
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                         /*为了直观，加入return*/
                         return;
+                        SAT_DEBUG("==============================================");
                 }
                 sat_linphone_incomming_refresh(node->call_id);
                 intercom_call_status_setting(2);
@@ -132,9 +139,10 @@ void layout_monitor_goto_layout_process(void)
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
-
-        sat_linphone_incomming_refresh(node->call_id);
-
+        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        {
+                sat_linphone_incomming_refresh(node->call_id);
+        }
         monitor_channel_set(node->channel);
         layout_monitor_report_vaild_channel();
         monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
@@ -457,6 +465,26 @@ static void monitor_obj_volume_display(void)
         }
 }
 
+/************************************************************
+** 函数说明: 监控顶部状态显示定时关闭
+** 作者: xiaoxiao
+** 日期：2023-10-06 09:18:57
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void monitor_top_display_delay_close_task(lv_timer_t *ptimer)
+{
+        if (user_data_get()->alarm.buzzer_alarm)
+        {
+                user_data_get()->alarm.buzzer_alarm = false;
+                user_data_save();
+        }
+        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
+        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        obj->user_data = NULL;
+        lv_timer_del(ptimer);
+}
+
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -507,7 +535,20 @@ static void monitor_obj_display_click(lv_event_t *e)
         }
         else
         {
-                SAT_DEBUG("get display data failed\n");
+
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
+                if (obj == NULL)
+                {
+                        return;
+                }
+
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_GET_DEVICE_ADJ_INFO_FAILED));
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
         }
 }
 
@@ -724,53 +765,11 @@ static void *monitor_unlock_ctrl_task(void *arg)
  ***********************************************/
 static void monitor_unlock_ctrl(int ch, int mode, bool en)
 {
-        if ((ch == MON_CH_DOOR1) && (mode == 2))
-        {
-                door1_lock1_pin_ctrl(en);
-        }
-        else if ((ch == MON_CH_DOOR2) && (mode == 2))
-        {
-                // const char *user = monitor_channel_get_url(ch, false);
-                char *cmd[3] = {
-                    "echo 32 > /sys/class/gpio/export",
-                    "echo out > /sys/class/gpio/gpio32/direction",
-                    "echo 1 > /sys/class/gpio/gpio32/value"};
-
-                if (en == false)
-                {
-                        cmd[2] = "echo 0 > /sys/class/gpio/gpio32/value";
-                }
-
-                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-                {
-
-                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, cmd[i], 1000);
-                }
-        }
-        else
-        {
-                // const char *user = monitor_channel_get_url(ch, false);
-                char *cmd[3] = {
-                    "echo 32 > /sys/class/gpio/export",
-                    "echo out > /sys/class/gpio/gpio32/direction",
-                    "echo 1 > /sys/class/gpio/gpio32/value"};
-
-                if (en == false)
-                {
-                        cmd[2] = "echo 0 > /sys/class/gpio/gpio32/value";
-                }
-
-                for (int i = 0; i < sizeof(cmd) / sizeof(char *); i++)
-                {
-                        printf("cmd[%d] is %s\n", i, cmd[i]);
-                        sat_ipcamera_report_shellcmd(network_data_get()->door_device[ch].ipaddr, 80, "admiin", network_data_get()->door_device[ch].password, cmd[i], 1000);
-                }
-        }
-        door_lock_info info;
+        pthread_mutex_lock(&door_lock_mutex);
+        static door_lock_info info;
         info.ch = ch;
         info.en = en;
         info.mode = mode;
-        pthread_mutex_lock(&door_lock_mutex);
         pthread_t task_id;
         pthread_create(&task_id, sat_pthread_attr_get(), monitor_unlock_ctrl_task, (void *)&info);
         pthread_detach(task_id);
@@ -1156,26 +1155,6 @@ static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
         }
 }
 
-/************************************************************
-** 函数说明: 监控顶部状态显示定时关闭
-** 作者: xiaoxiao
-** 日期：2023-10-06 09:18:57
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void monitor_top_display_delay_close_task(lv_timer_t *ptimer)
-{
-        if (user_data_get()->alarm.buzzer_alarm)
-        {
-                user_data_get()->alarm.buzzer_alarm = false;
-                user_data_save();
-        }
-        lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
-        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        obj->user_data = NULL;
-        lv_timer_del(ptimer);
-}
-
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -1183,7 +1162,7 @@ static void monitor_top_display_delay_close_task(lv_timer_t *ptimer)
  ***********************************************/
 static void home_use_mobile_app_obj_display(void)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
         if (obj == NULL)
         {
                 return;
@@ -1196,7 +1175,7 @@ static void home_use_mobile_app_obj_display(void)
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
                 lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
-                lv_obj_clear_flag(obj, HOME_XLS_LANG_ID_USE_MOBILE_APP);
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
         }
 }
@@ -1419,6 +1398,22 @@ static void layout_monitor_setting_adj_reset(lv_event_t *e)
                 }
                 lv_slider_set_value(slider, brightness_default, LV_ANIM_OFF);
         }
+        else
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
+                if (obj == NULL)
+                {
+                        return;
+                }
+
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_SET_DEVICE_ADJ_INFO_FAILED));
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
+        }
 }
 
 static void layout_monitor_setting_brightness_slider_change_cb(lv_event_t *e)
@@ -1436,7 +1431,22 @@ static void layout_monitor_setting_brightness_slider_change_cb(lv_event_t *e)
                 device = &network_data_get()->cctv_device[channel - 8];
         }
         monitor_brightness[2] = value;
-        sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500);
+        if (sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500) == false)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
+                if (obj == NULL)
+                {
+                        return;
+                }
+
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_SET_DEVICE_ADJ_INFO_FAILED));
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
+        }
 }
 
 static void layout_monitor_brightness_bar_create(lv_obj_t *parent)
@@ -1509,7 +1519,22 @@ static void layout_monitor_setting_contrast_slider_change_cb(lv_event_t *e)
                 device = &network_data_get()->cctv_device[channel - 8];
         }
         monitor_contrast[2] = value;
-        sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500);
+        if (sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500) == false)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
+                if (obj == NULL)
+                {
+                        return;
+                }
+
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_SET_DEVICE_ADJ_INFO_FAILED));
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
+        }
 }
 
 static void layout_monitor_contrast_bar_create(lv_obj_t *parent)
@@ -1582,7 +1607,22 @@ static void layout_monitor_setting_color_slider_change_cb(lv_event_t *e)
                 device = &network_data_get()->cctv_device[channel - 8];
         }
         monitor_saturation[2] = value;
-        sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500);
+        if (sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500) == false)
+        {
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
+                if (obj == NULL)
+                {
+                        return;
+                }
+
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                lv_label_set_text(obj, lang_str_get(MONITOR_XLS_LANG_ID_SET_DEVICE_ADJ_INFO_FAILED));
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
+        }
 }
 
 static void layout_monitor_color_bar_create(lv_obj_t *parent)
@@ -1757,7 +1797,7 @@ static bool layout_monitor_outgoing_arly_media_register(char *arg)
 
 static bool monitor_talk_call_failed_callback(char *arg)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
         if (obj == NULL)
         {
                 return false;
@@ -1958,7 +1998,7 @@ static void layout_monitor_door_ch_btn_create(void)
 static void layout_monitor_buzzer_alarm_call_callback(void)
 {
         buzzer_call_timestamp_set(user_timestamp_get());
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
         if (obj == NULL)
         {
                 return;
@@ -2121,7 +2161,7 @@ static void sat_layout_enter(monitor)
          ** 说明: app use
          ***********************************************/
         {
-                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label, 327, 66, 370, 60,
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label, 327, 66, 370, 60,
                                                       NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -2338,7 +2378,7 @@ static void sat_layout_enter(monitor)
 
         if (user_data_get()->alarm.buzzer_alarm)
         {
-                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
+                lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
                 if (obj == NULL)
                 {
                         return;
@@ -2825,7 +2865,7 @@ static bool truye_event_cmd_audio_start(void)
 {
 
         tuya_api_door2_unlock_mode_report(user_data_get()->etc.door2_lock_num);
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_app_label);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
         if (obj == NULL)
         {
                 return false;

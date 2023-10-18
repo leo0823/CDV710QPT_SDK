@@ -426,7 +426,7 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
 
         if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)
         {
-                lv_textarea_set_max_length(textarea, 32);
+                lv_textarea_set_max_length(textarea, 9);
                 if (ipc_camera_password_state == 0x01)
                 {
                         ipc_camera_input_new_password_processing(txt);
@@ -491,7 +491,8 @@ static void sat_layout_enter(ipc_camera_input)
                                                      LV_OPA_COVER, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 17 : 32,
+                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 17 : ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 9
+                                                                                                                                                                                                                                 : 32,
                                                      30, 500, 0Xffffff);
 
                 lv_obj_set_style_text_color(textarea, lv_color_hex(0x929292), LV_PART_TEXTAREA_PLACEHOLDER);

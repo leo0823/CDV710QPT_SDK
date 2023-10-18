@@ -76,7 +76,7 @@ static void wifi_input_textarea_placeholder_setting(void)
 
                 return;
         }
-        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_ENTET_WIFI_NAME : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
+        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_INPUT_USER : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
 }
 
 static void wifi_input_password_hidden_icon(void)

@@ -165,7 +165,7 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
                 setting_msgdialog_msg_del(ipc_camera_edit_obj_id_sensor_linkage_msg_bg);
         }
         msgbox = setting_msgdialog_msg_bg_create(ipc_camera_edit_obj_id_sensor_linkage_msg_bg, ipc_camera_edit_obj_id_sensor_linkage_msg, 282, 143, 460, 360);
-        setting_msgdialog_msg_create(msgbox, 0, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_SENSOR_LINKAGE), 0, 20, 460, 120);
+        setting_msgdialog_msg_create(msgbox, 0, lang_str_get(SENSOR_SETTING_XLS_LANG_ID_SETTING_SENSOR_CONNECT), 0, 20, 460, 120);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(msgbox, 1, 2, ipc_camera_edit_sensor_linkage_click_confirm, ipc_camera_edit_sensor_linkage_click_cancel);
         lv_obj_t *list = setting_list_create(msgbox, 3);
         lv_common_style_set_common(list, 3, 27, 73, 460 - 27, 343 - 57 - 73, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
@@ -259,7 +259,7 @@ static void sat_layout_enter(ipc_camera_edit)
 
                     {0, 88 * 2, 928, 88,
                      2, 0, 1,
-                     DOOR_CAMERA_SEARCH_XLS_LANG_ID_SENSOR_LINKAGE, lang_str_get,
+                     SENSOR_SETTING_XLS_LANG_ID_SETTING_SENSOR_CONNECT, lang_str_get,
                      -1, NULL,
                      ipc_camera_edit_sensor_linkage_click, -1}};
 

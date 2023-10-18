@@ -143,6 +143,7 @@ static void ipc_camera_register_del_msgbox_confirm_click(lv_event_t *e)
 
         if (layout_ipc_cmeara_is_doorcamera_get() == true)
         {
+                sat_ipcamera_device_delete(device_index, 1500);
                 memset(&(network_data_get()->door_device[device_index]), 0, sizeof(network_data_get()->door_device[device_index]));
         }
         else

@@ -141,6 +141,14 @@ lv_timer_t *buzzer_call_timer_get()
 {
         return buzzer_call_timer;
 }
+
+/************************************************************
+** 函数说明: 蜂鸣器通知关闭
+** 作者: xiaoxiao
+** 日期：2023-10-14 14:53:38
+** 参数说明:
+** 注意事项：
+************************************************************/
 static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
 {
         lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
@@ -929,8 +937,11 @@ static void sat_layout_enter(logo)
         }
         else if (access("/app/tuya/tuya_key_backup", F_OK) == 0)
         {
-                system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
-        }
+                if (access("/app/tuya/tuya_key", F_OK) != 0)
+                {
+                        system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
+                }
+                }
         if (tuya_key_and_uuid_init() == false)
         {
                 logo_serial_numbe_txt_create();

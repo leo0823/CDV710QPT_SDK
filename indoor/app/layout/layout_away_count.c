@@ -165,7 +165,7 @@ static void layout_alarm_count_param_init(void)
     }
     if (layout_away_count_data_get()->away_count_sec == 0)
     {
-        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time;
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
     }
 }
 
@@ -233,7 +233,7 @@ static void sat_layout_enter(away_count)
         layout_away_count_timer_obj_display();
         if (layout_away_count_data_get()->away_setting_time_countdown_timer == NULL)
         {
-            layout_away_count_data_get()->away_setting_time_countdown_timer = lv_timer_create(layout_away_count_timer, user_data_get()->alarm.away_setting_time * 60 * 1000, NULL);
+            layout_away_count_data_get()->away_setting_time_countdown_timer = lv_timer_create(layout_away_count_timer, 1000, NULL);
         }
     }
 

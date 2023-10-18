@@ -284,7 +284,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 // {
                 //         return;
                 // }
-                if (user_data_get()->alarm.away_alarm_enable == 0X01)
+                if ((user_data_get()->alarm.away_alarm_enable != 0X02) && (user_data_get()->alarm.alarm_enable_always[0][arg1] != true) && (user_data_get()->alarm.alarm_enable_always[1][arg1] != true))
                 {
                         return;
                 }

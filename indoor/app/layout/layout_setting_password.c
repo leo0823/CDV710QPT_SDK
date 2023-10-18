@@ -325,7 +325,7 @@ static void setting_password_modiy_obj_create(void)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      lang_str_get(reset_unit ? SETTING_PASSWORD_XLS_LANG_ID_RESET_UNIT_DOOR : SETTING_PASSWORD_XLS_LANG_ID_RESET_COMMON_ENTRANCE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                                      lang_str_get(reset_unit ? SETTING_PASSWORD_XLS_LANG_ID_RESET_HOUSEHOLD_PASSWORD : SETTING_PASSWORD_XLS_LANG_ID_RESET_COMMON_ENTRANCE_PASSWORD), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 /***********************************************
                 ** 作者: leo.liu
                 ** 日期: 2023-2-3 14:13:25
