@@ -111,10 +111,8 @@ int main(int argc, char **argv)
 #else
 
 #include "anyka/ak_common.h"
-#define SIP_CALL_QURY_TIMER 5000
 
-static unsigned long long sip_call_timestamp = 0;
-static bool sip_call_status = false;
+#define SIP_CALL_QURY_TIMER 5000
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 10:7:35
@@ -254,12 +252,6 @@ static void sys_timer_callback(void)
                 return;
         }
         pre_timestamp = timestamp;
-
-        /*如果5秒内 sip_call_timestamp还是没有更新，则判断sip无连接， 需要主动挂断设备了*/
-        if ((sip_call_status == true) && ((timestamp - sip_call_timestamp) > SIP_CALL_QURY_TIMER * 10))
-        {
-                return;
-        }
 
         /*每隔500ms发送一次在线询问*/
         //   sat_linphone_calls_cmd_send();

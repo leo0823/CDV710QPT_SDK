@@ -3,6 +3,52 @@
 =======
 =======
 # 2023/10/18
+> 1. 增加接口，动态切换视频的分辨率，用于满足客户app与室内机动态切换视频流
+```c
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置当前视频流channel：
+** 0:主通道
+** 1：子通道
+*****************************************************************/
+bool sat_ipcamera_device_channel_get(const char *ip, int port, const char *user, const char *password, char auther_flag, int *channel, int timeout);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置当前视频流channel：
+** 0:主通道
+** 1：子通道
+*****************************************************************/
+bool sat_ipcamera_device_channel_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, int channel, int timeout);
+```
+> 2. 增加接口用于设置和获取设备的工作模式
+```c
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置当前设备的工作模式：
+** 0：正常工作模式
+** bit1: 警报模式
+** bit2: 睡眠模式
+** bit3: 离家模式
+** bit4: 后面模式
+*****************************************************************/
+bool sat_ipcamera_device_mode_get(const char *ip, int port, const char *user, const char *password, char auther_flag, char *status, int timeout);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置当前设备的工作模式：
+** 0：正常工作模式
+** bit1: 警报模式
+** bit2: 睡眠模式
+** bit3: 离家模式
+** bit4: 后面模式
+*****************************************************************/
+bool sat_ipcamera_device_mode_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, char status, int timeout);
+
+```
+# 2023/10/18
 > 1. 修复当前呼叫，重新刷新后会死机的问题。
 >>>>>>> e1d3100fb927b74eba7e6965afe6e799dc6f1097
 # 2023/10/14
