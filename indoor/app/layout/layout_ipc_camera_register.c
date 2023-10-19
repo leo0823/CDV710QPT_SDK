@@ -150,7 +150,6 @@ static void ipc_camera_register_del_msgbox_confirm_click(lv_event_t *e)
         {
                 memset(&(network_data_get()->cctv_device[device_index]), 0, sizeof(network_data_get()->cctv_device[device_index]));
                 user_data_get()->alarm.cctv_sensor[device_index] = 0;
-                user_data_save();
         }
         network_data_save();
         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);

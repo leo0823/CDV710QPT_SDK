@@ -241,10 +241,10 @@ bool sat_ipcamera_device_mode_get(const char *ip, int port, const char *user, co
 **@作者: leo.liu
 **@功能: 设置当前设备的工作模式：
 ** 0：正常工作模式
-** bit1: 警报模式
-** bit2: 睡眠模式
-** bit3: 离家模式
-** bit4: 后面模式
+** bit0: 警报模式
+** bit1: 睡眠模式
+** bit2: 离家模式
+** bit3: 后面模式
 *****************************************************************/
 bool sat_ipcamera_device_mode_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, char status, int timeout);
 

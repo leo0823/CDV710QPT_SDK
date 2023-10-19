@@ -554,7 +554,7 @@ static void sat_layout_quit(close)
     user_linphone_call_streams_running_receive_register(NULL);
     lv_obj_clean(sat_cur_layout_screen_get());
 
-    lv_timer_set_repeat_count(lv_timer_create(layout_close_backlight_open_timer, 100, NULL), 1);
+    lv_timer_set_repeat_count(lv_timer_create(layout_close_backlight_open_timer, 300, NULL), 1);
 
     standby_timer_restart(true);
 }

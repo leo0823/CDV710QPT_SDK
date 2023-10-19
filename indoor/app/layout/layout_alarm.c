@@ -32,7 +32,10 @@ typedef enum
 
 static short int alarm_passwd_input_error_count = 0; // 输入错误次数
 static short int alarm_idel_time = 0;                // 警报铃声空闲时间计时
-static lv_timer_t *alarm_ring_idel_timer = 0;        // 警报铃声空闲时间计时
+static lv_timer_t *alarm_ring_idel_timer = NULL;
+;                                                 // 警报铃声空闲时间计时
+static lv_timer_t *alarm_ring_close_timer = NULL; // 定时关闭警铃声
+
 static void alarm_alarm_cont_display(lv_timer_t *ptimer)
 {
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
@@ -120,6 +123,12 @@ static void layout_alarm_monitor_open(void)
         {
         }
 }
+static void layout_alarm_ring_stop(lv_timer_t *ptimer)
+{
+        sat_linphone_audio_play_stop();
+        lv_timer_del(alarm_ring_close_timer);
+        alarm_ring_close_timer = NULL;
+}
 
 static void alarm_ring_idel_check(lv_timer_t *ptimer)
 {
@@ -128,6 +137,12 @@ static void alarm_ring_idel_check(lv_timer_t *ptimer)
                 user_data_get()->alarm.alarm_ring_play = true;
                 user_data_save();
                 ring_alarm_play();
+                if (alarm_ring_close_timer)
+                {
+                        lv_timer_del(alarm_ring_close_timer);
+                        alarm_ring_close_timer = NULL;
+                }
+                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
                 lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
                 if (parent)
                 {
@@ -194,6 +209,12 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                                 user_data_save();
                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
                                 ring_alarm_play();
+                                if (alarm_ring_close_timer)
+                                {
+                                        lv_timer_del(alarm_ring_close_timer);
+                                        alarm_ring_close_timer = NULL;
+                                }
+                                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
                         }
                 }
                 else
@@ -208,7 +229,10 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 {
                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
                 }
-                alarm_trigger_check();
+                if (alarm_trigger_check() == false)
+                {
+                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                }
         }
 }
 
@@ -409,6 +433,12 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                         layout_alarm_passwd_input_txt_reset();
 
                                                         ring_alarm_play();
+                                                        if (alarm_ring_close_timer)
+                                                        {
+                                                                lv_timer_del(alarm_ring_close_timer);
+                                                                alarm_ring_close_timer = NULL;
+                                                        }
+                                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
                                                 }
                                         }
                                         else
@@ -423,7 +453,10 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         {
                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
                                         }
-                                        alarm_trigger_check();
+                                        if (alarm_trigger_check() == false)
+                                        {
+                                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                        }
                                         return;
 #endif
                                 }
@@ -439,6 +472,12 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         user_data_get()->alarm.alarm_ring_play = true;
                                         user_data_save();
                                         ring_alarm_play();
+                                        if (alarm_ring_close_timer)
+                                        {
+                                                lv_timer_del(alarm_ring_close_timer);
+                                                alarm_ring_close_timer = NULL;
+                                        }
+                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
                                         if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                         {
                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
@@ -543,6 +582,12 @@ static void layout_alarm_close_keyboard_obj_click(lv_event_t *ev)
         user_data_get()->alarm.alarm_ring_play = true;
         user_data_save();
         ring_alarm_play();
+        if (alarm_ring_close_timer)
+        {
+                lv_timer_del(alarm_ring_close_timer);
+                alarm_ring_close_timer = NULL;
+        }
+        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
@@ -631,19 +676,6 @@ static bool layout_alarm_ringplay_register_callback(int arg)
         return true;
 }
 
-/************************************************************
-** 函数说明: 警报页面挂断收到呼叫直接挂断
-** 作者: xiaoxiao
-** 日期：2023-09-24 13:45:13
-** 参数说明:
-** 注意事项：
-************************************************************/
-bool layout_call_extern_func(char *arg)
-{
-        sat_linphone_handup(0XFFFF);
-        return false;
-}
-
 static void layout_alarm_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
         user_data_get()->alarm.buzzer_alarm = false;
@@ -682,23 +714,62 @@ static void layout_alarm_buzzer_alarm_call_callback(void)
 }
 
 /************************************************************
+** 函数说明: 警报页面铃声播放/暂停同步
+** 作者: xiaoxiao
+** 日期：2023-09-12 08:00:33
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void alarm_ringtone_play_check(void)
+{
+        if (sat_cur_layout_get() == sat_playout_get(alarm))
+        {
+                if (user_data_get()->alarm.alarm_ring_play == false)
+                {
+                        sat_linphone_audio_play_stop();
+                }
+                else
+                {
+                        ring_alarm_play();
+                        if (alarm_ring_close_timer)
+                        {
+                                lv_timer_del(alarm_ring_close_timer);
+                                alarm_ring_close_timer = NULL;
+                        }
+                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                }
+        }
+}
+
+/************************************************************
 ** 函数说明:
 ** 作者: xiaoxiao
 ** 日期: 2023-06-07 18:26:29
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-static void sat_layout_enter(alarm)
+static void
+sat_layout_enter(alarm)
 {
+        if ((user_data_get()->system_mode & 0X0F) == 0X01)
+        {
+                for (int i = 0; i < DEVICE_MAX; i++)
+                {
+                        if (monitor_valid_channel_check(i) == true)
+                        {
+                                sat_ipcamera_device_mode_setting(network_data_get()->door_device[i].ipaddr, network_data_get()->door_device[i].port, network_data_get()->door_device[i].username, network_data_get()->door_device[i].password, network_data_get()->door_device[i].auther_flag, 0x01, 1000);
+                        }
+                }
+        }
+        alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-
         alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
         ring_play_event_cmd_register(layout_alarm_ringplay_register_callback);
-        user_linphone_call_incoming_received_register(layout_call_extern_func);
         layout_alarm_monitor_open();
+        alaem_ring_func_callback_register(alarm_ringtone_play_check);
         /************************************************************
         ** 函数说明: 背景创建
         ** 作者: xiaoxiao
@@ -840,6 +911,12 @@ static void sat_layout_enter(alarm)
                 ** 注意事项:
                 ************************************************************/
                 ring_alarm_play();
+                if (alarm_ring_close_timer)
+                {
+                        lv_timer_del(alarm_ring_close_timer);
+                        alarm_ring_close_timer = NULL;
+                }
+                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
         }
 
         {
@@ -928,10 +1005,9 @@ static void sat_layout_enter(alarm)
 }
 static void sat_layout_quit(alarm)
 {
-        buzzer_call_callback_register(buzzer_alarm_trigger_default);
 
+        buzzer_call_callback_register(buzzer_alarm_trigger_default);
         alarm_ring_idel_timer = NULL;
-        user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
         alarm_power_out_ctrl(false);
         lv_obj_pressed_func = lv_layout_touch_callback;
         ring_play_event_cmd_register(NULL);
@@ -941,6 +1017,7 @@ static void sat_layout_quit(alarm)
         monitor_close(0x02);
         standby_timer_restart(true);
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
+        alaem_ring_func_callback_register(NULL);
 }
 
 sat_layout_create(alarm);

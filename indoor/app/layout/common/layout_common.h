@@ -135,4 +135,13 @@ bool buzzer_call_timestamp_set(unsigned long long timestamp);
 ** 注意事项：
 ************************************************************/
 void buzzer_alarm_trigger_default(void);
+
+/************************************************************
+** 函数说明: 警报铃声状态变化回调
+** 作者: xiaoxiao
+** 日期：2023-10-19 09:19:12
+** 参数说明:
+** 注意事项：
+************************************************************/
+void alaem_ring_func_callback_register(void (*callback)(void));
 #endif

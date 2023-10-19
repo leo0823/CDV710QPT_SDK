@@ -340,22 +340,14 @@ bool alarm_trigger_check(void)
                 }
                 if ((alarm_occur))
                 {
-                        if (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false))
-                        {
-                                user_data_save();
-                                struct tm tm;
-                                user_time_read(&tm);
-                                alarm_list_add(security_emergency, i, &tm);
-                                layout_alarm_alarm_channel_set(i);
-                                sat_linphone_handup(0xFFFF);
-                                sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
-                        }
+                        user_data_save();
+                        struct tm tm;
+                        user_time_read(&tm);
+                        alarm_list_add(security_emergency, i, &tm);
+                        layout_alarm_alarm_channel_set(i);
+                        sat_linphone_handup(0xFFFF);
+                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
                 }
-        }
-
-        if ((alarm_occur == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
-        {
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
         }
         return alarm_occur;
 }

@@ -53,8 +53,8 @@ static const user_data_info user_data_default =
 
             .securirty_office_tone = 1,
 
-            .entracne_volume = 50,
-            .entrancr_voice = 50,
+            .entrance_volume = 50,
+            .entrance_voice = 50,
 
             .guard_station_volume = 50,
             .guard_station_voice = 50,
@@ -284,8 +284,8 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(common_entrance_voice, 1, 6);
 
         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
-        user_data_audio_check_range_out(entracne_volume, 0, 100);
-        user_data_audio_check_range_out(entrancr_voice, 0, 100);
+        user_data_audio_check_range_out(entrance_volume, 0, 100);
+        user_data_audio_check_range_out(entrance_voice, 0, 100);
 
         user_data_audio_check_range_out(guard_station_volume, 0, 100);
         user_data_audio_check_range_out(guard_station_voice, 0, 100);

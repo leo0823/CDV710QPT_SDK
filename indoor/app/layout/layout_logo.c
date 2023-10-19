@@ -282,26 +282,17 @@ void buzzer_alarm_trigger_default(void)
         ring_buzzer_play(user_data_get()->audio.buzzer_tone);
 }
 
+static void (*alaem_ring_func)(void) = NULL;
 /************************************************************
-** 函数说明: 警报页面铃声播放/暂停同步
+** 函数说明: 警报铃声状态变化回调
 ** 作者: xiaoxiao
-** 日期：2023-09-12 08:00:33
+** 日期：2023-10-19 09:19:12
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void alarm_ringtone_play_check(void)
+void alaem_ring_func_callback_register(void (*callback)(void))
 {
-        if (sat_cur_layout_get() == sat_playout_get(alarm))
-        {
-                if (user_data_get()->alarm.alarm_ring_play == false)
-                {
-                        sat_linphone_audio_play_stop();
-                }
-                else
-                {
-                        ring_alarm_play();
-                }
-        }
+        alaem_ring_func = callback;
 }
 
 /************************************************************
@@ -426,7 +417,23 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 {
                                         memcpy(&user_data_get()->alarm.alarm_trigger, &info->alarm.alarm_trigger, sizeof(user_data_get()->alarm.alarm_trigger));
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
-                                        alarm_trigger_check();
+                                        if ((alarm_trigger_check() == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
+                                        {
+                                                if ((user_data_get()->system_mode & 0X0F) == 0X01)
+                                                {
+                                                        if ((user_data_get()->system_mode & 0X0F) == 0X01)
+                                                        {
+                                                                for (int i = 0; i < DEVICE_MAX; i++)
+                                                                {
+                                                                        if (monitor_valid_channel_check(i) == true)
+                                                                        {
+                                                                                sat_ipcamera_device_mode_setting(network_data_get()->door_device[i].ipaddr, network_data_get()->door_device[i].port, network_data_get()->door_device[i].username, network_data_get()->door_device[i].password, network_data_get()->door_device[i].auther_flag, 0x00, 1000);
+                                                                        }
+                                                                }
+                                                        }
+                                                }
+                                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                        }
                                 }
                         }
                         if (user_data_get()->alarm.buzzer_alarm != info->alarm.buzzer_alarm) // 蜂鸣器触发，取消同步
@@ -437,7 +444,10 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         if (user_data_get()->alarm.alarm_ring_play != info->alarm.alarm_ring_play) // 警报页面内，铃声播放取消同步
                         {
                                 user_data_get()->alarm.alarm_ring_play = info->alarm.alarm_ring_play;
-                                alarm_ringtone_play_check();
+                                if (alaem_ring_func != NULL)
+                                {
+                                        alaem_ring_func();
+                                }
                         }
                         if (0 /*user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return*/) // 警报页面内，stop/return状态同步(客户取消return状态)
                         {

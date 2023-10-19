@@ -124,7 +124,10 @@ void layout_monitor_goto_layout_process(void)
                         {
                                 sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                         }
-                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                        if (alarm_trigger_check() == false)
+                        {
+                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                        }
                         /*为了直观，加入return*/
                         return;
                 }
@@ -612,7 +615,7 @@ static void layout_monitor_vol_bar_display(void)
         lv_obj_t *silder_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_vol_cont), monitor_vol_obj_id_slider_cont);
         lv_obj_t *slider_obj = lv_obj_get_child_form_id(silder_cont, 1);
         lv_obj_t *value_obj = lv_obj_get_child_form_id(silder_cont, 0);
-        int cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.entrancr_voice : user_data_get()->audio.entracne_volume;
+        int cur_volume = is_monitor_door_camera_talk == true ? user_data_get()->audio.entrance_voice : user_data_get()->audio.entrance_volume;
         char value_str[32] = {0};
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
@@ -711,7 +714,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
         door_lock_info *info = (door_lock_info *)arg;
         if ((info->ch == MON_CH_DOOR1) && (info->mode == 2))
         {
-                SAT_DEBUG("=====ctrl ddl");
+                SAT_DEBUG("=====ctrl ddl %d", info->en);
                 door1_lock1_pin_ctrl(info->en);
         }
         else if ((info->ch == MON_CH_DOOR2) && (info->mode == 2))
@@ -737,7 +740,7 @@ static void *monitor_unlock_ctrl_task(void *arg)
         {
                 // const char *user = monitor_channel_get_url(ch, false);
                 char *cmd[3] = {
-                    "echo 32 > /sys/class/gpio/export",
+                    "echo 33 > /sys/class/gpio/export",
                     "echo out > /sys/class/gpio/gpio33/direction",
                     "echo 1 > /sys/class/gpio/gpio33/value"};
 
@@ -1689,14 +1692,14 @@ static void layout_monitor_setting_volume_slider_change_cb(lv_event_t *e)
         {
                 int value = lv_slider_get_value(obj);
 
-                user_data_get()->audio.entrancr_voice = value;
+                user_data_get()->audio.entrance_voice = value;
                 user_data_save();
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
         {
                 int value = lv_slider_get_value(obj);
-                user_data_get()->audio.entracne_volume = value;
+                user_data_get()->audio.entrance_volume = value;
                 sat_linphone_audio_play_volume_set(value);
                 user_data_save();
         }
@@ -2031,8 +2034,22 @@ static void sat_layout_enter(monitor)
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = false;
         is_monitor_record_video_ing = false;
-        monitor_timeout_sec_reset(30);
         call_duration = 0;
+        monitor_timeout_sec_reset(30);
+
+        int ch = monitor_channel_get();
+        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        {
+                if (tuya_api_client_num() >= 1)
+                {
+                        sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 1, 1000);
+                }
+                else
+                {
+                        sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
+                }
+        }
+
         // 满屏查看
         {
 
@@ -2905,6 +2922,11 @@ static bool truye_event_cmd_audio_start(void)
 ************************************************************/
 static void tuya_event_cmd_video_stop(void)
 {
+        int ch = monitor_channel_get();
+        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        {
+                sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
+        }
         if (is_monitor_door_camera_talk == false || monitor_enter_flag_get() == MON_ENTER_TUYA_TALK_FLAG)
         {
                 layout_monitor_goto_layout_process();
@@ -2922,13 +2944,23 @@ static void tuya_event_cmd_video_stop(void)
 ************************************************************/
 static bool tuya_event_cmd_video_start(void)
 {
+        int ch = monitor_channel_get();
         if ((is_monitor_door_camera_talk) && (monitor_enter_flag_get() != MON_ENTER_TUYA_TALK_FLAG))
         {
                 tuya_api_preview_quit();
                 tuya_api_monitor_handup();
         }
-        monitor_obj_talk_display();
-        layout_monitor_switch_btn_display();
+        else
+        {
+                if (is_channel_ipc_camera(monitor_channel_get()) == false)
+                {
+                        sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 1, 1000);
+                }
+
+                monitor_obj_talk_display();
+                layout_monitor_switch_btn_display();
+        }
+
         return true;
 }
 
