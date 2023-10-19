@@ -33,18 +33,6 @@ bool ipc_rtsp_token_get(const char *ip, int port, const char *user, const char *
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
-**@功能:获取设备的rtsp
-*****************************************************************/
-bool ipc_camera_device_register(char *loc_sip_uri, const char *ipaddr, int port, const char *username, const char *password, int timeout);
-/****************************************************************
-**@日期: 2022-09-20
-**@作者: leo.liu
-**@功能: 删除
-*****************************************************************/
-bool ipc_camera_device_detele(char *data, const char *ip, int port, const char *user, const char *password, int timeout);
-/****************************************************************
-**@日期: 2022-09-20
-**@作者: leo.liu
 **@功能: 查询是否在线
 *****************************************************************/
 bool ipc_camera_device_name_get(char *name, const char *ip, int port, const char *user, const char *password, char auther_flag, int timeout);
@@ -54,12 +42,6 @@ bool ipc_camera_device_name_get(char *name, const char *ip, int port, const char
 **@功能: 设置用户名
 *****************************************************************/
 bool ipc_camera_device_name_set(char *name, const char *ip, int port, const char *user, const char *password, char auther_flag, int timeout);
-/****************************************************************
-**@日期: 2022-09-20
-**@作者: leo.liu
-**@功能: 查询版本号
-*****************************************************************/
-bool ipc_camera_device_version_get(char *version, const char *ip, int port, const char *user, const char *password, int timeout);
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
