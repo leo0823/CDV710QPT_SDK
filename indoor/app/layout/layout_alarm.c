@@ -690,7 +690,6 @@ static void layout_alarm_buzzer_alarm_call_callback(void)
 ************************************************************/
 static void sat_layout_enter(alarm)
 {
-        SAT_DEBUG("=======================================");
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
 
@@ -926,7 +925,6 @@ static void sat_layout_enter(alarm)
         }
         buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
         lv_obj_pressed_func = NULL;
-        SAT_DEBUG("=======================================");
 }
 static void sat_layout_quit(alarm)
 {

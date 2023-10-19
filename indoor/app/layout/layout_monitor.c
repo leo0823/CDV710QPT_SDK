@@ -109,7 +109,6 @@ void layout_monitor_goto_layout_process(void)
         // }
         monitor_close(is_channel_ipc_camera(monitor_channel_get()) ? 0x02 : 0x01);
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
-        SAT_DEBUG("==============================================");
         if (node == NULL)
         { /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
                 if (tuya_api_client_num() > 0)
@@ -128,7 +127,6 @@ void layout_monitor_goto_layout_process(void)
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                         /*为了直观，加入return*/
                         return;
-                        SAT_DEBUG("==============================================");
                 }
                 sat_linphone_incomming_refresh(node->call_id);
                 intercom_call_status_setting(2);
@@ -1174,7 +1172,7 @@ static void home_use_mobile_app_obj_display(void)
                 {
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
-                lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+                lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP));
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 3000, obj);
         }

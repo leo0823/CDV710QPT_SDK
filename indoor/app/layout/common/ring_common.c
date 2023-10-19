@@ -102,7 +102,7 @@ bool ring_buzzer_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.buzzer_volume);
-        sprintf(cmd, RESOURCE_RING_PATH "buzzer/buzzer_%d.mp3", index);
+        sprintf(cmd, RESOURCE_RING_PATH "buzzer/buzzer_%d.mp3", index + 1);
         return sat_linphone_audio_play_start(cmd, 1);
 }
 
