@@ -23,7 +23,6 @@
 #include <mqueue.h>
 #include <ctype.h>
 #include <signal.h>
-
 #include "common/sat_user_common.h"
 #include "common/ssd20x_common.h"
 #include "common/sat_main_event.h"
@@ -38,6 +37,7 @@
 #include "anyka/ak_common.h"
 #include "anyka/ak_vi.h"
 #include "anyka/ak_vpss.h"
+#include "anyka/ak_ats.h"
 #if 0
 #include <stdio.h>
 #include <stdlib.h>
@@ -111,8 +111,18 @@ int main(int argc, char **argv)
 #else
 
 #include "anyka/ak_common.h"
-
 #define SIP_CALL_QURY_TIMER 5000
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 设置当前设备的工作模式：
+** 0：正常工作模式
+** bit1: 警报模式
+** bit2: 睡眠模式
+** bit3: 离家模式
+** bit4: 后面模式
+*****************************************************************/
+char CIP_D20YS_WORK_MODE = 0x00;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 10:7:35
@@ -210,7 +220,10 @@ static bool asterisk_register_online_check(const char *user)
                 if (strncmp(p_register_info[i].name, user, strlen(user)) != NULL)
                 {
                         /*分机收到的时间戳为0,代表已经离线*/
-                        return p_register_info[i].timestamp == 0 ? false : true;
+                        if (p_register_info[i].timestamp)
+                        {
+                                return true;
+                        }
                 }
         }
 
@@ -246,13 +259,14 @@ static void sys_timer_callback(void)
         static unsigned long long pre_timestamp = 0;
         unsigned long long timestamp = user_timestamp_get();
 
+        /* 警报状态的情况下，通话需要播放警报铃声*/
+
         /*每500ms跑一次*/
         if ((timestamp - pre_timestamp) < SIP_CALL_QURY_TIMER)
         {
                 return;
         }
         pre_timestamp = timestamp;
-
         /*每隔500ms发送一次在线询问*/
         //   sat_linphone_calls_cmd_send();
         if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
@@ -293,7 +307,38 @@ static void video_stream_status_callback(bool en)
 static void call_ring_event_callback(void)
 {
         sat_linphone_audio_play_stop();
-        sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.wav", 2);
+        if (CIP_D20YS_WORK_MODE & 0x01)
+        {
+                sat_linphone_audio_play_volume_set(100);
+                sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
+        }
+        else
+        {
+                sat_linphone_audio_play_volume_set(100);
+                sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.wav", 1);
+        }
+}
+/* ring play:arg1:0,start,1:finish*/
+/*LinphoneCallState*/
+static int linphone_core_status = 0;
+static void call_ring_play_status_callback(int state)
+{
+        /*铃声结束，警报模式，并且是通话状态*/
+        if ((state == 1) && (CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
+        {
+                sat_linphone_audio_play_volume_set(20);
+                sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
+        }
+}
+static void linphone_call_status_callback(int state)
+{
+        linphone_core_status = state;
+        /*警报模式，并且按下通话*/
+        if ((CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
+        {
+                sat_linphone_audio_play_volume_set(20);
+                sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
+        }
 }
 /*
  * @日期: 2022-08-06
@@ -317,6 +362,7 @@ int main(int argc, char *argv[])
         ak_sdk_init(&config);
 
         //  ak_its_start(8765);
+        // ak_ats_start(8765);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 11:38:19
@@ -343,9 +389,17 @@ int main(int argc, char *argv[])
         ** 说明: call事件处理
         ***********************************************/
         key_call_callback_register(key_call_process);
+        /*定时器，随时安排*/
         system_timer_callback_register(sys_timer_callback);
+        /*视频流已经打开，准备参数*/
         video_stream_status_callback_register(video_stream_status_callback);
+        /*播放呼叫铃声*/
         call_ring_event_fun_register(call_ring_event_callback);
+        /*铃声播放状态*/
+        call_ring_play_status_func_register(call_ring_play_status_callback);
+        /*linphone 状态改变处理函数*/
+        linphone_call_status_event_func_register(linphone_call_status_callback);
+
         if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
         {
                 usleep(100 * 1000);

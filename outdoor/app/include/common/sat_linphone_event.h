@@ -178,10 +178,4 @@ bool sat_linphone_message_cmd_send(const char *user, const char *cmd);
 ** 说明: 查询通话状态
 ***********************************************/
 bool sat_linphone_calls_cmd_send(void);
-/***********************************************
-** 作者: leo.liu
-** 日期: 2022-12-28 13:42:13
-** 说明: 查询本机sip通话状态注册函数
-***********************************************/
-void sip_call_status_qury_register(void (*callback)(bool));
 #endif

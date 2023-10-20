@@ -1659,6 +1659,35 @@ static bool tcp_device_serverce_xml_set_gateway(int tcp_socket_fd, const unsigne
         }
         return true;
 }
+extern char CIP_D20YS_WORK_MODE;
+extern int media_stream_video_index_get(void);
+extern void media_stream_video_index_setting(int ch);
+static bool tcp_device_serverce_xml_process_workmode_get(int tcp_socket_fd)
+{
+        char string[20] = {0};
+        sprintf(string, "%d", CIP_D20YS_WORK_MODE);
+        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, string);
+}
+static bool tcp_device_serverce_xml_process_workmode_setting(int tcp_socket_fd, char *data)
+{
+        char work_mode = atoi(data);
+        CIP_D20YS_WORK_MODE = work_mode;
+        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, data);
+}
+static bool tcp_device_serverce_xml_process_videostream_channel_get(int tcp_socket_fd)
+{
+        char string[20] = {0};
+        sprintf(string, "%d", media_stream_video_index_get());
+        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, string);
+}
+
+static bool tcp_device_serverce_xml_process_videostream_channel_setting(int tcp_socket_fd, char *data)
+{
+        char channel = atoi(data);
+        media_stream_video_index_setting(channel);
+        return tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, data);
+}
+
 #define SYNC_FILE_DATA_MAX (512 * 1024)
 static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const unsigned char *recv_data, int recv_size)
 {
@@ -1833,6 +1862,26 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
         {
                 printf("[%s:%d] ShellCmd\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_process_shellcmd(tcp_socket_fd, data);
+        }
+        else if (discover_devices_data_parsing(ptr, "WorkModeGet", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] WorkModeGet\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_workmode_get(tcp_socket_fd);
+        }
+        else if (discover_devices_data_parsing(ptr, "WorkModeSetting", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] WorkModeSetting\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_workmode_setting(tcp_socket_fd, data);
+        }
+        else if (discover_devices_data_parsing(ptr, "VideoStreamChannelGet", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] VideoStreamChannelGet\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_videostream_channel_get(tcp_socket_fd);
+        }
+        else if (discover_devices_data_parsing(ptr, "VideoStreamChannelSetting", data, SYNC_FILE_DATA_MAX) == true)
+        {
+                printf("[%s:%d] VideoStreamChannelSetting\n", __func__, __LINE__);
+                reslut = tcp_device_serverce_xml_process_videostream_channel_setting(tcp_socket_fd, data);
         }
         else
         {
