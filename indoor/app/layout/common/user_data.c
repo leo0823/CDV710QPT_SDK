@@ -428,7 +428,7 @@ static const user_network_info network_data_default = {
     .local_server = {"10.0.0.2"},
     .sip_server = {"10.0.0.2"},
     .cctv_server = {"10.0.0.2"},
-    .guard_number = {"700000051"},
+    .guard_number = {"7000000051"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \

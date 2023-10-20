@@ -219,7 +219,10 @@ static void default_buzzer_call_timer(lv_timer_t *timer)
                         if (bg == NULL)
                         {
                                 buzzer_call_trigger_ui_create();
-                                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                                if (user_data_get()->audio.ring_mute == false)
+                                {
+                                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                                }
                         }
                         if (user_timestamp_get() - buzzer_call_timestamp_get() >= 6000)
                         {
@@ -279,7 +282,10 @@ void buzzer_alarm_trigger_default(void)
         }
         buzzer_call_timestamp = user_timestamp_get();
         buzzer_call_trigger_ui_create();
-        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+        }
 }
 
 static void (*alaem_ring_func)(void) = NULL;
