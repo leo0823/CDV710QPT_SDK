@@ -56,7 +56,12 @@ bool sat_linphone_register(const char *name, const char *user, const char *pwd, 
  * @注释: 同意通话
  */
 bool sat_linphone_answer(long id, bool is_tuya_answer);
-
+/*
+ * @日期: 2022-09-06
+ * @作者: leo.liu
+ * @注释: 是否添加背景音乐
+ */
+bool sat_linphone_alarm_backgound_sound(bool en);
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-21 14:44:28

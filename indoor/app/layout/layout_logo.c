@@ -158,7 +158,7 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
                 user_data_save();
                 if ((user_data_get()->system_mode & 0X0f) != 0x01)
                 {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                 }
 
                 // lv_timer_del(buzzer_call_timer);
@@ -425,19 +425,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
                                         if ((alarm_trigger_check() == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
                                         {
-                                                if ((user_data_get()->system_mode & 0X0F) == 0X01)
-                                                {
-                                                        if ((user_data_get()->system_mode & 0X0F) == 0X01)
-                                                        {
-                                                                for (int i = 0; i < DEVICE_MAX; i++)
-                                                                {
-                                                                        if (monitor_valid_channel_check(i) == true)
-                                                                        {
-                                                                                sat_ipcamera_device_mode_setting(network_data_get()->door_device[i].ipaddr, network_data_get()->door_device[i].port, network_data_get()->door_device[i].username, network_data_get()->door_device[i].password, network_data_get()->door_device[i].auther_flag, 0x00, 1000);
-                                                                        }
-                                                                }
-                                                        }
-                                                }
+
                                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                                         }
                                 }

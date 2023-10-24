@@ -56,12 +56,14 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         printf("layout_ipc_camera_edit_index_get() is %d\n", layout_ipc_camera_edit_index_get());
         sat_ipcamera_device_status_reset();
         sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
-        if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
+        for (int i = 0; i < 3; i++)
         {
-                ipc_search_door_camera_modify_default_passwd_check();
-                return;
+                if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
+                {
+                        ipc_search_door_camera_modify_default_passwd_check();
+                        return;
+                }
         }
-
         if (layout_ipc_cmeara_is_doorcamera_get() == true) // if(1)
         {
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);

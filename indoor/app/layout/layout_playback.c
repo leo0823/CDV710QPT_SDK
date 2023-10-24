@@ -211,6 +211,7 @@ static void playback_thumb_refresh_display_callback(void)
                 }
                 lv_obj_clear_flag(parent, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_set_style_bg_img_src(parent, media_thumb_img_dsc_group[i], LV_PART_MAIN);
+                lv_img_cache_invalidate_src(parent->bg_img_src);
                 media_thumb_refresh_gorup[i] = false;
         }
         /*每次加载完后显示总数*/
@@ -410,7 +411,7 @@ static void playback_thumb_decode_all_display(void)
                 if (index >= 0)
                 {
                         const file_info *info = media_file_info_get(playback_media_type, index);
-                        printf("name is %s\n", info->ch);
+                        printf("name is %s\n", info->file_name);
                         sprintf(arry[thumb_count++], "%s%s %d %d %d %d", playback_media_path, info->file_name, media_thumb_point_gorup[i]->x, media_thumb_point_gorup[i]->y, PLAYBACK_THUMB_WIDTH, PLAYBACK_THUMB_HIGHT);
                         playabck_media_new_obj_display(parent, info->is_new);
                         playback_media_mode_obj_display(parent, info->mode);

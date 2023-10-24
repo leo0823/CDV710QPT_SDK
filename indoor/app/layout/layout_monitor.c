@@ -1124,9 +1124,23 @@ static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 
 static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
+        is_monitor_snapshot_ing = false;
+        is_monitor_record_video_ing = false;
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
-                lv_sat_timer_create(monitor_call_record_delay_task, 500, NULL);
+
+                if (user_data_get()->auto_record_mode != 0)
+                {
+                        if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 1))
+                        {
+                                is_monitor_record_video_ing = true;
+                        }
+                        else
+                        {
+                                is_monitor_snapshot_ing = true;
+                        }
+                }
+                lv_sat_timer_create(monitor_call_record_delay_task, 100, NULL);
         }
 }
 
@@ -1993,10 +2007,6 @@ static void layout_monitor_buzzer_alarm_call_callback(void)
 static void sat_layout_enter(monitor)
 {
 
-        if (monitor_channel_get() == MON_CH_DOOR1 && (user_data_get()->etc.door1_open_door_mode == 1))
-        {
-                door1_lock1_power_pin_ctrl(true);
-        }
         /*呼叫繁忙事件注册（在监控状态收到别人的呼叫）*/
         user_linphone_call_busy_register(layout_monitor_busy_callback);
 
@@ -2010,8 +2020,8 @@ static void sat_layout_enter(monitor)
         lv_obj_pressed_func = NULL;
         standby_timer_close();
         is_monitor_door_camera_talk = false;
-        is_monitor_snapshot_ing = false;
-        is_monitor_record_video_ing = false;
+        is_monitor_snapshot_ing = true;
+        is_monitor_record_video_ing = true;
         call_duration = 0;
         monitor_timeout_sec_reset(30);
 
@@ -2027,7 +2037,15 @@ static void sat_layout_enter(monitor)
                         sat_ipcamera_device_channel_setting(network_data_get()->door_device[ch].ipaddr, network_data_get()->door_device[ch].port, network_data_get()->door_device[ch].username, network_data_get()->door_device[ch].password, network_data_get()->door_device[ch].auther_flag, 0, 1000);
                 }
         }
-
+        if (monitor_channel_get() == MON_CH_DOOR1 && (user_data_get()->etc.door1_open_door_mode == 1))
+        {
+                door1_lock1_power_pin_ctrl(true);
+        }
+        if (is_alarm_trigger())
+        {
+                SAT_DEBUG("alarm mode report");
+                sat_linphone_alarm_backgound_sound(true);
+        }
         // 满屏查看
         {
 
@@ -2307,7 +2325,7 @@ static void sat_layout_enter(monitor)
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  resource_ui_src_get("btn_call_rec.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
 
-                        monitor_obj_record_video_display();
+                        // monitor_obj_record_video_display();
                 }
                 /***********************************************
                  ** 作者: leo.liu
@@ -2321,7 +2339,7 @@ static void sat_layout_enter(monitor)
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  resource_ui_src_get("btn_call_camera.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_TOP_MID);
 
-                        monitor_obj_record_photo_display();
+                        // monitor_obj_record_photo_display();
                 }
         }
         /************************************************************
@@ -2412,6 +2430,7 @@ static void sat_layout_enter(monitor)
 static void sat_layout_quit(monitor)
 {
         door1_lock1_power_pin_ctrl(false);
+        sat_linphone_alarm_backgound_sound(false);
         if (unlock_timer != NULL)
         {
                 monitor_obj_unlock_open_timer(NULL); // 退出监控时间=，把已开启的锁关闭

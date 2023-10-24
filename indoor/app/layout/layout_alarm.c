@@ -153,7 +153,7 @@ static void alarm_ring_idel_check(lv_timer_t *ptimer)
                 alarm_ring_idel_timer = NULL;
                 if ((user_data_get()->system_mode & 0x0f) != 0x01)
                 {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                 }
         }
 }
@@ -171,7 +171,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
         user_data_save();
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
-                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
         }
         sat_linphone_audio_play_stop();
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
@@ -207,7 +207,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                         {
                                 user_data_get()->alarm.alarm_ring_play = true;
                                 user_data_save();
-                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                                 ring_alarm_play();
                                 if (alarm_ring_close_timer)
                                 {
@@ -227,7 +227,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 }
                 if ((user_data_get()->system_mode & 0x0f) != 0x01)
                 {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                 }
                 if (alarm_trigger_check() == false)
                 {
@@ -408,7 +408,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 lv_obj_t *label = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_confirm_btn), layout_alarm_obj_id_confirm_label);
                                                 user_data_get()->alarm.is_alarm_return = true;
                                                 user_data_save();
-                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                                                 lv_label_set_text(label, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_RETURN));
                                                 return;
                                         }
@@ -451,7 +451,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         }
                                         if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                         {
-                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                                         }
                                         if (alarm_trigger_check() == false)
                                         {
@@ -480,7 +480,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
                                         if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                         {
-                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                                         }
                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN);
                                 }
@@ -590,7 +590,7 @@ static void layout_alarm_close_keyboard_obj_click(lv_event_t *ev)
         alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
-                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 500, NULL);
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
         }
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
         lv_obj_add_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);
@@ -751,16 +751,6 @@ static void alarm_ringtone_play_check(void)
 static void
 sat_layout_enter(alarm)
 {
-        if ((user_data_get()->system_mode & 0X0F) == 0X01)
-        {
-                for (int i = 0; i < DEVICE_MAX; i++)
-                {
-                        if (monitor_valid_channel_check(i) == true)
-                        {
-                                sat_ipcamera_device_mode_setting(network_data_get()->door_device[i].ipaddr, network_data_get()->door_device[i].port, network_data_get()->door_device[i].username, network_data_get()->door_device[i].password, network_data_get()->door_device[i].auther_flag, 0x01, 1000);
-                        }
-                }
-        }
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();

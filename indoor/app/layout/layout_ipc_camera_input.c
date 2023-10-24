@@ -79,7 +79,7 @@ static void ipc_camera_password_input_cancel_click(lv_event_t *e)
 
         if ((flag == IPC_CAMERA_FLAG_CHANGE_NAME) || (flag == IPC_CAMERA_FLAG_CHANGE_PWD))
         {
-                if ((layout_ipc_cmeara_is_doorcamera_get() == true) && network_data_get()->door_device[layout_ipc_camera_edit_index_get()].sip_url[0] == '\0')
+                if ((layout_ipc_cmeara_is_doorcamera_get() == true) && (sat_pre_layout_get() == sat_playout_get(ipc_camera_search)))
                 {
                         sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }

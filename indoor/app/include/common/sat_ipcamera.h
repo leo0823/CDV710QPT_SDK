@@ -256,7 +256,7 @@ bool sat_ipcamera_device_mode_setting(const char *ip, int port, const char *user
 ** 1：子通道
 *****************************************************************/
 bool sat_ipcamera_device_channel_get(const char *ip, int port, const char *user, const char *password, char auther_flag, int *channel, int timeout);
-/****************************************************************
+/****************************************************************S
 **@日期: 2023-09-21
 **@作者: leo.liu
 **@功能: 设置当前视频流channel：

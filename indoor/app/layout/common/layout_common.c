@@ -293,6 +293,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_get()->alarm.emergency_mode = 1;
+                        user_data_get()->alarm.alarm_ring_play = true;
                         user_data_save();
                         struct tm tm;
                         user_time_read(&tm);
@@ -702,4 +703,23 @@ bool is_valid_ipv4(const char *s)
         }
         free(copy);
         return count == 4;
+}
+
+/************************************************************
+** 函数说明: 是否警备触发状态
+** 作者: xiaoxiao
+** 日期：2023-10-23 08:21:24
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool is_alarm_trigger(void)
+{
+        for (int i = 0; i < 8; i++)
+        {
+                if (user_data_get()->alarm.alarm_trigger[i])
+                {
+                        return true;
+                }
+        }
+        return false;
 }
