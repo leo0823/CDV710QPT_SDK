@@ -76,7 +76,7 @@ static void wifi_input_textarea_placeholder_setting(void)
 
                 return;
         }
-        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_ENTET_WIFI_NAME : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
+        lv_textarea_set_placeholder_text(textarea, lang_str_get(wifi_input_user_temp[0] == 0 ? WIFI_INPUT_XLS_LANG_ID_INPUT_USER : WIFI_INPUT_XLS_LANG_ID_INPUT_PASSWORD));
 }
 
 static void wifi_input_password_hidden_icon(void)
@@ -217,7 +217,6 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_target(ev);
         uint16_t btn_id = lv_btnmatrix_get_selected_btn(obj);
-        printf("btn_id is %d\n", btn_id);
         lv_keyboard_mode_t mode = lv_keyboard_get_mode(obj);
         if ((((mode == LV_KEYBOARD_MODE_TEXT_LOWER) || (mode == LV_KEYBOARD_MODE_TEXT_UPPER)) && (btn_id != 41)) ||
             ((mode == LV_KEYBOARD_MODE_SPECIAL) && (btn_id != 43)))
@@ -231,6 +230,7 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
                 strcpy(wifi_input_user_temp, lv_textarea_get_text(textarea));
                 lv_textarea_set_text(textarea, "");
                 wifi_input_textarea_placeholder_setting();
+                lv_textarea_set_password_mode(textarea, true);
                 wifi_input_password_hidden_icon();
                 layout_wifi_input_head_display();
         }
@@ -300,6 +300,7 @@ static void sat_layout_enter(wifi_input)
                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                 lv_textarea_set_password_bullet(textarea, "*");
                 wifi_input_textarea_placeholder_setting();
+                printf("wifi_input_user_temp[0] is %c\n", wifi_input_user_temp[0]);
                 lv_textarea_set_password_mode(textarea, wifi_input_user_temp[0] == 0 ? false : true);
         }
         /***********************************************

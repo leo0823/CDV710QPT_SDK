@@ -30,7 +30,9 @@ enum
         setting_motion_obj_id_msgbox_confirm = setting_motion_obj_id_msgbox_check_4 + 12,
         setting_motion_obj_id_msgbox_confirm_img,
         setting_motion_obj_id_msgbox_cancel,
-        setting_motion_obj_id_msgbox_cancel_img
+        setting_motion_obj_id_msgbox_cancel_img,
+
+        setting_motion_obj_id_msgbox_item_hidden,
 };
 
 typedef enum
@@ -340,7 +342,7 @@ static lv_obj_t *setting_motion_msgbox_create(const char *title, lv_event_cb_t c
                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                  resource_ui_src_get("btn_title_confirm.png"), LV_OPA_TRANSP, 0x0096FF, LV_ALIGN_CENTER);
 
-        return parent;
+        return msgbox;
 }
 
 static void setting_motion_msgbox_item_click(lv_event_t *ev)
@@ -457,11 +459,20 @@ static void setting_motion_lcd_on_msgbox_confim_click(lv_event_t *e)
         }
         setting_motion_msgbox_del();
 }
+
+/************************************************************
+** 函数说明: 在选择记录方式时，插拔SD卡，推出选择
+** 作者: xiaoxiao
+** 日期：2023-10-14 16:39:35
+** 参数说明:
+** 注意事项：
+************************************************************/
 static void setting_motion_save_format_sd_state_change_callback(void)
 {
         setting_motion_msgbox_del();
         sd_state_channge_callback_register(sd_state_change_default_callback);
 }
+
 static void setting_motion_list_item_click(lv_event_t *e)
 {
         lv_obj_t *item = lv_event_get_current_target(e);
@@ -484,9 +495,18 @@ static void setting_motion_list_item_click(lv_event_t *e)
                 const char *item[2] = {0};
                 item[0] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_VIDEO);
                 item[1] = lang_str_get(RECORDING_XLS_LANG_ID_SAVE_PICTURE);
-                setting_motion_msgbox_create(lang_str_get(SETTING_MOTION_XLS_LANG_ID_STORAGE_FORMAT),
-                                             setting_motion_msgbox_cancel_obj_click, setting_motion_storage_foramt_msgbox_confim_click, setting_motion_msgbox_item_click,
-                                             item, 2, user_data_get()->motion.saving_fmt);
+                lv_obj_t *msgbox = setting_motion_msgbox_create(lang_str_get(SETTING_MOTION_XLS_LANG_ID_STORAGE_FORMAT),
+                                                                setting_motion_msgbox_cancel_obj_click, setting_motion_storage_foramt_msgbox_confim_click, setting_motion_msgbox_item_click,
+                                                                item, 2, user_data_get()->motion.saving_fmt);
+
+                if (((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG)))
+                {
+                        lv_common_img_btn_create(msgbox, setting_motion_obj_id_msgbox_item_hidden, 10, 70, 365, 48,
+                                                 NULL, true, LV_OPA_60, 0x242526, LV_OPA_60, 0x242526,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                }
         }
         else if (item->id == setting_motion_obj_id_storage_sensitivity_cont)
         {
@@ -614,6 +634,7 @@ static void sat_layout_enter(setting_motion)
 
 static void sat_layout_quit(setting_motion)
 {
+        sd_state_channge_callback_register(sd_state_change_default_callback);
 }
 
 sat_layout_create(setting_motion);

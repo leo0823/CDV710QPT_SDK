@@ -17,6 +17,7 @@ enum
         ipc_camera_search_display_obj_id_regist_msgbox_cont,
         ipc_camera_search_display_obj_id_regist_msgbox_title,
         ipc_camera_search_display_obj_id_regist_msgbox_confirm,
+
 };
 
 static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
@@ -31,6 +32,26 @@ static void ipc_camera_search_display_cancel_click(lv_event_t *ev)
         }
 }
 
+static void ipc_camera_display_get_ip_falid_confirm(lv_event_t *e)
+{
+
+        setting_msgdialog_msg_del(ipc_camera_search_display_obj_id_regist_msgbox_bg);
+}
+
+/************************************************************
+** 函数说明: 数据校验失败提示
+** 作者: xiaoxiao
+** 日期：2023-09-26 14:23:59
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void ipc_camera_display_get_ip_fali_tips(void)
+{
+        lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_display_obj_id_regist_msgbox_bg, 0, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(msgbox, 1, lang_str_get(IP_SETTING_XLS_LANG_ID_GET_FAILED), 0, 60, 460, 120);
+        setting_msgdialog_msg_confirm_btn_create(msgbox, 2, ipc_camera_display_get_ip_falid_confirm);
+}
+
 static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
 {
         struct ipcamera_info *pinfo = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
@@ -40,13 +61,18 @@ static void ipc_camera_search_display_ip_edit_click(lv_event_t *ev)
         }
         struct ipcamera_network network;
         memset(&network, 0, sizeof(struct ipcamera_network));
-        sat_ipcamera_network_get(pinfo->ipaddr, pinfo->port, pinfo->username, pinfo->password, pinfo->auther_flag, &network, 1000);
-        layout_setting_ipaddress_info_get()->ip_setting_flag = 0x01;
-        layout_setting_ipaddress_info_get()->network = network;
-        layout_setting_ipaddress_info_get()->pinfo = *pinfo;
-        printf("dns is %s\n", layout_setting_ipaddress_info_get()->network.dns);
-        printf("gateway is %s\n", layout_setting_ipaddress_info_get()->network.gateway);
-        sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        if (sat_ipcamera_network_get(pinfo->ipaddr, pinfo->port, pinfo->username, pinfo->password, pinfo->auther_flag, &network, 1500))
+        {
+                layout_setting_ipaddress_info_get()->ip_setting_flag = 0x01;
+                layout_setting_ipaddress_info_get()->network = network;
+                layout_setting_ipaddress_info_get()->pinfo = *pinfo;
+
+                sat_layout_goto(setting_ipaddress, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        }
+        else
+        {
+                ipc_camera_display_get_ip_fali_tips();
+        }
 }
 
 static bool ipc_camera_search_display_register_func(void)
@@ -115,6 +141,7 @@ static bool ipc_camera_search_display_register_func(void)
                                         strncpy(network_data_get()->door_device[i].door_name, doorname, strlen(doorname));
 
                                         network_data_save();
+
                                         // SAT_DEBUG("%s %s", number, network_data_get()->door_device[i].sip_url);
                                         //  struct ipcamera_info *device = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
                                         // printf("ip:%s,port=%d,username:%s,password:%s,auther=%d\n", device->ipaddr, device->port, device->username, device->password, device->auther_flag);
@@ -161,6 +188,7 @@ static void ipc_camera_search_display_register_click(lv_event_t *ev)
         }
         else
         {
+
                 lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_display_obj_id_regist_msgbox_bg, ipc_camera_search_display_obj_id_regist_msgbox_cont, 282, 93, 460, 352);
                 setting_msgdialog_msg_create(msgbox, ipc_camera_search_display_obj_id_regist_msgbox_title, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTER_FAILDED), 0, 110, 460, 80);
                 setting_msgdialog_msg_confirm_btn_create(msgbox, ipc_camera_search_display_obj_id_regist_msgbox_confirm, ipc_camera_search_display_register_failed_confirm_func);
@@ -180,12 +208,6 @@ static void ipc_camera_display_ipcamera_state_func(unsigned int type, unsigned i
                                 lv_timer_del((lv_timer_t *)sat_cur_layout_screen_get()->user_data);
                                 sat_cur_layout_screen_get()->user_data = NULL;
                         }
-                        lv_obj_t *check = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_top_cont), ipc_camera_search_display_obj_id_if_you);
-                        lv_obj_t *reg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_register_label);
-
-                        lv_label_set_text(check, lang_str_get(layout_ipc_cmeara_is_doorcamera_get() ? DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_SEE : DOOR_CAMERA_SEARCH_XLS_LANG_ID_IF_YOUT_CANNOT_REGISTER));
-                        lv_obj_set_style_bg_color(reg, lv_color_hex(0X00A8FF), LV_PART_MAIN);
-                        lv_obj_add_flag(reg, LV_OBJ_FLAG_CLICKABLE);
                         sprintf(buffer, "%s %s %s", rtsp, sat_ipcamera_username_get(layout_ipc_camera_edit_index_get()), sat_ipcamera_password_get(layout_ipc_camera_edit_index_get()));
                         // SAT_DEBUG("%s", buffer);
                         sat_linphone_ipcamera_start(buffer);
@@ -202,7 +224,7 @@ static void layout_ipc_display_register_display(lv_timer_t *ptimer)
         // lv_obj_t *edit = lv_obj_get_child_form_id(parent, ipc_camera_search_display_obj_id_ip_edit);
         lv_obj_t *reg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_display_obj_id_register_label);
 
-        lv_label_set_text(check, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHECK_CONNECTION_INFO));
+        lv_label_set_text(check, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_CHECK_INFOMATION));
         lv_obj_set_style_bg_color(reg, lv_color_hex(0x47494A), LV_PART_MAIN);
         lv_obj_clear_flag(reg, LV_OBJ_FLAG_CLICKABLE);
         // lv_obj_add_flag(edit, LV_OBJ_FLAG_HIDDEN);
@@ -265,7 +287,7 @@ static void sat_layout_enter(ipc_camera_display)
                                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                          resource_ui_src_get("btn_title_IPset.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                                if (layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER)
+                                if (0 /*layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER*/)
                                 {
                                         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                                 }
@@ -296,6 +318,12 @@ static void sat_layout_enter(ipc_camera_display)
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTRATION), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
+                if (layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER)
+                {
+                        lv_obj_set_style_bg_color(obj, lv_color_hex(0x47494A), LV_PART_MAIN);
+                        lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+                }
+
                 lv_obj_set_style_pad_top(obj, 15, LV_PART_MAIN);
         }
 

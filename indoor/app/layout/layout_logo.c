@@ -141,6 +141,14 @@ lv_timer_t *buzzer_call_timer_get()
 {
         return buzzer_call_timer;
 }
+
+/************************************************************
+** 函数说明: 蜂鸣器通知关闭
+** 作者: xiaoxiao
+** 日期：2023-10-14 14:53:38
+** 参数说明:
+** 注意事项：
+************************************************************/
 static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
 {
         lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
@@ -150,7 +158,7 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
                 user_data_save();
                 if ((user_data_get()->system_mode & 0X0f) != 0x01)
                 {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 100, NULL);
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
                 }
 
                 // lv_timer_del(buzzer_call_timer);
@@ -211,7 +219,10 @@ static void default_buzzer_call_timer(lv_timer_t *timer)
                         if (bg == NULL)
                         {
                                 buzzer_call_trigger_ui_create();
-                                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                                if (user_data_get()->audio.ring_mute == false)
+                                {
+                                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                                }
                         }
                         if (user_timestamp_get() - buzzer_call_timestamp_get() >= 6000)
                         {
@@ -271,29 +282,23 @@ void buzzer_alarm_trigger_default(void)
         }
         buzzer_call_timestamp = user_timestamp_get();
         buzzer_call_trigger_ui_create();
-        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+        }
 }
 
+static void (*alaem_ring_func)(void) = NULL;
 /************************************************************
-** 函数说明: 警报页面铃声播放/暂停同步
+** 函数说明: 警报铃声状态变化回调
 ** 作者: xiaoxiao
-** 日期：2023-09-12 08:00:33
+** 日期：2023-10-19 09:19:12
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void alarm_ringtone_play_check(void)
+void alaem_ring_func_callback_register(void (*callback)(void))
 {
-        if (sat_cur_layout_get() == sat_playout_get(alarm))
-        {
-                if (user_data_get()->alarm.alarm_ring_play == false)
-                {
-                        sat_linphone_audio_play_stop();
-                }
-                else
-                {
-                        ring_alarm_play();
-                }
-        }
+        alaem_ring_func = callback;
 }
 
 /************************************************************
@@ -388,7 +393,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
-
+                                user_data_get()->auto_record_mode = info->auto_record_mode;
                                 user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
@@ -401,7 +406,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group, &info->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                         }
-                        SAT_DEBUG("=====================================");
+
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
                         user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                         user_data_get()->alarm.security_auto_record = info->alarm.security_auto_record;
@@ -418,7 +423,11 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 {
                                         memcpy(&user_data_get()->alarm.alarm_trigger, &info->alarm.alarm_trigger, sizeof(user_data_get()->alarm.alarm_trigger));
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
-                                        alarm_trigger_check();
+                                        if ((alarm_trigger_check() == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
+                                        {
+
+                                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                                        }
                                 }
                         }
                         if (user_data_get()->alarm.buzzer_alarm != info->alarm.buzzer_alarm) // 蜂鸣器触发，取消同步
@@ -429,7 +438,10 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         if (user_data_get()->alarm.alarm_ring_play != info->alarm.alarm_ring_play) // 警报页面内，铃声播放取消同步
                         {
                                 user_data_get()->alarm.alarm_ring_play = info->alarm.alarm_ring_play;
-                                alarm_ringtone_play_check();
+                                if (alaem_ring_func != NULL)
+                                {
+                                        alaem_ring_func();
+                                }
                         }
                         if (0 /*user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return*/) // 警报页面内，stop/return状态同步(客户取消return状态)
                         {
@@ -769,7 +781,6 @@ static void logo_enter_system_timer(lv_timer_t *t)
                         sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
         }
-        lv_timer_del(t);
 }
 
 /************************************************************
@@ -929,7 +940,10 @@ static void sat_layout_enter(logo)
         }
         else if (access("/app/tuya/tuya_key_backup", F_OK) == 0)
         {
-                system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
+                if (access("/app/tuya/tuya_key", F_OK) != 0)
+                {
+                        system("mv /app/tuya/tuya_key_backup /app/tuya/tuya_key");
+                }
         }
         if (tuya_key_and_uuid_init() == false)
         {

@@ -483,7 +483,7 @@ static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
         int value = lv_slider_get_value(parent);
         if ((intercom_call_state == 3 || intercom_call_state == 4))
         {
-                user_data_get()->audio.entrancr_voice = value;
+                user_data_get()->audio.extension_voice = value;
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
@@ -849,7 +849,8 @@ static void sat_layout_enter(intercom_talk)
                 {
                         lv_timer_del((lv_timer_t *)obj->user_data);
                 }
-                obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, user_timestamp_get() - buzzer_call_timestamp_get(), obj);
+                int time = user_timestamp_get() - buzzer_call_timestamp_get();
+                obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, time > 6000 ? 6000 : time, obj);
         }
         buzzer_call_callback_register(intercom_talk_buzzer_alarm_call_callback);
 }
@@ -871,7 +872,7 @@ static void sat_layout_quit(intercom_talk)
         int index = extern_index_get_by_user(intercom_call_user);
         sprintf(extension, "%d", index);
         CALL_LOG_TYPE type;
-        if (intercom_call_state == 0X01 || intercom_call_state == 0x03)
+        if (intercom_call_state == 0X01 || intercom_call_state == 0x04)
         {
                 type = CALL_OUT;
                 time_t time_val;
@@ -893,7 +894,7 @@ static void sat_layout_quit(intercom_talk)
                 call_list_add(type, extension, intercom_talk_timeout, tm_val);
                 layout_last_call_new_flag_set(true);
         }
-        else if (intercom_call_state == 0X04)
+        else if (intercom_call_state == 0X03)
         {
                 type = IN_AND_ANSWER;
                 time_t time_val;

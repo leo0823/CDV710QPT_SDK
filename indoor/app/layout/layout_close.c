@@ -522,6 +522,10 @@ static void sat_layout_enter(close)
         sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
     }
 }
+static void layout_close_backlight_open_timer(lv_timer_t *t)
+{
+    backlight_enable(true);
+}
 
 static void sat_layout_quit(close)
 {
@@ -548,8 +552,9 @@ static void sat_layout_quit(close)
     sd_state_channge_callback_register(sd_state_change_default_callback);
 
     user_linphone_call_streams_running_receive_register(NULL);
+    lv_obj_clean(sat_cur_layout_screen_get());
 
-    backlight_enable(true);
+    lv_timer_set_repeat_count(lv_timer_create(layout_close_backlight_open_timer, 300, NULL), 1);
 
     standby_timer_restart(true);
 }

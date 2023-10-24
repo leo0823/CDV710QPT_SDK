@@ -829,6 +829,9 @@ static bool automatic_ip_setting(void)
         if ((network_data_get()->network.udhcp == false) || (ipaddr_udhcp_server_get_wait() == false))
         {
                 sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
+                sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
+
+                system("ps");
                 if (network_data_get()->network.ipaddr[0] != '\0')
                 {
                         SAT_DEBUG("==============");

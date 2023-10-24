@@ -36,8 +36,8 @@ typedef struct
         int common_entrance_volume;
         int common_entrance_voice;
         int securirty_office_tone;
-        int entracne_volume;
-        int entrancr_voice;
+        int entrance_volume;
+        int entrance_voice;
         int guard_station_volume;
         int guard_station_voice;
         int extension_volume;

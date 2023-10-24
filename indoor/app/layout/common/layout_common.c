@@ -284,7 +284,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 // {
                 //         return;
                 // }
-                if (user_data_get()->alarm.away_alarm_enable == 0X01)
+                if ((user_data_get()->alarm.away_alarm_enable != 0X02) && (user_data_get()->alarm.alarm_enable_always[0][arg1] != true) && (user_data_get()->alarm.alarm_enable_always[1][arg1] != true))
                 {
                         return;
                 }
@@ -293,6 +293,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_get()->alarm.emergency_mode = 1;
+                        user_data_get()->alarm.alarm_ring_play = true;
                         user_data_save();
                         struct tm tm;
                         user_time_read(&tm);
@@ -340,21 +341,14 @@ bool alarm_trigger_check(void)
                 }
                 if ((alarm_occur))
                 {
-                        if (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false))
-                        {
-                                user_data_save();
-                                struct tm tm;
-                                user_time_read(&tm);
-                                alarm_list_add(security_emergency, i, &tm);
-                                layout_alarm_alarm_channel_set(i);
-                                sat_linphone_handup(0xFFFF);
-                                sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
-                        }
+                        user_data_save();
+                        struct tm tm;
+                        user_time_read(&tm);
+                        alarm_list_add(security_emergency, i, &tm);
+                        layout_alarm_alarm_channel_set(i);
+                        sat_linphone_handup(0xFFFF);
+                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
                 }
-        }
-        if ((alarm_occur == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
-        {
-                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
         }
         return alarm_occur;
 }
@@ -709,4 +703,23 @@ bool is_valid_ipv4(const char *s)
         }
         free(copy);
         return count == 4;
+}
+
+/************************************************************
+** 函数说明: 是否警备触发状态
+** 作者: xiaoxiao
+** 日期：2023-10-23 08:21:24
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool is_alarm_trigger(void)
+{
+        for (int i = 0; i < 8; i++)
+        {
+                if (user_data_get()->alarm.alarm_trigger[i])
+                {
+                        return true;
+                }
+        }
+        return false;
 }

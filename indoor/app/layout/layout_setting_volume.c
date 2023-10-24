@@ -155,14 +155,14 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
 
                 int value = lv_slider_get_value(obj);
                 sat_linphone_audio_play_volume_set(value);
-                user_data_get()->audio.entracne_volume = value;
+                user_data_get()->audio.entrance_volume = value;
                 user_data_save();
-                if ((user_data_get()->audio.entracne_volume != 0))
+                if ((user_data_get()->audio.entrance_volume != 0))
                 {
                         if ((playing_index != 1) || is_setting_volume_ring_play_runing == false)
                                 ring_door_call_play(user_data_get()->audio.door_tone);
                 }
-                else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.entracne_volume == 0))
+                else if ((is_setting_volume_ring_play_runing == true) && (user_data_get()->audio.entrance_volume == 0))
                 {
                         sat_linphone_audio_play_stop();
                         is_setting_volume_ring_play_runing = false;
@@ -172,7 +172,7 @@ static void setting_entrance_volume_slider_change_cb(lv_event_t *e)
         else if (y == 78) // 调通话声音
         {
                 int value = lv_slider_get_value(obj);
-                user_data_get()->audio.entrancr_voice = value;
+                user_data_get()->audio.entrance_voice = value;
                 user_data_save();
         }
 }
@@ -181,7 +181,7 @@ static void setting_entrance_volume_slider_display(lv_obj_t *parent)
         lv_obj_t *slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_volume_obj_id_entrance_cont), setting_volume_obj_id_entrance_volume_slider_cont);
         lv_obj_t *slider_obj = lv_obj_get_child_form_id(slider_cont, setting_volume_obj_id_entrance_volume_slider);
         lv_obj_t *value_obj = lv_obj_get_child_form_id(slider_cont, setting_volume_obj_id_entrance_volume_slider_text);
-        int cur_volume = user_data_get()->audio.entracne_volume;
+        int cur_volume = user_data_get()->audio.entrance_volume;
         char value_str[32] = {0};
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);
@@ -190,7 +190,7 @@ static void setting_entrance_volume_slider_display(lv_obj_t *parent)
         slider_cont = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, setting_volume_obj_id_entrance_cont), setting_volume_obj_id_entrance_voice_slider_cont);
         slider_obj = lv_obj_get_child_form_id(slider_cont, setting_volume_obj_id_entrance_voice_slider);
         value_obj = lv_obj_get_child_form_id(slider_cont, setting_volume_obj_id_entrance_voice_slider_text);
-        cur_volume = user_data_get()->audio.entrancr_voice;
+        cur_volume = user_data_get()->audio.entrance_voice;
 
         sprintf(value_str, "%02d", cur_volume);
         lv_bar_set_value(slider_obj, cur_volume, LV_ANIM_OFF);

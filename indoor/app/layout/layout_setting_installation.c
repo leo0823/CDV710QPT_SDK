@@ -254,7 +254,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              setting_installation_front_door_camera_obj_click, -1},
             {0, 72 * 9, 622, 72,
              setting_installation_obj_id_front_cctv_cont, 0, -1,
-             INSTALLATION_XLS_LANG_ID_FRONT_CCTV, lang_str_get,
+             INSTALLATION_XLS_LANG_ID_IP_CCTV_CAMERA, lang_str_get,
              -1, NULL,
              setting_installation_front_cctv_obj_click, -1},
             {0, 72 * 10, 622, 72,

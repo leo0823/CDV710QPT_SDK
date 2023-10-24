@@ -31,6 +31,7 @@ enum
         setting_server_ipaddress_obj_id_update_sever_label,
         setting_server_ipaddress_obj_id_cctv_server_label
 };
+
 static char etting_server_ipaddress_flag = false;
 char layout_setting_setting_server_ipaddress_flag_get()
 {

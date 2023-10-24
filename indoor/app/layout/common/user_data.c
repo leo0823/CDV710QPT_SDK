@@ -46,22 +46,22 @@ static const user_data_info user_data_default =
             .extenion_tone = 3,
 
             .buzzer_tone = 1,
-            .buzzer_volume = 1,
+            .buzzer_volume = 50,
             .common_entrance_tone = 1,
-            .common_entrance_volume = 1,
-            .common_entrance_voice = 1,
+            .common_entrance_volume = 50,
+            .common_entrance_voice = 50,
 
             .securirty_office_tone = 1,
 
-            .entracne_volume = 1,
-            .entrancr_voice = 1,
+            .entrance_volume = 50,
+            .entrance_voice = 50,
 
-            .guard_station_volume = 1,
-            .guard_station_voice = 1,
-            .extension_volume = 1,
-            .extension_voice = 4,
-            .touch_notification_volume = 1,
-            .touch_notification_voice = 1,
+            .guard_station_volume = 50,
+            .guard_station_voice = 50,
+            .extension_volume = 50,
+            .extension_voice = 50,
+            .touch_notification_volume = 50,
+            .touch_notification_voice = 50,
             .ring_repeat = 0,
         },
 
@@ -284,8 +284,8 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(common_entrance_voice, 1, 6);
 
         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
-        user_data_audio_check_range_out(entracne_volume, 0, 100);
-        user_data_audio_check_range_out(entrancr_voice, 0, 100);
+        user_data_audio_check_range_out(entrance_volume, 0, 100);
+        user_data_audio_check_range_out(entrance_voice, 0, 100);
 
         user_data_audio_check_range_out(guard_station_volume, 0, 100);
         user_data_audio_check_range_out(guard_station_voice, 0, 100);
@@ -406,7 +406,7 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .network = {
-        .udhcp = true,
+        .udhcp = false,
         .ipaddr = {0},
         .mask = {"255.0.0.0"},
         .gateway = {"10.0.0.1"},
@@ -428,7 +428,7 @@ static const user_network_info network_data_default = {
     .local_server = {"10.0.0.2"},
     .sip_server = {"10.0.0.2"},
     .cctv_server = {"10.0.0.2"},
-    .guard_number = {"700000051"},
+    .guard_number = {"7000010051"},
 };
 
 #define network_data_check_range_out(cur, min, max)                                      \

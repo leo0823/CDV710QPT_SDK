@@ -140,7 +140,7 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
 
         user_data_save();
 
-        layout_away_count_data_get()->away_release_time_countdown_timer = lv_sat_timer_create(layout_away_alarm_release_det_timer, 10 * 1000, NULL);
+        layout_away_count_data_get()->away_release_time_countdown_timer = lv_sat_timer_create(layout_away_alarm_release_det_timer, user_data_get()->alarm.away_release_time * 1000, NULL);
         layout_away_count_data_get()->away_release_time_countdown_timer->lock = true; // 退出界面，定时器不关闭
         if (sat_cur_layout_get() == sat_playout_get(away_count))
         {
@@ -165,7 +165,7 @@ static void layout_alarm_count_param_init(void)
     }
     if (layout_away_count_data_get()->away_count_sec == 0)
     {
-        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time;
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
     }
 }
 

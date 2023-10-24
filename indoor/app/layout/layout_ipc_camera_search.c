@@ -42,7 +42,7 @@ static void ipc_search_door_camera_modify_default_passwd_check()
                 setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
         }
         masgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_obj_id_msg_bg, ipc_camera_search_msg_obj_id_msg, 282, 123, 460, 323);
-        setting_msgdialog_msg_create(masgbox, ipc_camera_search_msg_obj_id_text, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_MODIFY_DEFAULT_PASSWD), 20, 40, 420, 180);
+        setting_msgdialog_msg_create(masgbox, ipc_camera_search_msg_obj_id_text, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DEFAULT_PASSWORD_IS_SET), 20, 40, 420, 180);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, ipc_camera_search_msg_obj_id_confirm, ipc_camera_search_msg_obj_id_cancel, ipc_search_door_camera_modify_default_passwd_confirm, ipc_search_door_camera_modify_default_passwd_concel);
 }
 static void ipc_camera_serarch_list_click(lv_event_t *ev)
@@ -53,14 +53,17 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
                 return;
         }
         layout_ipc_camera_edit_index_set(parent->id);
+        printf("layout_ipc_camera_edit_index_get() is %d\n", layout_ipc_camera_edit_index_get());
         sat_ipcamera_device_status_reset();
         sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
-        if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
+        for (int i = 0; i < 3; i++)
         {
-                ipc_search_door_camera_modify_default_passwd_check();
-                return;
+                if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
+                {
+                        ipc_search_door_camera_modify_default_passwd_check();
+                        return;
+                }
         }
-
         if (layout_ipc_cmeara_is_doorcamera_get() == true) // if(1)
         {
                 layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD);

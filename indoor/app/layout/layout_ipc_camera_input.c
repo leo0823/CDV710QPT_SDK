@@ -79,7 +79,7 @@ static void ipc_camera_password_input_cancel_click(lv_event_t *e)
 
         if ((flag == IPC_CAMERA_FLAG_CHANGE_NAME) || (flag == IPC_CAMERA_FLAG_CHANGE_PWD))
         {
-                if ((layout_ipc_cmeara_is_doorcamera_get() == true) && network_data_get()->door_device[layout_ipc_camera_edit_index_get()].sip_url[0] == '\0')
+                if ((layout_ipc_cmeara_is_doorcamera_get() == true) && (sat_pre_layout_get() == sat_playout_get(ipc_camera_search)))
                 {
                         sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
@@ -426,7 +426,7 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
 
         if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD)
         {
-                lv_textarea_set_max_length(textarea, 32);
+                lv_textarea_set_max_length(textarea, 9);
                 if (ipc_camera_password_state == 0x01)
                 {
                         ipc_camera_input_new_password_processing(txt);
@@ -491,7 +491,8 @@ static void sat_layout_enter(ipc_camera_input)
                                                      LV_OPA_COVER, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 17 : 32,
+                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 17 : ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 9
+                                                                                                                                                                                                                                 : 32,
                                                      30, 500, 0Xffffff);
 
                 lv_obj_set_style_text_color(textarea, lv_color_hex(0x929292), LV_PART_TEXTAREA_PLACEHOLDER);
@@ -499,39 +500,47 @@ static void sat_layout_enter(ipc_camera_input)
                 lv_obj_add_state(textarea, LV_STATE_FOCUSED);
                 lv_textarea_set_password_bullet(textarea, "*");
                 ipc_camera_password_input_textarea_placeholder_setting();
-                lv_textarea_set_password_mode(textarea, true);
-        }
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-2-2 13:43:29
-        ** 说明: 隐藏按钮
-        ***********************************************/
-        {
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_password_hidden, 928, 100, 48, 48,
-                                         ipc_camera_password_input_hidden_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("btn_list_show.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                ipc_camera_input_hidden_btn_display();
-        }
-        /***********************************************
-         ** 作者: leo.liu
-         ** 日期: 2023-2-2 13:43:29
-         ** 说明: 键盘
-         ***********************************************/
-        {
+                if ((ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD) || (ipc_camera_input_flag & IPC_CAMERA_FLAG_INPUT_PWD))
+                {
+                        lv_textarea_set_password_mode(textarea, true);
+                }
+                else
+                {
+                        lv_textarea_set_password_mode(textarea, false);
+                }
 
-                lv_obj_t *keyboard = lv_common_keyboard_create(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_keyboard, 0, 200, 1024, 400,
-                                                               ipc_camera_password_input_keyboard_click, LV_OPA_COVER, 0x292929, LV_OPA_COVER, 0x00a8ff,
-                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                               8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                               8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                               0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
-                                                               24, 18, 18, 8, 12, 12,
-                                                               LV_OPA_COVER, 0x353535, LV_OPA_COVER, 0x353535);
+                /***********************************************
+                ** 作者: leo.liu
+                ** 日期: 2023-2-2 13:43:29
+                ** 说明: 隐藏按钮
+                ***********************************************/
+                {
+                        lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_password_hidden, 928, 100, 48, 48,
+                                                 ipc_camera_password_input_hidden_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("btn_list_show.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                        ipc_camera_input_hidden_btn_display();
+                }
+                /***********************************************
+                 ** 作者: leo.liu
+                 ** 日期: 2023-2-2 13:43:29
+                 ** 说明: 键盘
+                 ***********************************************/
+                {
 
-                lv_keyboard_set_textarea(keyboard, textarea);
+                        lv_obj_t *keyboard = lv_common_keyboard_create(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_keyboard, 0, 200, 1024, 400,
+                                                                       ipc_camera_password_input_keyboard_click, LV_OPA_COVER, 0x292929, LV_OPA_COVER, 0x00a8ff,
+                                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                       8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                       8, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                       0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                                                       24, 18, 18, 8, 12, 12,
+                                                                       LV_OPA_COVER, 0x353535, LV_OPA_COVER, 0x353535);
+
+                        lv_keyboard_set_textarea(keyboard, textarea);
+                }
         }
 }
 static void sat_layout_quit(ipc_camera_input)

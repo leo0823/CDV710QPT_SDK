@@ -29,15 +29,16 @@ bool ring_touch_play(void)
 ***********************************************/
 bool ring_door_call_play(int index)
 {
-        if (user_data_get()->audio.entracne_volume == 0)
+        if (user_data_get()->audio.entrance_volume == 0)
         {
                 return false;
         }
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
-        sat_linphone_audio_play_volume_set(user_data_get()->audio.entracne_volume);
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.entrance_volume);
         sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
-        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0 ? index == 6 ? 2 : 1 : 0xfffff);
+
+        return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
 }
 
 /***********************************************

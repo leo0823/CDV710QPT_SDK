@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_setting_ipaddress.h"
+#include "layout_ipc_camera.h"
 enum
 {
         setting_ipaddress_obj_id_titile_label,
@@ -126,7 +127,7 @@ static void setting_ipaddress_falid_confirm(lv_event_t *e)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void setting_ipaddress_falid_tips(void)
+static void setting_ipaddress_data_vaild_fali_tips(void)
 {
         lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_msg_bg);
         if (masgbox != NULL)
@@ -137,6 +138,26 @@ static void setting_ipaddress_falid_tips(void)
         setting_msgdialog_msg_create(masgbox, 1, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
         setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_ipaddress_falid_confirm);
 }
+
+/************************************************************
+** 函数说明: 更改摄像头ip信息失败提示
+** 作者: xiaoxiao
+** 日期：2023-10-16 14:28:07
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void setting_ipaddress_setting_fail_tips(void)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_ipaddress_obj_id_msg_bg);
+        if (masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(setting_ipaddress_obj_id_msg_bg);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(setting_ipaddress_obj_id_msg_bg, 0, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(IP_SETTING_XLS_LANG_ID_IP_SETTING_FAILED), 0, 60, 460, 120);
+        setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_ipaddress_falid_confirm);
+}
+
 static void layout_setting_ipaddress_textarea_focus_state_clear(void)
 {
         int obj_id[4] =
@@ -211,6 +232,19 @@ static bool layout_setting_ipaddress_data_valid_check(void)
         }
         return true;
 }
+
+void modify_rtsp_url(const char *original_url, const char *new_ip_address, char *modified_url)
+{
+        // 查找原始URL中的IP地址部分
+        const char *ip_start = strstr(original_url, "://") + 3;
+        const char *ip_end = strchr(ip_start, ':');
+
+        // 构建新的URL
+        strncpy(modified_url, original_url, ip_start - original_url);     // 复制 "rtsp://"
+        strcpy(modified_url + (ip_start - original_url), new_ip_address); // 添加新IP地址
+        strcat(modified_url, ip_end);                                     // 添加端口号和路径
+}
+
 static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
 {
         /*这个地方id寻找的控件与实际意义不符*/
@@ -245,7 +279,7 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                         }
                         else
                         {
-                                setting_ipaddress_falid_tips();
+                                setting_ipaddress_data_vaild_fali_tips();
                                 return;
                         }
                 }
@@ -254,25 +288,67 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                 usleep(100 * 1000);
                 system("reboot");
         }
-        else if (!strncmp((const char *)dhcp->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
-        {
-                layout_setting_ipaddress_info_get()->network.udhcp = true;
-        }
         else
         {
-                layout_setting_ipaddress_info_get()->network.udhcp = false;
-                strncpy(layout_setting_ipaddress_info_get()->network.ipaddr, ipaddr, sizeof(network_data_get()->network.ipaddr));
-                strncpy(layout_setting_ipaddress_info_get()->network.mask, mask, sizeof(network_data_get()->network.mask));
-                strncpy(layout_setting_ipaddress_info_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
-                strncpy(layout_setting_ipaddress_info_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
-        }
-        {
-                sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
-                                             layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1000);
+                if (!strncmp((const char *)dhcp->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
+                {
+                        layout_setting_ipaddress_info_get()->network.udhcp = true;
+                }
+                else
+                {
+                        if (layout_setting_ipaddress_data_valid_check())
+                        {
+                                layout_setting_ipaddress_info_get()->network.udhcp = false;
+                                strncpy(layout_setting_ipaddress_info_get()->network.ipaddr, ipaddr, sizeof(network_data_get()->network.ipaddr));
+                                strncpy(layout_setting_ipaddress_info_get()->network.mask, mask, sizeof(network_data_get()->network.mask));
+                                strncpy(layout_setting_ipaddress_info_get()->network.dns, dns, sizeof(network_data_get()->network.dns));
+                                strncpy(layout_setting_ipaddress_info_get()->network.gateway, gateway, sizeof(network_data_get()->network.gateway));
+                        }
+                        else
+                        {
+                                setting_ipaddress_data_vaild_fali_tips();
+                                return;
+                        }
+                }
+                if (sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
+                                                 layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1500) == true)
+                {
+                        // char newurl[128] = {0};
+                        // if (layout_ipc_cmeara_is_doorcamera_get() && monitor_valid_channel_check(layout_ipc_camera_edit_index_get()))
+                        // {
 
-                sat_layout_goto(ipc_camera_search, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                        //         modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                        //         strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, newurl, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url));
+                        //         strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr));
+                        //         network_data_save();
+                        // }
+                        // else if (monitor_valid_channel_check(layout_ipc_camera_edit_index_get() + 8))
+                        // {
+                        //         modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                        //         strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, newurl, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url));
+                        //         strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr));
+                        //         network_data_save();
+                        // }
+                        if (layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER)
+                        {
+                                if (layout_ipc_cmeara_is_doorcamera_get() && monitor_valid_channel_check(layout_ipc_camera_edit_index_get()))
+                                {
+                                        memset(&network_data_get()->door_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()]));
+                                }
+                                else if (monitor_valid_channel_check(layout_ipc_camera_edit_index_get() + 8))
+                                {
+                                        memset(&network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()]));
+                                }
+                        }
+                        sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                }
+                else
+                {
+                        setting_ipaddress_setting_fail_tips();
+                }
         }
 }
+
 static bool setting_ipaddress_textbox_del(void)
 {
         lv_obj_t *textarea = setting_ipaddress_textarea_focused_get();
