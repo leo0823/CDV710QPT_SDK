@@ -1126,21 +1126,10 @@ static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 {
         is_monitor_snapshot_ing = false;
         is_monitor_record_video_ing = false;
+
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
-
-                if (user_data_get()->auto_record_mode != 0)
-                {
-                        if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 1))
-                        {
-                                is_monitor_record_video_ing = true;
-                        }
-                        else
-                        {
-                                is_monitor_snapshot_ing = true;
-                        }
-                }
-                lv_sat_timer_create(monitor_call_record_delay_task, 100, NULL);
+                lv_sat_timer_create(monitor_call_record_delay_task, 500, NULL);
         }
 }
 

@@ -94,7 +94,6 @@ static bool discover_devices_data_parsing(const char *buf, const char *type, cha
                 // return false;
                 pxml = buf;
         }
-
         mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
         if (root != NULL)
         {

@@ -161,6 +161,10 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 {
         intercom_call_username_setting(arg);
         intercom_call_status_setting(1);
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_intercom_play(user_data_get()->audio.extenion_tone);
+        }
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }

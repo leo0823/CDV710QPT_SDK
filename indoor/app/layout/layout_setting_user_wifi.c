@@ -38,6 +38,8 @@ typedef enum
         wifi_del_obj_id_cancel,
 
 } user_wifi_msg_bg_obj_id;
+
+static wifi_info *p_wifi_info_group = NULL;
 static void wifi_setting_user_wifi_enable_display(lv_obj_t *obj)
 {
         if (user_data_get()->wifi_enable == true)
@@ -108,7 +110,19 @@ static void setting_user_wifi_discover_click(lv_event_t *e)
                 return;
         }
         wifi_input_user_setting(lv_label_get_text(obj));
-
+        SAT_DEBUG("id is %d\n", parent->id);
+        SAT_DEBUG("==========name is %s============", p_wifi_info_group[parent->id].name);
+        SAT_DEBUG("==========wifi text is %s============", lv_label_get_text(obj));
+        if (p_wifi_info_group[parent->id].free == true)
+        {
+                SAT_DEBUG("======================");
+                wifi_input_mode_set(0x03);
+        }
+        else
+        {
+                SAT_DEBUG("======================");
+                wifi_input_mode_set(0x02);
+        }
         sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
 static const char *wifi_setting_user_wifi_free_icon_get(const wifi_info *info)
@@ -200,6 +214,7 @@ static void setting_wifi_delete_connected_wifi_info(lv_event_t *e)
 static void settign_wifi_add_click(lv_event_t *ev)
 {
         wifi_input_user_setting(NULL);
+        wifi_input_mode_set(0x01);
         sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
 
@@ -252,7 +267,7 @@ static void setting_user_wifi_discovered_network_display(void)
         unsigned char ip[32] = {0};
         wifi_connected_status = false;
         wifi_device_connection_stauts((unsigned char *)(wifi_connected_info.name), &wifi_connected_info.free, ip, &wifi_connected_status, (unsigned char *)wifi_connected_info.psk_flags);
-        wifi_info *p_wifi_info_group;
+
         int total = 0;
         if (wifi_device_scanf_info_get(&p_wifi_info_group, &total) == true)
         {

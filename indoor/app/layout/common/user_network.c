@@ -674,7 +674,7 @@ static bool obtain_ipaddress_based_on_mac(void)
 
         char ip[32] = {0};
         sprintf(ip, "%d.%d.%d.%d", 10, ip_part[0], ip_part[1], ip_part[2]);
-
+        strcpy(network_data_get()->network.ipaddr, ip);
         char cmd[128] = {0};
         sprintf(cmd, "ifconfig eth0 %s netmask %s", ip, "255.0.0.0");
         system(cmd);

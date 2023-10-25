@@ -108,6 +108,7 @@ static void setting_installation_factory_reset_confirm_func(lv_event_t *ev)
         alarm_list_del_all();
         call_list_del_all();
         wifi_api_reset_default();
+        media_file_delete_all(FILE_TYPE_FLASH_PHOTO, true);
         backlight_enable(false);
         usleep(100 * 1000);
         system("reboot");

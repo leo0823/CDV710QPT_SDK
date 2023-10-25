@@ -142,7 +142,7 @@ static void alarm_ring_idel_check(lv_timer_t *ptimer)
                         lv_timer_del(alarm_ring_close_timer);
                         alarm_ring_close_timer = NULL;
                 }
-                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
                 lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
                 if (parent)
                 {
@@ -214,7 +214,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                                         lv_timer_del(alarm_ring_close_timer);
                                         alarm_ring_close_timer = NULL;
                                 }
-                                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
                         }
                 }
                 else
@@ -438,7 +438,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                                 lv_timer_del(alarm_ring_close_timer);
                                                                 alarm_ring_close_timer = NULL;
                                                         }
-                                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
                                                 }
                                         }
                                         else
@@ -477,7 +477,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 lv_timer_del(alarm_ring_close_timer);
                                                 alarm_ring_close_timer = NULL;
                                         }
-                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
                                         if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                         {
                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
@@ -587,7 +587,7 @@ static void layout_alarm_close_keyboard_obj_click(lv_event_t *ev)
                 lv_timer_del(alarm_ring_close_timer);
                 alarm_ring_close_timer = NULL;
         }
-        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
         if ((user_data_get()->system_mode & 0x0f) != 0x01)
         {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
@@ -668,7 +668,7 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
 ************************************************************/
 static bool layout_alarm_ringplay_register_callback(int arg)
 {
-        //   SAT_DEBUG("arg is  %d\n",arg);
+        SAT_DEBUG("arg is  %d\n", arg);
         if (arg == 1)
         {
                 ring_alarm_play();
@@ -736,7 +736,7 @@ static void alarm_ringtone_play_check(void)
                                 lv_timer_del(alarm_ring_close_timer);
                                 alarm_ring_close_timer = NULL;
                         }
-                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
                 }
         }
 }
@@ -906,7 +906,7 @@ sat_layout_enter(alarm)
                         lv_timer_del(alarm_ring_close_timer);
                         alarm_ring_close_timer = NULL;
                 }
-                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 30 * 60 * 1000, NULL);
+                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
         }
 
         {

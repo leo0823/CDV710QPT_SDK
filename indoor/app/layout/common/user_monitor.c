@@ -9,8 +9,6 @@
 #include "unistd.h"
 #include "common/sat_ipcamera.h"
 
-
-
 static int monitor_channel = -1;
 static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
 
@@ -279,6 +277,7 @@ static void monitor_reset(char flag)
 }
 void monitor_open(bool refresh, bool rtsp)
 {
+        SAT_DEBUG("monitor_enter_flag is %d\n", monitor_enter_flag);
         if ((monitor_enter_flag == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag == MON_ENTER_MANUAL_CCTV_FLAG))
         {
                 monitor_reset(0x03);
@@ -415,33 +414,31 @@ int cctv_register_num_get()
 ** 参数说明:ch:门口机通道；totoal:注册的门口机在线个数
 ** 注意事项:
 ************************************************************/
-bool outdoor_online_check(int ch,int *total)
+bool outdoor_online_check(int ch, int *total)
 {
         int online_num = 0;
         bool result = false;
         const asterisk_register_info *p_register_info = asterisk_register_info_get();
         for (int j = 0; j < 20; j++)
         {
-                if((strncmp("20",p_register_info[j].name,2) == 0) && (p_register_info[j].timestamp != 0))//获取在线的门口机
+                if ((strncmp("20", p_register_info[j].name, 2) == 0) && (p_register_info[j].timestamp != 0)) // 获取在线的门口机
                 {
-                        if (network_data_get()->door_device[p_register_info[j].name[2] - '0' -1].rtsp[0].rtsp_url[0] != 0)//如果此在线的门口机是已经注册的
+                        if (network_data_get()->door_device[p_register_info[j].name[2] - '0' - 1].rtsp[0].rtsp_url[0] != 0) // 如果此在线的门口机是已经注册的
                         {
-                                online_num ++;
-                                if(p_register_info[j].name[2] - '0' == (ch + 1))//判断在线的门口机是否和传入的参数一致
+                                online_num++;
+                                if (p_register_info[j].name[2] - '0' == (ch + 1)) // 判断在线的门口机是否和传入的参数一致
                                 {
                                         result = true;
                                 }
                         }
                 }
         }
-        if(total != NULL)
+        if (total != NULL)
         {
                 *total = online_num;
         }
         return result;
 }
-
-
 
 /************************************************************
 ** 函数说明: 分机在线查询
@@ -450,28 +447,28 @@ bool outdoor_online_check(int ch,int *total)
 ** 参数说明:ch:分机id1-8；total分机在线个数统计
 ** 注意事项:
 ************************************************************/
-bool extension_online_check(int ch,int *total)
+bool extension_online_check(int ch, int *total)
 {
         int online_num = 0;
         bool result = false;
         const asterisk_register_info *p_register_info = asterisk_register_info_get();
         char user_name[64] = {0};
-        sprintf(user_name,"50%d",user_data_get()->system_mode & 0x0f);
+        sprintf(user_name, "50%d", user_data_get()->system_mode & 0x0f);
         for (int j = 0; j < 20; j++)
         {
-                if(strncmp(user_name,p_register_info[j].name,strlen(user_name)))
+                if (strncmp(user_name, p_register_info[j].name, strlen(user_name)))
                 {
-                        if((strncmp("50",p_register_info[j].name,2) == 0) && (p_register_info[j].timestamp != 0))//分机在线
+                        if ((strncmp("50", p_register_info[j].name, 2) == 0) && (p_register_info[j].timestamp != 0)) // 分机在线
                         {
-                                online_num ++;
-                                if(p_register_info[j].name[2] - '0' == ch)//判断在线的分机是否和传入的参数一致
+                                online_num++;
+                                if (p_register_info[j].name[2] - '0' == ch) // 判断在线的分机是否和传入的参数一致
                                 {
                                         result = true;
                                 }
                         }
                 }
         }
-        if(total != NULL)
+        if (total != NULL)
         {
                 *total = online_num;
         }

@@ -18,6 +18,7 @@ bool ring_touch_play(void)
         }
         sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "keysound/touch.mp3", 1); // touch.wav
+        printf("=====%s======%d=====\n", __func__, __LINE__);
 
         return true;
 }
@@ -37,7 +38,7 @@ bool ring_door_call_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entrance_volume);
         sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
-
+        printf("=====%s======%d=====\n", __func__, __LINE__);
         return sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
 }
 
@@ -53,6 +54,7 @@ bool ring_unlock_play(void)
         sat_linphone_audio_play_volume_set(100);
         sprintf(cmd, RESOURCE_RING_PATH "open/open.mp3");
         return sat_linphone_audio_play_start(cmd, 1);
+        printf("=====%s======%d=====\n", __func__, __LINE__);
 }
 /***********************************************
 ** 作者: leo.liu
@@ -71,6 +73,7 @@ bool ring_intercom_play(int index)
         sprintf(cmd, RESOURCE_RING_PATH "extension/extension_call_%d.mp3", index);
         printf("cmd is %s\n", cmd);
         return sat_linphone_audio_play_start(cmd, 1);
+        printf("=====%s======%d=====\n", __func__, __LINE__);
 }
 
 /************************************************************
@@ -82,8 +85,9 @@ bool ring_intercom_play(int index)
 ************************************************************/
 bool ring_alarm_play(void)
 {
-        sat_linphone_audio_play_volume_set(100);
+        sat_linphone_audio_play_volume_set(user_data_get()->audio.touch_notification_volume);
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm/alarm.mp3", 1);
+        printf("=====%s======%d=====\n", __func__, __LINE__);
         return true;
 }
 
@@ -104,6 +108,7 @@ bool ring_buzzer_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.buzzer_volume);
         sprintf(cmd, RESOURCE_RING_PATH "buzzer/buzzer_%d.mp3", index);
+        printf("=====%s======%d=====\n", __func__, __LINE__);
         return sat_linphone_audio_play_start(cmd, 1);
 }
 
@@ -124,6 +129,7 @@ bool ring_common_door_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
         sprintf(cmd, RESOURCE_RING_PATH "common_entrance/Common_entrance_%d.mp3", index);
+        printf("=====%s======%d=====\n", __func__, __LINE__);
         return sat_linphone_audio_play_start(cmd, 1);
 }
 
@@ -144,7 +150,7 @@ bool ring_guard_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sat_linphone_audio_play_volume_set(user_data_get()->audio.guard_station_volume);
         sprintf(cmd, RESOURCE_RING_PATH "security_office/security_office_%d.mp3", index);
-        printf("cmd is %s\n", cmd);
+        printf("=====%s======%d=====\n", __func__, __LINE__);
         return sat_linphone_audio_play_start(cmd, 1);
 }
 

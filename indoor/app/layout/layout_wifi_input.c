@@ -20,7 +20,6 @@ enum
         wifi_input_obj_id_connect_status,
         wifi_input_obj_id_confirm_btn,
         wifi_input_obj_id_confirm_btn_label,
-
 };
 /***
 ** 日期: 2022-04-26 09:16
@@ -30,6 +29,20 @@ enum
 ***/
 static char wifi_input_user_temp[128] = {0};
 static char wifi_input_user_passwd[128] = {0};
+
+static int wifi_input_mode = 0x00;
+/************************************************************
+** 函数说明: wifi输入模式设置(有一些是免费wifi，不需要输入密码，直接连接)
+** 作者: xiaoxiao
+** 日期：2023-10-24 21:34:15
+** 参数说明:0x01:账号输入;0x02:密码输入;0x03:直接连接
+** 注意事项：
+************************************************************/
+void wifi_input_mode_set(int mode)
+{
+        wifi_input_mode = mode;
+}
+
 void wifi_input_user_setting(const char *user)
 {
         memset(wifi_input_user_temp, 0, sizeof(wifi_input_user_temp));
@@ -215,9 +228,11 @@ static void layout_wifi_input_head_display(void)
 }
 static void wifi_input_keyboard_click(lv_event_t *ev)
 {
-        lv_obj_t *obj = lv_event_get_target(ev);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_keyboard);
         uint16_t btn_id = lv_btnmatrix_get_selected_btn(obj);
         lv_keyboard_mode_t mode = lv_keyboard_get_mode(obj);
+        SAT_DEBUG("btn_id is %d\n", btn_id);
+        SAT_DEBUG("mode is %d\n", mode);
         if ((((mode == LV_KEYBOARD_MODE_TEXT_LOWER) || (mode == LV_KEYBOARD_MODE_TEXT_UPPER)) && (btn_id != 41)) ||
             ((mode == LV_KEYBOARD_MODE_SPECIAL) && (btn_id != 43)))
         {
@@ -230,7 +245,6 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
                 strcpy(wifi_input_user_temp, lv_textarea_get_text(textarea));
                 lv_textarea_set_text(textarea, "");
                 wifi_input_textarea_placeholder_setting();
-                lv_textarea_set_password_mode(textarea, true);
                 wifi_input_password_hidden_icon();
                 layout_wifi_input_head_display();
         }
@@ -335,6 +349,12 @@ static void sat_layout_enter(wifi_input)
                                                                LV_OPA_COVER, 0x353535, LV_OPA_COVER, 0x353535);
 
                 lv_keyboard_set_textarea(keyboard, textarea);
+        }
+
+        if (wifi_input_mode == 0x03)
+        {
+                standby_timer_close();
+                wifi_input_msg_dialog_display();
         }
 }
 static void sat_layout_quit(wifi_input)

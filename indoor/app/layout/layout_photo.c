@@ -325,14 +325,11 @@ static void photo_obj_left_click(lv_event_t *e)
         }
         playback_pview_item_set(item);
         const file_info *info = playback_media_info_get();
-        if (info->type != FILE_TYPE_VIDEO)
-        {
-                sat_layout_goto(photo, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-        }
-        else
+        if (info->type == FILE_TYPE_VIDEO)
         {
                 sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
+
         photo_thumb_decode_all_display();
         photo_thumb_left_right_arrow_display();
 }
@@ -346,14 +343,11 @@ static void photo_obj_right_click(lv_event_t *e)
         }
         playback_pview_item_set(item);
         const file_info *info = playback_media_info_get();
-        if (info->type != FILE_TYPE_VIDEO)
-        {
-                sat_layout_goto(photo, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
-        }
-        else
+        if (info->type == FILE_TYPE_VIDEO)
         {
                 sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
+
         photo_thumb_decode_all_display();
         photo_thumb_left_right_arrow_display();
 }
