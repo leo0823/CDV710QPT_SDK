@@ -267,13 +267,13 @@ static void playback_media_thumb_obj_click(lv_event_t *e)
 }
 static void playabck_media_new_obj_display(lv_obj_t *parent, bool new)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 3);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
                 return;
         }
-        obj = lv_obj_get_child_form_id(parent, 2);
+        obj = lv_obj_get_child_form_id(obj, 2);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_get_child_form_id(parent, 2);");
@@ -288,6 +288,7 @@ static void playabck_media_new_obj_display(lv_obj_t *parent, bool new)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 }
+
 static void playback_media_mode_obj_display(lv_obj_t *parent, char mode)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
@@ -411,7 +412,7 @@ static void playback_thumb_decode_all_display(void)
                 if (index >= 0)
                 {
                         const file_info *info = media_file_info_get(playback_media_type, index);
-                        printf("name is %s\n", info->file_name);
+                        // printf("name is %s\n", info->file_name);
                         sprintf(arry[thumb_count++], "%s%s %d %d %d %d", playback_media_path, info->file_name, media_thumb_point_gorup[i]->x, media_thumb_point_gorup[i]->y, PLAYBACK_THUMB_WIDTH, PLAYBACK_THUMB_HIGHT);
                         playabck_media_new_obj_display(parent, info->is_new);
                         playback_media_mode_obj_display(parent, info->mode);

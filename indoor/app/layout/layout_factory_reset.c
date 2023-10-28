@@ -172,7 +172,7 @@ static void sat_layout_enter(factory_reset)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                      "User’s data, changed settings of the system, etc.\nAll are initialized to the factory state.\n\n\nReboot after initialization.",
+                                      lang_str_get(FACTORY_RESET_XLS_LANG_ID_ALL_DATA_RESET),
                                       0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
 

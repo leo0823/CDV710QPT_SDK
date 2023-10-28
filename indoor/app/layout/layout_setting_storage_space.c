@@ -490,7 +490,7 @@ static void sat_layout_enter(setting_storage_space)
         }
         else
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_extern_no_exit, 640, 336, 260, 40,
+                lv_common_text_create(sat_cur_layout_screen_get(), setting_storage_space_obj_id_extern_no_exit, 540, 336, 460, 40,
                                       NULL, LV_OPA_TRANSP, 0x00a8ff, LV_OPA_TRANSP, 0x00a8ff,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

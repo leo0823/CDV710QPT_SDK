@@ -351,6 +351,7 @@ static void setting_password_modiy_obj_create(void)
                                                                                0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                18, 24);
                         lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN);
+                        lv_btnmatrix_clear_btn_ctrl(obj, 9, LV_KEYBOARD_CTRL_BTN_FLAGS);
                 }
                 /***********************************************
                 ** 作者: leo.liu

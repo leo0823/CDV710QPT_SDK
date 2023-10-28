@@ -195,6 +195,7 @@ static void photo_thumb_decode_all_display(void)
 
         if (pinfo->is_new == true)
         {
+                SAT_DEBUG("==============");
                 media_file_new_clear(pinfo->type, playback_pview_item_get());
         }
 }

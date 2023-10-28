@@ -94,6 +94,7 @@ static bool discover_devices_data_parsing(const char *buf, const char *type, cha
                 // return false;
                 pxml = buf;
         }
+
         mxml_node_t *root = mxmlLoadString(NULL, pxml, MXML_NO_CALLBACK);
         if (root != NULL)
         {
@@ -783,7 +784,7 @@ static bool tcp_device_servrce_xml_get_version_name(int tcp_socket_fd, const cha
         struct tm tm;
         if (platform_build_date_get(&tm) == true)
         {
-                sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                sprintf(version, "%04d-%02d-%02d(%02d:%02d:%02d)%s", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, SYSTEM_VERSION);
                 tcp_device_serverce_xml_200_ok_requeset(tcp_socket_fd, version);
         }
         else
@@ -923,8 +924,9 @@ static bool tcp_device_serverce_xml_get_networkinterface(int tcp_socket_fd)
         char ip[32] = {0};
         char mask[32] = {0};
         sat_ip_mac_addres_get("eth0", ip, mac, mask);
+        int mask_vol = convert_subnet_mask(mask);
         memset(xml_buffer, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
-        sprintf(xml_buffer, xml_fmt, mac, ip, mask, user_data_get()->network.udhcp == true ? "true" : "false");
+        sprintf(xml_buffer, xml_fmt, mac, ip, mask_vol, user_data_get()->network.udhcp == true ? "true" : "false");
         int xml_size = strlen(xml_buffer);
 
         memset(xml_fmt, 0, strlen(xml_fmt) + 1);

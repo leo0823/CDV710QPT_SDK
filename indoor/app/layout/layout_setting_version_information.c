@@ -240,28 +240,27 @@ static void sat_layout_enter(setting_version_information)
                                 continue;
                         }
 
-                        if (sat_ipcamera_device_name_get(i, 100) == false)
-                        {
-                                SAT_DEBUG("get device[%d] nanme failed", i);
-                        }
-
-                        if (sat_ipcamera_device_version_get(version_buf, i, 100) == false)
-                        {
-                                strcpy(version_buf, "version unknow");
-                        }
-
                         lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(list, i, 0, 72 * i, 928, 72,
                                                                                            NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                            0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                                            0, 17, 576, 43, 0,
                                                                                            sat_ipcamera_door_name_get(i), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                           0, 42, 576, 29, 1,
+                                                                                           0, 42, 928, 29, 1,
                                                                                            version_buf, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                            0, 0, 0, 0, -1,
                                                                                            NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                            0, 0, 0, 0, -1,
                                                                                            NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+                        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
+                        if (sat_ipcamera_device_version_get(version_buf, i, 200) == false)
+                        {
+                                lv_label_set_text(obj, "Version unknow");
+                        }
+                        else
+                        {
+                                lv_label_set_text_fmt(obj, "build time:%s", version_buf);
+                        }
 
                         if (upgrade == true)
                         {

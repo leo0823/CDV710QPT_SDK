@@ -274,7 +274,7 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(key_sound, 0, 1);
         user_data_audio_check_range_out(ring_mute, 0, 1);
         user_data_audio_check_range_out(door_tone, 1, 6);
-        user_data_audio_check_range_out(extenion_tone, 4, 4);
+        user_data_audio_check_range_out(extenion_tone, 0, 4);
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
         user_data_audio_check_range_out(buzzer_volume, 1, 6);
@@ -299,7 +299,7 @@ static void user_data_check_valid(void)
 
         /***** display *****/
         user_data_display_check_range_out(standby_mode, 0, 1);
-        user_data_display_check_range_out(lcd_brigtness, 1, 100);
+        user_data_display_check_range_out(lcd_brigtness, 0, 100);
         user_data_display_check_range_out(wait_display_time, 15, 180);
 
         user_data_display_check_range_out(frame_time_en, 0, 1);

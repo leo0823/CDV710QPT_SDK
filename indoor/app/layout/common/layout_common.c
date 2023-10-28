@@ -279,15 +279,14 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                 {
                         return;
                 }
-                // if (((user_data_get()->alarm.away_alarm_enable == false) && user_data_get()->alarm.alarm_enable_always[0][arg1] == false) ||
-                //     ((user_data_get()->alarm.security_alarm_enable == false) && user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
-                // {
-                //         return;
-                // }
-                if ((user_data_get()->alarm.away_alarm_enable != 0X02) && (user_data_get()->alarm.alarm_enable_always[0][arg1] != true) && (user_data_get()->alarm.alarm_enable_always[1][arg1] != true))
+                if ((user_data_get()->alarm.alarm_enable_always[0][arg1] == false) && (user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
                 {
-                        return;
+                        if (user_data_get()->alarm.away_alarm_enable != 0x02 && user_data_get()->alarm.security_alarm_enable == false)
+                        {
+                                return;
+                        }
                 }
+
                 if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW * 100))
                 {
                         layout_alarm_alarm_channel_set(arg1);

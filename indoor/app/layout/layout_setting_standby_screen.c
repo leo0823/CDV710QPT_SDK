@@ -498,7 +498,7 @@ static void setting_standby_screen_sub_list_display(lv_obj_t *parent)
                 }
         }
 
-        cont = lv_obj_get_child_form_id(parent, setting_standby_screen_obj_id_display_item_cont);
+        cont = lv_obj_get_child_form_id(parent, setting_standby_screen_obj_id_background_cont);
         if (cont != NULL)
         {
                 obj = lv_obj_get_child_form_id(cont, setting_standby_screen_obj_id_background_sub);

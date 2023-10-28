@@ -70,7 +70,8 @@
                 "if.h": "c",
                 "sat_user_time.h": "c",
                 "video_input_api.h": "c",
-                "errno.h": "c"
+                "errno.h": "c",
+                "user_network.h": "c"
         },
         "cmake.sourceDirectory": "${workspaceFolder}/build",
         "window.autoDetectColorScheme": false,

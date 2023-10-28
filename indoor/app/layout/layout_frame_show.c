@@ -921,6 +921,7 @@ static void frame_show_cctv_start(void)
 ***/
 static void frame_show_restart(void)
 {
+	sat_linphone_media_thumb_destroy();
 	if (frame_display_timeout_check() == true)
 	{
 		sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -968,7 +969,7 @@ static void frame_show_restart(void)
 	}
 	else if ((user_data_get()->display.frame_list & 0x08) && (frame_show_frame_index <= 0x08))
 	{
-		sat_linphone_media_thumb_destroy();
+		// sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x08;
 		if ((monitor_door_first_valid_get(true) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(true))) // 没有注册或者是已经显示完最后一个Door camera通道
 		{
@@ -980,7 +981,7 @@ static void frame_show_restart(void)
 	}
 	else if ((user_data_get()->display.frame_list & 0x10) && (frame_show_frame_index <= 0x10))
 	{
-		sat_linphone_media_thumb_destroy();
+		// sat_linphone_media_thumb_destroy();
 		frame_show_frame_index = 0x10;
 		if ((monitor_door_first_valid_get(false) < 0) || (monitor_channel_get() == monitor_door_last_valid_get(false))) // 没有注册或者是已经显示完最后一个CCTV通道
 		{
@@ -1041,6 +1042,7 @@ static void sat_layout_enter(frame_show)
 																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																								NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 		lv_obj_clear_flag(frame1, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(frame1, LV_OBJ_FLAG_SCROLLABLE);
 	}
 	{
 
@@ -1050,6 +1052,7 @@ static void sat_layout_enter(frame_show)
 																								0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																								NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 		lv_obj_clear_flag(frame2, LV_OBJ_FLAG_HIDDEN);
+		lv_obj_clear_flag(frame2, LV_OBJ_FLAG_SCROLLABLE);
 	}
 
 	frame_show_cancel_btn_display();

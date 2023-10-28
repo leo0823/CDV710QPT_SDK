@@ -754,7 +754,7 @@ static void sat_layout_enter(intercom_call)
                                                                                   intercom_call_log_obj_del_all_click, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
-                                                                                  50, 20, 224, 43, intercom_call_obj_id_del_all_label,
+                                                                                  50, 20, 700, 43, intercom_call_obj_id_del_all_label,
                                                                                   lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_DELETED_ALL), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
                                                                                   0, 0, 32, 86, intercom_call_obj_id_del_all_img,
                                                                                   resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);

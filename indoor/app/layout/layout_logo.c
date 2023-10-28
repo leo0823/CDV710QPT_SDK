@@ -158,7 +158,7 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
                 user_data_save();
                 if ((user_data_get()->system_mode & 0X0f) != 0x01)
                 {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1000, NULL);
+                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                 }
 
                 // lv_timer_del(buzzer_call_timer);
@@ -450,6 +450,8 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;
                                 alarm_stop_return_status_display_check();
                         }
+                        SAT_DEBUG("USER_DATA away_setting_countdown is %d\n", user_data_get()->alarm.away_setting_countdown);
+                        SAT_DEBUG("info away_setting_countdown is %d\n", info->alarm.away_setting_countdown);
                         if (user_data_get()->alarm.away_setting_countdown != info->alarm.away_setting_countdown) // 离家设防同步
                         {
                                 user_data_get()->alarm.away_setting_countdown = info->alarm.away_setting_countdown;

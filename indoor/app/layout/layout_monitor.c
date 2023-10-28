@@ -1993,6 +1993,12 @@ static void layout_monitor_buzzer_alarm_call_callback(void)
         }
         obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 6000, obj);
 }
+
+static void layout_monitor_touch_callback(lv_event_t *e)
+{
+        standby_timer_restart(false);
+}
+
 static void sat_layout_enter(monitor)
 {
 
@@ -2006,7 +2012,7 @@ static void sat_layout_enter(monitor)
         user_linphone_call_error_register(monitor_talk_call_failed_callback);
 
         user_linphone_call_end_register(monitor_talk_call_end_callback);
-        lv_obj_pressed_func = NULL;
+        lv_obj_pressed_func = layout_monitor_touch_callback;
         standby_timer_close();
         is_monitor_door_camera_talk = false;
         is_monitor_snapshot_ing = true;

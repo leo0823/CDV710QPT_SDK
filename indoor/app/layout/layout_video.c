@@ -195,6 +195,7 @@ static void video_thumb_decode_all_display(void)
 
         if (pinfo->is_new == true)
         {
+                SAT_DEBUG("==============");
                 media_file_new_clear(pinfo->type, playback_pview_item_get());
         }
 }
@@ -428,32 +429,14 @@ static void video_thumb_play_state_callback(unsigned int sate)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
 
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(sate == 0x01 ? "btn_thumbnail_pause_l.png" : "btn_thumbnail_play_l.png"), LV_PART_MAIN);
-        if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_thumbnail_pause_l.png"), strlen(obj->bg_img_src)) == 0)
+        if (sate == 0x01)
         {
+                standby_timer_close();
                 video_media_thumb_obj_click(NULL);
         }
         else if (sate == 0x02)
         {
-                lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_buttom);
-                if (parent == NULL)
-                {
-                        SAT_DEBUG("lv_obj_t* parent=  lv_obj_get_child_form_id(sat_cur_layout_screen_get(),video_obj_id_buttom);");
-                        return;
-                }
-
-                parent = lv_obj_get_child_form_id(parent, 1);
-                if (parent == NULL)
-                {
-                        SAT_DEBUG(" parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), 1);");
-                        return;
-                }
-
-                lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);
-                if (slider == NULL)
-                {
-                        SAT_DEBUG("lv_obj_t *slider = lv_obj_get_child_form_id(parent, 1);");
-                        return;
-                }
+                standby_timer_restart(true);
         }
 }
 
@@ -470,9 +453,27 @@ static void video_obj_play_click(lv_event_t *e)
 {
         sat_linphone_video_play_pause();
 }
+static void layout_video_touch_callback(lv_event_t *e)
+{
+        printf("================\n");
+        standby_timer_restart(false);
+}
+
+static void layout_video_first_frame_callback(int arg1, int arg2)
+{
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
+        if (obj != NULL)
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
+        }
+}
 
 static void sat_layout_enter(video)
 {
+        lv_obj_pressed_func = layout_video_touch_callback;
+
+        first_refresh_lcd_cmd_callback_register(layout_video_first_frame_callback);
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -552,7 +553,7 @@ static void sat_layout_enter(video)
          ***********************************************/
         {
                 lv_common_img_btn_create(sat_cur_layout_screen_get(), video_obj_id_play, 435, 224, 152, 152,
-                                         video_obj_play_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         video_obj_play_click, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_thumbnail_play_l.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
@@ -640,7 +641,8 @@ static void sat_layout_enter(video)
 static void sat_layout_quit(video)
 {
         //   sat_linphone_media_thumb_destroy();
-        // thumb_display_refresh_register(NULL);
+        lv_obj_pressed_func = lv_layout_touch_callback;
+
         lv_common_video_mode_enable(false);
         sat_linphone_video_play_stop();
         sd_state_channge_callback_register(sd_state_change_default_callback);

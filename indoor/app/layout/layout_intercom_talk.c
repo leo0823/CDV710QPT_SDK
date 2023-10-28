@@ -692,10 +692,15 @@ static void intercom_talk_buzzer_alarm_call_callback(void)
         obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, 6000, obj);
 }
 
+static void layout_intercom_talk_touch_callback(lv_event_t *e)
+{
+        standby_timer_restart(false);
+}
+
 static void sat_layout_enter(intercom_talk)
 {
         SAT_DEBUG("intercom_call_state is %d", intercom_call_state);
-        lv_obj_pressed_func = NULL;
+        lv_obj_pressed_func = layout_intercom_talk_touch_callback;
         standby_timer_close();
         intercom_talk_timeout = 30;
         intercom_talk_status_background_display();
