@@ -92,7 +92,6 @@ static const user_data_info user_data_default =
             .call_time = 1,
         },
         .alarm = {
-            .auto_record = false,
             .away_alarm_enable_list = 0x00,     // 离家设防列表
             .security_alarm_enable_list = 0x00, // 安全设防列表
             .away_alarm_enable = false,         // 离家设防使能状态
@@ -328,7 +327,7 @@ static void user_data_check_valid(void)
 
         /*****	alarm *****/
         user_data_alarm_check_range_out(away_save_photo, 0, 1);
-        user_data_alarm_check_range_out(auto_record, 0, 1);
+
         user_data_alarm_check_range_out(away_alarm_enable, 0, 2);
         user_data_alarm_check_range_out(security_alarm_enable, 0, 1);
         user_data_alarm_check_range_out(emergency_mode, 0, 1);

@@ -292,7 +292,7 @@ static void setting_password_modiy_keyboard_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_target(ev);
         uint32_t id = lv_btnmatrix_get_selected_btn(obj);
-
+        SAT_DEBUG("id is %d\n", id);
         if (id == 11)
         {
                 setting_password_textbox_del();
@@ -350,8 +350,8 @@ static void setting_password_modiy_obj_create(void)
                                                                                360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                                0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                18, 24);
-                        lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN);
-                        lv_btnmatrix_clear_btn_ctrl(obj, 9, LV_KEYBOARD_CTRL_BTN_FLAGS);
+                        lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
+                        // lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_DISABLED);
                 }
                 /***********************************************
                 ** 作者: leo.liu

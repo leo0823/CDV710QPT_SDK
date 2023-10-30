@@ -64,7 +64,7 @@ static void setting_initialize_reset_timer(lv_timer_t *ptimer)
                 lv_timer_del(ptimer);
                 backlight_enable(false);
                 usleep(100 * 1000);
-                system("reboot");
+                // system("reboot");
                 return;
         }
         if (obj)

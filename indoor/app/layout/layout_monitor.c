@@ -1102,19 +1102,22 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
 static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 {
         int mode = REC_MODE_TUYA_CALL;
-
+        if (is_alarm_trigger())
+        {
+                mode |= REC_MODE_AUTO;
+        }
+        else
+        {
+                mode |= REC_MODE_ALARM;
+        }
         if (user_data_get()->auto_record_mode != 0)
         {
                 if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 1))
                 {
                         if (is_monitor_record_video_ing == false)
                         {
-                                record_video_start(true, REC_MODE_AUTO);
+                                record_video_start(true, mode);
                         }
-                }
-                else
-                {
-                        mode |= REC_MODE_AUTO;
                 }
         }
         record_jpeg_start(mode);

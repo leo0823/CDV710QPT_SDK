@@ -101,8 +101,6 @@ typedef struct
 
 typedef struct
 {
-        bool auto_record;
-
         int away_alarm_enable_list; // 离家警报模式：被监测的传感器列表
 
         int security_alarm_enable_list; // 安全警报模式：被监测的传感器列表
@@ -172,7 +170,10 @@ typedef struct
         char mastar_wallpad_ip[16]; // sip server 的IP
 
         int always_monitoring;
+
         bool last_call_new;
+
+        char compile_time[64];
 
 } user_data_info;
 

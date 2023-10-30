@@ -320,7 +320,7 @@ static bool ipc_camera_input_new_name_processing(void)
         char input_name[64] = {0};
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         strncpy(input_name, lv_textarea_get_text(textarea), sizeof(input_name));
-        if (sat_ipcamera_device_name_set(input_name, layout_ipc_camera_edit_index_get(), 1000) == true)
+        if (sat_ipcamera_device_name_set(input_name, layout_ipc_camera_edit_index_get(), 1500) == true)
         {
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
@@ -385,7 +385,6 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
 
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
         const char *txt = lv_textarea_get_text(textarea);
-
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -396,7 +395,6 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
         {
                 return;
         }
-
         /*搜索,输入密码进入*/
         if ((ipc_camera_input_flag & (IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD)) == (IPC_CAMERA_FLAG_SEARCH | IPC_CAMERA_FLAG_INPUT_PWD))
         {
@@ -437,7 +435,7 @@ static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
                 return SAT_VOID;
         }
 
-        if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME)
+        if (ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME & (strlen(txt) >= 1))
         {
                 ipc_camera_input_new_name_processing();
 

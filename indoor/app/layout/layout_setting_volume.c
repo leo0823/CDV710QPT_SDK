@@ -205,7 +205,6 @@ static void setting_common_entrance_volume_slider_change_cb(lv_event_t *e)
 
         if (y == 8) // 调铃声音量
         {
-
                 int value = lv_slider_get_value(obj);
                 sat_linphone_audio_play_volume_set(value);
                 user_data_get()->audio.common_entrance_volume = value;

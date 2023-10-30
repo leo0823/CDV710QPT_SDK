@@ -115,6 +115,7 @@ static void sd_state_checking_timer(lv_timer_t *timer)
 ************************************************************/
 void sd_state_change_default_callback(void)
 {
+
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -563,6 +564,29 @@ void flash_backup_to_sd_dispaly_create(bool *backup_ed)
 }
 
 /************************************************************
+** 函数说明: 开机是否需要解除警报或重置密码检查
+** 作者: xiaoxiao
+** 日期：2023-10-30 08:35:27
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void alarm_release_and_passwd_reset_check(void)
+{
+        if (access("/tmp/tf/CDV70QPT.BIN", F_OK) == 0)
+        {
+                memset(&user_data_get()->alarm.alarm_trigger, 0, sizeof(user_data_get()->alarm.alarm_trigger));
+                memcpy(user_data_get()->etc.password, "1234", sizeof(user_data_get()->etc.password));
+        }
+        char compile_time[64] = {0};
+        sprintf(compile_time, "%s %s", __DATE__, __TIME__);
+        if (strncmp(user_data_get()->compile_time, compile_time, sizeof(user_data_get()->compile_time)) == 0)
+        {
+                memcpy(user_data_get()->etc.password, "1234", sizeof(user_data_get()->etc.password));
+                strncpy(user_data_get()->compile_time, compile_time, sizeof(user_data_get()->compile_time));
+        }
+}
+
+/************************************************************
 ** 函数说明: 文件备份到SD卡
 ** 作者: xiaoxiao
 ** 日期: 2023-08-09 11:41:51
@@ -571,16 +595,8 @@ void flash_backup_to_sd_dispaly_create(bool *backup_ed)
 ************************************************************/
 static bool flash_backup_to_sd()
 {
-
-        if (access("/dev/mmcblk0", F_OK) == 0)
-        {
-                if (access(SD_BASE_PATH, F_OK) != 0)
-                {
-                        system("mkdir " SD_BASE_PATH);
-                }
-                system("mount /dev/mmcblk0 " SD_BASE_PATH);
-        }
-        else
+#if 1
+        if (access("/dev/mmcblk0", F_OK))
         {
                 return false;
         }
@@ -606,6 +622,28 @@ static bool flash_backup_to_sd()
 
         backup_ed = true;
         return true;
+#else
+        if (access("/dev/mmcblk0", F_OK))
+        {
+                return false;
+        }
+        file_type type = FILE_TYPE_FLASH_PHOTO;
+        int total = 0, new_total = 0;
+        media_file_total_get(type, &total, &new_total);
+        for (int i = 0; i < total; i++)
+        {
+                const file_info *info = NULL;
+
+                info = media_file_info_get(type, i);
+                if (info != NULL)
+                {
+                        char file_path[64] = {0};
+                        media_file_create(FILE_TYPE_VIDEO, info->ch, info->mode, file_path);
+                        media_file_bad_check(file_path);
+                }
+        }
+        return true;
+#endif
 }
 
 static void logo_enter_system_timer(lv_timer_t *t)
@@ -616,6 +654,18 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: 时间初始化
         ***********************************************/
         user_time_init();
+        if (user_data_get()->is_device_init == false)
+        {
+                struct tm tm;
+                tm.tm_year = 2030;
+                tm.tm_mon = 1;
+                tm.tm_mday = 1;
+                tm.tm_hour = 0;
+                tm.tm_min = 0;
+                tm.tm_sec = 0;
+                user_time_set(&tm);
+                user_time_sync();
+        }
 
         /*
          * @日期: 2022-08-11
@@ -658,6 +708,14 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ** 说明: 文件备份
         ***********************************************/
         flash_backup_to_sd();
+        /************************************************************
+        ** 函数说明: 开机是否需要解除警报或重置密码检查
+        ** 作者: xiaoxiao
+        ** 日期：2023-10-30 08:35:27
+        ** 参数说明:
+        ** 注意事项：
+        ************************************************************/
+        alarm_release_and_passwd_reset_check();
 
         //  usleep(3000 * 1000);
         /*判断是否为master*/
