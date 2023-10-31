@@ -197,12 +197,13 @@ static void layout_setting_installation_guard_no_display(lv_obj_t *list)
 static void layout_setting_installation_slave_display(lv_obj_t *list)
 {
         lv_obj_t *parent = lv_obj_get_child_form_id(list, setting_installation_obj_id_slave_register_cont);
-        if (parent != NULL)
+        if (parent == NULL)
         {
-                lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
-
-                lv_label_set_text(obj, "Slave registerd display");
+                return;
         }
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 0);
+
+        lv_label_set_text(obj, "Slave registerd display");
 }
 static lv_obj_t *setting_installation_sub_list_create(void)
 {
@@ -264,11 +265,11 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              -1, NULL,
              setting_installation_factory_reset_obj_click, -1},
 
-            {0, 72 * 11, 622, 72,
-             setting_installation_obj_id_slave_register_cont, 0, -1,
-             INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
-             -1, NULL,
-             setting_installation_slave_indoor_register_display, -1},
+            //     {0, 72 * 11, 622, 72,
+            //      setting_installation_obj_id_slave_register_cont, 0, -1,
+            //      INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
+            //      -1, NULL,
+            //      setting_installation_slave_indoor_register_display, -1},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_installation_obj_id_sub_list);
