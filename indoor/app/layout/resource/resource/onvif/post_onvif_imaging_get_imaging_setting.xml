@@ -1,0 +1,16 @@
+POST /onvif/imaging HTTP/1.1
+Content-Type: application/soap+xml; charset=utf-8;
+action="http://www.onvif.org/ver20/imaging/wsdl/GetImagingSettings"
+Host: %s
+%sContent-Length: %d
+Accept-Encoding: gzip, deflate
+Connection: Close
+
+<s:Envelope xmlns:s="http://www.w3.org/2003/05/soap-envelope">
+ %s<s:Body xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <GetImagingSettings xmlns="http://www.onvif.org/ver20/imaging/wsdl">
+      <VideoSourceToken>video_source</VideoSourceToken>
+    </GetImagingSettings>
+  </s:Body>
+</s:Envelope>

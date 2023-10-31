@@ -14,6 +14,7 @@
  * - 2022-10-8  SYK Created
  *******************************************************************************/
 #include <stdlib.h>
+#include "lvgl.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -23,148 +24,46 @@
 #include <mqueue.h>
 #include <ctype.h>
 #include <signal.h>
-#include "common/sat_user_common.h"
+
 #include "common/ssd20x_common.h"
 #include "common/sat_main_event.h"
-#include "common/user_key.h"
-#include "common/sat_linphone_event.h"
-#include "common/sat_main_event.h"
-#include "common/user_data.h"
-#include "common/user_linphone.h"
-#include "common/user_network.h"
-#include "common/sat_user_time.h"
-#include "common/user_gpio.h"
-#include "anyka/ak_common.h"
-#include "anyka/ak_vi.h"
-#include "anyka/ak_vpss.h"
-#include "anyka/ak_ats.h"
-#if 0
-#include <stdio.h>
-#include <stdlib.h>
+#include "layout_define.h"
+#include "lang_xls.h"
+
 #include <fcntl.h>
-#include <sys/mman.h>
-#include <time.h>
-#include <unistd.h>
-#include <string.h>
-#include <error.h>
-int main(int argc, char **argv)
-{
-      //  system("umount /etc/config");
-      //  system("mtd_debug erase /dev/mtd7 0x0 0x19000");
+#include <sys/ioctl.h>
 
-        int mem_fd = open("/dev/mem", O_RDWR | O_SYNC);
-        if (mem_fd == -1)
-        {
-                perror("Failed to open /dev/mem");
-                return 1;
-        }
+// #include "dds/topic_table.h"
+#if 0
+dds_inherit_listener
+#endif
 
-        // 根据具体Flash起始地址计算偏移量
-        off_t flash_offset = 0x4ab000;
+/***********************************************
+** 作者: leo.liu
+** 日期: 2023-1-13 8:7:34
+** 说明: 编译日期显示
+***********************************************/
+// #include "dmalloc.h"
 
-        // 读取JFFS2文件系统数据
-        FILE *jffs2_file = fopen("/tmp/nfs/config.jffs2", "rb"); // 以二进制读取方式打开文件
-        if (jffs2_file == NULL)
-        {
-                perror("Failed to open JFFS2 file");
-                close(mem_fd);
-                return 1;
-        }
-
-        // 定位到文件末尾，获取文件大小
-        fseek(jffs2_file, 0, SEEK_END);
-        long jffs2_file_size = ftell(jffs2_file);
-        rewind(jffs2_file);
-
-        // 根据计算的偏移量，使用lseek进行偏移
-        off_t offset = lseek(mem_fd, flash_offset, SEEK_SET);
-        if (offset == -1)
-        {
-                perror("Failed to seek to flash offset");
-                fclose(jffs2_file);
-                close(mem_fd);
-                return 1;
-        }
-
-        // 创建缓冲区，读取JFFS2文件系统的数据
-        unsigned char jffs2_data[jffs2_file_size];
-        fread(jffs2_data, sizeof(unsigned char), jffs2_file_size, jffs2_file);
-
-        // 将JFFS2文件系统的数据写入Flash
-        ssize_t bytes_written = write(mem_fd, jffs2_data, jffs2_file_size);
-        if (bytes_written == -1)
-        {
-                perror("Failed to write JFFS2 data to flash");
-                fclose(jffs2_file);
-                close(mem_fd);
-                return 1;
-        }
-
-        // 关闭文件和/dev/mem设备
-        fclose(jffs2_file);
-        close(mem_fd);
-
-        while (1)
-                ;
-        return 0;
-}
-#else
-
-#include "anyka/ak_common.h"
-#define SIP_CALL_QURY_TIMER 5000
-/****************************************************************
-**@日期: 2023-09-21
-**@作者: leo.liu
-**@功能: 设置当前设备的工作模式：
-** 0：正常工作模式
-** bit1: 警报模式
-** bit2: 睡眠模式
-** bit3: 离家模式
-** bit4: 后面模式
-*****************************************************************/
-char CIP_D20YS_WORK_MODE = 0x00;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2023-1-5 10:7:35
 ** 说明: 初始化内核
 ***********************************************/
-#define MAC_TXT_PATH "/etc/config/mac.txt"
-/* static bool network_mac_get(char *buf)
-{
-        int i = 0, j = 0;
-        char temp[128] = {0};
-        if (access(MAC_TXT_PATH, F_OK))
-        {
-                return false;
-        }
-        if (sat_file_read(MAC_TXT_PATH, temp, sizeof(temp)) < 1)
-        {
-                return false;
-        }
-
-        for (i = j = 0; temp[i] != '\0'; i++)
-        {
-                if (isalnum(temp[i]))
-                {
-                        buf[j++] = temp[i];
-                }
-        }
-        buf[j] = '\0';
-        SAT_DEBUG("%s->%s\n", temp, buf);
-        return true;
-} */
 static void linux_kerner_init(void)
 {
-
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2022-12-9 13:53:54
         ** 说明: 暂时处理上电打开功放
         ***********************************************/
-        // system("ifconfig eth0 txqueuelen 10000");
-        system("echo 4194304 > /proc/sys/net/core/wmem_default");
-        system("echo 4194304 > /proc/sys/net/core/wmem_max");
-        system("echo 4194304 > /proc/sys/net/core/rmem_max");
+        system("echo 12 > /sys/class/gpio/export");
+        system("echo out > /sys/class/gpio/gpio12/direction");
+        system("echo 1 > /sys/class/gpio/gpio12/value");
+
+        system("ifconfig eth0 txqueuelen 10000");
+        system("echo 10485760 > /proc/sys/net/core/wmem_max");
+        system("echo 10485760 > /proc/sys/net/core/rmem_max");
 
         /***********************************************
         ** 作者: leo.liu
@@ -174,261 +73,214 @@ static void linux_kerner_init(void)
                 BYTE1. 010(固定部分).
                 BYTE2. 001 -> 0x01
                                 bit[7]=0:
-                                        bit[6:0] 栋号
+                                bit[6:0] 栋号
 
-                                bit[7]=1:分机(门口机/室内分机)
-                                        bit[6:5]=00:室内分机
-                                        bit[6:5]=10:户外机)
+                                bit[7]=1:
+                                        分机(门口机/室内分机)
+                                        bit[6:5]=00:室内分机 1000 0000(128) ~ 1001 1111(159)
+                                        bit[6:5]=10:户外机 1100 0000(192) ~ 1101 1111(223)
+                                        bit[6:5]=01:CCTV 1010 0000(160) ~ 1011 1111(191)
 
-                BYTE3. 001 楼层号
-                BYTE4. 001 千分位和百分位 - 房号
+                BYTE3. 001 楼层号SS
+                BYTE4. 001 百分位和十分位 - 房号
                            个位 -BYTE2 bit[7]=0
                                                 1:室内机
-                                                3:Gateway IP system
+                                                3:Gateway IP systemD
                                                 7:Lobby IP system
                                                 9:Guard Phone IP system
                                                 5:KIOSK IP system
                                    -BYTE2 bit[7]=1
                                                 个位分机ID号
         ***********************************************/
-        /*读取mac地址*/
-        char mac[128] = {0};
-        if (sat_ip_mac_addres_get("eth0", NULL, mac, NULL) == true)
-        { // C0:25:A5:A1:27:F5
-                mac[2] = mac[5] = mac[8] = mac[11] = mac[14] = 'A';
-                setenv("SIP", mac, 1);
-        }
-        else
-        {
-                SAT_DEBUG("not find mac addres,will restart in 3 seconds\n");
-                sleep(3);
-                system("reboot");
-        }
+        //   setenv("SIP", network_data_get()->sip_user, 1);
 }
 
-static bool asterisk_register_online_check(const char *user)
+/*
+ * @日期: 2022-08-06
+ * @作者: leo.liu
+ * @功能: lvgl 心跳任务
+ * @return:
+ */
+static void *lv_sys_tick_task(void *arg)
 {
-        if (user == NULL)
-        {
-                return false;
-        }
+        struct timeval tv1, tv2;
+        gettimeofday(&tv2, NULL);
 
-        asterisk_register_info *p_register_info = asterisk_register_info_get();
-        for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
-        {
-
-                if (strncmp(p_register_info[i].name, user, strlen(user)) != NULL)
-                {
-                        /*分机收到的时间戳为0,代表已经离线*/
-                        if (p_register_info[i].timestamp)
-                        {
-                                return true;
-                        }
-                }
-        }
-
-        return false;
-}
-
-/***********************************************
-** 作者: leo.liu
-** 日期: 2022-12-28 13:47:49
-** 说明: 门铃呼叫
-***********************************************/
-static void key_call_process(unsigned int code, unsigned int state)
-{
-
-        char user[8] = {0};
-        for (int i = 1; i < 9; i++)
-        {
-                memset(user, 0, sizeof(user));
-                sprintf(user, "50%d", i);
-                /*只要存在一个在线，则呼叫*/
-                if (asterisk_register_online_check(user) == true)
-                {
-                        char call[64] = {0};
-                        sprintf(call, "sip:100@%s:5066", user_data_get()->server_ip);
-                        sat_linphone_call(call, true, true, NULL);
-                        break;
-                }
-        }
-}
-
-static void sys_timer_callback(void)
-{
-        static unsigned long long pre_timestamp = 0;
-        unsigned long long timestamp = user_timestamp_get();
-
-        /* 警报状态的情况下，通话需要播放警报铃声*/
-
-        /*每500ms跑一次*/
-        if ((timestamp - pre_timestamp) < SIP_CALL_QURY_TIMER)
-        {
-                return;
-        }
-        pre_timestamp = timestamp;
-        /*每隔500ms发送一次在线询问*/
-        //   sat_linphone_calls_cmd_send();
-        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
-        {
-                char domain[32] = {0};
-                sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
-        }
-}
-
-static void *media_server_task(void *arg)
-{
         while (1)
         {
-                extern int live555_media_server_start(const char *username, const char *password);
-                live555_media_server_start("admin", user_data_get()->device.password);
+                gettimeofday(&tv1, NULL);
+                lv_tick_inc(tv1.tv_sec * 1000 + tv1.tv_usec / 1000 - tv2.tv_sec * 1000 - tv2.tv_usec / 1000);
+                gettimeofday(&tv2, NULL);
+                usleep(1000);
+        }
+
+        return NULL;
+}
+
+/***
+** 日期: 2022-04-25 14:22
+** 作者: leo.liu
+** 函数作用：lvgl的任务调度以及心跳包线程
+** 返回参数说明：
+***/
+static void lv_task_scheduling_start(void)
+{
+        pthread_t task_id;
+
+        _sat_layout_goto(sat_playout_get(logo), LV_SCR_LOAD_ANIM_FADE_OUT);
+        pthread_create(&task_id, sat_pthread_attr_get(), lv_sys_tick_task, NULL);
+
+        while (1)
+        {
+                lv_task_handler();
+                usleep(1000);
+        }
+}
+
+static bool is_asterisk_server_sync_data_force = false;
+void asterisk_server_sync_data_force(bool is_sync)
+{
+        is_asterisk_server_sync_data_force = is_sync;
+}
+/*使用线程异步发送*/
+static void *asterisk_server_sync_task(void *arg)
+{
+
+        static bool is_registers_online[20] = {0};
+
+        bool is_need_asterisk_update = false;
+
+        asterisk_register_info *p_register_info = asterisk_register_info_get();
+        while (1)
+        {
+                for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
+                {
+
+                        /*主机过滤*/
+                        if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0))
+                        {
+                                if ((p_register_info[i].name[0] == '\0') && (is_registers_online[i] == true))
+                                {
+                                        is_registers_online[i] = false;
+                                }
+                                continue;
+                        }
+
+                        unsigned long long timestamp = user_timestamp_get();
+
+                        /*上次设备不在线，这次在线，状态发生改变*/
+                        if (((is_registers_online[i] == false) || (is_asterisk_server_sync_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
+                        {
+                                is_registers_online[i] = true;
+                                is_asterisk_server_sync_data_force = false;
+                                is_need_asterisk_update = true;
+                                for (int i = 0; i < 8; i++)
+                                {
+                                        user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
+                                }
+
+                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 200, NULL);
+                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 200, NULL);
+                        }
+                        else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
+                        {
+                                is_registers_online[i] = false;
+                                is_need_asterisk_update = true;
+                                /*离线设备需要同步到其他设备*/
+                                p_register_info[i].timestamp = 0;
+                                printf("%s %s offline \n", p_register_info[i].name, p_register_info[i].name);
+                        }
+                }
+
+                /*需要同步注册信息*/
+                if (is_need_asterisk_update == true)
+                {
+                        is_need_asterisk_update = false;
+
+                        sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 200, network_data_get()->door_device);
+                }
                 usleep(1000 * 1000);
         }
         return NULL;
 }
 
-/*视频流状态显示*/
-static void video_stream_status_callback(bool en)
-{
-        led_ctrl_enable(((en == false) || (ir_feed_read() == GPIO_LEVEL_LOW)) ? false : true);
-
-        if (en == true)
-        {
-                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_BRIGHTNESS, user_data_get()->brightness);
-                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SATURATION, user_data_get()->saturation);
-                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_CONTRAST, user_data_get()->contrast);
-                ak_vpss_effect_set(VIDEO_DEV0, VPSS_EFFECT_SHARP, user_data_get()->sharpness);
-        }
-        return;
-}
-
-/*铃声回调*/
-static void call_ring_event_callback(void)
-{
-        sat_linphone_audio_play_stop();
-        if (CIP_D20YS_WORK_MODE & 0x01)
-        {
-                sat_linphone_audio_play_volume_set(100);
-                sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
-        }
-        else
-        {
-                sat_linphone_audio_play_volume_set(100);
-                sat_linphone_audio_play_start(RESOURCE_RING_PATH "call_door1.wav", 1);
-        }
-}
-/* ring play:arg1:0,start,1:finish*/
-/*LinphoneCallState*/
-
-#if 0
-// static int linphone_core_status = 0x01;
-static void call_ring_play_status_callback(int state)
-{
-        /*铃声结束，警报模式，并且是通话状态*/
-        if ((state == 1) && (CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
-        {
-                usleep(1000 * 1000);
-                sat_linphone_audio_play_volume_set(0);
-                sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
-        }
-}
-static void linphone_call_status_callback(int state)
-{
-        if ((state == 6) || (state == 0) || (state == 13))
-        {
-                linphone_core_status = state;
-                /*警报模式，并且按下通话*/
-                if ((CIP_D20YS_WORK_MODE & 0x01) && (linphone_core_status == 6))
-                {
-                        usleep(1000 * 1000);
-                        sat_linphone_audio_play_volume_set(0);
-                        sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm.wav", 1);
-                }
-                else if (linphone_core_status == 13)
-                {
-                        sat_linphone_audio_play_stop();
-                }
-        }
-
-}
-#endif
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
- *
  * @功能: 主函数入口
  * @return:
  */
-#include "anyka/ak_its.h"
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
+        /*先干掉asterik服务器*/
         remove("/tmp/.linphonerc");
-        printf("*****************************************************\n");
-        printf("*****        project: CDV810QPT(outdoor)        *****\n");
-        printf("*****        author:  leo                       *****\n");
-        printf("*****        date:    2023/03/11                *****\n");
-        printf("*****************************************************\n");
-        usleep(1000 * 1000);
-        sdk_run_config config = {0};
-        ak_sdk_init(&config);
-
-        //  ak_its_start(8765);
-        //  ak_ats_start(8765);
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2023-1-5 11:38:19
-        ** 说明: 用户数据初始化
-        ***********************************************/
+        sat_kill_task_process("{safe_asterisk} /bin/sh /app/asterisk/sbin/safe_asterisk");
+        sat_kill_task_process("/app/asterisk/sbin/asterisk -f -vvvg -c");
         user_data_init();
+        if (user_data_get()->is_device_init == false)
+        {
+                system("rm -rf /app/data/user_data.cfg");
+                system("rm -rf /app/data/network_data.cfg");
+                user_data_init();
+        }
+        network_data_init();
 
         linux_kerner_init();
 
-        user_network_init();
+        /*
+         * @日期: 2022-08-06
+         * @作者: leo.liu
+         * @注释: 平台sdk初始化
+         */
+        platform_sdk_init();
 
-        user_linphone_init();
+        init_language_xls_info();
 
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2022-12-28 11:47:47
-        ** 说明: 呼叫按钮检测
-        ***********************************************/
-        user_gpio_init();
-        user_key_init();
-        /***********************************************
-        ** 作者: leo.liu
-        ** 日期: 2022-12-28 13:47:0
-        ** 说明: call事件处理
-        ***********************************************/
-        key_call_callback_register(key_call_process);
-        /*定时器，随时安排*/
-        system_timer_callback_register(sys_timer_callback);
-        /*视频流已经打开，准备参数*/
-        video_stream_status_callback_register(video_stream_status_callback);
-        /*播放呼叫铃声*/
-        call_ring_event_fun_register(call_ring_event_callback);
-        /*铃声播放状态*/
-        // call_ring_play_status_func_register(call_ring_play_status_callback);
-        /*linphone 状态改变处理函数*/
-        // linphone_call_status_event_func_register(linphone_call_status_callback);
+        /*lv_task_handler
+         * @日期: 2022-08-08
+         * @作者: leo.liu
+         * @注释: lvgl core初始化
+         */
+        lv_init();
 
-        if ((user_data_get()->server_ip[0] != 0) && (user_data_get()->device.number[0] != 0))
-        {
-                usleep(100 * 1000);
-                char domain[32] = {0};
-                sprintf(domain, "%s:5066", user_data_get()->server_ip);
-                sat_linphone_register(user_data_get()->device.name, user_data_get()->device.number, NULL, domain);
-        }
-        pthread_t thread_id;
-        pthread_create(&thread_id, sat_pthread_attr_get(), media_server_task, NULL);
+        /*
+         * @日期: 2022-08-08
+         * @作者: leo.liu
+         * @注释:注册显示设备
+         */
+        lv_port_disp_init();
 
+        /*
+         * @日期: 2022-08-08
+         * @作者: leo.liu
+         * @注释: 注册输入设备
+         */
+        lv_port_indev_init();
         /*
          * @日期: 2022-08-08
          * @作者: leo.liu
          * @注释: 主任务初始化
          */
         sat_mian_task_init();
+
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2022-11-9 10:15:48
+        ** 说明: 创建信令任务
+        ***********************************************/
+        if ((user_data_get()->system_mode & 0x0F) == 0x01)
+        {
+                pthread_t task_id;
+                pthread_create(&task_id, sat_pthread_attr_get(), asterisk_server_sync_task, NULL);
+        }
+
+        /*
+         * @日期: 2022-08-08
+         * @作者: leo.liu
+         * @注释: 开启任务调度
+         */
+        lv_task_scheduling_start();
+
         return 0;
 }
-#endif
