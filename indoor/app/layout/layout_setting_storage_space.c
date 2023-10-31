@@ -432,7 +432,7 @@ static void sat_layout_enter(setting_storage_space)
                 lv_anim_set_values(&a, 0, use_data);
                 lv_anim_start(&a);
         }
-        if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
+        if (media_sdcard_insert_check() != SD_STATE_UNPLUG)
         {
                 /***********************************************
                  ** 作者: leo.liu

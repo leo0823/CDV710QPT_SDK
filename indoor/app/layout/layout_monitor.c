@@ -375,7 +375,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
-                monitor_timeout_sec--;
+                //    monitor_timeout_sec--;
         }
         else
         {

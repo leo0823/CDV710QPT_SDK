@@ -293,6 +293,11 @@ static void setting_password_modiy_keyboard_click(lv_event_t *ev)
         lv_obj_t *obj = lv_event_get_target(ev);
         uint32_t id = lv_btnmatrix_get_selected_btn(obj);
 
+        if (lv_btnmatrix_has_btn_ctrl(obj, id, LV_BTNMATRIX_CTRL_HIDDEN) == true)
+        {
+                return;
+        }
+
         if (id == 11)
         {
                 setting_password_textbox_del();
