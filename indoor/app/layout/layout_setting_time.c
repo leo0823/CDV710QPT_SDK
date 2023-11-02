@@ -67,7 +67,7 @@ static void setting_time_set_date_automatically_enable_display(lv_obj_t *obj)
 
 static void layout_setting_time_save_time(void)
 {
-        if (modify)
+        if (modify && (user_data_get()->etc.time_automatically == false))
         {
                 struct tm tm;
                 /***** year *****/
@@ -368,7 +368,7 @@ static void sat_layout_enter(setting_time)
 
         {
                 lv_obj_t *roller_bg = lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_time_roller_cont, 0, 275, 1024, 201,
-                                                               NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                               NULL, true, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                false, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);

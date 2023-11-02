@@ -24,9 +24,12 @@ static void setting_complete_confirm_click(lv_event_t *ev)
         ************************************************************/
 
         user_data_get()->is_device_init = 1;
-        user_data_save();
+
         backlight_enable(false);
         usleep(100 * 1000);
+
+        user_data_save();
+        network_data_save();
         system("reboot");
         // standby_timer_restart(true);
         // sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);

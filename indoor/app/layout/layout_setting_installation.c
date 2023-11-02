@@ -265,11 +265,11 @@ static lv_obj_t *setting_installation_sub_list_create(void)
              -1, NULL,
              setting_installation_factory_reset_obj_click, -1},
 
-            //     {0, 72 * 11, 622, 72,
-            //      setting_installation_obj_id_slave_register_cont, 0, -1,
-            //      INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
-            //      -1, NULL,
-            //      setting_installation_slave_indoor_register_display, -1},
+            {0, 72 * 11, 622, 72,
+             setting_installation_obj_id_slave_register_cont, 0, -1,
+             INSTALLATION_XLS_LANG_ID_FACTORY_RESET, lang_str_get,
+             -1, NULL,
+             setting_installation_slave_indoor_register_display, -1},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_installation_obj_id_sub_list);
@@ -278,7 +278,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
 
         char system_mode = user_data_get()->system_mode;
 
-        for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
+        for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t) - 1; i++)
         {
                 /*单系统*/
                 if ((system_mode & 0x0f) != 0x01)

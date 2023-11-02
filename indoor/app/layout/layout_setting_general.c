@@ -116,6 +116,23 @@ static lv_obj_t *setting_general_list_item_sub_get(int cont, int sub_id)
 
         return sub;
 }
+/************************************************************
+** 函数说明: 时间设置模式次标题显示
+** 作者: xiaoxiao
+** 日期：2023-10-31 16:40:05
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void time_setup_mode_sub_display(void)
+{
+        lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_data_and_time_count, setting_general_obj_id_data_and_time_sub);
+        if (sub == NULL)
+        {
+                return;
+        }
+
+        lv_label_set_text(sub, user_data_get()->etc.time_automatically == 1 ? lang_str_get(SETTING_GENERAL_XLS_LANG_ID_AUTO_SETUP) : lang_str_get(SETTING_GENERAL_XLS_LANG_ID_MANUAL_SETUP));
+}
 
 /************************************************************
 ** 函数说明: door_open_method 次标题显示
@@ -782,6 +799,7 @@ static lv_obj_t *setting_sub_list_create(void)
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
                 j++;
         }
+        time_setup_mode_sub_display();
         door_open_method_sub_display();
         door1_open_moudle_sub_display();
         door2_open_lock_num_sub_display();

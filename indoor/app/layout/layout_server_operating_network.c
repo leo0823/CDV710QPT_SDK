@@ -365,21 +365,15 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
                 {
                         if (i == 0)
                         {
-                                int building = 0;
-                                char number[64] = {0};
-                                sscanf(lv_textarea_get_text(textarea), "%d", &building);
-                                sprintf(number, "%04d", building);
-                                memset(&network_data_get()->sip_user[3], 0, 4);
-                                strncpy(&(network_data_get()->sip_user[3]), number, 4);
+                                memset(&network_data_get()->sip_user[3], '0', 4);
+                                const char *building_str = lv_textarea_get_text(textarea);
+                                strncpy(&network_data_get()->sip_user[7 - strlen(building_str)], building_str, strlen(building_str));
                         }
                         else if (i == 1)
                         {
-                                int household = 0;
-                                char number[64] = {0};
-                                sscanf(lv_textarea_get_text(textarea), "%d", &household);
-                                sprintf(number, "%02d%02d", household / 100, (household % 100));
-                                memset(&network_data_get()->sip_user[7], 0, 4);
-                                strncpy(&(network_data_get()->sip_user[7]), number, 4);
+                                memset(&network_data_get()->sip_user[7], '0', 4);
+                                const char *household_str = lv_textarea_get_text(textarea);
+                                strncpy(&network_data_get()->sip_user[11 - strlen(household_str)], household_str, strlen(household_str));
                         }
                         else if (i == 2)
                         {
@@ -415,6 +409,7 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
                         }
                 }
         }
+
         if (setting_server_operation_data_valid_check())
         {
                 sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);

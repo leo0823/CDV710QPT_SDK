@@ -5,7 +5,8 @@ enum
         factory_reset_obj_id_title,
         factory_reset_obj_id_cancel,
         factory_reset_obj_id_warn_tips,
-        factory_reset_obj_id_param,
+        factory_reset_obj_id_param1,
+        factory_reset_obj_id_param2,
         factory_reset_obj_id_confirm,
         factory_reset_obj_id_msgbox_bg,
         factory_reset_obj_id_msgbox_cont,
@@ -60,6 +61,9 @@ static void *layout_factory_reset_process(void *arg)
         *reseted += 1;
         usleep(100 * 1000);
         tuay_api_data_reset();
+        *reseted += 1;
+        usleep(100 * 1000);
+        media_file_delete_all(FILE_TYPE_FLASH_PHOTO, true);
         *reseted += 1;
         usleep(100 * 1000);
         alarm_list_del_all();
@@ -168,11 +172,24 @@ static void sat_layout_enter(factory_reset)
         ** 说明: 格式化参数提示
         ***********************************************/
         {
-                lv_common_text_create(sat_cur_layout_screen_get(), factory_reset_obj_id_param, 0, 232, 1024, 144,
+                lv_common_text_create(sat_cur_layout_screen_get(), factory_reset_obj_id_param1, 0, 232, 1024, 144,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(FACTORY_RESET_XLS_LANG_ID_ALL_DATA_RESET),
+                                      0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+        }
+        /***********************************************
+        ** 作者: xiaoxiao
+        ** 日期：2023-09-12 08:54:10
+        ** 说明: 格式化参数提示
+        ***********************************************/
+        {
+                lv_common_text_create(sat_cur_layout_screen_get(), factory_reset_obj_id_param2, 0, 350, 1024, 38,
+                                      NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                      lang_str_get(SETTING_INITIALIZE_XLS_LANG_ID_FINISH_AND_REBOOT),
                                       0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
         }
 

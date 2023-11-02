@@ -33,7 +33,7 @@ static void setting_screen_slider_obj_change_cb(lv_event_t *ev)
 
         user_data_get()->display.lcd_brigtness = value;
         user_data_save();
-        backlight_brightness_set(value <= 4 ? 4 : value);
+        backlight_brightness_set(value <= 5 ? 5 : value);
 }
 static void setting_screen_standby_screen_obj_click(lv_event_t *ev)
 {
@@ -99,10 +99,19 @@ static lv_obj_t *setting_screen_sub_list_create(void)
                 if (main_list_group[i].cont_id == setting_screen_obj_id_standby_screen_cont)
                 {
                         lv_obj_t *sub_obj = lv_obj_get_child_form_id(item, setting_screen_obj_id_standby_screen_sub);
-                        int offset = user_data_get()->display.screen_off_time == 15 ? 0 : user_data_get()->display.screen_off_time == 30 ? 1
-                                                                                      : user_data_get()->display.screen_off_time == 60   ? 2
-                                                                                                                                         : 3;
-                        lv_label_set_text(sub_obj, lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
+
+                        if (user_data_get()->display.standby_mode)
+                        {
+
+                                lv_label_set_text(sub_obj, lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_OPEN_FRAME));
+                        }
+                        else
+                        {
+                                int offset = user_data_get()->display.screen_off_time == 15 ? 0 : user_data_get()->display.screen_off_time == 30 ? 1
+                                                                                              : user_data_get()->display.screen_off_time == 60   ? 2
+                                                                                                                                                 : 3;
+                                lv_label_set_text(sub_obj, lang_str_get(SCREEN_XLS_LANG_ID_LCD_SCREEN_AFTER_15SEC + offset));
+                        }
                 }
         }
         return list;

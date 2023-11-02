@@ -552,7 +552,10 @@ static void password_input_keyboard_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_target(ev);
         uint32_t id = lv_btnmatrix_get_selected_btn(obj);
-
+        if (lv_btnmatrix_has_btn_ctrl(obj, id, LV_BTNMATRIX_CTRL_HIDDEN) == true)
+        {
+                return;
+        }
         if (id == 11)
         {
                 common_password_input_textbox_del(lv_obj_get_parent(obj));
@@ -616,7 +619,7 @@ void common_passwd_check_func_create(int cont_id, void (*callback)(void))
                                                                                360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                                0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                18, 24);
-                        lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN);
+                        lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
                 }
 
                 /************************************************************

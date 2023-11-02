@@ -1102,13 +1102,16 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
 static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 {
         int mode = REC_MODE_TUYA_CALL;
-        if (is_alarm_trigger())
+        if ((is_alarm_trigger() || user_data_get()->alarm.away_alarm_enable))
         {
-                mode |= REC_MODE_AUTO;
+                if (is_alarm_trigger())
+                        mode |= REC_MODE_ALARM;
+                if (user_data_get()->alarm.away_alarm_enable)
+                        mode |= REC_MODE_AWAY;
         }
         else
         {
-                mode |= REC_MODE_ALARM;
+                mode |= REC_MODE_AUTO;
         }
         if (user_data_get()->auto_record_mode != 0)
         {

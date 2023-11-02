@@ -146,7 +146,10 @@ static void setting_guard_station_number_obj_keyboad_click(lv_event_t *e)
 {
         lv_obj_t *obj = lv_event_get_target(e);
         uint32_t id = lv_btnmatrix_get_selected_btn(obj);
-
+        if (lv_btnmatrix_has_btn_ctrl(obj, id, LV_BTNMATRIX_CTRL_HIDDEN) == true)
+        {
+                return;
+        }
         if (id == 11)
         {
 
@@ -210,7 +213,7 @@ static void sat_layout_enter(setting_guard_station_number)
                                                                        360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                        18, 24);
-                lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN);
+                lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
         }
         /***********************************************
         ** 作者: leo.liu

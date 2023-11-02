@@ -49,11 +49,6 @@ static void setting_sensor_switch_list_click(lv_event_t *e)
                         user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] = false;
                 }
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
-                obj = lv_obj_get_child_form_id(cont, 1);
-                if (obj != NULL)
-                {
-                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
-                }
         }
         else
         {
@@ -66,11 +61,23 @@ static void setting_sensor_switch_list_click(lv_event_t *e)
                         user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] = true;
                 }
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-                obj = lv_obj_get_child_form_id(cont, 1);
-                if (obj != NULL)
-                {
-                        lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
-                }
+        }
+        obj = lv_obj_get_child_form_id(cont, 1);
+        if (obj != NULL)
+        {
+                lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
+        }
+        if (user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] == false)
+        {
+                lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
+        }
+        else if (user_data_get()->alarm.alarm_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] == 1)
+        {
+                lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NO));
+        }
+        else if (user_data_get()->alarm.alarm_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] == 2)
+        {
+                lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC));
         }
         user_data_save();
 }

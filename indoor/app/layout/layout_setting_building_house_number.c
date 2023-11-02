@@ -250,6 +250,7 @@ static void sat_layout_enter(setting_building_house_number)
         char household[8] = {0};
         strncpy(building, &network_data_get()->sip_user[3], 4);
         strncpy(household, &network_data_get()->sip_user[7], 4);
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:43:29

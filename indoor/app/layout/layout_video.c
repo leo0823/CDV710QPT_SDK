@@ -186,7 +186,7 @@ static void video_thumb_decode_all_display(void)
         const file_info *pinfo = playback_media_info_get();
         char arry[128] = {0};
         sprintf(arry, "%s%s", playback_pview_path_get(), pinfo->file_name);
-
+        printf("video play :%s\n", arry);
         sat_linphone_video_play_start(arry, 0, 0, video_WIDTH, video_HIGHT);
         //  sat_linphone_media_thumb_display(arry, 1, video_thumb_media_display_callback);
         /*每次加载完后显示总数*/
@@ -195,7 +195,6 @@ static void video_thumb_decode_all_display(void)
 
         if (pinfo->is_new == true)
         {
-                SAT_DEBUG("==============");
                 media_file_new_clear(pinfo->type, playback_pview_item_get());
         }
 }
@@ -341,7 +340,6 @@ static void video_obj_left_click(lv_event_t *e)
         {
                 sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
-
         video_thumb_decode_all_display();
         video_thumb_left_right_arrow_display();
 }
@@ -363,7 +361,6 @@ static void video_obj_right_click(lv_event_t *e)
         {
                 sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
-
         video_thumb_decode_all_display();
         video_thumb_left_right_arrow_display();
 }
@@ -400,7 +397,6 @@ static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
         {
                 return;
         }
-
         if (cur == total)
         {
                 const file_info *info = playback_media_info_get();
@@ -429,12 +425,12 @@ static void video_thumb_play_state_callback(unsigned int sate)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
 
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(sate == 0x01 ? "btn_thumbnail_pause_l.png" : "btn_thumbnail_play_l.png"), LV_PART_MAIN);
-        if (sate == 0x01)
+        if (sate == 0x02)
         {
                 standby_timer_close();
                 video_media_thumb_obj_click(NULL);
         }
-        else if (sate == 0x02)
+        else if (sate == 0x01)
         {
                 standby_timer_restart(true);
         }
@@ -455,7 +451,6 @@ static void video_obj_play_click(lv_event_t *e)
 }
 static void layout_video_touch_callback(lv_event_t *e)
 {
-        printf("================\n");
         standby_timer_restart(false);
 }
 
@@ -637,6 +632,8 @@ static void sat_layout_enter(video)
         video_play_state_callback_register(video_thumb_play_state_callback);
 
         lv_timer_ready(lv_sat_timer_create(video_thumb_duration_timer, 100, NULL));
+
+        standby_timer_close();
 }
 static void sat_layout_quit(video)
 {

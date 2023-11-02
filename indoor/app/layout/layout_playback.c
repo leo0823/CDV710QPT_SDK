@@ -267,7 +267,7 @@ static void playback_media_thumb_obj_click(lv_event_t *e)
 }
 static void playabck_media_new_obj_display(lv_obj_t *parent, bool new)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 3);
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 4);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
@@ -294,11 +294,27 @@ static void playback_media_mode_obj_display(lv_obj_t *parent, char mode)
         lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
         if (obj == NULL)
         {
-                SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
+                SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,1);");
                 return;
         }
 
-        if (mode == REC_MODE_ALARM)
+        if (mode & REC_MODE_ALARM)
+        {
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+
+        obj = lv_obj_get_child_form_id(parent, 3);
+        if (obj == NULL)
+        {
+                SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,3);");
+                return;
+        }
+
+        if (mode & REC_MODE_AWAY)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -307,6 +323,7 @@ static void playback_media_mode_obj_display(lv_obj_t *parent, char mode)
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
 }
+
 static void playback_media_play_obj_display(lv_obj_t *parent, file_type type)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(parent, 2);
@@ -327,7 +344,7 @@ static void playback_media_play_obj_display(lv_obj_t *parent, file_type type)
 }
 static void playback_media_type_obj_display(lv_obj_t *parent, file_type type)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 3);
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 4);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
@@ -352,7 +369,7 @@ static void playback_media_type_obj_display(lv_obj_t *parent, file_type type)
 }
 static void playabck_media_filename_obj_display(lv_obj_t *parent, const char *filename)
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 3);
+        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 4);
         if (obj == NULL)
         {
                 SAT_DEBUG("   lv_obj_t* obj = lv_obj_get_child_form_id(parent,0);");
@@ -541,7 +558,13 @@ static void sat_layout_enter(playback)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_thumbnail_play_s.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
-                parent = lv_common_img_btn_create(parent, 3, 0, PLAYBACK_THUMB_HIGHT - 64, PLAYBACK_THUMB_WIDTH, 64,
+                lv_common_img_btn_create(parent, 3, 284, 144, 48, 48,
+                                         NULL, false, LV_OPA_TRANSP, 0x242526, LV_OPA_TRANSP, 0x242526,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("ic_playback_away.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
+                parent = lv_common_img_btn_create(parent, 4, 0, PLAYBACK_THUMB_HIGHT - 64, PLAYBACK_THUMB_WIDTH, 64,
                                                   NULL, false, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x00,
                                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                   0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

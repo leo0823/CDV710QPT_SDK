@@ -799,7 +799,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         lv_timer_create(default_buzzer_call_timer, 500, NULL);
 
         /***** 设置背光使能亮度 *****/
-        backlight_brightness_set(user_data_get()->display.lcd_brigtness <= 0 ? 4 : user_data_get()->display.lcd_brigtness);
+        backlight_brightness_set(user_data_get()->display.lcd_brigtness <= 5 ? 5 : user_data_get()->display.lcd_brigtness);
 
         /***** 音频输出初始化 *****/
         audio_output_cmd_register(audio_output_event_default_process);
