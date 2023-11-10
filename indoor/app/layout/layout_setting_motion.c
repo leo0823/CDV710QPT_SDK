@@ -92,17 +92,24 @@ static bool setting_motion_select_camera_display(void)
         {
                 SAT_DEBUG(" lv_obj_t*sub = setting_motion_list_item_sub_get(setting_motion_obj_id_select_camera_cont);");
                 return false;
-        }
-        char name[64] = {0};
-        if (user_data_get()->motion.select_camera > MON_CH_DOOR8)
+        };
+        if (monitor_valid_channel_check(user_data_get()->motion.select_camera))
         {
-                sprintf(name, network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
+                char name[64] = {0};
+                if (user_data_get()->motion.select_camera > MON_CH_DOOR8)
+                {
+                        sprintf(name, network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
+                }
+                else
+                {
+                        sprintf(name, network_data_get()->door_device[(int)user_data_get()->motion.select_camera].door_name);
+                }
+                lv_label_set_text(sub, name);
         }
         else
         {
-                sprintf(name, network_data_get()->door_device[(int)user_data_get()->motion.select_camera].door_name);
+                lv_label_set_text(sub, lang_str_get(SETTING_MOTION_XLS_LANG_ID_CAMERA_NOT_SET));
         }
-        lv_label_set_text(sub, name);
         return true;
 }
 
@@ -402,6 +409,7 @@ static void setting_motion_select_camera_msgbox_confim_click(lv_event_t *e)
         if (item_n != user_data_get()->motion.select_camera)
         {
                 user_data_get()->motion.select_camera = item_n;
+                printf("item_n is %d\n", item_n);
                 user_data_save();
                 setting_motion_select_camera_display();
         }
@@ -475,6 +483,10 @@ static void setting_motion_save_format_sd_state_change_callback(void)
 
 static void setting_motion_list_item_click(lv_event_t *e)
 {
+        if (monitor_door_registered_status_get() == false)
+        {
+                return;
+        }
         lv_obj_t *item = lv_event_get_current_target(e);
         if (item->id == setting_motion_obj_id_use_motion_cont)
         {

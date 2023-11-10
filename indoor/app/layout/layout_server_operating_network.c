@@ -204,9 +204,117 @@ static bool setting_server_operation_data_valid_check(void)
         return true;
 }
 
+static void setting_setver_operation_network_data_save(void)
+{
+        int obj_id[][2] = {
+            {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
+            {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
+            {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
+            {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
+            {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
+            {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
+            {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
+            {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
+            {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
+            {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
+
+        lv_obj_t *textarea = NULL;
+
+        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
+
+        int total = sizeof(obj_id) / (sizeof(int) * 2);
+        for (int i = 0; i < total; i++)
+        {
+                lv_obj_t *parent = lv_obj_get_child_form_id(list, obj_id[i][0]);
+                textarea = lv_obj_get_child_form_id(parent, obj_id[i][1]);
+
+                if (textarea != NULL)
+                {
+                        if (i == 0)
+                        {
+                                memset(&network_data_get()->sip_user[0], '0', 4);
+                                const char *building_str = lv_textarea_get_text(textarea);
+                                strncpy(&network_data_get()->sip_user[4 - strlen(building_str)], building_str, strlen(building_str));
+                        }
+                        else if (i == 1)
+                        {
+                                memset(&network_data_get()->sip_user[4], '0', 4);
+                                const char *household_str = lv_textarea_get_text(textarea);
+                                strncpy(&network_data_get()->sip_user[8 - strlen(household_str)], household_str, strlen(household_str));
+                        }
+                        else if (i == 2)
+                        {
+                                strncpy(network_data_get()->network.ipaddr, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.ipaddr));
+                        }
+                        else if (i == 3)
+                        {
+                                strncpy(network_data_get()->network.gateway, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.gateway));
+                        }
+                        else if (i == 4)
+                        {
+                                strncpy(network_data_get()->network.mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.mask));
+                        }
+                        else if (i == 5)
+                        {
+                                strncpy(network_data_get()->network.dns, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.dns));
+                        }
+                        else if (i == 6)
+                        {
+                                strncpy(network_data_get()->local_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->local_server));
+                        }
+                        else if (i == 7)
+                        {
+                                strncpy(network_data_get()->sip_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->sip_server));
+                        }
+                        else if (i == 8)
+                        {
+                                strncpy(network_data_get()->cctv_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->cctv_server));
+                        }
+                        else if (i == 9)
+                        {
+                                strncpy(network_data_get()->guard_number, lv_textarea_get_text(textarea), sizeof(network_data_get()->guard_number));
+                        }
+                }
+        }
+        user_data_save();
+}
+
+static void setting_server_operation_network_falid_confirm(lv_event_t *e)
+{
+
+        setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
+}
+
+/************************************************************
+** 函数说明: 数据校验失败提示
+** 作者: xiaoxiao
+** 日期：2023-09-26 14:23:59
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void setting_server_operation_network_falid_tips(void)
+{
+        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_msg_bg);
+        if (masgbox != NULL)
+        {
+                setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
+        }
+        masgbox = setting_msgdialog_msg_bg_create(server_operation_network_obj_id_msg_bg, server_operation_network_obj_id_msg, 282, 143, 460, 283);
+        setting_msgdialog_msg_create(masgbox, server_operation_network_obj_id_text, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
+        setting_msgdialog_msg_confirm_btn_create(masgbox, server_operation_network_obj_id_confirm, setting_server_operation_network_falid_confirm);
+}
+
 static void setting_server_operation_network_cancel_btn_click(lv_event_t *e)
 {
-        sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        if (setting_server_operation_data_valid_check())
+        {
+                setting_setver_operation_network_data_save();
+                sat_layout_goto(power_setting, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
+        else
+        {
+                setting_server_operation_network_falid_tips();
+        }
 }
 
 static void setting_server_operation_network_init(void)
@@ -227,20 +335,11 @@ static void setting_server_operation_network_init(void)
 
         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
 
-        // int total = sizeof(obj_id) / (sizeof(int) * 2);
-        // char building[8] = {0};
-        // char household[8] = {0};
-        // int loacal_number[8] = {0};
-        // const char *username = network_data_get()->sip_user;
-        // loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-        // loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48) * 100 + (username[9] - 48) * 10 + (username[10] - 48);
-        // sprintf(building, "%04d", loacal_number[0]);
-        // sprintf(household, "%04d", loacal_number[1]);
         int total = sizeof(obj_id) / (sizeof(int) * 2);
         char building[8] = {0};
         char household[8] = {0};
-        strncpy(building, &network_data_get()->sip_user[3], 4);
-        strncpy(household, &network_data_get()->sip_user[7], 4);
+        strncpy(building, &network_data_get()->sip_user[0], 4);
+        strncpy(household, &network_data_get()->sip_user[4], 4);
         for (int i = 0; i < total; i++)
         {
                 lv_obj_t *parent = lv_obj_get_child_form_id(list, obj_id[i][0]);
@@ -312,106 +411,12 @@ static void setting_server_operation_network_init(void)
         }
 }
 
-static void setting_server_operation_network_falid_confirm(lv_event_t *e)
-{
-
-        setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
-}
-
-/************************************************************
-** 函数说明: 数据校验失败提示
-** 作者: xiaoxiao
-** 日期：2023-09-26 14:23:59
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void setting_server_operation_network_falid_tips(void)
-{
-        lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_msg_bg);
-        if (masgbox != NULL)
-        {
-                setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
-        }
-        masgbox = setting_msgdialog_msg_bg_create(server_operation_network_obj_id_msg_bg, server_operation_network_obj_id_msg, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, server_operation_network_obj_id_text, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
-        setting_msgdialog_msg_confirm_btn_create(masgbox, server_operation_network_obj_id_confirm, setting_server_operation_network_falid_confirm);
-}
-
 static void setting_server_operation_network_next_btn_click(lv_event_t *e)
 {
-        int obj_id[][2] = {
-            {server_operation_network_obj_id_building_number_cont, server_operation_network_obj_id_building_number_textarea},
-            {server_operation_network_obj_id_building_household_number_cont, server_operation_network_obj_id_building_household_number_textarea},
-            {server_operation_network_obj_id_product_ip_cont, server_operation_network_obj_id_product_ip_textarea},
-            {server_operation_network_obj_id_gateway_cont, server_operation_network_obj_id_gateway_textarea},
-            {server_operation_network_obj_id_mask_cont, server_operation_network_obj_id_mask_textarea},
-            {server_operation_network_obj_id_dns_cont, server_operation_network_obj_id_dns_textarea},
-            {server_operation_network_obj_id_local_server_cont, server_operation_network_obj_id_local_server_textarea},
-            {server_operation_network_obj_id_sip_server_cont, server_operation_network_obj_id_sip_server_textarea},
-            {server_operation_network_obj_id_cctv_server_cont, server_operation_network_obj_id_cctv_server_textarea},
-            {server_operation_network_obj_id_guard_statioon_cont, server_operation_network_obj_id_guard_statioon_textarea}};
-
-        lv_obj_t *textarea = NULL;
-
-        lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), server_operation_network_obj_id_list);
-
-        int total = sizeof(obj_id) / (sizeof(int) * 2);
-        for (int i = 0; i < total; i++)
-        {
-                lv_obj_t *parent = lv_obj_get_child_form_id(list, obj_id[i][0]);
-                textarea = lv_obj_get_child_form_id(parent, obj_id[i][1]);
-
-                if (textarea != NULL)
-                {
-                        if (i == 0)
-                        {
-                                memset(&network_data_get()->sip_user[3], '0', 4);
-                                const char *building_str = lv_textarea_get_text(textarea);
-                                strncpy(&network_data_get()->sip_user[7 - strlen(building_str)], building_str, strlen(building_str));
-                        }
-                        else if (i == 1)
-                        {
-                                memset(&network_data_get()->sip_user[7], '0', 4);
-                                const char *household_str = lv_textarea_get_text(textarea);
-                                strncpy(&network_data_get()->sip_user[11 - strlen(household_str)], household_str, strlen(household_str));
-                        }
-                        else if (i == 2)
-                        {
-                                strncpy(network_data_get()->network.ipaddr, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.ipaddr));
-                        }
-                        else if (i == 3)
-                        {
-                                strncpy(network_data_get()->network.gateway, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.gateway));
-                        }
-                        else if (i == 4)
-                        {
-                                strncpy(network_data_get()->network.mask, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.mask));
-                        }
-                        else if (i == 5)
-                        {
-                                strncpy(network_data_get()->network.dns, lv_textarea_get_text(textarea), sizeof(network_data_get()->network.dns));
-                        }
-                        else if (i == 6)
-                        {
-                                strncpy(network_data_get()->local_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->local_server));
-                        }
-                        else if (i == 7)
-                        {
-                                strncpy(network_data_get()->sip_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->sip_server));
-                        }
-                        else if (i == 8)
-                        {
-                                strncpy(network_data_get()->cctv_server, lv_textarea_get_text(textarea), sizeof(network_data_get()->cctv_server));
-                        }
-                        else if (i == 9)
-                        {
-                                strncpy(network_data_get()->guard_number, lv_textarea_get_text(textarea), sizeof(network_data_get()->guard_number));
-                        }
-                }
-        }
 
         if (setting_server_operation_data_valid_check())
         {
+                setting_setver_operation_network_data_save();
                 sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else
@@ -419,9 +424,18 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
                 setting_server_operation_network_falid_tips();
         }
 }
+
 static void setting_server_operating_btn_click(lv_event_t *e)
 {
-        sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        if (setting_server_operation_data_valid_check())
+        {
+                setting_setver_operation_network_data_save();
+                sat_layout_goto(operating_structure, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+        }
+        else
+        {
+                setting_server_operation_network_falid_tips();
+        }
 }
 static lv_obj_t *setting_server_textarea_focused_get(void)
 {

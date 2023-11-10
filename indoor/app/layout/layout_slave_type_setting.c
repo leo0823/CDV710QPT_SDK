@@ -86,12 +86,7 @@ static void slave_type_setting_save_confirm(lv_event_t *e)
         strncpy(user_data_get()->mastar_wallpad_ip, update_master_ip, sizeof(user_data_get()->mastar_wallpad_ip));
         user_data_get()->system_mode &= 0xF0;
         user_data_get()->system_mode |= update_slave_id & 0x0F;
-        char number[32] = {0};
-        memset(number, 0, sizeof(number));
-        strncpy(number, network_data_get()->sip_user, 11);
-        sprintf(&number[11], "%d", update_slave_id);
-        memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
-        strcpy(network_data_get()->sip_user, number);
+
         user_data_get()->is_device_init = true;
         network_data_save();
         user_data_save();

@@ -262,6 +262,7 @@ void layout_alarm_alarm_channel_set(int ch)
 ************************************************************/
 void layout_alarm_trigger_default(int arg1, int arg2)
 {
+
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -274,19 +275,17 @@ void layout_alarm_trigger_default(int arg1, int arg2)
         }
         else
         {
-
                 if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
                 {
                         return;
                 }
                 if ((user_data_get()->alarm.alarm_enable_always[0][arg1] == false) && (user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
                 {
-                        if (user_data_get()->alarm.away_alarm_enable != 0x02 && user_data_get()->alarm.security_alarm_enable == false)
+                        if (user_data_get()->alarm.away_alarm_enable == false && user_data_get()->alarm.security_alarm_enable == false)
                         {
                                 return;
                         }
                 }
-
                 if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW * 100))
                 {
                         layout_alarm_alarm_channel_set(arg1);
@@ -320,6 +319,7 @@ bool alarm_trigger_check(void)
                         if (user_data_get()->alarm.alarm_enable[i] == 0)
                         {
                                 user_data_get()->alarm.alarm_trigger[i] = false;
+                                user_data_get()->alarm.alarm_trigger_enable[i] = false;
                                 user_data_save();
                                 continue;
                         }
@@ -327,10 +327,18 @@ bool alarm_trigger_check(void)
                         {
                                 continue;
                         }
-                        if ((user_data_get()->alarm.alarm_enable[i] != 0 && user_data_get()->alarm.alarm_trigger[i]))
+                        if ((user_data_get()->alarm.alarm_trigger[i]))
                         {
-                                alarm_occur = true;
-                                user_data_get()->alarm.emergency_mode = 1;
+                                if (user_data_get()->alarm.alarm_trigger_enable[i] || user_data_get()->alarm.security_alarm_enable)
+                                {
+                                        alarm_occur = true;
+                                        user_data_get()->alarm.emergency_mode = 1;
+                                }
+                        }
+                        else
+                        {
+                                user_data_get()->alarm.alarm_trigger_enable[i] = false;
+                                user_data_save();
                         }
                 }
                 else if (user_data_get()->alarm.alarm_trigger[i])
@@ -340,7 +348,8 @@ bool alarm_trigger_check(void)
                 }
                 if ((alarm_occur))
                 {
-                        user_data_save();
+                        user_data_get()->alarm.alarm_ring_play = true;
+
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(security_emergency, i, &tm);
@@ -351,7 +360,6 @@ bool alarm_trigger_check(void)
         }
         return alarm_occur;
 }
-
 /***********************************************************************/
 
 /************************************************************
@@ -620,6 +628,11 @@ void common_passwd_check_func_create(int cont_id, void (*callback)(void))
                                                                                0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                18, 24);
                         lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
+                        lv_common_img_btn_create(parent, 7, 128, 390, 100, 102,
+                                                 NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
 
                 /************************************************************

@@ -20,6 +20,13 @@ typedef enum
 static layout_away_count_info layout_away_count_default_info = {
     .away_setting_time_countdown_timer = NULL,
     .away_release_time_countdown_timer = NULL,
+    .away_release_time[0] = 0,
+    .away_release_time[1] = 0,
+    .away_release_time[2] = 0,
+    .away_release_time[3] = 0,
+    .away_release_time[4] = 0,
+    .away_release_time[5] = 0,
+    .away_release_time[6] = 0,
     .away_count_sec = 0};
 
 layout_away_count_info *layout_away_count_data_get(void)
@@ -81,43 +88,119 @@ static void layout_away_count_timer_obj_display(void)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-/************************************************************
-** 函数说明: 警报界面警报触发处理
-** 作者: xiaoxiao
-** 日期: 2023-05-06 21:33:07
-** 参数说明:
-** 注意事项:
-************************************************************/
-static void away_alarm_sensor_check(void)
+static void away_alarm_release_det_timer(lv_timer_t *ptimer)
 {
     for (int i = 0; i < 7; i++)
     {
-        if (!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << i)))
+        if (user_data_get()->alarm.alarm_trigger[i] == true && user_data_get()->alarm.alarm_trigger_enable[i] == false)
+        {
+            if (layout_away_count_data_get()->away_release_time[i]++ == user_data_get()->alarm.away_release_time)
+            {
+                struct tm tm;
+                user_time_read(&tm);
+                alarm_list_add(security_emergency, i, &tm);
+                user_data_get()->alarm.alarm_trigger_enable[i] = true;
+                if (sat_cur_layout_get() != sat_playout_get(alarm))
+                {
+                    layout_alarm_alarm_channel_set(i);
+                    user_data_get()->alarm.emergency_mode = 1;
+                    user_data_get()->alarm.alarm_ring_play = true;
+                    user_data_save();
+                    sat_linphone_handup(0xFFFF);
+                    sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                }
+            }
+        }
+    }
+}
+/************************************************************
+** 函数说明: 离家模式下的传感器回调事件
+** 作者: xiaoxiao
+** 日期：2023-11-02 09:33:38
+** 参数说明:
+** 注意事项：
+************************************************************/
+void away_mode_alarm_trigger_callback(int arg1, int arg2)
+{
+    if ((arg1 == 7) && (arg2 < ALM_LOW * 100))
+    {
+        user_data_get()->alarm.buzzer_alarm = true;
+        user_data_save();
+        buzzer_call_trigger_check();
+    }
+    else
+    {
+        if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
         {
             return;
         }
-        if (((user_data_get()->alarm.alarm_enable[i] == 1 && user_sensor_value_get(i) > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && user_sensor_value_get(i) < ALM_LOW)))
+        if ((user_data_get()->alarm.alarm_enable_always[0][arg1] == false) && (user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
         {
+            if (user_data_get()->alarm.away_alarm_enable == false && user_data_get()->alarm.security_alarm_enable == false)
+            {
+                return;
+            }
+        }
+        if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW * 100))
+        {
+            if (user_data_get()->alarm.alarm_trigger[arg1] == false)
+            {
+                user_data_get()->alarm.alarm_trigger[arg1] = true;
+                if (user_data_get()->alarm.alarm_enable_always[0][arg1])
+                {
+                    struct tm tm;
+                    user_time_read(&tm);
+                    alarm_list_add(security_emergency, arg1, &tm);
+                    if (sat_cur_layout_get() != sat_playout_get(alarm))
+                    {
+                        layout_alarm_alarm_channel_set(arg1);
+                        user_data_get()->alarm.emergency_mode = 1;
+                        user_data_get()->alarm.alarm_ring_play = true;
+                        user_data_save();
+                        sat_linphone_handup(0xFFFF);
+                        sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                    }
+                }
+                else
+                {
 
-            user_data_get()->alarm.alarm_trigger[i] = true;
+                    layout_away_count_data_get()->away_release_time[arg1] = 0;
+                    if (user_data_get()->alarm.away_release_time == 0)
+                    {
+
+                        away_alarm_release_det_timer(NULL);
+                    }
+                }
+                user_data_save();
+            }
         }
     }
 }
 
 /************************************************************
-** 函数说明: 离家释时间警报检测任务创建
+** 函数说明: 离家模式设防检测任务创建
 ** 作者: xiaoxiao
-** 日期: 2023-08-08 09:58:42
+** 日期：2023-11-02 18:13:36
 ** 参数说明:
-** 注意事项:
+** 注意事项：
 ************************************************************/
-static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
+void away_mode_alarm_trigger_timer_create(void)
 {
-    lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
-    layout_away_count_data_get()->away_release_time_countdown_timer = NULL;
-    user_data_get()->alarm.away_alarm_enable = 0x02;
-    away_alarm_sensor_check();
-    alarm_trigger_check();
+    if ((user_data_get()->system_mode & 0x1f) == 0x01)
+    {
+        if (layout_away_count_data_get()->away_release_time_countdown_timer == NULL)
+        {
+            if (user_data_get()->alarm.away_release_time)
+            {
+                lv_timer_ready(layout_away_count_data_get()->away_release_time_countdown_timer = lv_timer_create(away_alarm_release_det_timer, 1000, NULL));
+            }
+            else
+            {
+
+                away_alarm_release_det_timer(NULL);
+            }
+        }
+    }
 }
 
 static void layout_away_count_timer(lv_timer_t *ptimer)
@@ -134,9 +217,21 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
     {
         lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
         layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
-        user_data_get()->alarm.away_alarm_enable = 0x01;
+        user_data_get()->alarm.away_alarm_enable = true;
         user_data_save();
-        layout_away_count_data_get()->away_release_time_countdown_timer = lv_timer_create(layout_away_alarm_release_det_timer, user_data_get()->alarm.away_release_time * 1000, NULL);
+
+        for (int i = 0; i < 7; i++)
+        {
+            if (user_data_get()->alarm.away_alarm_enable_list & 0x01 << i)
+            {
+                float value = user_sensor_value_get(i);
+                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < ALM_LOW))
+                {
+                    user_data_get()->alarm.alarm_trigger[i] = true;
+                }
+            }
+        }
+        away_mode_alarm_trigger_timer_create();
         if (sat_cur_layout_get() == sat_playout_get(away_count))
         {
             sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -153,6 +248,7 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
 ************************************************************/
 static void layout_alarm_count_param_init(void)
 {
+
     if (layout_away_count_data_get()->away_release_time_countdown_timer != NULL)
     {
         lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
@@ -166,6 +262,9 @@ static void layout_alarm_count_param_init(void)
 
 static void sat_layout_enter(away_count)
 {
+    memset(&user_data_get()->alarm.alarm_trigger_enable, 0, sizeof(user_data_get()->alarm.alarm_trigger_enable));
+
+    alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报回调注册
 
     standby_timer_close();
     /************************************************************

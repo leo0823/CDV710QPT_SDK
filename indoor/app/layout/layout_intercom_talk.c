@@ -471,6 +471,7 @@ static bool intercom_talk_call_answer_callback(char *args)
         intercom_talk_status_background_display();
         intercom_talk_answer_obj_display();
         sat_linphone_answer(-1, false);
+        sat_linphone_audio_talk_volume_set(user_data_get()->audio.extension_voice);
         layout_intercom_talk_vol_bar_display();
         return true;
 }

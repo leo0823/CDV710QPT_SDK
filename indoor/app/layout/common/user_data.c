@@ -25,7 +25,7 @@ static const user_data_info user_data_default =
         .wifi_enable = true,
         .motion = {
             .enable = false,
-            .select_camera = 1,
+            .select_camera = 0,
             .saving_fmt = 0,
             .sensivity = 1,
             .timer_en = false,
@@ -43,7 +43,7 @@ static const user_data_info user_data_default =
             .ring_mute = false,
             .door_tone = 1,
 
-            .extenion_tone = 3,
+            .extenion_tone = 1,
 
             .buzzer_tone = 1,
             .buzzer_volume = 50,
@@ -106,7 +106,6 @@ static const user_data_info user_data_default =
             .alarm_enable[5] = 0,
             .alarm_enable[6] = 0,
             .alarm_enable[7] = 0,
-
             .alarm_trigger[0] = 0, // 0非触发状态，1触发状态
             .alarm_trigger[1] = 0,
             .alarm_trigger[2] = 0,
@@ -115,6 +114,14 @@ static const user_data_info user_data_default =
             .alarm_trigger[5] = 0,
             .alarm_trigger[6] = 0,
             .alarm_trigger[7] = 0,
+            .alarm_trigger_enable[0] = 0,
+            .alarm_trigger_enable[1] = 0,
+            .alarm_trigger_enable[2] = 0,
+            .alarm_trigger_enable[3] = 0,
+            .alarm_trigger_enable[4] = 0,
+            .alarm_trigger_enable[5] = 0,
+            .alarm_trigger_enable[6] = 0,
+            .alarm_trigger_enable[7] = 0,
             .alarm_enable_always[0][0] = false,
             .alarm_enable_always[0][1] = false,
             .alarm_enable_always[0][2] = false,
@@ -276,11 +283,11 @@ static void user_data_check_valid(void)
         user_data_audio_check_range_out(extenion_tone, 0, 4);
 
         user_data_audio_check_range_out(buzzer_tone, 1, 6);
-        user_data_audio_check_range_out(buzzer_volume, 1, 6);
+        user_data_audio_check_range_out(buzzer_volume, 0, 100);
 
         user_data_audio_check_range_out(common_entrance_tone, 1, 6);
         user_data_audio_check_range_out(common_entrance_volume, 0, 100);
-        user_data_audio_check_range_out(common_entrance_voice, 1, 6);
+        user_data_audio_check_range_out(common_entrance_voice, 0, 100);
 
         user_data_audio_check_range_out(securirty_office_tone, 1, 6);
         user_data_audio_check_range_out(entrance_volume, 0, 100);
@@ -355,10 +362,10 @@ static void user_data_check_valid(void)
         }
 
         user_data_alarm_check_range_out(away_setting_time, 1, 3);
-        user_data_alarm_check_range_out(away_release_time, 30, 90);
+        user_data_alarm_check_range_out(away_release_time, 0, 90);
         user_data_alarm_check_range_out(away_auto_record, 0, 1);
         user_data_alarm_check_range_out(security_auto_record, 0, 1);
-        user_data_alarm_check_range_out(buzzer_alarm, 1, 3);
+        user_data_alarm_check_range_out(buzzer_alarm, 0, 1);
 
         user_data_check_range_out(system_mode, 1, 29);
 }
@@ -410,20 +417,8 @@ static const user_network_info network_data_default = {
         .mask = {"255.0.0.0"},
         .gateway = {"10.0.0.1"},
         .dns = {"8.8.8.8"}},
-
-    .sip_user = {"010001001011"},
-    .local_server = {"10.1.1.1"},
-    .sip_server = {"10.1.1.1"},
-    .cctv_server = {"10.1.1.1"},
-    .guard_number = {"00000000000"},
-
-    .sip_user = {"010001001011"},
-    .local_server = {"10.1.1.1"},
-    .sip_server = {"10.1.1.1"},
-    .cctv_server = {"10.1.1.1"},
-
     .common_entrance_ip = {"10.0.0.2"},
-    .sip_user = {"010123456781"},
+    .sip_user = {"12345678"},
     .local_server = {"10.0.0.2"},
     .sip_server = {"10.0.0.2"},
     .cctv_server = {"10.0.0.2"},

@@ -905,8 +905,6 @@ static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 
 static void sat_layout_enter(home)
 {
-        SAT_DEBUG("door_device[0].rtsp is %s", network_data_get()->door_device[0].rtsp[0].rtsp_url);
-        SAT_DEBUG("door_device[0].sip_url is %s", network_data_get()->door_device[0].sip_url);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25

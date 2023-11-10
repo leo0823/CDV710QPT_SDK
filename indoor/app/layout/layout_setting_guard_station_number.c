@@ -11,6 +11,12 @@ enum
         ** 说明: 数字键盘
         ***********************************************/
         setting_guard_station_number_obj_id_number_keyboard_btn,
+        /***********************************************
+        ** 作者: leo.liu
+        ** 日期: 2023-2-1 8:50:19
+        ** 说明: 数字键盘无用案件覆盖
+        ***********************************************/
+        setting_guard_station_number_obj_id_number_keyboard_cover,
 
         /***********************************************
         ** 作者: leo.liu
@@ -214,6 +220,11 @@ static void sat_layout_enter(setting_guard_station_number)
                                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                        18, 24);
                 lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_cover, 128, 390, 100, 102,
+                                         NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         /***********************************************
         ** 作者: leo.liu

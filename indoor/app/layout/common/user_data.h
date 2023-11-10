@@ -117,6 +117,8 @@ typedef struct
 
         char security_sensor_enable[8]; // 安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
+        char alarm_trigger_enable[8];
+
         char alarm_trigger[8]; // 传感器触发列表
 
         bool alarm_enable_always[2][8]; // 传感器总是使能：设置了总是使能，对应模式下的传感器总是能被检测（即使没有开启警报检测）
@@ -191,7 +193,7 @@ void user_data_reset(void);
 typedef struct
 {
         struct ipcamera_network network;
-        char sip_user[32];
+        char sip_user[9];
 
         char local_server[32];
         char sip_server[32];

@@ -635,6 +635,7 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 monitor_enter_flag_set(monitor_enter_flag_get() == MON_ENTER_CALL_FLAG ? MON_ENTER_CALL_TALK_FLAG : MON_ENTER_MANUAL_TALK_FLAG);
 
                 sat_linphone_answer(-1, false);
+                sat_linphone_audio_talk_volume_set(user_data_get()->audio.entrance_voice);
                 monitor_obj_talk_display();
                 monitor_obj_handup_display();
                 monitor_obj_normal_lock_display();
@@ -714,9 +715,6 @@ static void *monitor_unlock_ctrl_task(void *arg)
 
         door_lock_info *info = (door_lock_info *)arg;
 
-        printf("===============ch is %d\n", info->ch);
-        printf("===============mode is %d\n", info->mode);
-        printf("===============en is %d\n", info->en);
         if ((info->ch == MON_CH_DOOR1) && (info->mode == 2))
         {
                 SAT_DEBUG("=====ctrl ddl %d", info->en);
@@ -900,7 +898,6 @@ static void monitor_obj_lock_1_click(lv_event_t *e)
         int ch = monitor_channel_get();
         if (monitor_obj_unlock_icon_display(ch, 1) == true)
         {
-                SAT_DEBUG("======================");
                 ring_unlock_play();
         }
 }
@@ -1051,10 +1048,7 @@ static void monitor_obj_record_photo_display(void)
         {
                 return;
         }
-        if (record_jpeg_mode_get() == REC_MODE_TUYA_CALL) // 如果没设置自动记录，涂鸦抓拍不需要改变图标
-        {
-                return;
-        }
+
         if (is_monitor_snapshot_ing == true)
         {
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_save.png"), LV_PART_MAIN);
@@ -1089,6 +1083,10 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
                 SAT_DEBUG("jpeg record start\n");
         }
         is_monitor_snapshot_ing = snapshot_ing;
+        if (record_jpeg_mode_get() == REC_MODE_TUYA_CALL) // 如果没设置自动记录，涂鸦抓拍不需要改变图标
+        {
+                return;
+        }
         monitor_obj_record_photo_display();
 }
 
@@ -1102,25 +1100,27 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
 static void monitor_call_record_delay_task(lv_timer_t *ptimer)
 {
         int mode = REC_MODE_TUYA_CALL;
-        if ((is_alarm_trigger() || user_data_get()->alarm.away_alarm_enable))
-        {
-                if (is_alarm_trigger())
-                        mode |= REC_MODE_ALARM;
-                if (user_data_get()->alarm.away_alarm_enable)
-                        mode |= REC_MODE_AWAY;
-        }
-        else
-        {
-                mode |= REC_MODE_AUTO;
-        }
+
         if (user_data_get()->auto_record_mode != 0)
         {
+                if ((is_alarm_trigger() || user_data_get()->alarm.away_alarm_enable))
+                {
+                        if (is_alarm_trigger())
+                                mode |= REC_MODE_ALARM;
+                        if (user_data_get()->alarm.away_alarm_enable)
+                                mode |= REC_MODE_AWAY;
+                }
+
                 if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->auto_record_mode == 1))
                 {
                         if (is_monitor_record_video_ing == false)
                         {
-                                record_video_start(true, mode);
+                                record_video_start(true, mode | REC_MODE_AUTO);
                         }
+                }
+                else
+                {
+                        mode |= REC_MODE_AUTO;
                 }
         }
         record_jpeg_start(mode);
@@ -2536,6 +2536,13 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         sscanf(str + 4, "%ld", &call_id);
 
         int index = monitor_index_get_by_user(arg);
+
+        if (monitor_valid_channel_check(monitor_valid_channel_check(index - 1)) == false)
+        {
+                sat_linphone_handup(-1);
+                return false;
+        }
+
         if (index < 0)
         {
 
@@ -2689,12 +2696,12 @@ bool monitor_doorcamera_call_extern_func(char *arg)
                 return false;
         }
         /*sip:2xxx代表门口机*/
-        if (strstr(arg, "sip:2") != NULL)
+        if (strstr(arg, "sip:20") != NULL)
         {
                 return monitor_doorcamera_call_process(arg, true);
         }
         /*sip:5xxx代表室内设备*/
-        if (strstr(arg, "sip:5") != NULL)
+        if (strstr(arg, "sip:50") != NULL)
         {
                 return monitor_intercom_extern_call(arg);
         }
@@ -2709,12 +2716,12 @@ bool monitor_doorcamera_call_inside_func(char *arg)
                 return false;
         }
         /*sip:2xxx代表门口机*/
-        if (strstr(arg, "sip:2") != NULL)
+        if (strstr(arg, "sip:20") != NULL)
         {
                 return monitor_doorcamera_call_process(arg, false);
         }
         /*sip:5xxx代表室内设备*/
-        if (strstr(arg, "sip:5") != NULL)
+        if (strstr(arg, "sip:50") != NULL)
         {
                 return monitor_intercom_extern_call(arg);
         }

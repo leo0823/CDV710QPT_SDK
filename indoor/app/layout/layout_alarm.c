@@ -27,6 +27,7 @@ typedef enum
         layout_alarm_obj_id_passwd_input_tx2,
         layout_alarm_obj_id_passwd_input_tx3,
         layout_alarm_obj_id_passwd_input_tx4,
+        layout_alarm_obj_id_number_keyboard_btn_cover,
 
 } passwd_cont_obj_id;
 
@@ -261,11 +262,9 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 {
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
-                        user_data_get()->alarm.emergency_mode = 1;
                         user_data_save();
                         struct tm tm;
                         user_time_read(&tm);
-
                         alarm_list_add(security_emergency, arg1, &tm);
                 }
         }
@@ -419,6 +418,8 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch) > ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
                                                 {
                                                         user_data_get()->alarm.alarm_trigger[ch] = false;
+                                                        user_data_get()->alarm.alarm_trigger_enable[ch] = false;
+
                                                         user_data_save();
                                                         struct tm tm;
                                                         user_time_read(&tm);
@@ -671,7 +672,6 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
 ************************************************************/
 static bool layout_alarm_ringplay_register_callback(int arg)
 {
-        SAT_DEBUG("arg is  %d\n", arg);
         if (arg == 1)
         {
                 ring_alarm_play();
@@ -762,7 +762,11 @@ sat_layout_enter(alarm)
         alarm_ring_close_timer = NULL;
         alarm_power_out_ctrl(true);
         sat_linphone_audio_play_stop();
-        alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
+        if (user_data_get()->alarm.security_alarm_enable)
+        {
+                alarm_sensor_cmd_register(layout_alarm_trigger_func); // 警报触发函数注册
+        }
+
         standby_timer_close();
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
         ring_play_event_cmd_register(layout_alarm_ringplay_register_callback);
@@ -908,7 +912,11 @@ sat_layout_enter(alarm)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-                ring_alarm_play();
+                if (user_data_get()->alarm.alarm_ring_play)
+                {
+                        ring_alarm_play();
+                }
+
                 if (alarm_ring_close_timer)
                 {
                         lv_timer_del(alarm_ring_close_timer);
@@ -941,6 +949,11 @@ sat_layout_enter(alarm)
                                                                                0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                18, 24);
                         lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
+                        lv_common_img_btn_create(parent, layout_alarm_obj_id_number_keyboard_btn_cover, 128, 390, 100, 102,
+                                                 NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
 
                 /************************************************************
@@ -1010,7 +1023,10 @@ static void sat_layout_quit(alarm)
         lv_obj_pressed_func = lv_layout_touch_callback;
         ring_play_event_cmd_register(NULL);
         user_linphone_call_streams_running_receive_register(NULL);
-        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
+        if (user_data_get()->alarm.security_alarm_enable)
+        {
+                alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
+        }
         record_video_stop();
         monitor_close(0x02);
         standby_timer_restart(true);

@@ -111,16 +111,12 @@ static void setting_user_wifi_discover_click(lv_event_t *e)
         }
         wifi_input_user_setting(lv_label_get_text(obj));
         SAT_DEBUG("id is %d\n", parent->id);
-        SAT_DEBUG("==========name is %s============", p_wifi_info_group[parent->id].name);
-        SAT_DEBUG("==========wifi text is %s============", lv_label_get_text(obj));
         if (p_wifi_info_group[parent->id].free == true)
         {
-                SAT_DEBUG("======================");
                 wifi_input_mode_set(0x03);
         }
         else
         {
-                SAT_DEBUG("======================");
                 wifi_input_mode_set(0x02);
         }
         sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);

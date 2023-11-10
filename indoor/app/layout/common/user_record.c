@@ -44,7 +44,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                         name = network_data_get()->door_device[ch].door_name;
                 }
 
-                media_file_create(type, name, mode & 0x1F, file_path);
+                media_file_create(type, name, mode & 0x2F, file_path);
                 int fd = open(file_path, O_CREAT | O_WRONLY);
                 if (fd >= 0)
                 {

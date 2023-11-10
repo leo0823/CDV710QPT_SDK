@@ -318,17 +318,30 @@ static bool setting_recording_motion_sub_display(void)
                 SAT_DEBUG("lv_obj_t* sub = setting_record_auto_item_sub_get(setting_recording_obj_id_motion_cont,setting_recording_obj_id_motion_sub);");
                 return false;
         }
-
-        char name[64] = {0};
-        if (user_data_get()->motion.select_camera > MON_CH_DOOR8)
+        if (user_data_get()->motion.enable)
         {
-                sprintf(name, network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
+                if (monitor_valid_channel_check(user_data_get()->motion.select_camera))
+                {
+                        char name[64] = {0};
+                        if (user_data_get()->motion.select_camera > MON_CH_DOOR8)
+                        {
+                                sprintf(name, network_data_get()->cctv_device[(int)user_data_get()->motion.select_camera - MON_CH_CCTV1].door_name);
+                        }
+                        else
+                        {
+                                sprintf(name, network_data_get()->door_device[(int)user_data_get()->motion.select_camera].door_name);
+                        }
+                        lv_label_set_text(sub, name);
+                }
+                else
+                {
+                        lv_label_set_text(sub, lang_str_get(SETTING_MOTION_XLS_LANG_ID_CAMERA_NOT_SET));
+                }
         }
         else
         {
-                sprintf(name, network_data_get()->door_device[(int)user_data_get()->motion.select_camera].door_name);
+                lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
         }
-        lv_label_set_text(sub, name);
 
         return true;
 }

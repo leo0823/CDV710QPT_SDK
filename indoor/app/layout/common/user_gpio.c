@@ -50,6 +50,7 @@ bool backlight_enable(bool en)
 ***/
 bool backlight_brightness_set(int per)
 {
+        printf("backlight ness value is %d\n", per);
         pwm_period_set(BL_PWM_NO, BL_PWM_CH, 65535);
 
         return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, per);
@@ -251,7 +252,7 @@ bool user_gpio_init(void)
         /***** 初始化背光 *****/
         pwm_init(BL_PWM_NO, BL_PWM_CH);
 
-        backlight_enable(true);
+        backlight_enable(false);
 
         /* 功放gpio处理 */
         amp_gpio_init();

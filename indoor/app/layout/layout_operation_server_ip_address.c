@@ -90,10 +90,10 @@ static void setting_server_ipaddress_obj_confirm_click(lv_event_t *e)
         strncpy(network_data_get()->local_server, lv_textarea_get_text(local_txt), sizeof(network_data_get()->local_server));
         strncpy(network_data_get()->sip_server, lv_textarea_get_text(sip_txt), sizeof(network_data_get()->sip_server));
         strncpy(network_data_get()->cctv_server, lv_textarea_get_text(cctv_txt), sizeof(network_data_get()->cctv_server));
-        if (layout_setting_setting_server_ipaddress_flag_get() != 0)
-        {
-                sat_layout_goto(ipc_camera_display, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
-        }
+        network_data_save();
+        backlight_enable(false);
+        usleep(100 * 1000);
+        system("reboot");
         sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 

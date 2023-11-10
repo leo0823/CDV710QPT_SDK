@@ -20,6 +20,8 @@ enum
 
         intercom_call_obj_id_list = intercom_call_obj_id_id_base + 8,
 
+        intercom_call_obj_id_id_btnmatrix_btn_cover,
+
 };
 
 typedef enum
@@ -726,10 +728,14 @@ static void sat_layout_enter(intercom_call)
                         lv_btnmatrix_set_map(btnmatrix, btnm_map);
                         lv_btnmatrix_set_btn_bg_map(btnmatrix, btnm_img_map);
                         lv_btnmatrix_set_btn_ctrl(btnmatrix, 8, LV_BTNMATRIX_CTRL_HIDDEN);
-
+                        lv_common_img_btn_create(page_1, intercom_call_obj_id_id_btnmatrix_btn_cover, 763, 280, 261, 125,
+                                                 NULL, true, LV_OPA_TRANSP, 0x808080, LV_OPA_TRANSP, 0x808080,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         {
-                                int x = (network_data_get()->sip_user[11] - 49) % 3 * 261 + 231;
-                                int y = (network_data_get()->sip_user[11] - 49) / 3 * 134;
+                                int x = ((user_data_get()->system_mode & 0x1f) - 1) % 3 * 261 + 231;
+                                int y = ((user_data_get()->system_mode & 0x1f) - 1) / 3 * 134;
                                 lv_common_img_btn_create(page_1, intercom_call_obj_id_btnmatrix_myself, x, y, 261, 134,
                                                          NULL, true, LV_OPA_60, 0, LV_OPA_60, 0,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

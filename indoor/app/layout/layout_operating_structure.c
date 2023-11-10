@@ -61,16 +61,15 @@ static void operating_structure_save_btn_click(lv_event_t *e)
                 user_data_get()->system_mode = 0x01;
                 // memset(user_data_get()->mastar_wallpad_ip,0,sizeof(user_data_get()->mastar_wallpad_ip));
         }
-        char number[32] = {0};
+        char number[8] = {0};
         memset(number, 0, sizeof(number));
-        strncpy(number, network_data_get()->sip_user, 11);
-        sprintf(&number[11], "%d", 1);
+        strncpy(number, network_data_get()->sip_user, 8);
         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
         strcpy(network_data_get()->sip_user, number);
         network_data_save();
         user_data_save();
         backlight_enable(false);
-        usleep(100 * 1000);
+        usleep(1000 * 1000);
         system("reboot");
 }
 
@@ -117,7 +116,7 @@ static void operating_structure_slave_seting_click(lv_event_t *e)
         extern void slave_typle_setting_update_slave_id_setting(int id);
         slave_typle_setting_update_master_ip_setting(user_data_get()->mastar_wallpad_ip);
         slave_typle_setting_update_slave_id_setting(user_data_get()->system_mode & 0x0f);
-        printf("user_data_get()->mastar_wallpad_ip is %s\n", user_data_get()->mastar_wallpad_ip);
+
         sat_layout_goto(slave_type_setting, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 

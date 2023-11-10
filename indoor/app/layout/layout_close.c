@@ -485,13 +485,12 @@ static void layout_close_buzzer_alarm_trigger_default(void)
 
 static void sat_layout_enter(close)
 {
-    SAT_DEBUG("enter the close layut");
     standby_timer_close();
     // backlight_enable(true);
     backlight_enable(false);
     close_cancel_btn_create();
     buzzer_call_callback_register(layout_close_buzzer_alarm_trigger_default);
-    if (user_data_get()->motion.enable && ((user_data_get()->system_mode & 0x0f) == 0x01))
+    if (user_data_get()->motion.enable && ((user_data_get()->system_mode & 0x0f) == 0x01) && (monitor_valid_channel_check(user_data_get()->motion.select_camera)))
     {
         motion_timeout_sec = 10;
         is_motion_snapshot_ing = false;
@@ -524,7 +523,6 @@ static void sat_layout_enter(close)
 }
 static void layout_close_backlight_open_timer(lv_timer_t *t)
 {
-    SAT_DEBUG("====================");
     backlight_enable(true);
 }
 
@@ -558,8 +556,6 @@ static void sat_layout_quit(close)
     lv_timer_set_repeat_count(lv_timer_create(layout_close_backlight_open_timer, 300, NULL), 1);
 
     standby_timer_restart(true);
-
-    backlight_enable(true);
 }
 
 sat_layout_create(close);

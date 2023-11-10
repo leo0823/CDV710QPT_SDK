@@ -77,6 +77,9 @@ static void logo_sip_server_register(void)
 
 static void sip_register_timer(lv_timer_t *t)
 {
+        if (user_data_get()->is_device_init == false)
+                return;
+
         logo_sip_server_register();
 }
 
@@ -233,8 +236,16 @@ static void default_buzzer_call_timer(lv_timer_t *timer)
         }
 }
 
-static void (*buzzer_call_fun)(void) = NULL;
+static void sync_data_alarm_trigger_check()
+{
+        if ((alarm_trigger_check() == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
+        {
 
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+}
+
+static void (*buzzer_call_fun)(void) = NULL;
 void buzzer_call_callback_register(void (*callback)(void))
 {
         buzzer_call_fun = callback;
@@ -332,16 +343,20 @@ static void away_countdown_enable_sync_check(void)
                 sat_linphone_handup(0xFFFF);
                 sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
-        else if (sat_cur_layout_get() == sat_playout_get(away_count))
+        else
         {
-                if (layout_away_count_data_get()->away_setting_time_countdown_timer)
+                alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+                if (sat_cur_layout_get() == sat_playout_get(away_count))
                 {
-                        lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
-                }
+                        if (layout_away_count_data_get()->away_setting_time_countdown_timer)
+                        {
+                                lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
+                        }
 
-                layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
-                layout_away_count_data_get()->away_count_sec = 0;
-                sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                        layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
+                        layout_away_count_data_get()->away_count_sec = 0;
+                        sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                }
         }
 }
 /************************************************************
@@ -394,7 +409,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
 
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
-
                                 user_data_get()->etc.call_time = info->etc.call_time;
                                 user_data_get()->etc.open_the_door = info->etc.open_the_door;
                                 user_data_get()->etc.door1_open_door_mode = info->etc.door1_open_door_mode;
@@ -422,15 +436,13 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         memcpy(&user_data_get()->alarm.security_alarm_enable_list, &info->alarm.security_alarm_enable_list, sizeof(user_data_get()->alarm.security_alarm_enable_list));
                         for (int i = 0; i < 8; i++) // 警报触发取消同步
                         {
-                                if ((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i]))
+
+                                if (((user_data_get()->alarm.alarm_trigger[i]) != (info->alarm.alarm_trigger[i])) || ((user_data_get()->alarm.alarm_trigger_enable[i]) != (info->alarm.alarm_trigger_enable[i])))
                                 {
                                         memcpy(&user_data_get()->alarm.alarm_trigger, &info->alarm.alarm_trigger, sizeof(user_data_get()->alarm.alarm_trigger));
+                                        memcpy(&user_data_get()->alarm.alarm_trigger_enable, &info->alarm.alarm_trigger_enable, sizeof(user_data_get()->alarm.alarm_trigger_enable));
                                         user_data_get()->alarm.alarm_trigger[i] = info->alarm.alarm_trigger[i];
-                                        if ((alarm_trigger_check() == false) && (sat_cur_layout_get() == sat_playout_get(alarm)))
-                                        {
-
-                                                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                                        }
+                                        sync_data_alarm_trigger_check();
                                 }
                         }
                         if (user_data_get()->alarm.buzzer_alarm != info->alarm.buzzer_alarm) // 蜂鸣器触发，取消同步
@@ -451,8 +463,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;
                                 alarm_stop_return_status_display_check();
                         }
-                        SAT_DEBUG("USER_DATA away_setting_countdown is %d\n", user_data_get()->alarm.away_setting_countdown);
-                        SAT_DEBUG("info away_setting_countdown is %d\n", info->alarm.away_setting_countdown);
+
                         if (user_data_get()->alarm.away_setting_countdown != info->alarm.away_setting_countdown) // 离家设防同步
                         {
                                 user_data_get()->alarm.away_setting_countdown = info->alarm.away_setting_countdown;
@@ -689,6 +700,10 @@ static void logo_enter_system_timer(lv_timer_t *t)
          ***********************************************/
         user_gpio_init();
 
+        /***** 设置背光使能亮度 *****/
+        backlight_brightness_set(user_data_get()->display.lcd_brigtness <= 5 ? 5 : user_data_get()->display.lcd_brigtness);
+
+        backlight_enable(true);
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-1-5 17:17:15
@@ -793,13 +808,21 @@ static void logo_enter_system_timer(lv_timer_t *t)
                         extern bool tuya_api_time_sync(void);
                         tuya_api_time_sync();
                 }
+                for (int i = 0; i < 7; i++)
+                {
+                        if (user_data_get()->alarm.alarm_trigger[i])
+                        {
+                                user_data_get()->alarm.alarm_trigger_enable[i] = true;
+                        }
+                }
+                if (user_data_get()->alarm.away_alarm_enable)
+                {
+                        away_mode_alarm_trigger_timer_create();
+                }
         }
 #endif
         // 蜂鸣器警报执行任务
         lv_timer_create(default_buzzer_call_timer, 500, NULL);
-
-        /***** 设置背光使能亮度 *****/
-        backlight_brightness_set(user_data_get()->display.lcd_brigtness <= 5 ? 5 : user_data_get()->display.lcd_brigtness);
 
         /***** 音频输出初始化 *****/
         audio_output_cmd_register(audio_output_event_default_process);
@@ -812,7 +835,14 @@ static void logo_enter_system_timer(lv_timer_t *t)
 
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
 
-        alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+        if (user_data_get()->alarm.away_alarm_enable)
+        {
+                alarm_sensor_cmd_register(away_mode_alarm_trigger_callback); // 警报回调注册
+        }
+        else
+        {
+                alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报回调注册
+        }
 
         user_linphone_call_incoming_received_register(monitor_doorcamera_call_extern_func);
 
@@ -1009,6 +1039,7 @@ static void sat_layout_enter(logo)
         }
         if (tuya_key_and_uuid_init() == false)
         {
+                backlight_enable(true);
                 logo_serial_numbe_txt_create();
                 layout_logo_input_txt_create();
                 layout_logo_input_keyboard_create();

@@ -52,15 +52,16 @@ static void setting_building_house_number_obj_confirm_click(lv_event_t *e)
 
         if ((strlen(building_str) >= 1) && (strlen(household_str) >= 1))
         {
-                memset(&network_data_get()->sip_user[3], '0', 8);
-                strncpy(&network_data_get()->sip_user[7 - strlen(building_str)], building_str, strlen(building_str));
-                strncpy(&network_data_get()->sip_user[11 - strlen(household_str)], household_str, strlen(household_str));
+                memset(&network_data_get()->sip_user[0], '0', 8);
+                strncpy(&network_data_get()->sip_user[4 - strlen(building_str)], building_str, strlen(building_str));
+                strncpy(&network_data_get()->sip_user[8 - strlen(household_str)], household_str, strlen(household_str));
 
                 memset(network_data_get()->door_device, 0, sizeof(struct ipcamera_info) * DEVICE_MAX);
                 network_data_save();
-                //   setenv("SIP", network_data_get()->sip_user, 1);
-                // usleep(1000 * 1000);
-                // exit(0);
+
+                backlight_enable(false);
+                usleep(100 * 1000);
+                system("reboot");
         }
 
         sat_layout_goto(setting_installation, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
@@ -231,25 +232,11 @@ static void sat_layout_enter(setting_building_house_number)
                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                        18, 24);
         }
-        //"010001001011" -> 010.001.001.011
-        // char building[8] = {0};
-        // char household[8] = {0};
-        // char floor[8] = {0};
-        // char extension[8] = {0};
-        // int loacal_number[8] = {0};
-
-        // const char *username = network_data_get()->sip_user;
-        // printf("===============network_data_get()->sip_user is %s\n",network_data_get()->sip_user);
-        // loacal_number[0] = ((username[3] - 48) * 100 + (username[4] - 48) * 10 + (username[5] - 48)) & 0x1F;
-        // loacal_number[1] = (username[6] - 48) * 10000 + (username[7] - 48) * 1000 + (username[8] - 48)*100 + (username[9] - 48) * 10 + (username[10] - 48);
-
-        // sprintf(building, "%04d", loacal_number[0]);
-        // sprintf(household, "%04d", loacal_number[1]);
 
         char building[8] = {0};
         char household[8] = {0};
-        strncpy(building, &network_data_get()->sip_user[3], 4);
-        strncpy(household, &network_data_get()->sip_user[7], 4);
+        strncpy(building, &network_data_get()->sip_user[0], 4);
+        strncpy(household, &network_data_get()->sip_user[4], 4);
 
         /***********************************************
          ** 作者: leo.liu

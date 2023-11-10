@@ -455,7 +455,7 @@ lv_obj_t *lv_common_roller_create(lv_obj_t *parent, int id, int x, int y, int w,
         lv_obj_set_style_anim_time(obj, 500, LV_PART_MAIN);
         lv_obj_set_style_text_line_space(obj, line_space, LV_PART_MAIN);
         lv_roller_set_visible_row_count(obj, row_cont);
-
+        lv_obj_set_ext_click_area(obj, 54);
         char opt[512] = {0};
         for (int i = min; i <= max; i++)
         {
@@ -464,6 +464,7 @@ lv_obj_t *lv_common_roller_create(lv_obj_t *parent, int id, int x, int y, int w,
                 strcat(opt, buf);
         }
         lv_roller_set_options(obj, opt, LV_ROLLER_MODE_NORMAL);
+
         return obj;
 }
 /***********************************************

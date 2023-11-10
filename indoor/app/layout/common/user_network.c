@@ -831,16 +831,15 @@ static bool automatic_ip_setting(void)
                 sat_kill_task_process("udhcpc -b -i eth0 -s /etc/init.d/udhcpc.script");
                 sat_kill_task_process("udhcpc -i eth0 -s /etc/init.d/udhcpc.script");
 
-                system("ps");
+                // system("ps");
                 if (network_data_get()->network.ipaddr[0] != '\0')
                 {
-                        SAT_DEBUG("==============");
                         /*手动设置的IP信息*/
                         obtain_ipddress_based_on_manual();
                 }
                 else
                 {
-                        SAT_DEBUG("==============");
+
                         /*默认IP*/
                         obtain_ipaddress_based_on_mac(); // obtain_ipaddress_based_on_username();
                 }

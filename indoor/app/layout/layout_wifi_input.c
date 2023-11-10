@@ -231,8 +231,6 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_keyboard);
         uint16_t btn_id = lv_btnmatrix_get_selected_btn(obj);
         lv_keyboard_mode_t mode = lv_keyboard_get_mode(obj);
-        SAT_DEBUG("btn_id is %d\n", btn_id);
-        SAT_DEBUG("mode is %d\n", mode);
         if ((((mode == LV_KEYBOARD_MODE_TEXT_LOWER) || (mode == LV_KEYBOARD_MODE_TEXT_UPPER)) && (btn_id != 41)) ||
             ((mode == LV_KEYBOARD_MODE_SPECIAL) && (btn_id != 43)))
         {
@@ -247,6 +245,9 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
                 wifi_input_textarea_placeholder_setting();
                 wifi_input_password_hidden_icon();
                 layout_wifi_input_head_display();
+                lv_textarea_set_password_mode(textarea, true);
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), wifi_input_obj_id_password_hidden);
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_list_hide.png"), LV_PART_MAIN);
         }
         else
         {
@@ -270,6 +271,7 @@ static void wifi_input_keyboard_click(lv_event_t *ev)
 
 static void sat_layout_enter(wifi_input)
 {
+        memset(wifi_input_user_passwd, 0, sizeof(wifi_input_user_passwd));
         lv_obj_t *textarea;
         /***********************************************
         ** 作者: leo.liu

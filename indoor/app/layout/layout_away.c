@@ -136,8 +136,7 @@ unsigned char layout_away_sensor_enabel_flag_get(void)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-unsigned char
-layout_away_sensor_enable_flag(void)
+unsigned char layout_away_sensor_enable_flag(void)
 {
     lv_obj_t *tableview = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_tabview);
     lv_obj_t *cont = lv_tabview_get_content(tableview);
@@ -257,7 +256,6 @@ static void layout_away_execution_normal_msgbox_create(char normal_select)
             strcat(sensors_str, index);
         }
     }
-    SAT_DEBUG("sensors_str is %s", sensors_str);
     char abnormal_str[128] = {0};
     sprintf(abnormal_str, "%s%s%s", lang_str_get(SENSOR_SETTING_XLS_LANG_ID_CANNOT), sensors_str, lang_str_get(SENSOR_SETTING_XLS_LANG_ID_SENSOR_IS_NORMAL));
     setting_msgdialog_msg_create(masgbox, layout_away_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120);
@@ -299,8 +297,18 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
             }
-            away_sensor_enabel_flag = sensor_select_list;
             user_data_get()->alarm.away_alarm_enable_list = sensor_select_list;
+            for (int i = 0; i < 8; i++)
+            {
+                if ((user_data_get()->alarm.alarm_enable_always[0][i]))
+                {
+                    user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
+                }
+            }
+            if ((user_data_get()->system_mode & 0x0f) != 0x01)
+            {
+                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+            }
             sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
@@ -1138,6 +1146,7 @@ static void layout_away_passwd_check_success_cb(void)
     unsigned char list = layout_away_sensor_enable_flag();
     user_data_get()->alarm.away_alarm_enable = false;
     user_data_get()->alarm.away_alarm_enable_list &= (~list);
+    user_data_get()->alarm.away_setting_countdown = false;
     user_data_save();
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
@@ -1149,29 +1158,14 @@ static void layout_away_passwd_check_success_cb(void)
         lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
         layout_away_count_data_get()->away_release_time_countdown_timer = NULL;
     }
+    memset(&layout_away_count_data_get()->away_release_time, 0, sizeof(layout_away_count_data_get()->away_release_time));
+    alarm_sensor_cmd_register(layout_alarm_trigger_default); // 警报触发函数注册
 
     sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
 static void sat_layout_enter(away)
 {
-    if (user_data_get()->alarm.away_alarm_enable == false)
-    {
-        user_data_get()->alarm.away_alarm_enable_list = 0x00;
-        for (int i = 0; i < 8; i++)
-        {
-            if ((user_data_get()->alarm.alarm_enable_always[0][i]) || (user_data_get()->alarm.alarm_enable_always[1][i]))
-            {
-                user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
-            }
-        }
-        user_data_save();
-        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-        {
-            sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-        }
-    }
-
     /************************************************************
     ** 函数说明:
     ** 作者: xiaoxiao

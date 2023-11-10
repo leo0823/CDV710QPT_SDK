@@ -153,52 +153,54 @@ static void *asterisk_server_sync_task(void *arg)
         asterisk_register_info *p_register_info = asterisk_register_info_get();
         while (1)
         {
-                for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
+                if (user_data_get()->is_device_init)
                 {
-
-                        /*主机过滤*/
-                        if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0))
+                        for (int i = 0; i < ASTERISK_REIGSTER_DEVICE_MAX; i++)
                         {
-                                if ((p_register_info[i].name[0] == '\0') && (is_registers_online[i] == true))
+                                /*主机过滤*/
+                                if ((p_register_info[i].name[0] == '\0') || (strncmp(p_register_info[i].name, "501", 3) == 0))
+                                {
+                                        if ((p_register_info[i].name[0] == '\0') && (is_registers_online[i] == true))
+                                        {
+                                                is_registers_online[i] = false;
+                                        }
+                                        continue;
+                                }
+
+                                unsigned long long timestamp = user_timestamp_get();
+
+                                /*上次设备不在线，这次在线，状态发生改变*/
+                                if (((is_registers_online[i] == false) || (is_asterisk_server_sync_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
+                                {
+                                        is_registers_online[i] = true;
+                                        is_asterisk_server_sync_data_force = false;
+                                        is_need_asterisk_update = true;
+                                        for (int i = 0; i < 8; i++)
+                                        {
+                                                user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
+                                        }
+
+                                        sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                                }
+                                else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
                                 {
                                         is_registers_online[i] = false;
+                                        is_need_asterisk_update = true;
+                                        /*离线设备需要同步到其他设备*/
+                                        p_register_info[i].timestamp = 0;
                                 }
-                                continue;
                         }
 
-                        unsigned long long timestamp = user_timestamp_get();
-
-                        /*上次设备不在线，这次在线，状态发生改变*/
-                        if (((is_registers_online[i] == false) || (is_asterisk_server_sync_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
+                        /*需要同步注册信息*/
+                        if (is_need_asterisk_update == true)
                         {
-                                is_registers_online[i] = true;
-                                is_asterisk_server_sync_data_force = false;
-                                is_need_asterisk_update = true;
-                                for (int i = 0; i < 8; i++)
-                                {
-                                        user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
-                                }
+                                is_need_asterisk_update = false;
 
-                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
-                        }
-                        else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
-                        {
-                                is_registers_online[i] = false;
-                                is_need_asterisk_update = true;
-                                /*离线设备需要同步到其他设备*/
-                                p_register_info[i].timestamp = 0;
-                                printf("%s %s offline \n", p_register_info[i].name, p_register_info[i].name);
+                                sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                         }
                 }
 
-                /*需要同步注册信息*/
-                if (is_need_asterisk_update == true)
-                {
-                        is_need_asterisk_update = false;
-
-                        sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-                }
                 usleep(1000 * 1000);
         }
         return NULL;

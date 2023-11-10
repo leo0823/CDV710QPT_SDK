@@ -16,6 +16,7 @@ enum
         setting_password_obj_id_modiy_cont,
         setting_password_obj_id_modiy_cancel,
         setting_password_obj_id_modiy_input_btnatirx,
+        setting_password_obj_id_modiy_input_keyboard_cover,
         setting_password_obj_id_modiy_password_head_label,
         setting_password_obj_id_modiy_password_reset_label,
         setting_password_obj_id_modiy_password_new_label,
@@ -356,7 +357,11 @@ static void setting_password_modiy_obj_create(void)
                                                                                0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                                18, 24);
                         lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
-                        // lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_DISABLED);
+                        lv_common_img_btn_create(parent, setting_password_obj_id_modiy_input_keyboard_cover, 128, 390, 100, 102,
+                                                 NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 }
                 /***********************************************
                 ** 作者: leo.liu

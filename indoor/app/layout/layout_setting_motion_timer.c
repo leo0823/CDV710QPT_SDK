@@ -23,6 +23,17 @@ enum
         setting_motion_timer_obj_id_end_hour_roller,
         setting_motion_timer_obj_id_end_min_roller,
 
+        setting_motion_timer_obj_id_arrow_1,
+        setting_motion_timer_obj_id_arrow_2,
+        setting_motion_timer_obj_id_arrow_3,
+        setting_motion_timer_obj_id_arrow_4,
+        setting_motion_timer_obj_id_arrow_5,
+        setting_motion_timer_obj_id_arrow_6,
+        setting_motion_timer_obj_id_arrow_7,
+        setting_motion_timer_obj_id_arrow_8,
+        setting_motion_timer_obj_id_arrow_9,
+        setting_motion_timer_obj_id_arrow_10,
+
         setting_motion_timer_obj_id_1_obj,
         setting_motion_timer_obj_id_2_obj,
         setting_motion_timer_obj_id_3_obj,
@@ -75,10 +86,9 @@ static void setting_motion_timer_schedule_setting_obj_click(lv_event_t *e)
 }
 static void setting_moiton_timer_roller_click(lv_event_t *e)
 {
-        SAT_DEBUG("=================================");
+
         if (e->code == LV_EVENT_VALUE_CHANGED)
         {
-                SAT_DEBUG("=================================");
                 modify = true;
         }
 }
@@ -126,7 +136,6 @@ static void setting_motion_time_param_init(void)
 
 static void layout_setting_motion_time_save_time(void)
 {
-        SAT_DEBUG("=================================");
         if (modify)
         {
                 lv_obj_t *year_start = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_motion_timer_obj_id_timer_cont), setting_motion_timer_obj_id_start_year_roller);
@@ -245,11 +254,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: year roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_year_roller, 248, 0, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_1, 248, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_year_roller, 248, 65, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 2023, 2037, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 2023, 2037, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -271,11 +285,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: montth roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_month_roller, 388, 0, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_2, 388, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_month_roller, 388, 65, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 1, 12, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 1, 12, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -297,11 +316,16 @@ static void sat_layout_enter(setting_motion_timer)
                 ** 说明: day roller
                 ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_day_roller, 528, 0, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_3, 528, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_day_roller, 528, 65, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 1, 31, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 1, 31, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -312,11 +336,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: hour roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_hour_roller, 672, 0, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_4, 672, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_hour_roller, 672, 65, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -338,11 +367,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: min roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_min_roller, 812, 0, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_5, 812, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_start_min_roller, 812, 65, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -353,11 +387,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: year roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_year_roller, 248, 200, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_6, 812, 200, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_year_roller, 248, 265, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 2023, 2037, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 2023, 2037, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -379,11 +418,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: montth roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_month_roller, 388, 200, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_7, 388, 200, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_month_roller, 388, 265, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 1, 12, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 1, 12, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -405,11 +449,16 @@ static void sat_layout_enter(setting_motion_timer)
                 ** 说明: day roller
                 ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_day_roller, 528, 200, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_8, 528, 200, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_day_roller, 528, 265, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 1, 31, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 1, 31, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -420,11 +469,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: hour roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_hour_roller, 672, 200, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_9, 672, 200, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_hour_roller, 672, 265, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
@@ -446,11 +500,16 @@ static void sat_layout_enter(setting_motion_timer)
                  ** 说明: min roller
                  ***********************************************/
                 {
-                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_min_roller, 812, 200, 104, 201,
+                        lv_common_img_btn_create(parent, setting_motion_timer_obj_id_arrow_10, 812, 200, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                        lv_obj_t *roller = lv_common_roller_create(parent, setting_motion_timer_obj_id_end_min_roller, 812, 265, 104, 201,
                                                                    setting_moiton_timer_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                                                    0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                                                   3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                                                   1, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                    resource_ui_src_get("roller_icon.png"));
                         lv_obj_add_event_cb(roller, setting_moiton_timer_roller_click, LV_EVENT_VALUE_CHANGED, NULL);
                 }
