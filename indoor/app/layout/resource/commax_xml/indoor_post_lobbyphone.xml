@@ -8,6 +8,14 @@ Accept-Encoding: gzip, deflate
 SOAPAction: ""
 
 <?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns4="urn:clks"><SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"><ns4:videoResolution><op>Get</op><nLevel>-1</nLevel></ns4:videoResolution></SOAP-ENV:Body></SOAP-ENV:Envelope>
-
-
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+    xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns4="urn:clks">
+    <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+        <ns4:videoResolution>
+            <op>Get</op>
+            <nLevel>-1</nLevel>
+        </ns4:videoResolution>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>

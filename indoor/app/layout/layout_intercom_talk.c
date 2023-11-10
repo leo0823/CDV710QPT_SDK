@@ -691,6 +691,7 @@ static void sat_layout_enter(intercom_talk)
         standby_timer_close();
         intercom_talk_timeout = 30;
         intercom_talk_status_background_display();
+        printf("=======================%s:%d====================\n", __func__, __LINE__);
         // 满屏查看
         {
 
@@ -704,6 +705,7 @@ static void sat_layout_enter(intercom_talk)
         {
                 layout_intercom_talk_door_ch_btn_create();
         }
+        printf("=======================%s:%d====================\n", __func__, __LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -744,6 +746,7 @@ static void sat_layout_enter(intercom_talk)
                         lv_sat_timer_create(intercom_talk_call_time_timer, 1000, NULL);
                 }
         }
+        printf("=======================%s:%d====================\n", __func__, __LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -757,6 +760,7 @@ static void sat_layout_enter(intercom_talk)
                                       " ", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
                 intercom_talk_call_status_label_display();
         }
+        printf("=======================%s:%d====================\n", __func__, __LINE__);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -832,7 +836,7 @@ static void sat_layout_enter(intercom_talk)
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
         user_linphone_call_end_register(intercom_talk_call_end_callback);
         user_linphone_call_busy_register(intercom_talk_call_busy_callback);
-
+        printf("=======================%s:%d====================\n", __func__, __LINE__);
         if (sat_pre_layout_get() == sat_playout_get(monitor) && (intercom_call_state == 0x01))
         {
                 sat_linphone_call(intercom_call_user, false, false, NULL);
@@ -853,6 +857,7 @@ static void sat_layout_enter(intercom_talk)
                 obj->user_data = lv_sat_timer_create(intercom_talk_buzzer_call_delay_close_task, time > 6000 ? 6000 : time, obj);
         }
         buzzer_call_callback_register(intercom_talk_buzzer_alarm_call_callback);
+        printf("=======================%s:%d====================\n", __func__, __LINE__);
 }
 
 static void sat_layout_quit(intercom_talk)

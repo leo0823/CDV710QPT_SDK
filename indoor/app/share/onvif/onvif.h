@@ -54,6 +54,13 @@ bool ipc_camera_device_password_change(char *pwd, const char *ip, int port, cons
 **@功能: 数据同步
 *****************************************************************/
 bool ipc_camera_device_send_data(char *data_type, char *data, const char *ip, int port, const char *user, const char *password, int timeout);
+
+/****************************************************************
+**@日期: 2022-09-20
+**@作者: leo.liu
+**@功能: onvfi发送数据
+*****************************************************************/
+bool ipc_onvif_tcp_send(char *data, int size, const char *ip, int port, int timeout);
 /****************************************************************
 **@日期: 2022-09-20
 **@作者: leo.liu
