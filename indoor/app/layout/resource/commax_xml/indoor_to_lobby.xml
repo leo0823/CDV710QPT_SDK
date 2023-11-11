@@ -1,17 +1,20 @@
-HTTP/1.1 200 OK
-Server: gSOAP/2.8
+POST / HTTP/1.1
+Host: %s
+User-Agent: gSOAP/2.8
 Content-Type: text/xml; charset=utf-8
-Content-Length: 484
+%sContent-Length: %d
 Connection: close
+SOAPAction: ""
 
 <?xml version="1.0" encoding="UTF-8"?>
 <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
     xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns="urn:clks">
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:ns1="urn:cmm">
     <SOAP-ENV:Body SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-        <ns:videoResolutionResponse>
-            <out>1</out>
-        </ns:videoResolutionResponse>
+        %s<ns1:pushVList>
+            <ip>%s</ip>
+            <port>%s</port>
+        </ns1:pushVList>
     </SOAP-ENV:Body>
 </SOAP-ENV:Envelope>

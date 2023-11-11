@@ -14,6 +14,7 @@
 #include "common/user_network.h"
 #include "common/user_linphone.h"
 #include "layout_away_count.h"
+#include "common/commax_websocket.h"
 static int input_index = 0;
 
 enum
@@ -72,7 +73,7 @@ static void logo_sip_server_register(void)
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
         // printf("%s register to :%s\n",sip_user_id,sip_sever);
-        sat_linphone_register(NULL, sip_user_id, NULL, sip_sever);
+        sat_linphone_register(sip_user_id, sip_user_id, NULL, sip_sever);
 }
 
 static void sip_register_timer(lv_timer_t *t)
@@ -755,6 +756,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
                 system("mkdir /var/lib/asterisk");
                 system("/app/asterisk/sbin/safe_asterisk ");
                 // system("/app/asterisk/sbin/asterisk -cvvvvvv ");
+                commax_sip_asterisk_server_init(ASTERISK_CONF_PATH "sip.conf", ASTERISK_CONT_TEMP_PATH "sip.conf", ASTERISK_CONF_PATH "extensions.conf", ASTERISK_CONT_TEMP_PATH "extensions.conf", network_data_get()->local_server, network_data_get()->sip_user);
         }
 
         /*注册到sip server*/

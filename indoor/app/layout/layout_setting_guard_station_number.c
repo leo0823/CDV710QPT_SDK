@@ -220,8 +220,8 @@ static void sat_layout_enter(setting_guard_station_number)
                                                                        0XFFFFFF, 0XFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                        18, 24);
                 lv_btnmatrix_set_btn_ctrl(obj, 9, LV_BTNMATRIX_CTRL_HIDDEN | LV_BTNMATRIX_CTRL_DISABLED);
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_cover, 128, 390, 100, 102,
-                                         NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), setting_guard_station_number_obj_id_number_keyboard_cover, 608, 425, 100, 102,
+                                         NULL, true, LV_OPA_TRANSP, 0x808080, LV_OPA_TRANSP, 0x808080,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);

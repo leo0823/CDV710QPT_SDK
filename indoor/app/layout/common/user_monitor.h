@@ -3,7 +3,7 @@
 #define _USER_MONITOR_H_
 #include "stdbool.h"
 #include "user_network.h"
-#define is_channel_ipc_camera(ch) (((ch) >= 8) ? true : false)
+#define is_channel_ipc_camera(ch) (((ch >= 8 && ch <= 15)) ? true : false)
 
 #define MON_CH_NONE -1
 #define MON_CH_DOOR1 0
@@ -22,13 +22,17 @@
 #define MON_CH_CCTV6 13
 #define MON_CH_CCTV7 14
 #define MON_CH_CCTV8 15
-
+#define MON_CH_LOBBY 16
 typedef enum
 {
         MON_ENTER_CALL_FLAG,
         MON_ENTER_TUYA_TALK_FLAG,
         MON_ENTER_MANUAL_TALK_FLAG,
         MON_ENTER_CALL_TALK_FLAG,
+        MON_ENTER_LOBBY_CALL_FLAG,
+        MON_ENTER_LOBBY_CALL_TALK_FLAG,
+        MON_ENTER_GUARD_CALL_FLAG,
+        MON_ENTER_GUARD_CALL_TALK_FLAG,
         MON_ENTER_MANUAL_DOOR_FLAG,
         MON_ENTER_MANUAL_CCTV_FLAG
 } MON_ENTER_FLAG;

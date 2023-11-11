@@ -113,15 +113,19 @@ static void intercom_extension_obj_click(lv_event_t *e)
         lv_obj_clear_state(obj, LV_STATE_USER_2);
         if (obj->id == intercom_call_obj_id_guard)
         {
-                lv_obj_t *abnormal = lv_obj_get_child_form_id(parent, intercom_call_obj_id_abnormal_title);
-                lv_obj_clear_flag(abnormal, LV_OBJ_FLAG_HIDDEN);
-                ;
-                lv_obj_t *extension = lv_obj_get_child_form_id(parent, intercom_call_obj_id_externsion);
-                if (extension != NULL)
-                {
-                        lv_obj_clear_state(extension, LV_STATE_USER_1);
-                        lv_obj_add_state(extension, LV_STATE_USER_2);
-                }
+                char number[128] = {0};
+
+                sprintf(number, "sip:%s@%s:5066", network_data_get()->guard_number, user_data_get()->mastar_wallpad_ip);
+
+                sat_linphone_call(number, false, false, NULL);
+                //    lv_obj_t *abnormal = lv_obj_get_child_form_id(parent, intercom_call_obj_id_abnormal_title);
+                // lv_obj_clear_flag(abnormal, LV_OBJ_FLAG_HIDDEN);
+                // lv_obj_t *extension = lv_obj_get_child_form_id(parent, intercom_call_obj_id_externsion);
+                // if (extension != NULL)
+                // {
+                //         lv_obj_clear_state(extension, LV_STATE_USER_1);
+                //         lv_obj_add_state(extension, LV_STATE_USER_2);
+                // }
         }
         else
         {
@@ -153,6 +157,7 @@ static void intercom_id_obj_click(lv_event_t *e)
         {
                 char number[128] = {0};
                 sprintf(number, "sip:%s@%s:5066", user_name, user_data_get()->mastar_wallpad_ip);
+
                 sat_linphone_call(number, false, false, NULL);
                 // sat_ipcamera_device_discover_search(0x02);
                 return;
@@ -744,13 +749,13 @@ static void sat_layout_enter(intercom_call)
                         }
 
                         {
-                                lv_obj_t *adnormal_obj = lv_common_text_create(page_1, intercom_call_obj_id_abnormal_title, 231, 8, 793, 384,
+                                lv_obj_t *abnormal_obj = lv_common_text_create(page_1, intercom_call_obj_id_abnormal_title, 231, 8, 793, 384,
                                                                                NULL, LV_OPA_COVER, 0, LV_OPA_COVER, 0x0096ff,
                                                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                                                lang_str_get(CALL_XLS_LANG_ID_CANNOT_USE_BEFORE_SYSTEMSETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
-                                intercom_call_abnormal_title_display(adnormal_obj);
-                                lv_obj_set_style_pad_top(adnormal_obj, 180, LV_PART_MAIN);
+                                intercom_call_abnormal_title_display(abnormal_obj);
+                                lv_obj_set_style_pad_top(abnormal_obj, 180, LV_PART_MAIN);
                         }
                 }
                 lv_obj_t *page_2 = lv_obj_get_child_form_id(cont, 1);
