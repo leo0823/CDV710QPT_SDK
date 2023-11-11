@@ -313,6 +313,7 @@ void monitor_open(bool refresh, bool rtsp)
 void monitor_close(char flag)
 {
         monitor_reset(flag);
+        return;
         lv_common_video_mode_enable(false);
 }
 /***********************************************
