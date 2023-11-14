@@ -213,7 +213,7 @@ bool user_data_save(void)
 
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                asterisk_server_sync_data_force(true);
+                asterisk_server_sync_user_data_force(true);
         }
         return true;
 }
@@ -412,7 +412,7 @@ static user_network_info network_data = {0};
 
 static const user_network_info network_data_default = {
     .network = {
-        .udhcp = true,
+        .udhcp = false,
         .ipaddr = {0},
         .mask = {"255.0.0.0"},
         .gateway = {"10.0.0.1"},
@@ -449,7 +449,7 @@ bool network_data_save(void)
 
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                asterisk_server_sync_data_force(true);
+                asterisk_server_sync_network_data_force(true);
         }
 
         return true;

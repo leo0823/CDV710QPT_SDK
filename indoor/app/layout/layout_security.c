@@ -388,7 +388,30 @@ static void layout_security_sensor_select_create()
     }
 }
 
-static void emergenct_occupy_cctv_record_enable_display(void)
+static void layout_security_cctv_record_enable_init_display(void)
+{
+    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_security_obj_id_audto_record);
+    lv_obj_t *obj = lv_obj_get_child_form_id(parent, auto_record_switch_id);
+    if (user_data_get()->alarm.security_auto_record == true)
+    {
+        if (user_data_get()->alarm.security_alarm_enable == false)
+        {
+            lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+            user_data_get()->alarm.security_auto_record = false;
+            user_data_save();
+        }
+        else
+        {
+            lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+        }
+    }
+    else
+    {
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+    }
+}
+
+static void layout_security_cctv_record_enable_display(void)
 {
     lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_security_obj_id_audto_record);
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, auto_record_switch_id);
@@ -464,7 +487,7 @@ static void emergency_occupy_audo_record_click(lv_event_t *ev)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-    emergenct_occupy_cctv_record_enable_display();
+    layout_security_cctv_record_enable_display();
 }
 
 /************************************************************
@@ -536,7 +559,7 @@ static void sat_layout_enter(security)
                                       lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_AUTO_RECORD), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_RIGHT, lv_font_small,
                                       476 - 100, 0, 80, 48, auto_record_switch_id,
                                       (const char *)resource_ui_src_get("btn_switch_on.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        emergenct_occupy_cctv_record_enable_display();
+        layout_security_cctv_record_enable_init_display();
     }
 
     /************************************************************

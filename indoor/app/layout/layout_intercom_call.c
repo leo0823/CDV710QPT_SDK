@@ -166,6 +166,7 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
+        SAT_DEBUG("======arg is %s\n", arg);
         intercom_call_username_setting(arg);
         intercom_call_status_setting(1);
         if (user_data_get()->audio.ring_mute == false)
@@ -766,7 +767,7 @@ static void sat_layout_enter(intercom_call)
                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                                                   0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0X9B9B9B,
                                                                                   50, 20, 700, 43, intercom_call_obj_id_del_all_label,
-                                                                                  lang_str_get(LAYOUT_ALARM_LIST_XLS_LANG_ID_DELETED_ALL), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
+                                                                                  lang_str_get(INTERCOM_XLS_LANG_ID_CAll_SELECT_ALL), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_large,
                                                                                   0, 0, 32, 86, intercom_call_obj_id_del_all_img,
                                                                                   resource_ui_src_get("btn_checkbox_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                                 lv_obj_add_flag(del_all, LV_OBJ_FLAG_HIDDEN);

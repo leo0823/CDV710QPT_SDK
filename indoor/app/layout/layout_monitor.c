@@ -1089,6 +1089,12 @@ static void monitor_obj_record_photo_display(void)
  ***********************************************/
 static void monitor_sd_state_change_callback(void)
 {
+
+        if (is_monitor_record_video_ing == true)
+        {
+                record_video_stop();
+        }
+
         montior_obj_top_icon_display();
 }
 /***********************************************
@@ -1738,6 +1744,12 @@ static void layout_monitor_vol_bar_create(lv_obj_t *parent)
 
 static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
 {
+        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        if ((flag != MON_ENTER_MANUAL_DOOR_FLAG) && (flag != MON_ENTER_MANUAL_CCTV_FLAG))
+        {
+                return;
+        }
+
         lv_obj_t *obj = lv_event_get_current_target(ev);
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
@@ -1764,6 +1776,7 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
 
                                 return;
                         }
+                        monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch + 8);
                 }
         }
@@ -1840,6 +1853,11 @@ static bool monitor_talk_call_failed_callback(char *arg)
  ***********************************************/
 static void monitor_obj_channel_switch_click(lv_event_t *e)
 {
+        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        if ((flag != MON_ENTER_MANUAL_DOOR_FLAG) && (flag != MON_ENTER_MANUAL_CCTV_FLAG))
+        {
+                return;
+        }
         if (is_monitor_record_video_ing == true)
         {
                 record_video_stop();
@@ -2548,7 +2566,9 @@ sat_layout_create(monitor);
 *******************************					                               楚河汉界		                                         *******************************
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
-static bool guard_call_process(const char *arg, bool is_extern_call)
+static bool
+
+guard_call_process(const char *arg, bool is_extern_call)
 {
         long call_id = 0;
         char *str = strstr(arg, " id:");
@@ -2571,7 +2591,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         {
                 ring_door_call_play(user_data_get()->audio.common_entrance_tone);
         }
-
+        sat_linphone_handup(0xffff);
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
         {
@@ -2628,7 +2648,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         {
                 ring_door_call_play(user_data_get()->audio.common_entrance_tone);
         }
-
+        sat_linphone_handup(0xffff);
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
         {
@@ -2850,7 +2870,7 @@ bool monitor_doorcamera_call_extern_func(char *arg)
         {
                 return monitor_doorcamera_call_process(arg, true);
         }
-        else if (strstr(arg, "sip:50") != NULL) /*sip:5xxx代表室内设备*/
+        else if (strstr(arg, "user:\"50") != NULL) /*sip:5xxx代表室内设备*/
         {
                 return monitor_intercom_extern_call(arg);
         }
@@ -2880,7 +2900,7 @@ bool monitor_doorcamera_call_inside_func(char *arg)
                 SAT_DEBUG("==============");
                 return monitor_doorcamera_call_process(arg, false);
         }
-        else if (strstr(arg, "sip:50") != NULL) /*sip:5xxx代表室内设备*/
+        else if (strstr(arg, "user:\"50") != NULL) /*sip:5xxx代表室内设备*/
         {
                 SAT_DEBUG("==============");
                 return monitor_intercom_extern_call(arg);
@@ -2918,23 +2938,24 @@ static bool monitor_doorcamera_end_process(char *arg)
 static bool monitor_talk_call_end_callback(char *arg)
 {
         SAT_DEBUG("arg is %s", arg);
-        return true;
         /*sip:2xxx代表门口机*/
         if (strstr(arg, "sip:20") != NULL)
         {
                 return monitor_doorcamera_end_process(arg);
         }
         /*sip:5xxx代表室内设备*/
-        else if (strstr(arg, "sip:50") != NULL)
+        else if (strstr(arg, "user:\"50") != NULL)
         {
                 return monitor_doorcamera_end_process(arg);
         }
         else if (strstr(arg, "lobby") != NULL) /*lobby代表大厅设备*/
         {
+
                 layout_monitor_goto_layout_process();
         }
         else if (strstr(arg, "guard") != NULL) /*guard代表*/
         {
+
                 layout_monitor_goto_layout_process();
         }
         return true;

@@ -379,8 +379,9 @@ static bool intercom_doorcamera_end_process(char *arg)
 // 呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
+        SAT_DEBUG("=======arg is %s\n", arg);
         /*sip:5xxx代表室内设备*/
-        if (strstr(arg, "sip:50") != NULL)
+        if (strstr(arg, "user:\"50") != NULL)
         {
 
                 intercom_doorcamera_end_process(arg);
@@ -398,6 +399,7 @@ static bool intercom_talk_call_end_callback(char *arg)
 // 呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
+        SAT_DEBUG("=======arg is %s\n", arg);
         sat_linphone_audio_play_stop();
         layout_intercom_goto_layout_process();
         return true;
@@ -667,6 +669,7 @@ static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 ************************************************************/
 static void intercom_talk_buzzer_alarm_call_callback(void)
 {
+        buzzer_call_timestamp_set(user_timestamp_get());
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), intercom_talk_obj_id_buzzer_call_label);
         if (obj == NULL)
         {

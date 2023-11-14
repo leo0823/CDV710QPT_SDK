@@ -68,15 +68,15 @@ int monitor_index_get_by_user(const char *user)
 ************************************************************/
 int extern_index_get_by_user(const char *user)
 {
-        /*格式："user:"50x" <sip:502@10.1.1.11:5066>,*/
-        char *s = strstr(user, "sip:50");
+        /*格式："user:"50x" <sip:71x@10.1.1.11:5066>,*/
+        char *s = strstr(user, "user:\"50");
         if (s == NULL)
         {
                 printf("[%s:%d] user string parse failed(%s)\n", __func__, __LINE__, user);
                 return -1;
         }
 
-        s += 6;
+        s += 8;
         if (((*s) < '1') || ((*s) > '9'))
         {
                 printf("[%s:%d] user string aprse failed(%s)\n", __func__, __LINE__, user);
@@ -313,7 +313,6 @@ void monitor_open(bool refresh, bool rtsp)
 void monitor_close(char flag)
 {
         monitor_reset(flag);
-        return;
         lv_common_video_mode_enable(false);
 }
 /***********************************************

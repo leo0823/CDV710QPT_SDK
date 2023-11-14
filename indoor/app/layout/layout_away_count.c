@@ -43,10 +43,16 @@ layout_away_count_info *layout_away_count_data_get(void)
 static void layout_away_count_passwd_check_success_cb(void)
 {
     user_data_get()->alarm.away_setting_countdown = false;
-    user_data_save();
+
     lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
     layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
     layout_away_count_data_get()->away_count_sec = 0;
+    user_data_save();
+    if ((user_data_get()->system_mode & 0x0f) != 0x01)
+    {
+        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+    }
+
     sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
@@ -88,7 +94,7 @@ static void layout_away_count_timer_obj_display(void)
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-static void away_alarm_release_det_timer(lv_timer_t *ptimer)
+static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
 {
     for (int i = 0; i < 7; i++)
     {
@@ -168,7 +174,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                     if (user_data_get()->alarm.away_release_time == 0)
                     {
 
-                        away_alarm_release_det_timer(NULL);
+                        layout_away_alarm_release_det_timer(NULL);
                     }
                 }
                 user_data_save();
@@ -192,12 +198,12 @@ void away_mode_alarm_trigger_timer_create(void)
         {
             if (user_data_get()->alarm.away_release_time)
             {
-                lv_timer_ready(layout_away_count_data_get()->away_release_time_countdown_timer = lv_timer_create(away_alarm_release_det_timer, 1000, NULL));
+                lv_timer_ready(layout_away_count_data_get()->away_release_time_countdown_timer = lv_timer_create(layout_away_alarm_release_det_timer, 1000, NULL));
             }
             else
             {
 
-                away_alarm_release_det_timer(NULL);
+                layout_away_alarm_release_det_timer(NULL);
             }
         }
     }
@@ -256,7 +262,7 @@ static void layout_alarm_count_param_init(void)
     }
     if (layout_away_count_data_get()->away_count_sec == 0)
     {
-        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 10;
     }
 }
 

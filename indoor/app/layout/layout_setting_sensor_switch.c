@@ -67,7 +67,9 @@ static void setting_sensor_switch_list_click(lv_event_t *e)
         {
                 lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_FOR_SECURITY));
         }
-        if (user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] == false)
+
+        if (((user_data_get()->alarm.away_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] == false) && (layout_sensor_usage_setting_is_going_out() == true)) ||
+            ((user_data_get()->alarm.security_sensor_enable[cont->id - setting_sensor_switch_obj_id_item1_cont] == false) && (layout_sensor_usage_setting_is_going_out() == false)))
         {
                 lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NOT_USED));
         }

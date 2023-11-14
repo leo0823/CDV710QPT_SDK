@@ -301,7 +301,7 @@ void buzzer_alarm_trigger_default(void)
         }
 }
 
-static void (*alaem_ring_func)(void) = NULL;
+static void (*alarm_ring_func)(void) = NULL;
 /************************************************************
 ** 函数说明: 警报铃声状态变化回调
 ** 作者: xiaoxiao
@@ -309,9 +309,9 @@ static void (*alaem_ring_func)(void) = NULL;
 ** 参数说明:
 ** 注意事项：
 ************************************************************/
-void alaem_ring_func_callback_register(void (*callback)(void))
+void alarm_ring_func_callback_register(void (*callback)(void))
 {
-        alaem_ring_func = callback;
+        alarm_ring_func = callback;
 }
 
 /************************************************************
@@ -358,6 +358,10 @@ static void away_countdown_enable_sync_check(void)
                         layout_away_count_data_get()->away_count_sec = 0;
                         sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
+                else if (sat_cur_layout_get() == sat_playout_get(away))
+                {
+                        sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+                }
         }
 }
 /************************************************************
@@ -369,6 +373,9 @@ static void away_countdown_enable_sync_check(void)
 ************************************************************/
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
+        struct timeval tv1;
+        gettimeofday(&tv1, NULL);
+        SAT_DEBUG("timestamp is %lu\n", tv1.tv_sec * 1000 + tv1.tv_usec / 1000);
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -407,7 +414,9 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data;
-
+                        struct timeval tv1;
+                        gettimeofday(&tv1, NULL);
+                        SAT_DEBUG("timestamp is %lu\n", tv1.tv_sec * 1000 + tv1.tv_usec / 1000);
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
                                 user_data_get()->etc.call_time = info->etc.call_time;
@@ -451,14 +460,16 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
                                 buzzer_call_trigger_check();
                         }
-                        if (user_data_get()->alarm.alarm_ring_play != info->alarm.alarm_ring_play) // 警报页面内，铃声播放取消同步
+#ifdef ALARM_RINGPLAY_SYNC
+                        if (user_data_get()->alarm.alarm_ring_play != info->alarm.alarm_ring_play) // 警报页面内，铃声播放停止同步(铃声播放、停止单独处理，主分不需同步)
                         {
                                 user_data_get()->alarm.alarm_ring_play = info->alarm.alarm_ring_play;
-                                if (alaem_ring_func != NULL)
+                                if (alarm_ring_func != NULL)
                                 {
-                                        alaem_ring_func();
+                                        alarm_ring_func();
                                 }
                         }
+#endif
                         if (0 /*user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return*/) // 警报页面内，stop/return状态同步(客户取消return状态)
                         {
                                 user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;

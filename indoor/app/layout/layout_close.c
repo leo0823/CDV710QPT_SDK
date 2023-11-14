@@ -256,14 +256,14 @@ static bool layout_close_motion_dectection_callback(void)
         backlight_enable(true);
     }
 
-    if ((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR) || (user_data_get()->motion.saving_fmt == 1))
-    {
-        record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
-    }
-    else
+    if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)) && (user_data_get()->motion.saving_fmt == 1))
     {
         record_video_start(true, REC_MODE_MOTION);
         record_jpeg_start(REC_MODE_TUYA_MOTION);
+        }
+    else
+    {
+        record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);
     }
     lv_sat_timer_create(motion_obj_timeout_timer, 1000, NULL);
     return true;

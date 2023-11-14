@@ -137,10 +137,15 @@ static void lv_task_scheduling_start(void)
         }
 }
 
-static bool is_asterisk_server_sync_data_force = false;
-void asterisk_server_sync_data_force(bool is_sync)
+static bool is_asterisk_server_sync_user_data_force = false;
+static bool is_asterisk_server_sync_network_data_force = false;
+void asterisk_server_sync_user_data_force(bool is_sync)
 {
-        is_asterisk_server_sync_data_force = is_sync;
+        is_asterisk_server_sync_user_data_force = is_sync;
+}
+void asterisk_server_sync_network_data_force(bool is_sync)
+{
+        is_asterisk_server_sync_network_data_force = is_sync;
 }
 /*使用线程异步发送*/
 static void *asterisk_server_sync_task(void *arg)
@@ -170,18 +175,24 @@ static void *asterisk_server_sync_task(void *arg)
                                 unsigned long long timestamp = user_timestamp_get();
 
                                 /*上次设备不在线，这次在线，状态发生改变*/
-                                if (((is_registers_online[i] == false) || (is_asterisk_server_sync_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
+                                if (((is_registers_online[i] == false) || (is_asterisk_server_sync_user_data_force == true) || (is_asterisk_server_sync_network_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
                                 {
                                         is_registers_online[i] = true;
-                                        is_asterisk_server_sync_data_force = false;
                                         is_need_asterisk_update = true;
-                                        for (int i = 0; i < 8; i++)
+                                        if (is_asterisk_server_sync_user_data_force)
                                         {
-                                                user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
+                                                for (int i = 0; i < 8; i++)
+                                                {
+                                                        is_asterisk_server_sync_user_data_force = false;
+                                                        user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
+                                                }
+                                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                         }
-
-                                        sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                                        if (is_asterisk_server_sync_network_data_force)
+                                        {
+                                                is_asterisk_server_sync_network_data_force = false;
+                                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                                        }
                                 }
                                 else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
                                 {

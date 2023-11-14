@@ -348,8 +348,15 @@ bool alarm_trigger_check(void)
                 }
                 if ((alarm_occur))
                 {
+#ifdef ALARM_RINGPLAY_SYNC
                         user_data_get()->alarm.alarm_ring_play = true;
 
+                        if ((user_data_get()->system_mode & 0x0f) != 0x01)
+                        {
+                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                        }
+#endif
+                        user_data_save();
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(security_emergency, i, &tm);
