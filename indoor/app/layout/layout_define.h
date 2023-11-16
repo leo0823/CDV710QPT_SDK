@@ -33,8 +33,8 @@
 
 #define TUYA_PID "nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
 
-#define ALM_HIGHT 2.5
-#define ALM_LOW 1.0
+#define ALM_HIGHT 1.8
+#define ALM_LOW 1.1
 /*
  * @日期: 2022-08-11
  * @作者: leo.liu

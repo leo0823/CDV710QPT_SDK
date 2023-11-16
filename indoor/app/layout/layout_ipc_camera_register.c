@@ -1,6 +1,7 @@
 #include "layout_define.h"
 #include "layout_ipc_camera.h"
 #include "common/sat_ipcamera.h"
+#include "onvif.h"
 /*进入模式设置:door camera /ipc*/
 static bool ipc_cmeara_is_doorcamera = true;
 bool layout_ipc_cmeara_is_doorcamera_get(void)
@@ -198,6 +199,34 @@ static lv_obj_t *ipc_camera_registered_list_create(void)
         lv_common_style_set_common(list, ipc_camera_registered_obj_id_door_camera_list, 48, 194, 928, (600 - 194), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
         return list;
 }
+static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
+{
+        struct ipcamera_info *ipc_device = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device : network_data_get()->door_device;
+        bool *result = (bool *)timer->user_data;
+
+        lv_obj_t *list = ipc_camera_registered_list_create();
+        for (int i = 0; i < DEVICE_MAX; i++)
+        {
+                if (ipc_device[i].rtsp[0].rtsp_url[0] == 0)
+                {
+                        continue;
+                }
+                lv_obj_t *obj = lv_obj_get_child_form_id(list, i);
+                obj = lv_obj_get_child_form_id(obj, 2);
+                if (obj == NULL)
+                {
+                        continue;
+                }
+                if (result[i] == true)
+                {
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);
+                        continue;
+                }
+                result[i] = sat_ipcamera_device_name_get(i, 100);
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[i] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
+        }
+}
+
 static void sat_layout_enter(ipc_camera_register)
 {
 
@@ -297,7 +326,7 @@ static void sat_layout_enter(ipc_camera_register)
                                                                                                    0, 0, 0, 0, -1,
                                                                                                    NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                                    0, 20, 48, 48, 2,
-                                                                                                   resource_ui_src_get(outdoor_online_check(i, NULL) == true ? "ic_detect.png" : "ic_error.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
+                                                                                                   resource_ui_src_get("ic_error.png"), LV_OPA_TRANSP, 0, LV_ALIGN_CENTER);
                                 lv_obj_t *sub = lv_obj_get_child_form_id(parent, 1);
                                 if (sub != NULL)
                                 {
@@ -329,6 +358,9 @@ static void sat_layout_enter(ipc_camera_register)
         {
                 sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
         }
+        static bool result[8] = {0};
+        memset(result, false, sizeof(result));
+        lv_timer_ready(lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 3000, &result));
 }
 static void sat_layout_quit(ipc_camera_register)
 {

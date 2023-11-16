@@ -159,17 +159,17 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
         lv_obj_t *bg = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
         if (bg != NULL)
         {
-                user_data_get()->alarm.buzzer_alarm = false;
-                user_data_save();
-                if ((user_data_get()->system_mode & 0X0f) != 0x01)
-                {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                }
-
-                // lv_timer_del(buzzer_call_timer);
-                // buzzer_call_timer = NULL;
                 lv_obj_del(bg);
                 sat_linphone_audio_play_stop();
+                if (t != NULL) // 主动取消蜂鸣器报警才需要同步给其他室内机
+                {
+                        user_data_get()->alarm.buzzer_alarm = false;
+                        user_data_save();
+                        if ((user_data_get()->system_mode & 0X0f) != 0x01)
+                        {
+                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                        }
+                }
         }
 }
 
@@ -364,6 +364,21 @@ static void away_countdown_enable_sync_check(void)
                 }
         }
 }
+
+/************************************************************
+** 函数说明: 安全模式设置ui同步
+** 作者: xiaoxiao
+** 日期：2023-11-14 09:35:04
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void security_mode_sync_callback()
+{
+        if (sat_cur_layout_get() == sat_playout_get(security))
+        {
+                sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+}
 /************************************************************
 ** 函数说明: 文件同步事件回调
 ** 作者: xiaoxiao
@@ -414,9 +429,10 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data;
-                        struct timeval tv1;
-                        gettimeofday(&tv1, NULL);
-                        SAT_DEBUG("timestamp is %lu\n", tv1.tv_sec * 1000 + tv1.tv_usec / 1000);
+                        // if (user_data_get()->sync_timestamp >= info->sync_timestamp)
+                        // {
+                        //         return;
+                        // }
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
                                 user_data_get()->etc.call_time = info->etc.call_time;
@@ -430,12 +446,12 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 memcpy(&user_data_get()->alarm.security_sensor_enable, &info->alarm.security_sensor_enable, sizeof(user_data_get()->alarm.security_sensor_enable));
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group, &info->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
+                                memcpy(&user_data_get()->alarm.alarm_enable_always, &info->alarm.alarm_enable_always, sizeof(user_data_get()->alarm.alarm_enable_always));
                                 user_data_get()->auto_record_mode = info->auto_record_mode;
                                 memcpy(&user_data_get()->motion, &info->motion, sizeof(user_data_get()->motion));
                         }
 
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
-                        user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                         user_data_get()->alarm.security_auto_record = info->alarm.security_auto_record;
                         user_data_get()->alarm.away_auto_record = info->alarm.away_auto_record;
                         user_data_get()->alarm.away_setting_time = info->alarm.away_setting_time;
@@ -480,6 +496,11 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         {
                                 user_data_get()->alarm.away_setting_countdown = info->alarm.away_setting_countdown;
                                 away_countdown_enable_sync_check();
+                        }
+                        if (user_data_get()->alarm.security_alarm_enable != info->alarm.security_alarm_enable) // 离家设防同步
+                        {
+                                user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
+                                security_mode_sync_callback();
                         }
                         user_data_save();
                 }

@@ -72,10 +72,13 @@ int extern_index_get_by_user(const char *user)
         char *s = strstr(user, "user:\"50");
         if (s == NULL)
         {
-                printf("[%s:%d] user string parse failed(%s)\n", __func__, __LINE__, user);
-                return -1;
+                s = strstr(user, "sip:50");
+                if (s == NULL)
+                {
+                        printf("[%s:%d] user string parse failed(%s)\n", __func__, __LINE__, user);
+                        return -1;
+                }
         }
-
         s += 8;
         if (((*s) < '1') || ((*s) > '9'))
         {

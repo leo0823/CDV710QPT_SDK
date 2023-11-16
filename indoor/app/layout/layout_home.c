@@ -903,6 +903,50 @@ static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
         home_obj_top_icon_display();
 }
 
+static void layout_home_security_away_btn_display(void)
+{
+        lv_obj_t *away = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_away_cont);
+        lv_obj_t *security = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_burglar_cont);
+        lv_obj_t *icon_away = lv_obj_get_child_form_id(away, 0);
+        lv_obj_t *icon_security = lv_obj_get_child_form_id(security, 0);
+        if (user_data_get()->alarm.security_alarm_enable)
+        {
+                lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(icon_away, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_security, LV_OBJ_FLAG_CLICKABLE);
+        }
+
+        if (user_data_get()->alarm.away_alarm_enable)
+        {
+                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(icon_security, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_away, LV_OBJ_FLAG_CLICKABLE);
+        }
+
+        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
+        {
+                lv_common_img_btn_create(away, 0, 55, 45, 48, 48,
+                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+
+        if (user_data_get()->alarm.away_alarm_enable)
+        {
+                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
+        }
+        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
+        {
+                lv_common_img_btn_create(security, 0, 55, 45, 48, 48,
+                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+}
 static void sat_layout_enter(home)
 {
         /***********************************************
@@ -1191,18 +1235,13 @@ static void sat_layout_enter(home)
                                                                        lang_str_get(HOME_XLS_LANG_ID_AWAY), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                        13, 0, 77, 77, home_obj_id_away_img,
                                                                        (const char *)resource_ui_src_get("btn_main_away_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                        if (user_data_get()->alarm.security_alarm_enable)
-                        {
-                                lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
-                        }
-                        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
-                        {
-                                lv_common_img_btn_create(away, 0, 55, 45, 48, 48,
-                                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                        }
+
+                        lv_common_img_btn_create(away, 0, 55, 45, 48, 48,
+                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
                         sec_x += unit_offset;
                 }
                 if (1 /*(user_data_get()->system_mode == 0) || (user_data_get()->system_mode == 1)*/)
@@ -1215,18 +1254,12 @@ static void sat_layout_enter(home)
                                                                            lang_str_get(HOME_XLS_LANG_ID_BURGLAR), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                                                            13, 0, 77, 77, home_obj_id_burglar_img,
                                                                            (const char *)resource_ui_src_get("btn_main_security_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                        if (user_data_get()->alarm.away_alarm_enable)
-                        {
-                                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
-                        }
-                        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
-                        {
-                                lv_common_img_btn_create(security, 0, 55, 45, 48, 48,
-                                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                        }
+                        lv_common_img_btn_create(security, 0, 55, 45, 48, 48,
+                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+
                         sec_x += unit_offset;
                 }
 
@@ -1242,6 +1275,7 @@ static void sat_layout_enter(home)
                                                       (const char *)resource_ui_src_get("btn_main_elevator_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         sec_x += unit_offset;
                 }
+                layout_home_security_away_btn_display();
 
                 lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_emergency_cont, sec_x, 436, 103, 121,
                                               home_emergency_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,

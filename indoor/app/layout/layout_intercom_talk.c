@@ -379,7 +379,6 @@ static bool intercom_doorcamera_end_process(char *arg)
 // 呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
-        SAT_DEBUG("=======arg is %s\n", arg);
         /*sip:5xxx代表室内设备*/
         if (strstr(arg, "user:\"50") != NULL)
         {
@@ -399,7 +398,7 @@ static bool intercom_talk_call_end_callback(char *arg)
 // 呼叫失败事件注册
 static bool intercom_talk_call_failed_callback(char *arg)
 {
-        SAT_DEBUG("=======arg is %s\n", arg);
+
         sat_linphone_audio_play_stop();
         layout_intercom_goto_layout_process();
         return true;
@@ -628,6 +627,75 @@ static bool layout_intercom_door_call_process(const char *arg, bool is_extern_ca
         }
         return true;
 }
+static bool guard_call_process(const char *arg, bool is_extern_call)
+{
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+        // char *start = strstr(arg, "guard");
+
+        // /*获取别名*/
+        // char *end = strchr(arg, '"');
+        // if (end == NULL)
+        // {
+        //         printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+        //         return false;
+        // }
+        // *end = 0;
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_door_call_play(user_data_get()->audio.securirty_office_tone);
+        }
+
+        linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
+        if (node != NULL)
+        {
+                node->enable = true;
+                node->channel = MON_CH_GUARD;
+                node->call_id = call_id;
+                layout_intercom_talk_door_ch_btn_create();
+        }
+        return true;
+}
+
+static bool lobby_call_process(const char *arg, bool is_extern_call)
+{
+        long call_id = 0;
+        char *str = strstr(arg, " id:");
+        if (str == NULL)
+        {
+                return false;
+        }
+        sscanf(str + 4, "%ld", &call_id);
+        // char *start = strstr(arg, "lobby");
+
+        // /*获取别名*/
+        // char *end = strchr(arg, '"');
+        // if (end == NULL)
+        // {
+        //         printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+        //         return false;
+        // }
+        // *end = 0;
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_door_call_play(user_data_get()->audio.common_entrance_tone);
+        }
+
+        linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
+        if (node != NULL)
+        {
+                node->enable = true;
+                node->channel = MON_CH_GUARD;
+                node->call_id = call_id;
+                layout_intercom_talk_door_ch_btn_create();
+        }
+        return true;
+}
 
 /* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容*/
 bool layout_intercom_talk_call_incoming_func(char *arg)
@@ -637,13 +705,21 @@ bool layout_intercom_talk_call_incoming_func(char *arg)
         {
                 return false;
         }
+        if (strstr(arg, "guard") != NULL) /*sip:guard代表警卫室*/
+        {
+                return guard_call_process(arg, true);
+        }
+        else if (strstr(arg, "lobby") != NULL) /*sip:lobby代表大厅机*/
+        {
+                return lobby_call_process(arg, true);
+        }
         /*sip:2xxx代表门口机*/
-        if (strstr(arg, "sip:2") != NULL)
+        else if (strstr(arg, "sip:2") != NULL)
         {
                 return layout_intercom_door_call_process(arg, true);
         }
         /*sip:5xxx代表室内设备*/
-        if (strstr(arg, "sip:5") != NULL)
+        else if (strstr(arg, "user:\"50") != NULL) /*sip:5xxx代表室内设备*/
         {
                 return layout_intercom_inside_call(arg);
         }

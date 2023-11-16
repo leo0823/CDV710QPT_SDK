@@ -50,7 +50,6 @@ bool backlight_enable(bool en)
 ***/
 bool backlight_brightness_set(int per)
 {
-        printf("backlight ness value is %d\n", per);
         pwm_period_set(BL_PWM_NO, BL_PWM_CH, 65535);
 
         return pwm_duty_cycle_set(BL_PWM_NO, BL_PWM_CH, per);
@@ -138,6 +137,15 @@ static void alarm_enable_gpio_init(void)
         gpio_direction_set(ALM_EN_GPIO_PIN, GPIO_DIR_OUT);
         gpio_level_set(ALM_EN_GPIO_PIN, GPIO_LEVEL_LOW);
 }
+
+#define ALARM1_GPIO_PIN 5
+#define ALARM2_GPIO_PIN 7
+#define ALARM3_GPIO_PIN 8
+#define ALARM4_GPIO_PIN 9
+#define ALARM5_GPIO_PIN 10
+#define ALARM6_GPIO_PIN 11
+#define ALARM7_GPIO_PIN 73
+#define BUZZER_GPIO_PIN 71
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -179,6 +187,7 @@ static float sarad_read_func(void)
         return sarad_read(1);
 }
 
+static int ALARM_TRIGGER_NEW = 1;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -186,6 +195,7 @@ static float sarad_read_func(void)
 ***********************************************/
 static float cd4051_value_group[8] = {0};
 const int channel_to_sensor[8] = {5, 6, 7, 4, 0, 3, 1, 2};
+static GPIO_LEVEL alarm_gpio_value_group[8] = {0};
 float user_sensor_value_get(int ch)
 {
         if ((ch < 0) || (ch > 7))
@@ -194,13 +204,18 @@ float user_sensor_value_get(int ch)
         }
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
-                return cd4051_value_group[ch];
+                if (ALARM_TRIGGER_NEW)
+                {
+                        return alarm_gpio_value_group[ch];
+                }
+                return (float)cd4051_value_group[ch];
         }
         else
         {
                 return user_data_get()->alarm.alarm_gpio_value_group[ch];
         }
 }
+
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -208,40 +223,84 @@ float user_sensor_value_get(int ch)
 ***********************************************/
 static void *user_gpio_detect_task(void *arg)
 {
-        if (sarad_open() == false)
+        if (ALARM_TRIGGER_NEW)
         {
-                SAT_DEBUG("if(sarad_open() == false)");
-        }
-        cd4051_drive_init(sarad_enable_func, sarad_read_func, ad_ctrl_a_gpio_val_set, ad_ctrl_b_gpio_val_set, ad_ctrl_c_gpio_val_set);
-        cd4051_drive_enable_set(true);
-
-        for (int i = 0; i < 8; i++)
-        {
-                cd4051_value_group[channel_to_sensor[i]] = cd4051_drive_read(i);
-        }
-
-        while (1)
-        {
+                int gpio_group_pin[8] = {ALARM1_GPIO_PIN, ALARM2_GPIO_PIN, ALARM3_GPIO_PIN, ALARM4_GPIO_PIN, ALARM5_GPIO_PIN, ALARM6_GPIO_PIN, ALARM7_GPIO_PIN, BUZZER_GPIO_PIN};
                 for (int i = 0; i < 8; i++)
                 {
-                        float value = cd4051_drive_read(i);
-                        // SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
-                        if (abs(value - cd4051_value_group[channel_to_sensor[i]]) > 1.0)
-                        {
-                                cd4051_value_group[channel_to_sensor[i]] = value;
-                                SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
-                                asterisk_server_sync_user_data_force(true);
-                                sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
-                        }
-                        // usleep(1000 * 100);
+                        gpio_level_read(gpio_group_pin[i], &alarm_gpio_value_group[i]);
                 }
-                usleep(1000 * 100);
+                GPIO_LEVEL level;
+                while (1)
+                {
+                        for (int i = 0; i < 8; i++)
+                        {
+                                if ((gpio_level_read(gpio_group_pin[i], &level) == true) && (level != alarm_gpio_value_group[i]))
+                                {
+                                        alarm_gpio_value_group[i] = level;
+                                        SAT_DEBUG(" sensor%d value:%d", i, level);
+                                        asterisk_server_sync_user_data_force(true);
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, level);
+                                }
+                                usleep(1000 * 100);
+                        }
+                }
         }
-        sarad_close();
-        cd4051_drive_enable_set(false);
+        else
+        {
+                if (sarad_open() == false)
+                {
+                        SAT_DEBUG("if(sarad_open() == false)");
+                }
+                cd4051_drive_init(sarad_enable_func, sarad_read_func, ad_ctrl_a_gpio_val_set, ad_ctrl_b_gpio_val_set, ad_ctrl_c_gpio_val_set);
+                cd4051_drive_enable_set(true);
+
+                for (int i = 0; i < 8; i++)
+                {
+                        cd4051_value_group[channel_to_sensor[i]] = cd4051_drive_read(i);
+                }
+
+                while (1)
+                {
+                        for (int i = 0; i < 8; i++)
+                        {
+                                float value = cd4051_drive_read(i);
+                                // SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
+                                if (abs(value - cd4051_value_group[channel_to_sensor[i]]) > 1.0)
+                                {
+                                        cd4051_value_group[channel_to_sensor[i]] = value;
+                                        SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
+                                        asterisk_server_sync_user_data_force(true);
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
+                                }
+                                // usleep(1000 * 100);
+                        }
+                        usleep(1000 * 100);
+                }
+                sarad_close();
+                cd4051_drive_enable_set(false);
+        }
         return NULL;
 }
 
+/************************************************************
+** 函数说明: 警报检测IO初始化
+** 作者: xiaoxiao
+** 日期：2023-11-15 14:07:05
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void alarm_detect_gpio_init(void)
+{
+        gpio_direction_set(ALARM1_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(ALARM2_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(ALARM3_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(ALARM4_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(ALARM5_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(ALARM6_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(ALARM7_GPIO_PIN, GPIO_DIR_IN);
+        gpio_direction_set(BUZZER_GPIO_PIN, GPIO_DIR_IN);
+}
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -270,6 +329,8 @@ bool user_gpio_init(void)
 
         /*警报电源输出初始化*/
         alarm_power_out_gpio_init();
+        /*警报检测初始化*/
+        alarm_detect_gpio_init();
         if ((user_data_get()->system_mode & 0x0F) == 0x01)
         {
                 /*开启gpio 任务检测*/

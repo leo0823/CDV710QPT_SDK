@@ -128,7 +128,7 @@ static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
 ************************************************************/
 void away_mode_alarm_trigger_callback(int arg1, int arg2)
 {
-    if ((arg1 == 7) && (arg2 < ALM_LOW * 100))
+    if ((arg1 == 7) && (arg2 < ALM_LOW))
     {
         user_data_get()->alarm.buzzer_alarm = true;
         user_data_save();
@@ -147,7 +147,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                 return;
             }
         }
-        if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW * 100))
+        if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT ) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW ))
         {
             if (user_data_get()->alarm.alarm_trigger[arg1] == false)
             {

@@ -86,6 +86,7 @@ static bool is_monitor_snapshot_ing = false;
 static bool is_monitor_record_video_ing = false;
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
 static lv_timer_t *unlock_timer = NULL;
+static char call_obj_name[64];
 /****************************************************************
  **@日期: 2023-09-20
  **@作者: leo.liu
@@ -99,44 +100,32 @@ static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(void)
 {
-        SAT_DEBUG("==============");
-
         monitor_close(is_channel_ipc_camera(monitor_channel_get()) ? 0x02 : 0x01);
-
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
         if (node == NULL)
         {
-
-                SAT_DEBUG("==============");
                 /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
                 if (tuya_api_client_num() > 0)
                 {
-                        SAT_DEBUG("==============");
                         tuya_api_preview_quit();
                         tuya_api_monitor_handup();
                 }
                 node = linphone_incomming_used_node_get(false);
                 if (node == NULL)
                 {
-                        SAT_DEBUG("==============");
                         /*没有使用的节点：没有其他呼入的设备,需要考虑indoor 呼叫*/
                         sat_linphone_handup(0xFFFF);
                         if (layout_away_count_data_get()->away_setting_time_countdown_timer)
                         {
-                                SAT_DEBUG("==============");
                                 sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                         }
                         if (alarm_trigger_check() == false)
                         {
-                                SAT_DEBUG("==============");
-
                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                         }
-                        SAT_DEBUG("==============");
                         /*为了直观，加入return*/
                         return;
                 }
-                SAT_DEBUG("==============");
                 sat_linphone_incomming_refresh(node->call_id);
                 intercom_call_status_setting(2);
                 char number[128] = {0};
@@ -148,10 +137,8 @@ void layout_monitor_goto_layout_process(void)
         }
         if (is_channel_ipc_camera(monitor_channel_get()) == false)
         {
-                SAT_DEBUG("==============");
                 sat_linphone_incomming_refresh(node->call_id);
         }
-        SAT_DEBUG("==============");
         sat_linphone_incomming_refresh(node->call_id);
         monitor_channel_set(node->channel);
         layout_monitor_report_vaild_channel();
@@ -232,17 +219,15 @@ static void monitior_obj_channel_info_obj_display(void)
         MON_ENTER_FLAG flag = monitor_enter_flag_get();
         if (flag == MON_ENTER_GUARD_CALL_FLAG)
         {
-                SAT_DEBUG("======MON_ENTER_GUARD_CALL_FLAG======");
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "Guard  %04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", call_obj_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else if (flag == MON_ENTER_LOBBY_CALL_FLAG)
         {
-                SAT_DEBUG("======MON_ENTER_LOBBY_CALL_FLAG======");
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                lv_label_set_text_fmt(obj, "Lobby  %04d-%02d-%02d  %02d:%02d", tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", call_obj_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
         else if (is_channel_ipc_camera(channel) == true)
         {
@@ -399,7 +384,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
-                monitor_timeout_sec--;
+                // monitor_timeout_sec--;
         }
         else
         {
@@ -736,12 +721,9 @@ static pthread_mutex_t door_lock_mutex = PTHREAD_MUTEX_INITIALIZER;
  ***********************************************/
 static void *monitor_unlock_ctrl_task(void *arg)
 {
-
         door_lock_info *info = (door_lock_info *)arg;
-
         if ((info->ch == MON_CH_DOOR1) && (info->mode == 2))
         {
-                SAT_DEBUG("=====ctrl ddl %d", info->en);
                 door1_lock1_pin_ctrl(info->en);
         }
         else if ((info->ch == MON_CH_DOOR2) && (info->mode == 2))
@@ -2566,9 +2548,7 @@ sat_layout_create(monitor);
 *******************************					                               楚河汉界		                                         *******************************
 *******************************											                                               *******************************
 *************************************************************************************************************************************************/
-static bool
-
-guard_call_process(const char *arg, bool is_extern_call)
+static bool guard_call_process(const char *arg, bool is_extern_call)
 {
         long call_id = 0;
         char *str = strstr(arg, " id:");
@@ -2577,16 +2557,17 @@ guard_call_process(const char *arg, bool is_extern_call)
                 return false;
         }
         sscanf(str + 4, "%ld", &call_id);
-        // char *start = strstr(arg, "guard");
+        char *start = strstr(arg, "guard");
 
-        // /*获取别名*/
-        // char *end = strchr(arg, '"');
-        // if (end == NULL)
-        // {
-        //         printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
-        //         return false;
-        // }
-        // *end = 0;
+        /*获取别名*/
+        char *end = strchr(arg, '"');
+        if (end == NULL)
+        {
+                printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        *end = 0;
+        strncpy(call_obj_name, start, sizeof(call_obj_name));
         if (user_data_get()->audio.ring_mute == false)
         {
                 ring_door_call_play(user_data_get()->audio.common_entrance_tone);
@@ -2595,29 +2576,29 @@ guard_call_process(const char *arg, bool is_extern_call)
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
         {
-                monitor_channel_set(MON_CH_LOBBY);
+                monitor_channel_set(MON_CH_GUARD);
                 monitor_enter_flag_set(MON_ENTER_GUARD_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         else /*内部呼叫，存储变量*/
         {
-                // linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
-                // if (node != NULL)
-                // {
-                //         node->enable = true;
-                //         node->channel = MON_CH_LOBBY;
-                //         node->call_id = call_id;
-                //         layout_monitor_door_ch_btn_create();
-                // }
-                // // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
-                // if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
-                // {
-                //         layout_monitor_goto_layout_process();
-                // }
-                // else
-                // {
-                //         layout_monitor_door_ch_btn_create();
-                // }
+                linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
+                if (node != NULL)
+                {
+                        node->enable = true;
+                        node->channel = MON_CH_GUARD;
+                        node->call_id = call_id;
+                        layout_monitor_door_ch_btn_create();
+                }
+                // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
+                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
+                {
+                        layout_monitor_goto_layout_process();
+                }
+                else
+                {
+                        layout_monitor_door_ch_btn_create();
+                }
                 monitor_enter_flag_set(MON_ENTER_GUARD_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
@@ -2634,16 +2615,16 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                 return false;
         }
         sscanf(str + 4, "%ld", &call_id);
-        // char *start = strstr(arg, "lobby");
-
-        // /*获取别名*/
-        // char *end = strchr(arg, '"');
-        // if (end == NULL)
-        // {
-        //         printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
-        //         return false;
-        // }
-        // *end = 0;
+        char *start = strstr(arg, "lobby");
+        /*获取别名*/
+        char *end = strchr(arg, '"');
+        if (end == NULL)
+        {
+                printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                return false;
+        }
+        *end = 0;
+        strncpy(call_obj_name, start, sizeof(call_obj_name));
         if (user_data_get()->audio.ring_mute == false)
         {
                 ring_door_call_play(user_data_get()->audio.common_entrance_tone);
@@ -2658,23 +2639,23 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         }
         else /*内部呼叫，存储变量*/
         {
-                // linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
-                // if (node != NULL)
-                // {
-                //         node->enable = true;
-                //         node->channel = MON_CH_LOBBY;
-                //         node->call_id = call_id;
-                //         layout_monitor_door_ch_btn_create();
-                // }
-                // // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
-                // if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
-                // {
-                //         layout_monitor_goto_layout_process();
-                // }
-                // else
-                // {
-                //         layout_monitor_door_ch_btn_create();
-                // }
+                linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
+                if (node != NULL)
+                {
+                        node->enable = true;
+                        node->channel = MON_CH_LOBBY;
+                        node->call_id = call_id;
+                        layout_monitor_door_ch_btn_create();
+                }
+                // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
+                if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
+                {
+                        layout_monitor_goto_layout_process();
+                }
+                else
+                {
+                        layout_monitor_door_ch_btn_create();
+                }
                 monitor_enter_flag_set(MON_ENTER_LOBBY_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
@@ -2685,7 +2666,6 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
 /* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容 id:建立连接的id号*/
 static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call)
 {
-        SAT_DEBUG("==============");
         long call_id = 0;
         char *str = strstr(arg, " id:");
         if (str == NULL)
@@ -2695,13 +2675,11 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         sscanf(str + 4, "%ld", &call_id);
 
         int index = monitor_index_get_by_user(arg);
-        SAT_DEBUG("======index : %d========", index);
         if ((monitor_valid_channel_check(index - 1)) == false)
         {
                 sat_linphone_handup(-1);
                 return false;
         }
-        SAT_DEBUG("==============");
         if (index < 0)
         {
 
@@ -2744,21 +2722,6 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
         {
-                // if (sat_cur_layout_get() == sat_playout_get(intercom_talk))
-                // {
-                //         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
-                //         if (node != NULL)
-                //         {
-                //                 node->enable = true;
-                //                 node->channel = index - 1;
-                //                 node->call_id = call_id;
-                //                 // 门呼叫，内线呼叫会话按键刷新
-                //                 extern void layout_intercom_talk_door_ch_btn_create(void);
-                //                 layout_intercom_talk_door_ch_btn_create();
-                //                 SAT_DEBUG("incomming join channel:%d/call id:%ld", node->channel, node->call_id);
-                //                 return true;
-                //         }
-                // }
                 /*监控参数设置，准备进入监控页面*/
                 monitor_channel_set(index - 1);
                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
@@ -2774,17 +2737,14 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
                         node->call_id = call_id;
                         layout_monitor_door_ch_btn_create();
                 }
-                SAT_DEBUG("==============");
                 // 如果当前是手动进监控的，包括手机和室内机，就把当前手动监控的会话关闭。进入由call机发起的会话
                 if ((monitor_enter_flag_get() == MON_ENTER_MANUAL_DOOR_FLAG) || (monitor_enter_flag_get() == MON_ENTER_MANUAL_CCTV_FLAG))
                 {
-                        SAT_DEBUG("==============");
 
                         layout_monitor_goto_layout_process();
                 }
                 else
                 {
-                        SAT_DEBUG("==============");
                         layout_monitor_door_ch_btn_create();
                 }
         }
@@ -2822,21 +2782,6 @@ static bool monitor_intercom_extern_call(const char *arg)
         }
         else
         {
-                // if (sat_cur_layout_get() == sat_playout_get(intercom_talk))
-                // {
-                //         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
-                //         if (node != NULL)
-                //         {
-                //                 node->enable = true;
-                //                 node->channel = index;
-                //                 node->call_id = call_id;
-                //                 // 门呼叫，内线呼叫会话按键刷新
-                //                 extern void layout_intercom_talk_door_ch_btn_create(void);
-                //                 layout_intercom_talk_door_ch_btn_create();
-                //                 SAT_DEBUG("incomming join channel:%d/call id:%ld", node->channel, node->call_id);
-                //                 return true;
-                //         }
-                // }
                 if (user_data_get()->audio.ring_mute == false)
                 {
                         ring_intercom_play(user_data_get()->audio.extenion_tone);
@@ -2884,25 +2829,20 @@ bool monitor_doorcamera_call_inside_func(char *arg)
         {
                 return false;
         }
-        SAT_DEBUG("==============");
         if (strstr(arg, "guard") != NULL) /*sip:guard代表警卫室*/
         {
-                SAT_DEBUG("==============");
                 return guard_call_process(arg, true);
         }
         else if (strstr(arg, "lobby") != NULL) /*sip:lobby代表大厅机*/
         {
-                SAT_DEBUG("==============");
                 return lobby_call_process(arg, true);
         }
         else if (strstr(arg, "sip:20") != NULL) /*sip:2xxx代表门口机*/
         {
-                SAT_DEBUG("==============");
                 return monitor_doorcamera_call_process(arg, false);
         }
         else if (strstr(arg, "user:\"50") != NULL) /*sip:5xxx代表室内设备*/
         {
-                SAT_DEBUG("==============");
                 return monitor_intercom_extern_call(arg);
         }
         return true;
@@ -3027,11 +2967,9 @@ static bool tuya_event_cmd_ch_channge(int channel)
         {
                 if (node_group[i].channel == ch)
                 {
-                        SAT_DEBUG("======channel value========");
                         linphone_incomming_info *node = linphone_incomming_used_node_get_by_call_id(node_group[i].call_id);
                         if (node != NULL)
                         {
-                                SAT_DEBUG("======node not null========");
                                 sat_linphone_incomming_refresh(node_group[i].call_id);
                                 linphone_incomming_node_release(node);
                                 monitor_enter_flag_set(MON_ENTER_CALL_FLAG);

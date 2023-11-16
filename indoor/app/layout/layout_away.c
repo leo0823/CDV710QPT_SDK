@@ -292,7 +292,6 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
         else
         {
             user_data_get()->alarm.away_setting_countdown = true;
-            user_data_save();
             user_data_get()->alarm.away_alarm_enable_list = sensor_select_list;
             for (int i = 0; i < 8; i++)
             {
@@ -301,11 +300,11 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
                     user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
                 }
             }
+            user_data_save();
             if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
             }
-
             sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }

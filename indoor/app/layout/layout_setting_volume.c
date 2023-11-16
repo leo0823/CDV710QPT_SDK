@@ -596,7 +596,6 @@ static lv_obj_t *setting_volume_slider_obj_create(void)
 
 static bool setting_volume_ring_play_callback(int arg)
 {
-        SAT_DEBUG("=========ring olay status is %d================\n", arg);
         is_setting_volume_ring_play_runing = arg == 0 ? true : false;
         return true;
 }

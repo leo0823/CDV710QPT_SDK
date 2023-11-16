@@ -2,6 +2,8 @@
 #include "layout_setting_general.h"
 #define GOOLE_APP "https://play.google.com/store/apps/details?id=com.commaxcall.ipvideophone2"
 #define APPLE_APP "https://apps.apple.com/kr/app/commax-hey-call/id1585757748"
+#include "tuya/tuya_ipc_api.h"
+#include "tuya/tuya_api.h"
 enum
 {
 
@@ -11,7 +13,8 @@ enum
         setting_download_obj_id_apple_app_store,
         setting_download_obj_id_google_play_qrcode,
         setting_download_obj_id_apple_app_qrcode,
-        setting_download_obj_id_video_call_with_text
+        setting_download_obj_id_video_call_with_text,
+        setting_download_obj_id_binding_device_qrcode,
 };
 static void setting_download_cancel_obj_click(lv_event_t *e)
 {
@@ -55,19 +58,19 @@ static void sat_layout_enter(setting_download)
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_PLAY_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_PLAY_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_store, 680, 94, 198, 35,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_APP_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_GOOGLE_APP_STORE), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
                 lv_common_text_create(sat_cur_layout_screen_get(), setting_download_obj_id_apple_app_qrcode, 299, 428, 426, 80,
                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                       lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_VIDEO_CALL_WITH_MOBILE_APP), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                                      lang_str_get(SETTING_DOWNLOAD_XLS_LANG_ID_VIDEO_CALL_WITH_MOBILE_APP), 0x808080, 0x808080, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         }
 
         /***********************************************
@@ -87,6 +90,27 @@ static void sat_layout_enter(setting_download)
                 lv_common_style_set_common(qr, setting_download_obj_id_apple_app_qrcode, 669, 149, 210, 210, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
                 lv_common_style_set_event(qr, NULL, false, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN);
                 lv_common_style_set_boader(qr, 10, LV_OPA_COVER, 1, LV_BORDER_SIDE_FULL, 0xFFFFFF, LV_PART_MAIN);
+
+                for (int i = 0; i < 100; i++)
+                {
+                        if (1)
+                        {
+                                char tuya_qrc_info[256] = {0};
+                                tuya_ipc_get_qrcode(NULL, tuya_qrc_info, sizeof(tuya_qrc_info));
+                                SAT_DEBUG("tuya_qrc_info is %s", tuya_qrc_info);
+                                qr = lv_qrcode_create(sat_cur_layout_screen_get(), 165, lv_color_hex(0x00000), lv_color_hex(0xFFFFFFF));
+                                lv_qrcode_update(qr, tuya_qrc_info, strlen(tuya_qrc_info) + 1);
+                                lv_common_style_set_common(qr, setting_download_obj_id_binding_device_qrcode, 418, 149, 210, 210, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+                                lv_common_style_set_event(qr, NULL, false, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN);
+                                lv_common_style_set_boader(qr, 10, LV_OPA_COVER, 1, LV_BORDER_SIDE_FULL, 0xFFFFFF, LV_PART_MAIN);
+                                break;
+                        }
+                        else
+                        {
+                                SAT_DEBUG("tuya offline");
+                                usleep(100 * 1000);
+                        }
+                }
         }
 }
 static void sat_layout_quit(setting_download)

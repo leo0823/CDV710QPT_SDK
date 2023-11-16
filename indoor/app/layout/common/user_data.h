@@ -177,6 +177,8 @@ typedef struct
 
         char compile_time[64];
 
+        unsigned long long sync_timestamp;
+
 } user_data_info;
 
 bool user_data_save(void);

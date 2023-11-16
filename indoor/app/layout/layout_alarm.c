@@ -249,7 +249,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
-        if ((arg1 == 7) && (arg2 < ALM_LOW * 100))
+        if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save();
@@ -261,7 +261,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 {
                         return;
                 }
-                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT * 100) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW * 100)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT ) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW )) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
                 {
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
@@ -657,21 +657,30 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
         int rec_mode = 0;
         if (user_data_get()->alarm.security_alarm_enable)
         {
-                SAT_DEBUG("============");
-                if ((user_data_get()->alarm.security_auto_record) && ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
+                if (user_data_get()->alarm.security_auto_record)
                 {
-                        SAT_DEBUG("============");
-                        record_video_start(true, REC_MODE_ALARM);
+                        if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
+                        {
+
+                                record_video_start(true, REC_MODE_ALARM);
+                        }
+                }
+                else
+                {
+                        rec_mode |= REC_MODE_ALARM;
                 }
         }
         else if (user_data_get()->alarm.away_alarm_enable)
         {
-                if ((user_data_get()->alarm.away_auto_record) && ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
+                if (user_data_get()->alarm.away_auto_record)
                 {
-                        SAT_DEBUG("============");
-                        record_video_start(true, REC_MODE_ALARM);
+                        if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
+                        {
+
+                                record_video_start(true, REC_MODE_ALARM);
+                        }
                 }
-                if (user_data_get()->alarm.away_save_photo)
+                else
                 {
                         rec_mode |= REC_MODE_ALARM;
                 }

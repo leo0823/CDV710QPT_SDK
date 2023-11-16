@@ -43,8 +43,8 @@ static void layout_sensor_test_sensor_status_display(void)
         if(sensor_cont != NULL)
         {
             lv_obj_t * sensor_img = lv_obj_get_child_form_id(sensor_cont,2);
-            int value = user_sensor_value_get(i) * 100;
-            if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > 250) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < 100))
+            int value = user_sensor_value_get(i);
+            if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < ALM_LOW))
             {
 
                 lv_obj_set_style_bg_img_src(sensor_img, resource_ui_src_get("ic_undetect.png"), LV_PART_MAIN);
@@ -55,7 +55,6 @@ static void layout_sensor_test_sensor_status_display(void)
         }
 
     }
-
 }
 static void layout_sensor_list_create(void)
 {
