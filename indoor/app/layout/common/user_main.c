@@ -187,6 +187,7 @@ static void *asterisk_server_sync_task(void *arg)
                                                         user_data_get()->alarm.alarm_gpio_value_group[i] = user_sensor_value_get(i);
                                                 }
                                                 sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                                                user_data_get()->sync_timestamp = user_timestamp_get();
                                         }
                                         if (is_asterisk_server_sync_network_data_force)
                                         {
@@ -207,7 +208,6 @@ static void *asterisk_server_sync_task(void *arg)
                         if (is_need_asterisk_update == true)
                         {
                                 is_need_asterisk_update = false;
-
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                         }
                 }

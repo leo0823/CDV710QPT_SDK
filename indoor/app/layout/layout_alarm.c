@@ -131,15 +131,6 @@ static void layout_alarm_ring_stop(lv_timer_t *ptimer)
 
 static void alarm_ring_idel_check(lv_timer_t *ptimer)
 {
-
-#ifdef ALARM_RINGPLAY_SYNC
-        user_data_get()->alarm.alarm_ring_play = true;
-        user_data_save();
-        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-        {
-                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-        }
-#endif
         ring_alarm_play();
         if (alarm_ring_close_timer)
         {
@@ -164,80 +155,20 @@ static void alarm_stop_obj_click(lv_event_t *ev)
                 alarm_ring_idel_timer = NULL;
         }
         alarm_ring_idel_timer = lv_sat_timer_create(alarm_ring_idel_check, 20 * 1000, NULL);
-#ifdef ALARM_RINGPLAY_SYNC
-        user_data_get()->alarm.alarm_ring_play = true;
-        user_data_save();
-        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-        {
-                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-        }
-#endif
         sat_linphone_audio_play_stop();
         lv_obj_t *passwd_cont = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_passwd_cont);
-        if (1 /*user_data_get()->alarm.is_alarm_return == false*/) // 警报停止模式
-        {
 
-                struct tm tm;
-                user_time_read(&tm);
-                if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
-                {
-                        alarm_list_add(security_emergency_stop, 7, &tm);
-                }
-                else
-                {
-                        alarm_list_add(emergency_stop, 7, &tm);
-                }
-                lv_obj_clear_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);
+        struct tm tm;
+        user_time_read(&tm);
+        if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
+        {
+                alarm_list_add(security_emergency_stop, 7, &tm);
         }
         else
         {
-                if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
-                {
-                        int ch = layout_alarm_alarm_channel_get();
-                        if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch) > ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
-                        {
-                                user_data_get()->alarm.alarm_trigger[ch] = false;
-                                user_data_save();
-                                struct tm tm;
-                                user_time_read(&tm);
-                                alarm_list_add(emergency_return, ch, &tm);
-                        }
-                        else
-                        {
-#ifdef ALARM_RINGPLAY_SYNC
-                                user_data_get()->alarm.alarm_ring_play = true;
-                                user_data_save();
-                                if ((user_data_get()->system_mode & 0x0f) != 0x01)
-                                {
-                                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                }
-#endif
-                                ring_alarm_play();
-                                if (alarm_ring_close_timer)
-                                {
-                                        lv_timer_del(alarm_ring_close_timer);
-                                        alarm_ring_close_timer = NULL;
-                                }
-                                alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
-                        }
-                }
-                else
-                {
-                        user_data_get()->alarm.alarm_trigger[7] = false;
-                        user_data_save();
-                        struct tm tm;
-                        user_time_read(&tm);
-                        alarm_list_add(emergency_return, 7, &tm);
-                }
-                if ((user_data_get()->system_mode & 0x0f) != 0x01)
-                {
-                        sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                }
-                if (alarm_trigger_check() == false)
-                {
-                        sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
-                }
+                alarm_list_add(emergency_stop, 7, &tm);
         }
+        lv_obj_clear_flag(passwd_cont, LV_OBJ_FLAG_HIDDEN);
 }
 
 /************************************************************
@@ -261,7 +192,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 {
                         return;
                 }
-                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT ) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW )) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
                 {
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
@@ -403,18 +334,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                 }
                                 if (strncmp(user_data_get()->etc.password, buffer, 4) == 0)
                                 {
-#ifdef ALARM_RETURN
-                                        if (user_data_get()->alarm.emergency_mode)
-                                        {
-                                                lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN);
-                                                lv_obj_t *label = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_confirm_btn), layout_alarm_obj_id_confirm_label);
-                                                user_data_get()->alarm.is_alarm_return = true;
-                                                user_data_save();
-                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                                lv_label_set_text(label, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_RETURN));
-                                                return;
-                                        }
-#else
                                         if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
                                         {
                                                 int ch = layout_alarm_alarm_channel_get();
@@ -423,25 +342,18 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                         user_data_get()->alarm.alarm_trigger[ch] = false;
                                                         user_data_get()->alarm.alarm_trigger_enable[ch] = false;
 
-                                                        user_data_save();
                                                         if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                                         {
+                                                                user_data_get()->sync_timestamp = user_timestamp_get();
                                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                         }
+                                                        user_data_save();
                                                         struct tm tm;
                                                         user_time_read(&tm);
                                                         alarm_list_add(emergency_stop, ch, &tm);
                                                 }
                                                 else
                                                 {
-#ifdef ALARM_RINGPLAY_SYNC
-                                                        user_data_get()->alarm.alarm_ring_play = true;
-                                                        user_data_save();
-                                                        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-                                                        {
-                                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                                        }
-#endif
                                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN); // 错误三次键盘隐藏
                                                         layout_alarm_passwd_input_txt_reset();
 
@@ -457,14 +369,13 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         else
                                         {
                                                 user_data_get()->alarm.alarm_trigger[7] = false;
-                                                user_data_save();
+
                                                 if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                                 {
+                                                        user_data_get()->sync_timestamp = user_timestamp_get();
                                                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                 }
-                                                // struct tm tm;
-                                                // user_time_read(&tm);
-                                                // alarm_list_add(emergency_stop, 8, &tm);
+                                                user_data_save();
                                         }
 
                                         if (alarm_trigger_check() == false)
@@ -472,7 +383,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                                         }
                                         return;
-#endif
                                 }
 
                                 // 密码错误，屏幕闪烁
@@ -483,14 +393,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                 if ((alarm_passwd_input_error_count++) == 2)
                                 {
                                         alarm_passwd_input_error_count = 0;
-#ifdef ALARM_RINGPLAY_SYNC
-                                        user_data_get()->alarm.alarm_ring_play = true;
-                                        user_data_save();
-                                        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-                                        {
-                                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                                        }
-#endif
                                         ring_alarm_play();
                                         if (alarm_ring_close_timer)
                                         {
@@ -598,14 +500,6 @@ static void layout_alarm_password_input_keyboard_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_close_keyboard_obj_click(lv_event_t *ev)
 {
-#ifdef ALARM_RINGPLAY_SYNC
-        user_data_get()->alarm.alarm_ring_play = true;
-        user_data_save();
-        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-        {
-                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-        }
-#endif
         ring_alarm_play();
         if (alarm_ring_close_timer)
         {
@@ -940,14 +834,7 @@ static void sat_layout_enter(alarm)
                 ** 参数说明:
                 ** 注意事项:
                 ************************************************************/
-#ifdef ALARM_RINGPLAY_SYNC
-                if (user_data_get()->alarm.alarm_ring_play)
-                {
-                        ring_alarm_play();
-                }
-#else
                 ring_alarm_play();
-#endif
                 if (alarm_ring_close_timer)
                 {
                         lv_timer_del(alarm_ring_close_timer);

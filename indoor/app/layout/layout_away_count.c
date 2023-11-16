@@ -47,12 +47,13 @@ static void layout_away_count_passwd_check_success_cb(void)
     lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
     layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
     layout_away_count_data_get()->away_count_sec = 0;
-    user_data_save();
+
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
+        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-
+    user_data_save();
     sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
@@ -147,7 +148,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                 return;
             }
         }
-        if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT ) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW ))
+        if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW))
         {
             if (user_data_get()->alarm.alarm_trigger[arg1] == false)
             {

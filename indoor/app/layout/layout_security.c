@@ -255,11 +255,14 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             user_data_get()->alarm.security_alarm_enable = user_data_get()->alarm.security_alarm_enable ? false : true;
             unsigned char list = layout_security_sensor_enable_flag();
             user_data_get()->alarm.security_alarm_enable_list |= list;
-            user_data_save();
+
             if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
+                user_data_get()->sync_timestamp = user_timestamp_get();
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
             }
+
+            user_data_save();
             sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
@@ -482,11 +485,14 @@ static void emergency_occupy_audo_record_click(lv_event_t *ev)
         }
     }
     user_data_get()->alarm.security_auto_record = user_data_get()->alarm.security_auto_record ? false : true;
-    user_data_save();
+
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
+        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
+
+    user_data_save();
     layout_security_cctv_record_enable_display();
 }
 
@@ -502,11 +508,14 @@ static void layout_security_passwd_check_success_cb(void)
     user_data_get()->alarm.security_alarm_enable = false;
     unsigned char list = layout_security_sensor_enable_flag();
     user_data_get()->alarm.security_alarm_enable_list &= (~list);
-    user_data_save();
+
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
+        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
+
+    user_data_save();
     sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 

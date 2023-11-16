@@ -164,11 +164,14 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
                 if (t != NULL) // 主动取消蜂鸣器报警才需要同步给其他室内机
                 {
                         user_data_get()->alarm.buzzer_alarm = false;
-                        user_data_save();
+
                         if ((user_data_get()->system_mode & 0X0f) != 0x01)
                         {
+                                user_data_get()->sync_timestamp = user_timestamp_get();
                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                         }
+
+                        user_data_save();
                 }
         }
 }
@@ -476,16 +479,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
                                 buzzer_call_trigger_check();
                         }
-#ifdef ALARM_RINGPLAY_SYNC
-                        if (user_data_get()->alarm.alarm_ring_play != info->alarm.alarm_ring_play) // 警报页面内，铃声播放停止同步(铃声播放、停止单独处理，主分不需同步)
-                        {
-                                user_data_get()->alarm.alarm_ring_play = info->alarm.alarm_ring_play;
-                                if (alarm_ring_func != NULL)
-                                {
-                                        alarm_ring_func();
-                                }
-                        }
-#endif
                         if (0 /*user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return*/) // 警报页面内，stop/return状态同步(客户取消return状态)
                         {
                                 user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;

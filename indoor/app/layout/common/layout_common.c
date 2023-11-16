@@ -262,13 +262,11 @@ void layout_alarm_alarm_channel_set(int ch)
 ************************************************************/
 void layout_alarm_trigger_default(int arg1, int arg2)
 {
-        SAT_DEBUG("====arg1 is %d\n=======",arg1);
-        SAT_DEBUG("====arg2 is %d\n=======",arg2);
         if (user_data_get()->is_device_init == false)
         {
                 return;
         }
-        if ((arg1 == 7) && (arg2 < ALM_LOW ))
+        if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save();
@@ -276,12 +274,12 @@ void layout_alarm_trigger_default(int arg1, int arg2)
         }
         else
         {
-                //没有传感器被选中
+                // 没有传感器被选中
                 if ((!(user_data_get()->alarm.away_alarm_enable_list & (0x01 << arg1))) && (!(user_data_get()->alarm.security_alarm_enable_list & (0x01 << arg1))))
                 {
                         return;
                 }
-                //非
+                // 非
                 if ((user_data_get()->alarm.alarm_enable_always[0][arg1] == false) && (user_data_get()->alarm.alarm_enable_always[1][arg1] == false))
                 {
                         if (user_data_get()->alarm.away_alarm_enable == false && user_data_get()->alarm.security_alarm_enable == false)
@@ -289,7 +287,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                                 return;
                         }
                 }
-                if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT ) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW ))
+                if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW))
                 {
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
@@ -351,18 +349,10 @@ bool alarm_trigger_check(void)
                 }
                 if ((alarm_occur))
                 {
-#ifdef ALARM_RINGPLAY_SYNC
-                        user_data_get()->alarm.alarm_ring_play = true;
-
-                        if ((user_data_get()->system_mode & 0x0f) != 0x01)
-                        {
-                                sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                        }
-#endif
                         user_data_save();
                         struct tm tm;
                         user_time_read(&tm);
-                        alarm_list_add(security_emergency, i, &tm);
+                        alarm_list_add(i == 7 ? emergency_occur : security_emergency, i, &tm);
                         layout_alarm_alarm_channel_set(i);
                         sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, alarm_occur);
