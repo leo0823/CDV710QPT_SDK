@@ -2572,7 +2572,6 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         {
                 ring_door_call_play(user_data_get()->audio.common_entrance_tone);
         }
-        sat_linphone_handup(0xffff);
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
         {
@@ -2629,7 +2628,6 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         {
                 ring_door_call_play(user_data_get()->audio.common_entrance_tone);
         }
-        sat_linphone_handup(0xffff);
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
         {
@@ -2675,11 +2673,11 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         sscanf(str + 4, "%ld", &call_id);
 
         int index = monitor_index_get_by_user(arg);
-        if ((monitor_valid_channel_check(index - 1)) == false)
-        {
-                sat_linphone_handup(-1);
-                return false;
-        }
+        // if ((monitor_valid_channel_check(index - 1)) == false)
+        // {
+        //         sat_linphone_handup(-1);
+        //         return false;
+        // }
         if (index < 0)
         {
 

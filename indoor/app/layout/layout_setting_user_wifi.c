@@ -203,7 +203,7 @@ static void layout_user_wifi_msgbox_confirm(lv_event_t *e)
 static void setting_wifi_delete_connected_wifi_info(lv_event_t *e)
 {
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(user_wifi_obj_id_wifi_del_msg_bg, wifi_del_obj_id_msgbox, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox, wifi_del_obj_id_title, lang_str_get(WIFI_SETTING_XLS_LANG_ID_DEL_WIFI_ASK), 0, 110, 460, 120);
+        setting_msgdialog_msg_create(masgbox, wifi_del_obj_id_title, lang_str_get(WIFI_SETTING_XLS_LANG_ID_DEL_WIFI_ASK), 0, 110, 460, 120, false);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, wifi_del_obj_id_confirm, wifi_del_obj_id_cancel, layout_user_wifi_msgbox_confirm, layout_user_wifi_msgbox_cancel);
 }
 

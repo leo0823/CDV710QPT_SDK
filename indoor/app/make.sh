@@ -25,8 +25,10 @@ make_app()
 copy_to_rootfs()
 {
         rm -rf ./rootfs/board/CDV810QPT/app/
+        rm -rf ./rootfs/board/CDV810QPT/resource/
 
         mkdir ./rootfs/board/CDV810QPT/app/
+        mkdir ./rootfs/board/CDV810QPT/resource/
 
         cp ./build/SAT_SSD20X.BIN ./rootfs/board/CDV810QPT/app/
 

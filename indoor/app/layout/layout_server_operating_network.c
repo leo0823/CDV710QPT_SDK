@@ -300,7 +300,7 @@ static void setting_server_operation_network_falid_tips(void)
                 setting_msgdialog_msg_del(server_operation_network_obj_id_msg_bg);
         }
         masgbox = setting_msgdialog_msg_bg_create(server_operation_network_obj_id_msg_bg, server_operation_network_obj_id_msg, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, server_operation_network_obj_id_text, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
+        setting_msgdialog_msg_create(masgbox, server_operation_network_obj_id_text, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120, false);
         setting_msgdialog_msg_confirm_btn_create(masgbox, server_operation_network_obj_id_confirm, setting_server_operation_network_falid_confirm);
 }
 

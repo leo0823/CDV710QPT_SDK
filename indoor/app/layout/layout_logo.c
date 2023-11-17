@@ -103,7 +103,7 @@ static void sd_state_checking_timer(lv_timer_t *timer)
         else if ((media_sdcard_insert_check() == SD_STATE_ERROR) || (media_sdcard_insert_check() == SD_STATE_UNPLUG))
         {
                 masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
-                setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_IS_VALID), 0, 60, 460, 120);
+                setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_IS_VALID), 0, 60, 460, 120, false);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, sd_state_change_obj_id_msgbox_confirm, sd_state_change_msgbox_cancel_click);
                 masgbox->user_data = NULL;
         }
@@ -136,7 +136,7 @@ void sd_state_change_default_callback(void)
                 setting_msgdialog_msg_del(sd_state_change_obj_id_format_msgbox_cont);
         }
         masgbox = setting_msgdialog_msg_bg_create(sd_state_change_obj_id_format_msgbox_cont, sd_state_change_obj_id_format_msgbox, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_CHECKING_SD), 0, 120, 460, 120);
+        setting_msgdialog_msg_create(masgbox, sd_state_change_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_CHECKING_SD), 0, 120, 460, 120, false);
         masgbox->user_data = lv_sat_timer_create(sd_state_checking_timer, 500, NULL);
 }
 
@@ -161,18 +161,17 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
         {
                 lv_obj_del(bg);
                 sat_linphone_audio_play_stop();
+                user_data_get()->alarm.buzzer_alarm = false;
                 if (t != NULL) // 主动取消蜂鸣器报警才需要同步给其他室内机
                 {
-                        user_data_get()->alarm.buzzer_alarm = false;
 
                         if ((user_data_get()->system_mode & 0X0f) != 0x01)
                         {
                                 user_data_get()->sync_timestamp = user_timestamp_get();
                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                         }
-
-                        user_data_save();
                 }
+                user_data_save();
         }
 }
 

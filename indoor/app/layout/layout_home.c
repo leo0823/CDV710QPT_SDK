@@ -896,57 +896,51 @@ static void layout_home_cctv_icon_display()
         }
 }
 
+static void layout_home_security_away_btn_display(void)
+{
+        lv_obj_t *away = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_away_cont);
+        lv_obj_t *security = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_burglar_cont);
+        lv_obj_t *icon_away_ban = lv_obj_get_child_form_id(away, 0);
+        lv_obj_t *icon_security_ban = lv_obj_get_child_form_id(security, 0);
+        lv_obj_t *icon_away_en = lv_obj_get_child_form_id(away, 1);
+        lv_obj_t *icon_security_en = lv_obj_get_child_form_id(security, 1);
+        if (user_data_get()->alarm.security_alarm_enable)
+        {
+                lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_security_en, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(icon_away_en, LV_OBJ_FLAG_HIDDEN);
+        }
+        else if (user_data_get()->alarm.away_alarm_enable)
+        {
+                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_away_en, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(icon_security_en, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(icon_security_en, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(icon_away_en, LV_OBJ_FLAG_HIDDEN);
+        }
+}
+
 static void home_obj_top_icon_display_timer(lv_timer_t *ptimer)
 {
         layout_home_monitor_icon_display();
         layout_home_cctv_icon_display();
         home_obj_top_icon_display();
+        layout_home_security_away_btn_display();
 }
 
-static void layout_home_security_away_btn_display(void)
-{
-        lv_obj_t *away = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_away_cont);
-        lv_obj_t *security = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_burglar_cont);
-        lv_obj_t *icon_away = lv_obj_get_child_form_id(away, 0);
-        lv_obj_t *icon_security = lv_obj_get_child_form_id(security, 0);
-        if (user_data_get()->alarm.security_alarm_enable)
-        {
-                lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_add_flag(icon_away, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(icon_security, LV_OBJ_FLAG_CLICKABLE);
-        }
-
-        if (user_data_get()->alarm.away_alarm_enable)
-        {
-                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_add_flag(icon_security, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(icon_away, LV_OBJ_FLAG_CLICKABLE);
-        }
-
-        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
-        {
-                lv_common_img_btn_create(away, 0, 55, 45, 48, 48,
-                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        }
-
-        if (user_data_get()->alarm.away_alarm_enable)
-        {
-                lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
-        }
-        if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
-        {
-                lv_common_img_btn_create(security, 0, 55, 45, 48, 48,
-                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-        }
-}
 static void sat_layout_enter(home)
 {
         /***********************************************
@@ -1169,16 +1163,15 @@ static void sat_layout_enter(home)
                                          layout_last_call_new_flag_get() ? resource_ui_src_get("ic_main_new.png") : "", LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
         layout_home_video_call_title_param_init();
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 14:16:18
         ** 说明: 监控设置
         ***********************************************/
         {
-
                 int sec_x = ((user_data_get()->system_mode & 0xF0) != 0x10) ? 125 : 57; // user_data_get()->system_mode == 1?193:329;
                 int unit_offset = ((user_data_get()->system_mode & 0xF0) == 0x10) ? 136 : 136;
-
                 lv_obj_t *obj = lv_common_img_text_btn_create(sat_cur_layout_screen_get(), home_obj_id_monitor_cont, sec_x, 436, 103, 121,
                                                               home_monitor_obj_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1241,6 +1234,11 @@ static void sat_layout_enter(home)
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                        lv_common_img_btn_create(away, 1, 55, 45, 48, 48,
+                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                         sec_x += unit_offset;
                 }
@@ -1259,7 +1257,11 @@ static void sat_layout_enter(home)
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-
+                        lv_common_img_btn_create(security, 1, 55, 45, 48, 48,
+                                                 NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         sec_x += unit_offset;
                 }
 
@@ -1286,23 +1288,23 @@ static void sat_layout_enter(home)
                                               13, 0, 77, 77, home_obj_id_emergency_img,
                                               (const char *)resource_ui_src_get("btn_main_emergency_w.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
+
         {
-                {
-                        /************************************************************
-                        ** 函数说明: 时间同步提示
-                        ** 作者: xiaoxiao
-                        ** 日期: 2023-06-28 10:45:40
-                        ** 参数说明:
-                        ** 注意事项:
-                        ************************************************************/
-                        lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed, 68, 173, 346, 28,
-                                                              NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
-                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                              lang_str_get(HOME_XLS_LANG_TIME_MISMATCH), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
-                        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                }
+                /************************************************************
+                ** 函数说明: 时间同步提示
+                ** 作者: xiaoxiao
+                ** 日期: 2023-06-28 10:45:40
+                ** 参数说明:
+                ** 注意事项:
+                ************************************************************/
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed, 68, 173, 346, 28,
+                                                      NULL, LV_OPA_TRANSP, 0X303030, LV_OPA_TRANSP, 0X303030,
+                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                      lang_str_get(HOME_XLS_LANG_TIME_MISMATCH), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_small);
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
+
         {
                 /************************************************************
                 ** 函数说明: 网络图标创建

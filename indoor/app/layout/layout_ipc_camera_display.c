@@ -48,7 +48,7 @@ static void ipc_camera_display_get_ip_falid_confirm(lv_event_t *e)
 static void ipc_camera_display_get_ip_fali_tips(void)
 {
         lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_display_obj_id_regist_msgbox_bg, 0, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(msgbox, 1, lang_str_get(IP_SETTING_XLS_LANG_ID_GET_FAILED), 0, 60, 460, 120);
+        setting_msgdialog_msg_create(msgbox, 1, lang_str_get(IP_SETTING_XLS_LANG_ID_GET_FAILED), 0, 60, 460, 120, false);
         setting_msgdialog_msg_confirm_btn_create(msgbox, 2, ipc_camera_display_get_ip_falid_confirm);
 }
 
@@ -190,7 +190,7 @@ static void ipc_camera_search_display_register_click(lv_event_t *ev)
         {
 
                 lv_obj_t *msgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_display_obj_id_regist_msgbox_bg, ipc_camera_search_display_obj_id_regist_msgbox_cont, 282, 93, 460, 352);
-                setting_msgdialog_msg_create(msgbox, ipc_camera_search_display_obj_id_regist_msgbox_title, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTER_FAILDED), 0, 110, 460, 80);
+                setting_msgdialog_msg_create(msgbox, ipc_camera_search_display_obj_id_regist_msgbox_title, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_REGISTER_FAILDED), 0, 110, 460, 80, false);
                 setting_msgdialog_msg_confirm_btn_create(msgbox, ipc_camera_search_display_obj_id_regist_msgbox_confirm, ipc_camera_search_display_register_failed_confirm_func);
         }
 }

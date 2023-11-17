@@ -213,7 +213,7 @@ static void layout_security_execution_normal_msgbox_create(char normal_select)
     SAT_DEBUG("sensors_str is %s", sensors_str);
     char abnormal_str[128] = {0};
     sprintf(abnormal_str, "Cannot run.%s sensor is not normal. Please check the sensor.", sensors_str);
-    setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120);
+    setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, abnormal_str, 0, 70, 460, 120, false);
     setting_msgdialog_msg_confirm_btn_create(masgbox, layout_security_obj_id_msgbox_confirm_btn, layout_security_msgbox_cancel_click);
 }
 
@@ -444,7 +444,7 @@ static void layout_security_cctv_record_enable_failed_display(void)
     }
     masgbox = setting_msgdialog_msg_bg_create(layout_security_obj_id_msgbox_bg, layout_security_obj_id_msgbox_cont, 282, 143, 460, 283);
 
-    setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, lang_str_get(INTERCOM_XLS_LANG_ID_FUNC_NOT_AVAILABLE), 0, 70, 460, 120);
+    setting_msgdialog_msg_create(masgbox, layout_security_obj_id_msgbox_title, lang_str_get(INTERCOM_XLS_LANG_ID_FUNC_NOT_AVAILABLE), 0, 70, 460, 120, false);
     setting_msgdialog_msg_confirm_btn_create(masgbox, layout_security_obj_id_msgbox_confirm_btn, layout_security_msgbox_cancel_click);
 }
 

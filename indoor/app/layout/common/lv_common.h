@@ -281,7 +281,7 @@ lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id, int id, int x, int y, i
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-lv_obj_t *setting_msgdialog_msg_create(lv_obj_t *parent, int id, const char *msg_string, int x, int y, int w, int h);
+lv_obj_t *setting_msgdialog_msg_create(lv_obj_t *parent, int id, const char *msg_string, int x, int y, int w, int h, bool title);
 
 /************************************************************
 ** 函数说明: 消息框的确认按键创建

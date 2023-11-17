@@ -140,7 +140,7 @@ static void sat_layout_enter(setting_sensor_usage)
                                 setting_msgdialog_msg_del(setting_sensor_usage_obj_id_msgbox_bg);
                         }
                         masgbox = setting_msgdialog_msg_bg_create(setting_sensor_usage_obj_id_msgbox_bg, 0, 282, 159, 460, 283);
-                        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(XLS_LANG_ID_NO_SENSOR_CONNECT), 0, 70, 460, 120);
+                        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(XLS_LANG_ID_NO_SENSOR_CONNECT), 0, 70, 460, 120, false);
                         setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_sensor_usage_msgbox_cancel_click);
                 }
         }

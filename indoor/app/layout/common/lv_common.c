@@ -667,12 +667,12 @@ lv_obj_t *setting_msgdialog_msg_bg_create(int parent_id, int id, int x, int y, i
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-lv_obj_t *setting_msgdialog_msg_create(lv_obj_t *parent, int id, const char *msg_string, int x, int y, int w, int h)
+lv_obj_t *setting_msgdialog_msg_create(lv_obj_t *parent, int id, const char *msg_string, int x, int y, int w, int h, bool title)
 {
         lv_obj_t *obj = lv_common_text_create(parent, id, x, y, w, h,
                                               NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                              0, 2, title ? LV_BORDER_SIDE_BOTTOM : LV_BORDER_SIDE_NONE, LV_OPA_COVER, 0x323237,
+                                              0, 2, title ? LV_BORDER_SIDE_BOTTOM : LV_BORDER_SIDE_NONE, LV_OPA_COVER, 0x323237,
                                               msg_string, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
         return obj;
 }

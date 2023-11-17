@@ -143,7 +143,7 @@ static void wifi_input_animation_connecting_task(lv_timer_t *task)
                         lv_obj_clean(parent);
                         lv_timer_del(task);
 
-                        setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80);
+                        setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECT_FAILED), 0, 110, 460, 80, false);
                         setting_msgdialog_msg_confirm_btn_create(parent, wifi_input_obj_id_confirm_btn, wifi_input_msg_dialog_error_confirm_up);
                         if (user_data_get()->is_device_init == true) // 启动设置会有机会进入这里，所以要加判断
                         {
@@ -189,7 +189,7 @@ static void wifi_input_animation_task_create(lv_obj_t *parent)
         }
         // 连接状态显示
         {
-                setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECTING), 0, 110, 460, 80);
+                setting_msgdialog_msg_create(parent, wifi_input_obj_id_connect_status, lang_str_get(WIFI_INPUT_XLS_LANG_ID_CONNECTING), 0, 110, 460, 80, false);
         }
 
         static bool loop_count = 0; // wifi最大连接时长标志

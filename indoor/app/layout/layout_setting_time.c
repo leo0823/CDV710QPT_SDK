@@ -162,7 +162,6 @@ static void setting_time_set_date_automatically_click(lv_event_t *ev)
 }
 static void setting_time_set_roller_click(lv_event_t *ev)
 {
-        printf("ev->code is %d\n", ev->code);
         if (ev->code == LV_EVENT_VALUE_CHANGED)
         {
                 modify = true;

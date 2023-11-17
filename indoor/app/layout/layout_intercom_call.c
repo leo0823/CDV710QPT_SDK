@@ -166,6 +166,12 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
+
+        return true;
+}
+
+static bool intercom_linphone_outgoing_arly_media_register(char *arg)
+{
         SAT_DEBUG("======arg is %s\n", arg);
         intercom_call_username_setting(arg);
         intercom_call_status_setting(1);
@@ -174,13 +180,6 @@ static bool intercom_linphone_outgoing_callback(char *arg)
                 ring_intercom_play(user_data_get()->audio.extenion_tone);
         }
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
-        return true;
-}
-
-static bool intercom_linphone_outgoing_arly_media_register(char *arg)
-{
-        // intercom_call_username_setting(arg);
-        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
@@ -474,7 +473,7 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
                 }
 
                 lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(intercom_call_obj_id_log_msg_bg, call_log_msg_bg_obj_id_msgdialog, 282, 93, 460, 352);
-                setting_msgdialog_msg_create(masgbox, call_log_msg_bg_obj_id_title, lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL_TIPS), 0, 110, 460, 120);
+                setting_msgdialog_msg_create(masgbox, call_log_msg_bg_obj_id_title, lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL_TIPS), 0, 110, 460, 120, true);
                 setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, call_log_msg_bg_obj_id_confirm_id, call_log_msg_bg_obj_id_cancel_id, layout_intercom_call_log_msgbox_confirm_click, layout_intercom_call_log_msgbox_cancel);
         }
 }

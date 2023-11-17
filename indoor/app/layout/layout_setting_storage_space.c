@@ -235,7 +235,7 @@ static void format_sd_process_timer(lv_timer_t *ptime)
                 lv_timer_del(ptime);
                 lv_obj_t *msgbox = lv_obj_get_parent(bar);
                 lv_obj_clean(msgbox);
-                setting_msgdialog_msg_create(msgbox, setting_storage_space_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_FORMAT_COMPLETE), 0, 60, 460, 120);
+                setting_msgdialog_msg_create(msgbox, setting_storage_space_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_SD_FORMAT_COMPLETE), 0, 60, 460, 120, false);
                 setting_msgdialog_msg_confirm_btn_create(msgbox, setting_storage_space_obj_id_format_completed, setting_storage_space_msgbox_external_fmatsd_finish_confirm);
         }
 }
@@ -248,7 +248,7 @@ static void setting_storage_space_msgbox_external_fmatsd_click(lv_event_t *e)
         }
         lv_obj_del(obj);
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_storage_space_obj_id_format_msgbox_cont, setting_storage_space_obj_id_format_msgbox, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, setting_storage_space_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_FORMATING_SD), 0, 60, 460, 120);
+        setting_msgdialog_msg_create(masgbox, setting_storage_space_obj_id_format_text, lang_str_get(SD_XLS_LANG_ID_FORMATING_SD), 0, 60, 460, 120, false);
         lv_obj_t *bar = setting_storage_space_msgbox_format_process_display(masgbox);
         lv_sat_timer_create(format_sd_process_timer, 500, bar);
         media_format_sd();

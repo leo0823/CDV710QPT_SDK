@@ -42,7 +42,7 @@ static void ipc_search_door_camera_modify_default_passwd_check()
                 setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
         }
         masgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_obj_id_msg_bg, ipc_camera_search_msg_obj_id_msg, 282, 123, 460, 323);
-        setting_msgdialog_msg_create(masgbox, ipc_camera_search_msg_obj_id_text, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DEFAULT_PASSWORD_IS_SET), 20, 40, 420, 180);
+        setting_msgdialog_msg_create(masgbox, ipc_camera_search_msg_obj_id_text, lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_DEFAULT_PASSWORD_IS_SET), 20, 40, 420, 180, false);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, ipc_camera_search_msg_obj_id_confirm, ipc_camera_search_msg_obj_id_cancel, ipc_search_door_camera_modify_default_passwd_confirm, ipc_search_door_camera_modify_default_passwd_concel);
 }
 static void ipc_camera_serarch_list_click(lv_event_t *ev)

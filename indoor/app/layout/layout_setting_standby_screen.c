@@ -287,7 +287,7 @@ static void setting_standby_open_frame_msgbox_cancel_click(lv_event_t *ev)
 static void setting_standby_open_frame_click(void)
 {
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_standby_screen_obj_id_msg_bg, setting_standby_screen_obj_id_msgbox, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox, setting_standby_screen_obj_id_mesg, lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_OPEN_FRAME_APPLY_CONFIRM), 0, 90, 460, 120);
+        setting_msgdialog_msg_create(masgbox, setting_standby_screen_obj_id_mesg, lang_str_get(SETTING_STANDBY_SCREEN_XLS_LANG_ID_OPEN_FRAME_APPLY_CONFIRM), 0, 90, 460, 120, false);
         // setting_standby_screen_off_msgbox_option_create(masgbox,setting_standby_screen_off_msgbox_click);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, setting_standby_screen_off_obj_id_confirm, setting_standby_screen_off_obj_id_cancel, setting_standby_open_frame_msgbox_confirm_click, setting_standby_open_frame_msgbox_cancel_click);
 }

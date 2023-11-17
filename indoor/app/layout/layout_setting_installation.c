@@ -124,7 +124,7 @@ static void setting_installation_factory_reset_obj_click(lv_event_t *ev)
 
         sat_layout_goto(factory_reset, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_installation_obj_id_factory_reset_msg_bg, factory_reset_obj_id_msgbox, 282, 93, 460, 352);
-        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_ACK), 0, 110, 460, 120);
+        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_title, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_ACK), 0, 110, 460, 120, false);
         setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, factory_reset_obj_id_conrfirm, factory_reset_obj_id_cancel, setting_installation_factory_reset_confirm_func, setting_installation_factory_reset_cancel_func);
 }
 

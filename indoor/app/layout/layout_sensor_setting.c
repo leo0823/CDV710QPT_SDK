@@ -426,7 +426,7 @@ static void setting_sensor_settings_list_click(lv_event_t *e)
     if (user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.away_alarm_enable)
     {
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(sensor_setting_obj_id_msgbox_bg_cont, sensor_setting_obj_id_msgbox_cont, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, sensor_setting_obj_id_titile_id, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_RUNNNG_TIPS), 0, 90, 460, 80);
+        setting_msgdialog_msg_create(masgbox, sensor_setting_obj_id_titile_id, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_RUNNNG_TIPS), 0, 90, 460, 80, false);
         setting_msgdialog_msg_confirm_btn_create(masgbox, sensor_setting_obj_id_msgbox_confirm, sensor_setting_msgbox_cancel_click);
         return;
     }

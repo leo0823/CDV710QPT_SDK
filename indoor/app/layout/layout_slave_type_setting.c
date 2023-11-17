@@ -100,12 +100,12 @@ static void slave_type_setting_save_btn_click(lv_event_t *e)
         lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(slave_type_setting_obj_id_msgbox_bg_cont, slave_type_setting_obj_id_msgbox_cont, 282, 143, 460, 356);
         if (is_valid_ipv4(update_master_ip) && (update_slave_id != 1))
         {
-                setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_VALID), 0, 120, 460, 120);
+                setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_VALID), 0, 120, 460, 120, false);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_save_confirm);
         }
         else
         {
-                setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_ILLEGAL), 0, 120, 460, 120);
+                setting_msgdialog_msg_create(masgbox, slave_type_setting_obj_id_msgbox_titile, lang_str_get(SIGNLE_OPERATION_STRUCTURE_XLS_LANG_ID_VALUE_ILLEGAL), 0, 120, 460, 120, false);
                 setting_msgdialog_msg_confirm_btn_create(masgbox, slave_type_setting_obj_id_msgbox_cancel, slave_type_setting_cancel_func);
         }
 }

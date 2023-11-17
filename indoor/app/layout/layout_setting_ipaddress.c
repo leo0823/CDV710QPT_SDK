@@ -135,7 +135,7 @@ static void setting_ipaddress_data_vaild_fali_tips(void)
                 setting_msgdialog_msg_del(setting_ipaddress_obj_id_msg_bg);
         }
         masgbox = setting_msgdialog_msg_bg_create(setting_ipaddress_obj_id_msg_bg, 0, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120);
+        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_ENTER_FORMAT), 0, 60, 460, 120, false);
         setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_ipaddress_falid_confirm);
 }
 
@@ -154,7 +154,7 @@ static void setting_ipaddress_setting_fail_tips(void)
                 setting_msgdialog_msg_del(setting_ipaddress_obj_id_msg_bg);
         }
         masgbox = setting_msgdialog_msg_bg_create(setting_ipaddress_obj_id_msg_bg, 0, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(IP_SETTING_XLS_LANG_ID_IP_SETTING_FAILED), 0, 60, 460, 120);
+        setting_msgdialog_msg_create(masgbox, 1, lang_str_get(IP_SETTING_XLS_LANG_ID_IP_SETTING_FAILED), 0, 60, 460, 120, false);
         setting_msgdialog_msg_confirm_btn_create(masgbox, 2, setting_ipaddress_falid_confirm);
 }
 

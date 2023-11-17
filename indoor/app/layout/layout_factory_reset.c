@@ -93,7 +93,7 @@ static void layout_factory_reset_confirm(lv_event_t *ev)
                 setting_msgdialog_msg_del(factory_reset_obj_id_msgbox_bg);
         }
         masgbox = setting_msgdialog_msg_bg_create(factory_reset_obj_id_msgbox_bg, factory_reset_obj_id_msgbox_cont, 282, 143, 460, 283);
-        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_msgbox_text, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_PROCESS), 0, 120, 460, 120);
+        setting_msgdialog_msg_create(masgbox, factory_reset_obj_id_msgbox_text, lang_str_get(INSTALLATION_XLS_LANG_ID_FACTORY_RESET_PROCESS), 0, 120, 460, 120, false);
         static lv_style_t style_bg;
         static lv_style_t style_indic;
 

@@ -178,5 +178,6 @@ sat_layout_define(buzzer_call);
 sat_layout_define(factory_reset);
 
 sat_layout_define(indoor_register);
+sat_layout_define(setting_app_integration);
 
 #endif
