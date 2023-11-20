@@ -87,6 +87,14 @@ static bool is_monitor_record_video_ing = false;
 static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg);
 static lv_timer_t *unlock_timer = NULL;
 static char call_obj_name[64];
+void layout_monitor_ch_name_set(char *doorname)
+{
+        if (doorname == NULL)
+        {
+                return;
+        }
+        strncpy(call_obj_name, doorname, sizeof(call_obj_name));
+}
 /****************************************************************
  **@日期: 2023-09-20
  **@作者: leo.liu
@@ -216,14 +224,13 @@ static void monitior_obj_channel_info_obj_display(void)
         struct tm tm;
         user_time_read(&tm);
         int channel = monitor_channel_get();
-        MON_ENTER_FLAG flag = monitor_enter_flag_get();
-        if (flag == MON_ENTER_GUARD_CALL_FLAG)
+        if (strstr(call_obj_name, "guard"))
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", call_obj_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
-        else if (flag == MON_ENTER_LOBBY_CALL_FLAG)
+        else if (strstr(call_obj_name, "lobby"))
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
@@ -2590,7 +2597,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         if (is_extern_call == true)
         {
                 monitor_channel_set(MON_CH_GUARD);
-                monitor_enter_flag_set(MON_ENTER_GUARD_CALL_FLAG);
+                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         else /*内部呼叫，存储变量*/
@@ -2612,7 +2619,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
                 {
                         layout_monitor_door_ch_btn_create();
                 }
-                monitor_enter_flag_set(MON_ENTER_GUARD_CALL_FLAG);
+                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
 
@@ -2646,7 +2653,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         if (is_extern_call == true)
         {
                 monitor_channel_set(MON_CH_LOBBY);
-                monitor_enter_flag_set(MON_ENTER_LOBBY_CALL_FLAG);
+                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         else /*内部呼叫，存储变量*/
@@ -2668,7 +2675,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
                 {
                         layout_monitor_door_ch_btn_create();
                 }
-                monitor_enter_flag_set(MON_ENTER_LOBBY_CALL_FLAG);
+                monitor_enter_flag_set(MON_ENTER_CALL_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
 

@@ -20,7 +20,7 @@ enum
 };
 
 static int intercom_talk_timeout = 0;
-/*0:空闲，1：call outgoing 2:incomming 3:out_talk 4:in_talk*/
+/*0:空闲，1：call outgoing 2:incomming 3:in_talk 4:out_talk*/
 static int intercom_call_state = 0;
 static char *intercom_call_user = NULL;
 
@@ -246,7 +246,14 @@ static void intercom_talk_call_info_display(void)
         struct tm tm;
         user_time_read(&tm);
         int index = extern_index_get_by_user(intercom_call_user);
-        lv_label_set_text_fmt(obj, "Call: %s %d    %04d-%02d:%02d %02d:%02d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        if (index != -1)
+        {
+                lv_label_set_text_fmt(obj, "Call: %s %d    %04d-%02d:%02d %02d:%02d", lang_str_get(INTERCOM_XLS_LANG_ID_EXTENSION), index, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        }
+        else
+        {
+                lv_label_set_text_fmt(obj, "Call: %s    %04d-%02d:%02d %02d:%02d", network_data_get()->guard_number, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        }
 }
 
 static void intercom_talk_call_time_display(void)
@@ -455,11 +462,26 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
         layout_intercom_talk_vol_bar_display();
 }
 
-static bool intercom_talk_call_answer_callback(char *args)
+static bool intercom_talk_call_answer_callback(char *arg)
 {
         if (intercom_call_state == 4)
         {
                 return false;
+        }
+        if (strstr(arg, "guard") != NULL)
+        {
+                char *start = strstr(arg, "guard");
+                /*获取别名*/
+                char *end = strchr(arg, '"');
+                if (end == NULL)
+                {
+                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                *end = 0;
+                layout_monitor_ch_name_set(start);
+                monitor_enter_flag_set(MON_ENTER_CALL_TALK_FLAG);
+                sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }
         sat_linphone_audio_play_stop();
         intercom_call_state = 4;
