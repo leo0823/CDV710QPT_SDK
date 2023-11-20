@@ -96,7 +96,6 @@ static void layout_security_ececution_stop_btn_display(void)
     lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_security_obj_id_obj_id_confirm_btn);
     if (user_data_get()->alarm.security_alarm_enable)
     {
-        printf("set false");
         lv_obj_set_style_bg_color(obj, lv_color_hex(0x00A8FF), LV_PART_MAIN);
         lv_obj_t *label = lv_obj_get_child_form_id(obj, layout_security_obj_id_confirm_label);
         lv_label_set_text(label, lang_str_get(LAYOUT_SECURITY_XLS_LANG_ID_END));
@@ -255,14 +254,12 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             user_data_get()->alarm.security_alarm_enable = user_data_get()->alarm.security_alarm_enable ? false : true;
             unsigned char list = layout_security_sensor_enable_flag();
             user_data_get()->alarm.security_alarm_enable_list |= list;
-
+            user_data_save(true, true);
             if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
-                user_data_get()->sync_timestamp = user_timestamp_get();
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
             }
-
-            user_data_save();
+            SAT_DEBUG("user_data_get()->sync_timestamp is %llu", user_data_get()->sync_timestamp);
             sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
@@ -401,7 +398,7 @@ static void layout_security_cctv_record_enable_init_display(void)
         {
             lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
             user_data_get()->alarm.security_auto_record = false;
-            user_data_save();
+            user_data_save(true, true);
         }
         else
         {
@@ -485,14 +482,12 @@ static void emergency_occupy_audo_record_click(lv_event_t *ev)
         }
     }
     user_data_get()->alarm.security_auto_record = user_data_get()->alarm.security_auto_record ? false : true;
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
 
-    user_data_save();
     layout_security_cctv_record_enable_display();
 }
 
@@ -508,14 +503,11 @@ static void layout_security_passwd_check_success_cb(void)
     user_data_get()->alarm.security_alarm_enable = false;
     unsigned char list = layout_security_sensor_enable_flag();
     user_data_get()->alarm.security_alarm_enable_list &= (~list);
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-
-    user_data_save();
     sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 

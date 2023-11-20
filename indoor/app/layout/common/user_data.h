@@ -117,7 +117,7 @@ typedef struct
 
         char security_sensor_enable[8]; // 安全模式下传感器使能状态：只有被使能的传感器才能设置监测状态
 
-        char alarm_trigger_enable[8];
+        char alarm_trigger_enable[8]; // 是否允许触发（主要针对离家模式，有个触发缓冲时间，尽管警报触发了，也得满足缓冲时间结束为止）
 
         char alarm_trigger[8]; // 传感器触发列表
 
@@ -181,7 +181,7 @@ typedef struct
 
 } user_data_info;
 
-bool user_data_save(void);
+bool user_data_save(bool sync, bool active);
 bool user_data_init(void);
 user_data_info *user_data_get(void);
 void user_data_reset(void);

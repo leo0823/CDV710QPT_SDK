@@ -578,7 +578,7 @@ static void sat_layout_enter(always_record)
 static void sat_layout_quit(always_record)
 {
         user_data_get()->always_monitoring = 0;
-        user_data_save();
+        user_data_save(false, false);
         record_video_stop();
         monitor_close(0x02);
         /*sd卡状态处理 */

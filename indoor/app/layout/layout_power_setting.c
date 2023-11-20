@@ -48,7 +48,7 @@ static void power_setting_skip_btn_client(lv_event_t *ev)
 	// user_data_init();
 	// network_data_init();
 	user_data_get()->is_device_init = true;
-	user_data_save();
+	user_data_save(false,false);
 	sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 

@@ -96,14 +96,14 @@ static void setting_frame_display_time_checkbox_click(lv_event_t *e)
                 if (user_data_get()->display.frame_time_en != 0)
                 {
                         user_data_get()->display.frame_time_en = 0;
-                        user_data_save();
+                        user_data_save(false, false);
                         setting_frame_display_time_main_checkbox_obj_display();
                 }
         }
         else if (user_data_get()->display.frame_time_en == 0)
         {
                 user_data_get()->display.frame_time_en = 1;
-                user_data_save();
+                user_data_save(false, false);
                 setting_frame_display_time_main_checkbox_obj_display();
         }
 }
@@ -201,16 +201,17 @@ static void sat_layout_enter(setting_frame_display_time)
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                             NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-                lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_1, 0, 0, 104, 201,
-                                         NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
-                lv_common_roller_create(parent, setting_frame_display_time_obj_id_roller_start_hour, 0, 65, 104, 201,
+                lv_obj_t *arrow = lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_1, 0, 0, 104, 201,
+                                                           NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                           resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                lv_obj_add_flag(arrow, LV_OBJ_FLAG_HIDDEN);
+                lv_common_roller_create(parent, setting_frame_display_time_obj_id_roller_start_hour, 0, 0, 104, 201,
                                         setting_frame_display_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        1, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                        3, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                         resource_ui_src_get("roller_icon.png"));
 
                 lv_common_text_create(parent, setting_frame_display_time_obj_id_roller_1_obj, 104, 78, 36, 72,
@@ -218,16 +219,17 @@ static void sat_layout_enter(setting_frame_display_time)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
-                lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_2, 140, 0, 104, 201,
-                                         NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
-                lv_common_roller_create(parent, setting_frame_display_time_obj_id_rolle_start_min, 140, 65, 104, 201,
+                arrow = lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_2, 140, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                lv_obj_add_flag(arrow, LV_OBJ_FLAG_HIDDEN);
+                lv_common_roller_create(parent, setting_frame_display_time_obj_id_rolle_start_min, 140, 0, 104, 201,
                                         setting_frame_display_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        1, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                        3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                         resource_ui_src_get("roller_icon.png"));
 
                 lv_common_text_create(parent, setting_frame_display_time_obj_id_roller_2_obj, 280, 78, 36, 72,
@@ -235,16 +237,17 @@ static void sat_layout_enter(setting_frame_display_time)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       "-", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
-                lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_3, 352, 0, 104, 201,
-                                         NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
-                lv_common_roller_create(parent, setting_frame_display_time_obj_id_roller_end_hour, 352, 65, 104, 201,
+                arrow = lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_3, 352, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                lv_obj_add_flag(arrow, LV_OBJ_FLAG_HIDDEN);
+                lv_common_roller_create(parent, setting_frame_display_time_obj_id_roller_end_hour, 352, 0, 104, 201,
                                         setting_frame_display_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        1, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                        3, 30, 0, 23, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                         resource_ui_src_get("roller_icon.png"));
 
                 lv_common_text_create(parent, setting_frame_display_time_obj_id_roller_3_obj, 456, 78, 36, 72,
@@ -252,16 +255,17 @@ static void sat_layout_enter(setting_frame_display_time)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       ":", 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
-                lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_4, 492, 0, 104, 201,
-                                         NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                         resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
-                lv_common_roller_create(parent, setting_frame_display_time_obj_id_roller_end_min, 492, 65, 104, 201,
+                arrow = lv_common_img_btn_create(parent, setting_frame_display_time_obj_id_roller_arrow_4, 492, 0, 104, 201,
+                                                 NULL, false, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                 resource_ui_src_get("roller_arrow_up_down.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_BOTTOM_MID);
+                lv_obj_add_flag(arrow, LV_OBJ_FLAG_HIDDEN);
+                lv_common_roller_create(parent, setting_frame_display_time_obj_id_roller_end_min, 492, 0, 104, 201,
                                         setting_frame_display_time_set_roller_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x323237,
                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0x00a8ff,
-                                        1, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
+                                        3, 30, 0, 59, 0x303030, 0x00a8ff, LV_TEXT_ALIGN_CENTER, lv_font_normal,
                                         resource_ui_src_get("roller_icon.png"));
                 layout_setting_frame_display_time_display();
         }
@@ -296,7 +300,7 @@ static void sat_layout_quit(setting_frame_display_time)
 
         user_data_get()->display.frame_time_end = hour * 60 + min;
 
-        user_data_save();
+        user_data_save(false, false);
 }
 
 sat_layout_create(setting_frame_display_time)

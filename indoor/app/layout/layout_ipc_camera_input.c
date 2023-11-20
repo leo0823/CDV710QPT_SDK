@@ -204,6 +204,7 @@ static bool ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_mode
         {
                 return false;
         }
+
         return true;
 }
 /*判断密码长度是否符合要求*/
@@ -247,7 +248,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         }
 
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
-
+        SAT_DEBUG("====================");
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
                 // struct ipcamera_info *node = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
@@ -278,6 +279,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
                 }
                 else
                 {
+                        SAT_DEBUG("====================");
                         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                                 lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_PASSWD_MODIFY_FAIL),
                                                                 ipc_camera_password_input_msgbox_confirm_click);
@@ -285,6 +287,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         }
         else
         {
+                SAT_DEBUG("====================");
                 ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                         lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH),
                                                         ipc_camera_password_input_msgbox_confirm_click);
@@ -322,6 +325,7 @@ static bool ipc_camera_input_new_name_processing(void)
         strncpy(input_name, lv_textarea_get_text(textarea), sizeof(input_name));
         if (sat_ipcamera_device_name_set(input_name, layout_ipc_camera_edit_index_get(), 1500) == true)
         {
+                SAT_DEBUG("====================");
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         char doorname[128] = {0};
@@ -345,6 +349,7 @@ static bool ipc_camera_input_new_name_processing(void)
 
                 return true;
         }
+        SAT_DEBUG("====================");
         ipc_camera_password_input_msgbox_create(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name,
                                                 lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_NAME_MODIY_FAIL),
                                                 ipc_camera_password_input_msgbox_confirm_click);
@@ -373,18 +378,52 @@ static void ipc_camera_input_hidden_btn_display(void)
                 lv_obj_clear_flag(hide_btn, LV_OBJ_FLAG_HIDDEN);
         }
 }
+/************************************************************
+** 函数说明:
+** 作者: xiaoxiao
+** 日期：2023-11-20 10:50:16
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void layout_ipc_camera_input_space_btn_ctrl(void)
+{
+        int flag = layout_ipc_camera_input_flag_get();
+
+        if ((flag == IPC_CAMERA_FLAG_CHANGE_NAME) || (flag == IPC_CAMERA_FLAG_CHANGE_PWD))
+        {
+                // lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_keyboard);
+                // lv_keyboard_mode_t mode = lv_keyboard_get_mode(obj);
+                // if ((mode == LV_KEYBOARD_MODE_TEXT_LOWER) || (mode == LV_KEYBOARD_MODE_TEXT_UPPER))
+                // {
+                //         lv_btnmatrix_set_btn_ctrl(obj, 40, LV_BTNMATRIX_CTRL_DISABLED);
+                //         lv_btnmatrix_clear_btn_ctrl(obj, 42, LV_BTNMATRIX_CTRL_DISABLED);
+                // }
+                // else if (mode == LV_KEYBOARD_MODE_SPECIAL)
+                // {
+                //         lv_btnmatrix_set_btn_ctrl(obj, 42, LV_BTNMATRIX_CTRL_DISABLED);
+                //         lv_btnmatrix_clear_btn_ctrl(obj, 40, LV_BTNMATRIX_CTRL_DISABLED);
+                // }
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), 111, 220, 527, 585, 65,
+                                         NULL, true, LV_OPA_TRANSP, 0x808080, LV_OPA_TRANSP, 0x808080,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+}
 
 static void ipc_camera_password_input_keyboard_click(lv_event_t *ev)
 {
         lv_obj_t *obj = lv_event_get_target(ev);
+        lv_keyboard_mode_t mode = lv_keyboard_get_mode(obj);
+        int btn_id = lv_btnmatrix_get_selected_btn(obj);
+        lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
+        const char *txt = lv_textarea_get_text(textarea);
         /*判断是否是有效的键值*/
-        if (ipc_camera_determine_whether_the_key_value_is_valid(lv_keyboard_get_mode(obj), lv_btnmatrix_get_selected_btn(obj)) == false)
+        if (ipc_camera_determine_whether_the_key_value_is_valid(mode, btn_id) == false)
         {
                 return;
         }
 
-        lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
-        const char *txt = lv_textarea_get_text(textarea);
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:46:56
@@ -490,7 +529,7 @@ static void sat_layout_enter(ipc_camera_input)
                                                      LV_OPA_COVER, 0Xffffff, LV_OPA_COVER, 0Xffffff,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                      0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
-                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 17 : ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 9
+                                                     NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_LEFT, lv_font_normal, ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_NAME ? 16 : ipc_camera_input_flag & IPC_CAMERA_FLAG_CHANGE_PWD ? 9
                                                                                                                                                                                                                                  : 32,
                                                      30, 500, 0Xffffff);
 
@@ -537,8 +576,8 @@ static void sat_layout_enter(ipc_camera_input)
                                                                        0xFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large,
                                                                        24, 18, 18, 8, 12, 12,
                                                                        LV_OPA_COVER, 0x353535, LV_OPA_COVER, 0x353535);
-
                         lv_keyboard_set_textarea(keyboard, textarea);
+                        layout_ipc_camera_input_space_btn_ctrl();
                 }
         }
 }

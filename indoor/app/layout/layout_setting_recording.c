@@ -388,7 +388,7 @@ static void ssetting_recording_auto_msgbox_confirm_click(lv_event_t *e)
                 }
 
                 user_data_get()->auto_record_mode = (char)mode;
-                user_data_save();
+                user_data_save(true, true);
                 setting_recording_auto_sub_display();
         }
         setting_recording_msgbox_del();
@@ -497,7 +497,7 @@ static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
         int mode = setting_recording_checkbox_mode_get();
         user_data_get()->always_monitoring = mode;
 
-        user_data_save();
+        user_data_save(true, true);
         if (mode > 0)
         {
                 sat_layout_goto(always_record, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);

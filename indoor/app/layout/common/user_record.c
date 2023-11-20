@@ -25,7 +25,8 @@ static int jpeg_record_mode = REC_MODE_MANUAL;
 
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
 {
-        if ((mode & 0x1F))
+        printf("mode is 0x%x\n", mode);
+        if ((mode & 0x3F))
         {
                 file_type type = FILE_TYPE_FLASH_PHOTO;
                 if ((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL))
@@ -43,8 +44,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 {
                         name = network_data_get()->door_device[ch].door_name;
                 }
-
-                media_file_create(type, name, mode & 0x2F, file_path);
+                media_file_create(type, name, mode & 0x3F, file_path);
                 int fd = open(file_path, O_CREAT | O_WRONLY);
                 if (fd >= 0)
                 {

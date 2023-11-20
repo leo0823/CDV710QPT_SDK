@@ -314,7 +314,7 @@ static void layout_sensor_setting_save(void)
             }
         }
     }
-    user_data_save();
+    user_data_save(true, true);
     sat_layout_goto(sensor_settings, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
 }
 

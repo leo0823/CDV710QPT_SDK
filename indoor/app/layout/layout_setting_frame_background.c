@@ -64,7 +64,7 @@ static void setting_frame_background_obj_checkbox_click(lv_event_t *e)
                 if (user_data_get()->display.frame_background != 0)
                 {
                         user_data_get()->display.frame_background = 0;
-                        user_data_save();
+                        user_data_save(false,false);
                         setting_frame_background_checkbox_display();
                 }
         }
@@ -72,7 +72,7 @@ static void setting_frame_background_obj_checkbox_click(lv_event_t *e)
         {
 
                 user_data_get()->display.frame_background = 1;
-                user_data_save();
+                user_data_save(false,false);
                 setting_frame_background_checkbox_display();
         }
 }

@@ -410,7 +410,7 @@ static void setting_motion_select_camera_msgbox_confim_click(lv_event_t *e)
         {
                 user_data_get()->motion.select_camera = item_n;
                 printf("item_n is %d\n", item_n);
-                user_data_save();
+                user_data_save(true, true);
                 setting_motion_select_camera_display();
         }
 
@@ -428,7 +428,7 @@ static void setting_motion_storage_foramt_msgbox_confim_click(lv_event_t *e)
         if (item_n != user_data_get()->motion.saving_fmt)
         {
                 user_data_get()->motion.saving_fmt = item_n;
-                user_data_save();
+                user_data_save(true, true);
                 setting_motion_storage_foramt_display();
         }
 
@@ -445,7 +445,7 @@ static void setting_motion_sensivity_msgbox_confim_click(lv_event_t *e)
         if (item_n != user_data_get()->motion.sensivity)
         {
                 user_data_get()->motion.sensivity = item_n;
-                user_data_save();
+                user_data_save(true, true);
                 setting_motion_sensivitity_display();
         }
 
@@ -462,7 +462,7 @@ static void setting_motion_lcd_on_msgbox_confim_click(lv_event_t *e)
         if (item_n != user_data_get()->motion.lcd_en)
         {
                 user_data_get()->motion.lcd_en = item_n;
-                user_data_save();
+                user_data_save(true, true);
                 setting_motion_lcd_display();
         }
         setting_motion_msgbox_del();
@@ -491,7 +491,7 @@ static void setting_motion_list_item_click(lv_event_t *e)
         if (item->id == setting_motion_obj_id_use_motion_cont)
         {
                 user_data_get()->motion.enable = user_data_get()->motion.enable ? false : true;
-                user_data_save();
+                user_data_save(true, true);
                 setting_motion_use_motion_detection_display();
         }
         else if (item->id == setting_motion_obj_id_select_camera_cont)

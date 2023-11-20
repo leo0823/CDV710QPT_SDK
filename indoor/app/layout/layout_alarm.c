@@ -183,7 +183,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
         if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
-                user_data_save();
+                user_data_save(true, true);
                 buzzer_call_trigger_check();
         }
         else
@@ -196,7 +196,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 {
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
-                        user_data_save();
+                        user_data_save(true, true);
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(security_emergency, arg1, &tm);
@@ -337,23 +337,26 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
                                         {
                                                 int ch = layout_alarm_alarm_channel_get();
+                                                float value = user_sensor_value_get(ch);
+                                                SAT_DEBUG("=====value is %f========", value);
+                                                SAT_DEBUG("=====ch is %d========", ch);
                                                 if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch) > ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
                                                 {
                                                         user_data_get()->alarm.alarm_trigger[ch] = false;
                                                         user_data_get()->alarm.alarm_trigger_enable[ch] = false;
-
+                                                        user_data_save(true, true);
                                                         if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                                         {
-                                                                user_data_get()->sync_timestamp = user_timestamp_get();
                                                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                         }
-                                                        user_data_save();
+
                                                         struct tm tm;
                                                         user_time_read(&tm);
                                                         alarm_list_add(emergency_stop, ch, &tm);
                                                 }
                                                 else
                                                 {
+                                                        SAT_DEBUG("=========================");
                                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN); // 错误三次键盘隐藏
                                                         layout_alarm_passwd_input_txt_reset();
 
@@ -364,20 +367,20 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                                 alarm_ring_close_timer = NULL;
                                                         }
                                                         alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
+                                                        return;
                                                 }
                                         }
                                         else
                                         {
+                                                SAT_DEBUG("=========================");
                                                 user_data_get()->alarm.alarm_trigger[7] = false;
-
+                                                user_data_save(true, true);
                                                 if ((user_data_get()->system_mode & 0x0f) != 0x01)
                                                 {
-                                                        user_data_get()->sync_timestamp = user_timestamp_get();
                                                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                 }
-                                                user_data_save();
                                         }
-
+                                        SAT_DEBUG("=========================");
                                         if (alarm_trigger_check() == false)
                                         {
                                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -546,7 +549,7 @@ static void layout_alarm_alarm_time_label_display(void)
         lv_label_set_text(obj, time_str);
 }
 
-static bool layout_alarm_streams_running_register_callback(char *arg)
+static void layout_alarm_auto_record_timer(lv_timer_t *t)
 {
         int rec_mode = 0;
         if (user_data_get()->alarm.security_alarm_enable)
@@ -556,12 +559,12 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
                         if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
                         {
 
-                                record_video_start(true, REC_MODE_ALARM);
+                                record_video_start(false, REC_MODE_ALARM);
                         }
-                }
-                else
-                {
-                        rec_mode |= REC_MODE_ALARM;
+                        else
+                        {
+                                rec_mode |= REC_MODE_ALARM;
+                        }
                 }
         }
         else if (user_data_get()->alarm.away_alarm_enable)
@@ -571,7 +574,7 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
                         if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
                         {
 
-                                record_video_start(true, REC_MODE_ALARM);
+                                record_video_start(false, REC_MODE_ALARM);
                         }
                 }
                 else
@@ -580,7 +583,14 @@ static bool layout_alarm_streams_running_register_callback(char *arg)
                 }
         }
         sat_linphone_calls_cmd_send();
+        SAT_DEBUG("rec_mode is %d\n", rec_mode);
         record_jpeg_start(rec_mode | REC_MODE_TUYA_ALARM);
+}
+
+static bool layout_alarm_streams_running_register_callback(char *arg)
+{
+
+        lv_timer_set_repeat_count(lv_sat_timer_create(layout_alarm_auto_record_timer, 1000, NULL), 1);
 
         return true;
 }
@@ -604,7 +614,7 @@ static bool layout_alarm_ringplay_register_callback(int arg)
 static void layout_alarm_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
         user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save();
+        user_data_save(true, true);
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj->user_data = NULL;
@@ -725,7 +735,7 @@ static void sat_layout_enter(alarm)
                                                                  resource_ui_src_get(layout_alarm_alarm_channel_get() == 7 ? "ic_emergency_bell.png" : "ic_emergency_occur.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                         // lv_common_style_set_boader(obj, 0, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0xff5951, LV_PART_MAIN);
-                        lv_sat_timer_create(alarm_alarm_cont_display, 1000, obj);
+                        lv_sat_timer_create(alarm_alarm_cont_display, 100000, obj);
                 }
 
                 /************************************************************

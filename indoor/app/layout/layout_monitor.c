@@ -384,7 +384,7 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
         if (monitor_timeout_sec > 0)
         {
                 monitor_obj_timeout_label_display();
-                // monitor_timeout_sec--;
+                monitor_timeout_sec--;
         }
         else
         {
@@ -487,7 +487,7 @@ static void monitor_top_display_delay_close_task(lv_timer_t *ptimer)
         if (user_data_get()->alarm.buzzer_alarm)
         {
                 user_data_get()->alarm.buzzer_alarm = false;
-                user_data_save();
+                user_data_save(true, true);
         }
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
@@ -1688,7 +1688,7 @@ static void layout_monitor_setting_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
 
                 user_data_get()->audio.entrance_voice = value;
-                user_data_save();
+                user_data_save(false, false);
                 sat_linphone_audio_talk_volume_set(value);
         }
         else
@@ -1696,7 +1696,7 @@ static void layout_monitor_setting_volume_slider_change_cb(lv_event_t *e)
                 int value = lv_slider_get_value(obj);
                 user_data_get()->audio.entrance_volume = value;
                 sat_linphone_audio_play_volume_set(value);
-                user_data_save();
+                user_data_save(false, false);
         }
 }
 
@@ -2570,7 +2570,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         strncpy(call_obj_name, start, sizeof(call_obj_name));
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_door_call_play(user_data_get()->audio.common_entrance_tone);
+                ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
         }
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
@@ -2626,7 +2626,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         strncpy(call_obj_name, start, sizeof(call_obj_name));
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_door_call_play(user_data_get()->audio.common_entrance_tone);
+                ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
         }
         /*如果是外部呼叫，则直接进入监控*/
         if (is_extern_call == true)
@@ -2672,7 +2672,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         }
         sscanf(str + 4, "%ld", &call_id);
 
-        int index = monitor_index_get_by_user(arg);
+        char index = monitor_index_get_by_user(arg);
         // if ((monitor_valid_channel_check(index - 1)) == false)
         // {
         //         sat_linphone_handup(-1);
@@ -2701,9 +2701,10 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         *e = 0;
 
         /*获取固定命名通道*/
-        char fulll_name[128] = {0};
-        snprintf(fulll_name, sizeof(fulll_name) - 1, "Door%d(%s)", index, s);
-
+        char fulll_name[64] = {0};
+        char doorname[17] = {0};
+        strncpy(doorname, s, 16);
+        snprintf(fulll_name, sizeof(fulll_name) - 1, "Door%d(%s)", index, doorname);
         /*door camera 名称被修改*/
         if (strcmp(fulll_name, network_data_get()->door_device[index - 1].door_name) != 0)
         {
@@ -2714,7 +2715,7 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
 
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_door_call_play(user_data_get()->audio.door_tone);
+                ring_door_call_play(user_data_get()->audio.door_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
         }
 
         /*如果是外部呼叫，则直接进入监控*/
@@ -2782,7 +2783,7 @@ static bool monitor_intercom_extern_call(const char *arg)
         {
                 if (user_data_get()->audio.ring_mute == false)
                 {
-                        ring_intercom_play(user_data_get()->audio.extenion_tone);
+                        ring_intercom_play(user_data_get()->audio.extenion_tone, 1);
                 }
                 intercom_call_status_setting(2);
 
@@ -2882,7 +2883,7 @@ static bool monitor_talk_call_end_callback(char *arg)
                 return monitor_doorcamera_end_process(arg);
         }
         /*sip:5xxx代表室内设备*/
-        else if (strstr(arg, "user:\"50") != NULL)
+        else if ((strstr(arg, "user:\"50") != NULL) || (strstr(arg, "sip:50") != NULL))
         {
                 return monitor_doorcamera_end_process(arg);
         }
@@ -2997,7 +2998,7 @@ static bool tuya_event_cmd_ch_channge(int channel)
 static bool tuya_event_cmd_motion_enable(int arg)
 {
         user_data_get()->motion.enable = (bool)arg;
-        user_data_save();
+        user_data_save(true, true);
         return true;
 }
 

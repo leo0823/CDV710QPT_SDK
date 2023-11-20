@@ -142,7 +142,7 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
                 {
 
                         strncpy(reset_unit ? user_data_get()->etc.password : user_data_get()->etc.comm_ent_password, buffer, 4);
-                        user_data_save();
+                        user_data_save(true, true);
                         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
         }

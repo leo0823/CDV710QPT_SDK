@@ -29,7 +29,7 @@
 #include "common/user_standby.h"
 #include "common/user_alarm_list.h"
 #include "common/user_call_list.h"
-#define SYSTEM_VERSION "Ver:0.0.6.6"
+#define SYSTEM_VERSION "Ver:0.0.6.8"
 
 #define TUYA_PID "nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
 

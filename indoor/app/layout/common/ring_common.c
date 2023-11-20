@@ -26,7 +26,7 @@ bool ring_touch_play(void)
 ** 日期: 2022-12-26 16:48:12
 ** 说明: 播放门口机的音效
 ***********************************************/
-bool ring_door_call_play(int index)
+bool ring_door_call_play(int index, int count)
 {
         if (user_data_get()->audio.entrance_volume == 0)
         {
@@ -35,7 +35,7 @@ bool ring_door_call_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
-        sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
+        sat_linphone_audio_play_start(cmd, count);
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entrance_volume);
         return true;
 }
@@ -60,7 +60,7 @@ bool ring_unlock_play(void)
 ** 日期: 2022-12-26 16:48:12
 ** 说明:intercom 铃声
 ***********************************************/
-bool ring_intercom_play(int index)
+bool ring_intercom_play(int index, int count)
 {
         if (user_data_get()->audio.extension_volume == 0)
         {
@@ -70,7 +70,7 @@ bool ring_intercom_play(int index)
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "extension/extension_call_%d.mp3", index);
         printf("cmd is %s\n", cmd);
-        sat_linphone_audio_play_start(cmd, 1);
+        sat_linphone_audio_play_start(cmd, count);
         sat_linphone_audio_play_volume_set(user_data_get()->audio.extension_volume);
         return true;
 }
@@ -84,6 +84,7 @@ bool ring_intercom_play(int index)
 ************************************************************/
 bool ring_alarm_play(void)
 {
+        return true;
         sat_linphone_audio_play_start(RESOURCE_RING_PATH "alarm/alarm.mp3", 1);
         sat_linphone_audio_play_volume_set(100);
         return true;
@@ -118,7 +119,7 @@ bool ring_buzzer_play(int index)
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-bool ring_common_door_play(int index)
+bool ring_common_door_play(int index, int count)
 {
         if (user_data_get()->audio.common_entrance_volume == 0)
         {
@@ -127,7 +128,7 @@ bool ring_common_door_play(int index)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "common_entrance/Common_entrance_%d.mp3", index);
-        sat_linphone_audio_play_start(cmd, 1);
+        sat_linphone_audio_play_start(cmd, count);
 
         sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
         return true;

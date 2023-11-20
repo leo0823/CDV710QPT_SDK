@@ -30,17 +30,11 @@ typedef enum
 #define FRAME_9_FILE_PATH "/app/resource/wallpaper/bg_openframe_background09.jpg"
 #define FRAME_10_FILE_PATH "/app/resource/wallpaper/bg_openframe_background10.jpg"
 
-char *frame_path[10] = {
-		FRAME_1_FILE_PATH,
-		FRAME_2_FILE_PATH,
+char *frame_path[3] = {
+
 		FRAME_3_FILE_PATH,
 		FRAME_4_FILE_PATH,
 		FRAME_5_FILE_PATH,
-		FRAME_6_FILE_PATH,
-		FRAME_7_FILE_PATH,
-		FRAME_8_FILE_PATH,
-		FRAME_9_FILE_PATH,
-		FRAME_10_FILE_PATH,
 
 };
 static int frame_path_index = 0;
@@ -635,7 +629,7 @@ static void frame_show_time_start(void)
 {
 	if (user_data_get()->display.frame_background == true)
 	{
-		if ((frame_show_frame_path == NULL) || (frame_path_index == 7))
+		if ((frame_show_frame_path == NULL) || (frame_path_index == 3))
 		{
 			frame_show_frame_path = frame_path[frame_path_index = 0];
 		}
@@ -738,9 +732,10 @@ static void frame_show_calendar_start(void)
 {
 	if (user_data_get()->display.frame_background == true)
 	{
-		if ((frame_show_frame_path == NULL) || (frame_path_index == 7))
+		if ((frame_show_frame_path == NULL) || (frame_path_index == 3))
 		{
-			frame_show_frame_path = frame_path[frame_path_index = 0];
+			frame_path_index = 0;
+			frame_show_frame_path = frame_path[frame_path_index];
 		}
 		else
 		{

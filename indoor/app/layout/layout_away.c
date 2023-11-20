@@ -300,13 +300,11 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
                     user_data_get()->alarm.away_alarm_enable_list |= 0x01 << i;
                 }
             }
-
+            user_data_save(true, true);
             if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
             }
-            user_data_get()->sync_timestamp = user_timestamp_get();
-            user_data_save();
             sat_layout_goto(away_count, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
     }
@@ -765,14 +763,11 @@ static void layout_away_release_time_msgbox_confirm_click(lv_event_t *e)
         if (!strncmp((const char *)checkbox->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
             user_data_get()->alarm.away_release_time = i * 10;
-
+            user_data_save(true, true);
             if ((user_data_get()->system_mode & 0x0f) != 0x01)
             {
-                user_data_get()->sync_timestamp = user_timestamp_get();
                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
             }
-
-            user_data_save();
             break;
         }
     }
@@ -810,14 +805,11 @@ static void layout_away_setting_time_save(void)
     {
         user_data_get()->alarm.away_setting_time = 3;
     }
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-
-    user_data_save();
     layout_away_msgbox_del();
     layout_away_setting_time_display();
 }
@@ -972,7 +964,7 @@ static void layout_away_cctv_auto_record_init_display(void)
         {
             lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
             user_data_get()->alarm.away_auto_record = false;
-            user_data_save();
+            user_data_save(true, true);
         }
         else
         {
@@ -1011,13 +1003,11 @@ static void away_alarm_save_photo_enable_btn_click(lv_event_t *ev)
 {
 
     user_data_get()->alarm.away_save_photo = user_data_get()->alarm.away_save_photo ? false : true;
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-    user_data_save();
     layout_away_save_visitor_photo();
 }
 
@@ -1025,14 +1015,11 @@ static void away_bypass_call_enable_btn_click(lv_event_t *ev)
 {
 
     user_data_get()->alarm.bypass_call = user_data_get()->alarm.bypass_call ? false : true;
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-
-    user_data_save();
     layout_away_bypass_call_display();
 }
 
@@ -1092,14 +1079,11 @@ static void away_cctv_record_enable_btn_click(lv_event_t *ev)
         }
     }
     user_data_get()->alarm.away_auto_record = user_data_get()->alarm.away_auto_record ? false : true;
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-
-    user_data_save();
     layout_away_cctv_auto_record_display();
 }
 
@@ -1183,15 +1167,11 @@ static void layout_away_passwd_check_success_cb(void)
     user_data_get()->alarm.away_alarm_enable = false;
     user_data_get()->alarm.away_alarm_enable_list &= (~list);
     user_data_get()->alarm.away_setting_countdown = false;
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-
-    user_data_save();
-
     if (layout_away_count_data_get()->away_release_time_countdown_timer != NULL)
     {
         lv_timer_del(layout_away_count_data_get()->away_release_time_countdown_timer);
@@ -1205,6 +1185,7 @@ static void layout_away_passwd_check_success_cb(void)
 
 static void sat_layout_enter(away)
 {
+
     /************************************************************
     ** 函数说明:
     ** 作者: xiaoxiao

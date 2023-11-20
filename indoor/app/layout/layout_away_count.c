@@ -47,13 +47,12 @@ static void layout_away_count_passwd_check_success_cb(void)
     lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
     layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
     layout_away_count_data_get()->away_count_sec = 0;
-
+    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
-        user_data_get()->sync_timestamp = user_timestamp_get();
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-    user_data_save();
+
     sat_layout_goto(away, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
 }
 
@@ -112,7 +111,7 @@ static void layout_away_alarm_release_det_timer(lv_timer_t *ptimer)
                     layout_alarm_alarm_channel_set(i);
                     user_data_get()->alarm.emergency_mode = 1;
                     user_data_get()->alarm.alarm_ring_play = true;
-                    user_data_save();
+                    user_data_save(true, true);
                     sat_linphone_handup(0xFFFF);
                     sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
@@ -132,7 +131,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
     if ((arg1 == 7) && (arg2 < ALM_LOW))
     {
         user_data_get()->alarm.buzzer_alarm = true;
-        user_data_save();
+        user_data_save(true, true);
         buzzer_call_trigger_check();
     }
     else
@@ -163,7 +162,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.emergency_mode = 1;
                         user_data_get()->alarm.alarm_ring_play = true;
-                        user_data_save();
+                        user_data_save(true, true);
                         sat_linphone_handup(0xFFFF);
                         sat_layout_goto(alarm, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                     }
@@ -178,7 +177,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
                         layout_away_alarm_release_det_timer(NULL);
                     }
                 }
-                user_data_save();
+                user_data_save(true, true);
             }
         }
     }
@@ -225,7 +224,7 @@ static void layout_away_count_timer(lv_timer_t *ptimer)
         lv_timer_del(layout_away_count_data_get()->away_setting_time_countdown_timer);
         layout_away_count_data_get()->away_setting_time_countdown_timer = NULL;
         user_data_get()->alarm.away_alarm_enable = true;
-        user_data_save();
+        user_data_save(true, true);
 
         for (int i = 0; i < 7; i++)
         {

@@ -389,7 +389,7 @@ static void setting_general_door1_opening_moethod_msgbox_confirm_click(lv_event_
         {
                 user_data_get()->etc.open_the_door = 1;
         }
-        user_data_save();
+        user_data_save(true, true);
         setting_general_msgbox_del();
         door_open_method_sub_display();
 }
@@ -446,7 +446,7 @@ static void setting_general_door1_opening_modoule_msgbox_confirm_click(lv_event_
         {
                 user_data_get()->etc.door1_open_door_mode = 1;
         }
-        user_data_save();
+        user_data_save(true, true);
         setting_general_msgbox_del();
         door1_open_moudle_sub_display();
 }
@@ -496,7 +496,7 @@ static void setting_general_door2_opener_num_msgbox_confirm_click(lv_event_t *ev
         {
                 user_data_get()->etc.door2_lock_num = 2;
         }
-        user_data_save();
+        user_data_save(true, true);
         setting_general_msgbox_del();
         door2_open_lock_num_sub_display();
 }
@@ -616,7 +616,7 @@ static void setting_general_call_time_msgbox_confirm_click(lv_event_t *ev)
         {
                 user_data_get()->etc.call_time = 3;
         }
-        user_data_save();
+        user_data_save(true, true);
         setting_general_msgbox_del();
         call_time_obj_sub_display();
 }

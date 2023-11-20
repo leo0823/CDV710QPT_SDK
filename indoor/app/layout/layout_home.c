@@ -109,7 +109,7 @@ static void home_mute_obj_display(lv_obj_t *obj)
 static void home_mute_obj_click(lv_event_t *ev)
 {
         user_data_get()->audio.ring_mute = user_data_get()->audio.ring_mute == true ? false : true;
-        user_data_save();
+        user_data_save(false, false);
         home_mute_obj_display(lv_event_get_current_target(ev));
 }
 
@@ -906,15 +906,17 @@ static void layout_home_security_away_btn_display(void)
         lv_obj_t *icon_security_en = lv_obj_get_child_form_id(security, 1);
         if (user_data_get()->alarm.security_alarm_enable)
         {
+                SAT_DEBUG("=====================");
                 lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(icon_security_en, LV_OBJ_FLAG_HIDDEN);
-                lv_obj_clear_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(icon_away_en, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
         }
         else if (user_data_get()->alarm.away_alarm_enable)
         {
+                SAT_DEBUG("=====================");
                 lv_obj_clear_flag(security, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
@@ -924,6 +926,7 @@ static void layout_home_security_away_btn_display(void)
         }
         else
         {
+                SAT_DEBUG("=====================");
                 lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);

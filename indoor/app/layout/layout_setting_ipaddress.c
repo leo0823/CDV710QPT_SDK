@@ -458,7 +458,6 @@ static void layout_setting_ipaddress_item_init_display()
                         char ip[32] = {0};
                         char mask[32] = {0};
                         sat_ip_mac_addres_get("eth0", ip, NULL, mask);
-
                         lv_textarea_set_text(item1_txt, ip);
                         lv_textarea_set_text(item3_txt, mask);
                         lv_textarea_set_text(item4_txt, network_data_get()->network.dns);

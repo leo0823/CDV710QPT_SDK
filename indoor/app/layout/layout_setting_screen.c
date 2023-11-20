@@ -32,7 +32,7 @@ static void setting_screen_slider_obj_change_cb(lv_event_t *ev)
         int value = lv_slider_get_value(parent);
 
         user_data_get()->display.lcd_brigtness = value;
-        user_data_save();
+        user_data_save(false,false);
         backlight_brightness_set(value <= 5 ? 5 : value);
 }
 static void setting_screen_standby_screen_obj_click(lv_event_t *ev)

@@ -78,14 +78,20 @@ int extern_index_get_by_user(const char *user)
                         printf("[%s:%d] user string parse failed(%s)\n", __func__, __LINE__, user);
                         return -1;
                 }
+                else
+                {
+                        s += 6;
+                }
         }
-        s += 8;
+        else
+        {
+                s += 8;
+        }
         if (((*s) < '1') || ((*s) > '9'))
         {
                 printf("[%s:%d] user string aprse failed(%s)\n", __func__, __LINE__, user);
                 return -1;
         }
-
         return ((*s) - '0');
 }
 
@@ -106,10 +112,8 @@ int monitor_channel_prev_get(void)
                 {
                         return ch;
                 }
-
                 ch--;
         }
-
         /*往上获取有效通道*/
         ch = is_channel_ipc_camera(monitor_channel) == false ? (DEVICE_MAX - 1) : (DEVICE_MAX * 2 - 1);
         while (ch != monitor_channel)
@@ -121,7 +125,6 @@ int monitor_channel_prev_get(void)
 
                 ch--;
         }
-
         return -1;
 }
 

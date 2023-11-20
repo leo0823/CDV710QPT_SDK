@@ -148,7 +148,7 @@ static void layout_ipc_edit_sensor_linkage_display(void)
 static void ipc_camera_edit_sensor_linkage_click_confirm(lv_event_t *e)
 {
         user_data_get()->alarm.cctv_sensor[ipc_camera_edit_index] = ipc_camera_edit_sensor_linkage_select_index_get();
-        user_data_save();
+        user_data_save(true, true);
         setting_msgdialog_msg_del(ipc_camera_edit_obj_id_sensor_linkage_msg_bg);
         layout_ipc_edit_sensor_linkage_display();
 }

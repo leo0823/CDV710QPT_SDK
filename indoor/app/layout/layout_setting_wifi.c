@@ -114,7 +114,7 @@ enum
 
 static void setting_wifi_cancel_click(lv_event_t *e)
 {
-        if (0/*(user_data_get()->system_mode & 0xF0) == 0x00*/)
+        if (0 /*(user_data_get()->system_mode & 0xF0) == 0x00*/)
         {
                 sat_layout_goto(single_operation_network, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
@@ -143,29 +143,28 @@ static void wifi_setting_wifi_enable_display(lv_obj_t *obj)
 static void setting_wifi_disable_obj_hidden(void)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_add_cont);
-        if(obj != NULL)
+        if (obj != NULL)
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-        
+
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_connected_user_cont);
-        if(obj != NULL)
+        if (obj != NULL)
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-        
+
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_discovered_user_cont);
-        if(obj != NULL)
+        if (obj != NULL)
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-        
+
         obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_list);
-        if(obj != NULL)
+        if (obj != NULL)
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-        
 }
 static void setting_wifi_setting_click(lv_event_t *e)
 {
@@ -173,22 +172,22 @@ static void setting_wifi_setting_click(lv_event_t *e)
         {
                 return;
         }
-        
+
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_wifi_obj_id_wifi_cont);
         lv_obj_t *img = lv_obj_get_child_form_id(parent, setting_wifi_obj_id_wifi_img);
 
         user_data_get()->wifi_enable = user_data_get()->wifi_enable ? false : true;
-        //user_data_save();
+        user_data_save(false, false);
         wifi_setting_wifi_enable_display(img);
-        
+
         if (user_data_get()->wifi_enable == false)
         {
-                
+
                 setting_wifi_disable_obj_hidden();
         }
         else
         {
-                
+
                 sat_layout_goto(setting_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
         }
 }
@@ -412,7 +411,7 @@ static void sat_layout_enter(setting_wifi)
                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                       lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI_WIRELESS_NETWORK), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
         }
-        
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:25
@@ -431,7 +430,7 @@ static void sat_layout_enter(setting_wifi)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("btn_title_next.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
-        
+
         /***********************************************
         ** 作者: leo.liu
         ** 日期: 2023-2-2 13:42:50
@@ -454,7 +453,6 @@ static void sat_layout_enter(setting_wifi)
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, setting_wifi_obj_id_wifi_img);
                 wifi_setting_wifi_enable_display(obj);
         }
-        
 
         /***********************************************
          ** 作者: leo.liu
@@ -470,11 +468,12 @@ static void sat_layout_enter(setting_wifi)
                                               lang_str_get(WIFI_SETTING_XLS_LANG_ID_ADD_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                               896, 16, 80, 32, setting_wifi_obj_id_wifi_add_img,
                                               (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
-        }  
+        }
         setting_wifi_discovered_network_display();
 
         if (user_data_get()->wifi_enable == false)
-        {             setting_wifi_disable_obj_hidden();
+        {
+                setting_wifi_disable_obj_hidden();
         }
         lv_sat_timer_create(wifi_display_status_timer, 1000, NULL);
 

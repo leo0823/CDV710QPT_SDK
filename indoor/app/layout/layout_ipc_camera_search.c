@@ -55,7 +55,7 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         layout_ipc_camera_edit_index_set(parent->id);
         sat_ipcamera_device_status_reset();
         sat_ipcamera_user_password_set(parent->id, "admin", "123456789");
-        if (0)
+        if (1)
         {
 
                 for (int i = 0; i < 3; i++)
@@ -110,14 +110,13 @@ static void cctv_search_list_display(void)
                         if (strncmp(network_data_get()->cctv_device[i].ipaddr, sat_ipcamera_ipaddr_get(i), sizeof(network_data_get()->cctv_device[i].ipaddr)) == 0)
                         {
                                 registered = true;
-                                break;
+                                continue;
                         }
                 }
                 if (registered == true)
                 {
-                        return;
+                        continue;
                 }
-
                 lv_common_setting_btn_title_sub_info_img_create(list, i, 48, item_y, 928, 88,
                                                                 ipc_camera_serarch_list_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,

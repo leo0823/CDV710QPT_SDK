@@ -646,6 +646,7 @@ static void sat_layout_quit(video)
 
         video_play_duration_callback_register(NULL);
         video_play_state_callback_register(NULL);
+        first_refresh_lcd_cmd_callback_register(NULL);
         //  video_thumb_img_dse_destroy();
 }
 

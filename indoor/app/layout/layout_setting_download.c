@@ -91,26 +91,26 @@ static void sat_layout_enter(setting_download)
                 lv_common_style_set_event(qr, NULL, false, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN);
                 lv_common_style_set_boader(qr, 10, LV_OPA_COVER, 1, LV_BORDER_SIDE_FULL, 0xFFFFFF, LV_PART_MAIN);
 
-                for (int i = 0; i < 100; i++)
-                {
-                        if (1)
-                        {
-                                char tuya_qrc_info[256] = {0};
-                                tuya_ipc_get_qrcode(NULL, tuya_qrc_info, sizeof(tuya_qrc_info));
-                                SAT_DEBUG("tuya_qrc_info is %s", tuya_qrc_info);
-                                qr = lv_qrcode_create(sat_cur_layout_screen_get(), 165, lv_color_hex(0x00000), lv_color_hex(0xFFFFFFF));
-                                lv_qrcode_update(qr, tuya_qrc_info, strlen(tuya_qrc_info) + 1);
-                                lv_common_style_set_common(qr, setting_download_obj_id_binding_device_qrcode, 418, 149, 210, 210, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
-                                lv_common_style_set_event(qr, NULL, false, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN);
-                                lv_common_style_set_boader(qr, 10, LV_OPA_COVER, 1, LV_BORDER_SIDE_FULL, 0xFFFFFF, LV_PART_MAIN);
-                                break;
-                        }
-                        else
-                        {
-                                SAT_DEBUG("tuya offline");
-                                usleep(100 * 1000);
-                        }
-                }
+                // for (int i = 0; i < 100; i++)
+                // {
+                //         if (1)
+                //         {
+                //                 char tuya_qrc_info[256] = {0};
+                //                 tuya_ipc_get_qrcode(NULL, tuya_qrc_info, sizeof(tuya_qrc_info));
+                //                 SAT_DEBUG("tuya_qrc_info is %s", tuya_qrc_info);
+                //                 qr = lv_qrcode_create(sat_cur_layout_screen_get(), 165, lv_color_hex(0x00000), lv_color_hex(0xFFFFFFF));
+                //                 lv_qrcode_update(qr, tuya_qrc_info, strlen(tuya_qrc_info) + 1);
+                //                 lv_common_style_set_common(qr, setting_download_obj_id_binding_device_qrcode, 418, 149, 210, 210, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+                //                 lv_common_style_set_event(qr, NULL, false, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN, LV_OPA_COVER, 0xFFFFFF, LV_PART_MAIN);
+                //                 lv_common_style_set_boader(qr, 10, LV_OPA_COVER, 1, LV_BORDER_SIDE_FULL, 0xFFFFFF, LV_PART_MAIN);
+                //                 break;
+                //         }
+                //         else
+                //         {
+                //                 SAT_DEBUG("tuya offline");
+                //                 usleep(100 * 1000);
+                //         }
+                // }
         }
 }
 static void sat_layout_quit(setting_download)

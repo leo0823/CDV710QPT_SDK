@@ -8,7 +8,7 @@
 #include <unistd.h>
 #include "stdio.h"
 #include "stdlib.h"
-
+#include "common/sat_user_time.h"
 #include "common/sat_user_common.h"
 #include "layout_common.h"
 #define USER_DATA_PATH "/app/data/user_data.cfg"
@@ -196,7 +196,7 @@ static const user_data_info user_data_default =
 };
 // {"010193001012@172.16.0.104", "010193001013@172.16.0.104", "010193001014@172.16.0.185", "010193001015@172.16.0.104", "010193001016@172.16.0.104", "010193001017@172.16.0.104", "010193001018@172.16.0.104"},
 
-bool user_data_save(void)
+bool user_data_save(bool data_sync, bool activve)
 {
         int fd = open(USER_DATA_PATH, O_WRONLY | O_CREAT);
 
@@ -205,16 +205,19 @@ bool user_data_save(void)
                 printf("write open %s fail \n", USER_DATA_PATH);
                 return false;
         }
-
+        if ((user_data_get()->system_mode & 0x0F) == 0x01 && data_sync) // 主机是否需要同步数据
+        {
+                asterisk_server_sync_user_data_force(true);
+        }
+        if (activve) // 是否是主动更改用户数据
+        {
+                user_data.sync_timestamp = user_timestamp_get();
+        }
         write(fd, &user_data, sizeof(user_data_info));
 
         close(fd);
         system("sync");
 
-        if ((user_data_get()->system_mode & 0x0F) == 0x01)
-        {
-                asterisk_server_sync_user_data_force(true);
-        }
         return true;
 }
 
@@ -399,7 +402,7 @@ void user_data_reset(void)
 
         user_data = user_data_default;
         user_data.etc.language = language;
-        user_data_save();
+        user_data_save(true, true);
         system("sync");
 }
 

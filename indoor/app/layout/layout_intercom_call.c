@@ -16,6 +16,7 @@ enum
         intercom_call_obj_id_externsion,
         intercom_call_obj_id_guard,
         intercom_call_obj_id_abnormal_title,
+        intercom_call_obj_id_call_guard,
         intercom_call_obj_id_id_base,
 
         intercom_call_obj_id_list = intercom_call_obj_id_id_base + 8,
@@ -90,19 +91,29 @@ static lv_obj_t *intercom_call_table_view_obj_create(void)
         return tabview;
 }
 
-static void intercom_call_abnormal_title_display(lv_obj_t *obj)
+static void intercom_call_guard_call_display(bool hidden)
 {
+        lv_obj_t *tabview = intercom_call_table_view_obj_create();
+        lv_obj_t *cont = lv_tabview_get_content(tabview);
+        lv_obj_t *page_1 = lv_obj_get_child_form_id(cont, 0);
+        lv_obj_t *guard_call = lv_obj_get_child_form_id(page_1, intercom_call_obj_id_call_guard);
 
-        int online_num = 0;
-        extension_online_check(-1, &online_num);
-        if (0 /*online_num == 0*/)
+        if (hidden)
         {
-                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(guard_call, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
-                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(guard_call, LV_OBJ_FLAG_HIDDEN);
         }
+}
+
+static void layout_intercom_call_guard_station_call(lv_event_t *e)
+{
+        char number[128] = {0};
+
+        sprintf(number, "sip:%s@%s:5066", network_data_get()->guard_number, user_data_get()->mastar_wallpad_ip);
+        sat_linphone_call(number, false, false, NULL);
 }
 
 static void intercom_extension_obj_click(lv_event_t *e)
@@ -113,30 +124,23 @@ static void intercom_extension_obj_click(lv_event_t *e)
         lv_obj_clear_state(obj, LV_STATE_USER_2);
         if (obj->id == intercom_call_obj_id_guard)
         {
-                char number[128] = {0};
-
-                sprintf(number, "sip:%s@%s:5066", network_data_get()->guard_number, user_data_get()->mastar_wallpad_ip);
-
-                sat_linphone_call(number, false, false, NULL);
-                //    lv_obj_t *abnormal = lv_obj_get_child_form_id(parent, intercom_call_obj_id_abnormal_title);
-                // lv_obj_clear_flag(abnormal, LV_OBJ_FLAG_HIDDEN);
-                // lv_obj_t *extension = lv_obj_get_child_form_id(parent, intercom_call_obj_id_externsion);
-                // if (extension != NULL)
-                // {
-                //         lv_obj_clear_state(extension, LV_STATE_USER_1);
-                //         lv_obj_add_state(extension, LV_STATE_USER_2);
-                // }
+                lv_obj_t *extension = lv_obj_get_child_form_id(parent, intercom_call_obj_id_externsion);
+                if (extension != NULL)
+                {
+                        lv_obj_clear_state(extension, LV_STATE_USER_1);
+                        lv_obj_add_state(extension, LV_STATE_USER_2);
+                }
+                intercom_call_guard_call_display(false);
         }
         else
         {
-                lv_obj_t *abnormal = lv_obj_get_child_form_id(lv_obj_get_parent(obj), intercom_call_obj_id_abnormal_title);
-                intercom_call_abnormal_title_display(abnormal);
                 lv_obj_t *guard = lv_obj_get_child_form_id(parent, intercom_call_obj_id_guard);
                 if (guard != NULL)
                 {
                         lv_obj_clear_state(guard, LV_STATE_USER_1);
                         lv_obj_add_state(guard, LV_STATE_USER_2);
                 }
+                intercom_call_guard_call_display(true);
         }
 }
 
@@ -166,20 +170,25 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
-
+        intercom_call_username_setting(arg);
+        intercom_call_status_setting(1);
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                ring_intercom_play(user_data_get()->audio.extenion_tone, 0xffff);
+        }
+        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
-        SAT_DEBUG("======arg is %s\n", arg);
-        intercom_call_username_setting(arg);
-        intercom_call_status_setting(1);
-        if (user_data_get()->audio.ring_mute == false)
-        {
-                ring_intercom_play(user_data_get()->audio.extenion_tone);
-        }
-        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        // intercom_call_username_setting(arg);
+        // intercom_call_status_setting(1);
+        // if (user_data_get()->audio.ring_mute == false)
+        // {
+        //         ring_intercom_play(user_data_get()->audio.extenion_tone);
+        // }
+        // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
@@ -473,7 +482,7 @@ static void intercom_call_log_del_obj_click(lv_event_t *ev)
                 }
 
                 lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(intercom_call_obj_id_log_msg_bg, call_log_msg_bg_obj_id_msgdialog, 282, 93, 460, 352);
-                setting_msgdialog_msg_create(masgbox, call_log_msg_bg_obj_id_title, lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL_TIPS), 0, 110, 460, 120, true);
+                setting_msgdialog_msg_create(masgbox, call_log_msg_bg_obj_id_title, lang_str_get(LAYOUT_CALL_LOG_XLS_LANG_ID_DEL_TIPS), 0, 110, 460, 120, false);
                 setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, call_log_msg_bg_obj_id_confirm_id, call_log_msg_bg_obj_id_cancel_id, layout_intercom_call_log_msgbox_confirm_click, layout_intercom_call_log_msgbox_cancel);
         }
 }
@@ -661,6 +670,7 @@ static void sat_layout_enter(intercom_call)
                                                               NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
+
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -754,10 +764,21 @@ static void sat_layout_enter(intercom_call)
                                                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                                                0, 1, LV_BORDER_SIDE_RIGHT, LV_OPA_COVER, 0x101010,
                                                                                lang_str_get(CALL_XLS_LANG_ID_CANNOT_USE_BEFORE_SYSTEMSETTING), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
-                                intercom_call_abnormal_title_display(abnormal_obj);
+                                lv_obj_add_flag(abnormal_obj, LV_OBJ_FLAG_HIDDEN);
                                 lv_obj_set_style_pad_top(abnormal_obj, 180, LV_PART_MAIN);
+
+                                lv_common_img_text_btn_create(page_1, intercom_call_obj_id_call_guard, 231, 8, 793, 384,
+                                                              layout_intercom_call_guard_station_call, LV_OPA_COVER, 0, LV_OPA_COVER, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                              0, 300, 793, 27, 0,
+                                                              lang_str_get(SERVER_OPERATION_NETWORK_XLS_LANG_ID_GUARD_STATION), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large,
+                                                              308, 150, 173, 154, 1,
+                                                              (const char *)resource_ui_src_get("call_guard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                intercom_call_guard_call_display(true);
                         }
                 }
+
                 lv_obj_t *page_2 = lv_obj_get_child_form_id(cont, 1);
                 {
                         {
@@ -774,7 +795,7 @@ static void sat_layout_enter(intercom_call)
                         lv_obj_t *list = lv_list_create(page_2);
                         lv_common_style_set_common(list, intercom_call_obj_id_list, 40, 0, 1024 - 40, 464, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
                         intercom_call_list_item_create(list);
-                }
+                                }
 
                 {
                         lv_obj_t *obj = lv_common_img_btn_create(sat_cur_layout_screen_get(), intercom_call_obj_id_del, 936, 16, 80, 48,
@@ -789,6 +810,7 @@ static void sat_layout_enter(intercom_call)
                 }
                 lv_tabview_set_act(tabview, enter_intercom_mode, LV_ANIM_OFF);
         }
+
         user_linphone_call_outgoing_call_register(intercom_linphone_outgoing_callback);
 
         user_linphone_call_outgoing_early_media_register(intercom_linphone_outgoing_arly_media_register);

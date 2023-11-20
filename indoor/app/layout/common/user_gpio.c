@@ -238,8 +238,9 @@ static void *user_gpio_detect_task(void *arg)
                                 if ((gpio_level_read(gpio_group_pin[i], &level) == true) && (level != alarm_gpio_value_group[i]))
                                 {
                                         alarm_gpio_value_group[i] = level;
+                                        user_data_get()->alarm.alarm_gpio_value_group[i] = level;
+                                        user_data_save(true, true);
                                         SAT_DEBUG(" sensor%d value:%d", i, level);
-                                        asterisk_server_sync_user_data_force(true);
                                         sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, i, level);
                                 }
                                 usleep(1000 * 100);
@@ -269,9 +270,10 @@ static void *user_gpio_detect_task(void *arg)
                                 if (abs(value - cd4051_value_group[channel_to_sensor[i]]) > 1.0)
                                 {
                                         cd4051_value_group[channel_to_sensor[i]] = value;
+                                        user_data_get()->alarm.alarm_gpio_value_group[channel_to_sensor[i]] = value;
+                                        user_data_save(true, true);
                                         SAT_DEBUG(" sensor%d value:%.02f", channel_to_sensor[i], value);
-                                        asterisk_server_sync_user_data_force(true);
-                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], value * 100);
+                                        sat_msg_send_cmd(MSG_EVENT_CMD_ALARM, channel_to_sensor[i], (int)value);
                                 }
                                 // usleep(1000 * 100);
                         }

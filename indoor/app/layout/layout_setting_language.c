@@ -136,7 +136,7 @@ static void setting_language_list_client(lv_event_t *ev)
 
 				user_data_get()->etc.language = id;
 				language_id_set(id);
-				user_data_save();
+				user_data_save(false,false);
 			}
 
 			return;

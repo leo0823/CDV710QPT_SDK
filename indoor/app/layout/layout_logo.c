@@ -162,16 +162,14 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
                 lv_obj_del(bg);
                 sat_linphone_audio_play_stop();
                 user_data_get()->alarm.buzzer_alarm = false;
+                user_data_save(true, true);
                 if (t != NULL) // 主动取消蜂鸣器报警才需要同步给其他室内机
                 {
-
                         if ((user_data_get()->system_mode & 0X0f) != 0x01)
                         {
-                                user_data_get()->sync_timestamp = user_timestamp_get();
                                 sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                         }
                 }
-                user_data_save();
         }
 }
 
@@ -380,6 +378,10 @@ static void security_mode_sync_callback()
         {
                 sat_layout_goto(security, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
+        else if (sat_cur_layout_get() == sat_playout_get(away) && user_data_get()->alarm.security_alarm_enable == true)
+        {
+                sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
 }
 /************************************************************
 ** 函数说明: 文件同步事件回调
@@ -390,9 +392,9 @@ static void security_mode_sync_callback()
 ************************************************************/
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
-        struct timeval tv1;
-        gettimeofday(&tv1, NULL);
-        SAT_DEBUG("timestamp is %lu\n", tv1.tv_sec * 1000 + tv1.tv_usec / 1000);
+        // struct timeval tv1;
+        // gettimeofday(&tv1, NULL);
+        // SAT_DEBUG("timestamp is %lu\n", tv1.tv_sec * 1000 + tv1.tv_usec / 1000);
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -431,10 +433,12 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data;
-                        // if (user_data_get()->sync_timestamp >= info->sync_timestamp)
-                        // {
-                        //         return;
-                        // }
+                        if (user_data_get()->sync_timestamp >= info->sync_timestamp)
+                        {
+
+                                return;
+                        }
+                        user_data_get()->sync_timestamp = info->sync_timestamp;
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
                                 user_data_get()->etc.call_time = info->etc.call_time;
@@ -494,7 +498,7 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.security_alarm_enable = info->alarm.security_alarm_enable;
                                 security_mode_sync_callback();
                         }
-                        user_data_save();
+                        user_data_save(true, false);
                 }
                 else if ((flag == 0x01) && (max == sizeof(user_network_info)))
                 {
@@ -885,7 +889,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         {
 
                 language_id_set(user_data_get()->etc.language);
-                user_data_save();
+                user_data_save(false, false);
                 /************************************************************
                  ** 函数说明: 待机初始化
                  ** 作者: xiaoxiao

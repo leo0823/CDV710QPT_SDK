@@ -379,8 +379,10 @@ static bool intercom_doorcamera_end_process(char *arg)
 // 呼叫结束事件注册
 static bool intercom_talk_call_end_callback(char *arg)
 {
+
+        SAT_DEBUG("arg is %s\n", arg);
         /*sip:5xxx代表室内设备*/
-        if (strstr(arg, "user:\"50") != NULL)
+        if ((strstr(arg, "user:\"50") != NULL) || (strstr(arg, "sip:50") != NULL))
         {
 
                 intercom_doorcamera_end_process(arg);
@@ -493,7 +495,7 @@ static void setting_intercom_talk_call_slider_obj_change_cb(lv_event_t *ev)
                 user_data_get()->audio.extension_volume = value;
                 sat_linphone_audio_play_volume_set(value);
         }
-        user_data_save();
+        user_data_save(false, false);
 }
 
 static void layout_intercom_talk_vol_bar_create(lv_obj_t *parent)
@@ -565,6 +567,18 @@ static bool layout_intercom_inside_call(const char *arg)
         }
         return true;
 }
+static bool intercom_talk_linphone_outgoing_callback(char *arg)
+{
+        SAT_DEBUG("=====================");
+
+        return true;
+}
+
+static bool intercom_talk_linphone_outgoing_arly_media_register(char *arg)
+{
+        SAT_DEBUG("=====================");
+        return true;
+}
 
 /* arg 的格式为：user:"uername"<sip:xxx@proxy> msg:消息内容 id:建立连接的id号*/
 static bool layout_intercom_door_call_process(const char *arg, bool is_extern_call)
@@ -614,7 +628,7 @@ static bool layout_intercom_door_call_process(const char *arg, bool is_extern_ca
 
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_door_call_play(user_data_get()->audio.door_tone);
+                ring_door_call_play(user_data_get()->audio.door_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
         }
 
         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
@@ -648,7 +662,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         // *end = 0;
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_door_call_play(user_data_get()->audio.securirty_office_tone);
+                ring_guard_play(user_data_get()->audio.securirty_office_tone);
         }
 
         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
@@ -683,7 +697,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         // *end = 0;
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_door_call_play(user_data_get()->audio.common_entrance_tone);
+                ring_common_door_play(user_data_get()->audio.common_entrance_tone, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
         }
 
         linphone_incomming_info *node = linphone_incomming_unused_node_get(true);
@@ -729,7 +743,7 @@ bool layout_intercom_talk_call_incoming_func(char *arg)
 static void intercom_talk_buzzer_call_delay_close_task(lv_timer_t *ptimer)
 {
         user_data_get()->alarm.buzzer_alarm = false;
-        user_data_save();
+        user_data_save(true, true);
         lv_obj_t *obj = (lv_obj_t *)ptimer->user_data;
         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
         obj->user_data = NULL;
@@ -771,6 +785,9 @@ static void layout_intercom_talk_touch_callback(lv_event_t *e)
 
 static void sat_layout_enter(intercom_talk)
 {
+        user_linphone_call_outgoing_call_register(intercom_talk_linphone_outgoing_callback);
+
+        user_linphone_call_outgoing_early_media_register(intercom_talk_linphone_outgoing_arly_media_register);
         SAT_DEBUG("intercom_call_state is %d", intercom_call_state);
         lv_obj_pressed_func = layout_intercom_talk_touch_callback;
         standby_timer_close();

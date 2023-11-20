@@ -90,11 +90,11 @@ static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
                 }
                 else if (id == setting_sound_obj_id_front_door_cont)
                 {
-                        ring_door_call_play(item->id + 1);
+                        ring_door_call_play(item->id + 1, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
                 }
                 else if (id == setting_sound_obj_id_common_entrance_cont)
                 {
-                        ring_common_door_play(item->id + 1);
+                        ring_common_door_play(item->id + 1, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
                 }
                 else if (id == setting_sound_obj_id_security_office_cont)
                 {
@@ -102,7 +102,7 @@ static void setting_sound_ring_msgbox_list_click(lv_event_t *ev)
                 }
                 else if (id == setting_sound_obj_id_extension_cont)
                 {
-                        ring_intercom_play(item->id + 1);
+                        ring_intercom_play(item->id + 1, 1);
                 }
                 lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
 
@@ -248,7 +248,7 @@ static void setting_sound_ring_msgbox_confirm_click(lv_event_t *e)
                         {
                                 user_data_get()->audio.extenion_tone = i + 1;
                         }
-                        user_data_save();
+                        user_data_save(false, false);
                         break;
                 }
         }

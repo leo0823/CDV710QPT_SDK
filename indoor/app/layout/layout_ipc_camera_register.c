@@ -222,7 +222,15 @@ static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
                         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_detect.png"), LV_PART_MAIN);
                         continue;
                 }
-                result[i] = sat_ipcamera_device_name_get(i, 100);
+                char name[64] = {0};
+                result[i] = ipc_camera_device_name_get(name, ipc_device[i].ipaddr, ipc_device[i].port, ipc_device[i].username, ipc_device[i].password, ipc_device[i].auther_flag, 1000);
+                // printf("=== ipc_device[index].ipaddr is %s===\n", ipc_device[i].ipaddr);
+                // printf("=== ipc_device[index].port is %d===\n", ipc_device[i].port);
+                // printf("=== ipc_device[index].username is %s===\n", ipc_device[i].username);
+                // printf("=== ipc_device[index].password is %s===\n", ipc_device[i].password);
+                // printf("=== ipc_device[index].auther_flag is %d===\n", ipc_device[i].auther_flag);
+                // result[i] = sat_ipcamera_device_name_get(i, 1000);
+
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[i] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
         }
 }

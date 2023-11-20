@@ -81,7 +81,7 @@ static void setting_sensor_switch_list_click(lv_event_t *e)
         {
                 lv_label_set_text(obj, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_NC));
         }
-        user_data_save();
+        user_data_save(true, true);
 }
 
 static void layout_sensor_usage_setting_display()

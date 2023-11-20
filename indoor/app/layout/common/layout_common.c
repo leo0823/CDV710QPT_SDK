@@ -269,7 +269,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
         if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
-                user_data_save();
+                user_data_save(true, true);
                 buzzer_call_trigger_check();
         }
         else
@@ -293,7 +293,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
                         user_data_get()->alarm.emergency_mode = 1;
                         user_data_get()->alarm.alarm_ring_play = true;
-                        user_data_save();
+                        user_data_save(true, true);
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(security_emergency, arg1, &tm);
@@ -321,7 +321,7 @@ bool alarm_trigger_check(void)
                         {
                                 user_data_get()->alarm.alarm_trigger[i] = false;
                                 user_data_get()->alarm.alarm_trigger_enable[i] = false;
-                                user_data_save();
+                                user_data_save(true, true);
                                 continue;
                         }
                         if (((!user_data_get()->alarm.away_alarm_enable_list) & (0x01 << i)) && (!user_data_get()->alarm.security_alarm_enable_list) & (0x01 << i))
@@ -339,7 +339,7 @@ bool alarm_trigger_check(void)
                         else
                         {
                                 user_data_get()->alarm.alarm_trigger_enable[i] = false;
-                                user_data_save();
+                                user_data_save(true, true);
                         }
                 }
                 else if (user_data_get()->alarm.alarm_trigger[i])
@@ -349,7 +349,7 @@ bool alarm_trigger_check(void)
                 }
                 if ((alarm_occur))
                 {
-                        user_data_save();
+                        user_data_save(true, true);
                         struct tm tm;
                         user_time_read(&tm);
                         alarm_list_add(i == 7 ? emergency_occur : security_emergency, i, &tm);
@@ -372,7 +372,7 @@ bool alarm_trigger_check(void)
 void layout_last_call_new_flag_set(bool new)
 {
         user_data_get()->last_call_new = new;
-        user_data_save();
+        user_data_save(false, false);
 }
 /************************************************************
 ** 函数说明: 获取是否有未查看的通话记录标志

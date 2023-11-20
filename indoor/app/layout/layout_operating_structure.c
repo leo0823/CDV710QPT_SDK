@@ -67,7 +67,7 @@ static void operating_structure_save_btn_click(lv_event_t *e)
         memset(network_data_get()->sip_user, 0, sizeof(network_data_get()->sip_user));
         strcpy(network_data_get()->sip_user, number);
         network_data_save();
-        user_data_save();
+        user_data_save(false, false);
         backlight_enable(false);
         usleep(1000 * 1000);
         system("reboot");

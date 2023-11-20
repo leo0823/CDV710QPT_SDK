@@ -276,7 +276,7 @@ static void setting_setver_operation_network_data_save(void)
                         }
                 }
         }
-        user_data_save();
+        user_data_save(true, true);
 }
 
 static void setting_server_operation_network_falid_confirm(lv_event_t *e)

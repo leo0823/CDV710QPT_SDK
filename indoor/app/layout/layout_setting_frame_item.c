@@ -211,7 +211,7 @@ static void sat_layout_quit(setting_frame_item)
 
         user_data_get()->display.frame_list = data;
         
-        user_data_save();
+        user_data_save(false,false);
         printf("frame_list is 0x%x\n",user_data_get()->display.frame_list);
 
 }

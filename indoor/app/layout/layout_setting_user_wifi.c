@@ -86,7 +86,7 @@ static void setting_user_wifi_setting_click(lv_event_t *e)
         lv_obj_t *img = lv_obj_get_child_form_id(parent, 2);
 
         user_data_get()->wifi_enable = user_data_get()->wifi_enable ? false : true;
-        user_data_save();
+        user_data_save(false,false);
         wifi_setting_user_wifi_enable_display(img);
 
         if (user_data_get()->wifi_enable == false)
