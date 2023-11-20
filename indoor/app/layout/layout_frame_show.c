@@ -583,6 +583,10 @@ static void frame_show_setting_time_label_display(void)
 	{
 		parent = frame2;
 	}
+	if (user_data_get()->display.frame_background == false)
+	{
+		lv_obj_set_style_bg_img_src(parent, NULL, LV_PART_MAIN);
+	}
 	lv_obj_t *time_obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_timer_label_obj);
 	if (time_obj == NULL)
 	{
@@ -670,6 +674,12 @@ static void frame_show_calendar_label_display(void)
 	{
 		parent = frame2;
 	}
+
+	if (user_data_get()->display.frame_background == false)
+	{
+		lv_obj_set_style_bg_img_src(parent, NULL, LV_PART_MAIN);
+	}
+
 	obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_calendar_year_label);
 	if (obj == NULL)
 	{

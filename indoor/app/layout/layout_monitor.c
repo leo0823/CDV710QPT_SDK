@@ -394,11 +394,16 @@ static void monitor_obj_timeout_timer(lv_timer_t *ptimer)
 
 static void layout_monitor_channel_type_switch_btn_display(void)
 {
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
         char *door_ch_png[8] = {"btn_call_cam1.png", "btn_call_cam2.png", "btn_call_cam3.png", "btn_call_cam4.png", "btn_call_cam5.png", "btn_call_cam6.png", "btn_call_cam7.png", "btn_call_cam8.png"};
         char *cctv_ch_png[8] = {"btn_call_cctv1.png", "btn_call_cctv2.png", "btn_call_cctv3.png", "btn_call_cctv4.png", "btn_call_cctv5.png", "btn_call_cctv6.png", "btn_call_cctv7.png", "btn_call_cctv8.png"};
 
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_CCTTV_monitor);
-
+        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        if ((flag != MON_ENTER_MANUAL_DOOR_FLAG) && (flag != MON_ENTER_MANUAL_CCTV_FLAG))
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                return;
+        }
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
         {
@@ -631,6 +636,52 @@ static void layout_monitor_vol_bar_display(void)
         lv_label_set_text(value_obj, value_str);
 }
 
+/************************************************************
+** 函数说明: switch按钮显示
+** 作者: xiaoxiao
+** 日期: 2023-06-15 08:32:55
+** 参数说明:
+** 注意事项:
+************************************************************/
+static void layout_monitor_switch_btn_display(void)
+{
+        lv_obj_t *obj_left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
+        lv_obj_t *obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
+        MON_ENTER_FLAG flag = monitor_enter_flag_get();
+        if ((flag != MON_ENTER_MANUAL_DOOR_FLAG) && (flag != MON_ENTER_MANUAL_CCTV_FLAG))
+        {
+                lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                return;
+        }
+        if (is_channel_ipc_camera(monitor_channel_get()) == true)
+        {
+                if (cctv_register_num_get() <= 1)
+                {
+                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                }
+                else
+                {
+                        lv_obj_clear_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                }
+        }
+        else
+        {
+                if ((door_camera_register_num_get() <= 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG) || tuya_api_client_num() >= 1)
+                {
+                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                }
+                else
+                {
+                        lv_obj_clear_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_clear_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
+                }
+        }
+}
+
 static void monitor_obj_talk_click(lv_event_t *e)
 {
         if (is_monitor_door_camera_talk == false)
@@ -646,6 +697,8 @@ static void monitor_obj_talk_click(lv_event_t *e)
                 sat_linphone_answer(-1, false);
                 sat_linphone_audio_talk_volume_set(user_data_get()->audio.entrance_voice);
                 monitor_obj_talk_display();
+                layout_monitor_switch_btn_display();
+                layout_monitor_channel_type_switch_btn_display();
                 monitor_obj_handup_display();
                 monitor_obj_normal_lock_display();
                 monitor_obj_volume_display();
@@ -1209,45 +1262,6 @@ static void monitor_record_video_state_callback(bool record_ing)
 {
         is_monitor_record_video_ing = record_ing;
         monitor_obj_record_video_display();
-}
-
-/************************************************************
-** 函数说明: switch按钮显示
-** 作者: xiaoxiao
-** 日期: 2023-06-15 08:32:55
-** 参数说明:
-** 注意事项:
-************************************************************/
-static void layout_monitor_switch_btn_display(void)
-{
-        lv_obj_t *obj_left = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_left_btn);
-        lv_obj_t *obj_right = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_channel_switch_right_btn);
-        if (is_channel_ipc_camera(monitor_channel_get()) == true)
-        {
-                if (cctv_register_num_get() <= 1)
-                {
-                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
-                }
-                else
-                {
-                        lv_obj_clear_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_clear_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
-                }
-        }
-        else
-        {
-                if ((door_camera_register_num_get() <= 1) || (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG) || tuya_api_client_num() >= 1)
-                {
-                        lv_obj_add_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_add_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
-                }
-                else
-                {
-                        lv_obj_clear_flag(obj_left, LV_OBJ_FLAG_HIDDEN);
-                        lv_obj_clear_flag(obj_right, LV_OBJ_FLAG_HIDDEN);
-                }
-        }
 }
 
 /************************************************************

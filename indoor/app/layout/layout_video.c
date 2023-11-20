@@ -399,6 +399,16 @@ static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
         {
                 return;
         }
+
+        lv_slider_set_value(slider, cur * 100 / total, LV_ANIM_ON);
+
+        lv_obj_t *label = lv_obj_get_child_form_id(parent, 0);
+        if (label == NULL)
+        {
+                SAT_DEBUG("lv_obj_t *slider = lv_obj_get_child_form_id(label, 1);");
+                return;
+        }
+        lv_label_set_text_fmt(label, "%02d:%02d", (total - cur) / 1000 / 60, (total - cur) / 1000 % 60);
         if (cur == total)
         {
                 const file_info *info = playback_media_info_get();
@@ -411,15 +421,6 @@ static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
                         sat_layout_goto(video, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
                 }
         }
-        lv_slider_set_value(slider, cur * 100 / total, LV_ANIM_ON);
-
-        lv_obj_t *label = lv_obj_get_child_form_id(parent, 0);
-        if (label == NULL)
-        {
-                SAT_DEBUG("lv_obj_t *slider = lv_obj_get_child_form_id(label, 1);");
-                return;
-        }
-        lv_label_set_text_fmt(label, "%02d:%02d", (total - cur) / 1000 / 60, (total - cur) / 1000 % 60);
 }
 static void video_thumb_play_state_callback(unsigned int sate)
 {

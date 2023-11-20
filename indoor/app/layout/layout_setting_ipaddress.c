@@ -457,11 +457,17 @@ static void layout_setting_ipaddress_item_init_display()
                 {
                         char ip[32] = {0};
                         char mask[32] = {0};
+                        char gateway[32] = {0};
+                        char dns[32] = {0};
                         sat_ip_mac_addres_get("eth0", ip, NULL, mask);
+                        sat_default_gateway_get("eth0", gateway, sizeof(gateway));
+                        sat_default_dns_get("eth0", dns, sizeof(dns));
+                        SAT_DEBUG("dns is %s\n", dns);
+                        SAT_DEBUG("gateway is %s\n", gateway);
                         lv_textarea_set_text(item1_txt, ip);
                         lv_textarea_set_text(item3_txt, mask);
-                        lv_textarea_set_text(item4_txt, network_data_get()->network.dns);
-                        lv_textarea_set_text(item2_txt, network_data_get()->network.gateway);
+                        lv_textarea_set_text(item4_txt, dns);
+                        lv_textarea_set_text(item2_txt, gateway);
                 }
                 else
                 {
