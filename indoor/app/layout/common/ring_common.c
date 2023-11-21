@@ -35,7 +35,11 @@ bool ring_door_call_play(int index, int count)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "door_camera/call_door%d.mp3", index);
+<<<<<<< HEAD
         sat_linphone_audio_play_start(cmd, count);
+=======
+        sat_linphone_audio_play_start(cmd, user_data_get()->audio.ring_repeat == 0 ? 1 : 0xfffff);
+>>>>>>> upstream/main
         sat_linphone_audio_play_volume_set(user_data_get()->audio.entrance_volume);
         return true;
 }
@@ -70,7 +74,11 @@ bool ring_intercom_play(int index, int count)
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "extension/extension_call_%d.mp3", index);
         printf("cmd is %s\n", cmd);
+<<<<<<< HEAD
         sat_linphone_audio_play_start(cmd, count);
+=======
+        sat_linphone_audio_play_start(cmd, 1);
+>>>>>>> upstream/main
         sat_linphone_audio_play_volume_set(user_data_get()->audio.extension_volume);
         return true;
 }
@@ -127,7 +135,11 @@ bool ring_common_door_play(int index, int count)
         char cmd[128] = {0};
         memset(cmd, 0, sizeof(cmd));
         sprintf(cmd, RESOURCE_RING_PATH "common_entrance/Common_entrance_%d.mp3", index);
+<<<<<<< HEAD
         sat_linphone_audio_play_start(cmd, count);
+=======
+        sat_linphone_audio_play_start(cmd, 1);
+>>>>>>> upstream/main
 
         sat_linphone_audio_play_volume_set(user_data_get()->audio.common_entrance_volume);
         return true;

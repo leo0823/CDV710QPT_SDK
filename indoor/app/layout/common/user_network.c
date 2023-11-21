@@ -486,7 +486,7 @@ static bool tcp_receive_device_service_html_processing(int tcp_socket_fd, const 
                 printf("[%s:%d] GetSystemDateAndTime\n", __func__, __LINE__);
                 reslut = tcp_device_serverce_xml_process_systemtime(tcp_socket_fd, data);
         }
-        else
+        else if (strstr((const char *)recv_data, "200 OK") == NULL)
         {
                 SAT_DEBUG("%s", recv_data);
         }
@@ -525,7 +525,7 @@ static void *user_network_tcp_task(void *arg)
                         int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
                         while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 1000)) > 0)
                         {
-                                //  printf("%s\n", receive_data);
+                                //  printf("%s\n", receive_data);la
                                 read_len += recv_len;
                                 remain_len -= recv_len;
                         }
