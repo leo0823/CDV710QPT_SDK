@@ -313,7 +313,6 @@ static void frame_show_animation_effect_timer(lv_timer_t *ptimer)
 
 static void frame_show_thumb_refresh_display_callback(void)
 {
-	SAT_DEBUG("=====================");
 	lv_obj_t *frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
 	lv_obj_t *frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
 	lv_obj_t *obj = frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1;

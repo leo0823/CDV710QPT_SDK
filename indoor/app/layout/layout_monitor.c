@@ -412,36 +412,33 @@ static void layout_monitor_channel_type_switch_btn_display(void)
                 return;
         }
         int ch = monitor_channel_get();
+
         if (is_channel_ipc_camera(ch))
         {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(door_ch_png[ch - 8]),
-                                            LV_PART_MAIN);
-        }
-        else
-        {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(cctv_ch_png[ch]),
-                                            LV_PART_MAIN);
-        }
-        if (is_channel_ipc_camera(ch) == false)
-        {
-                if (monitor_valid_channel_check(ch + 8) == false)
+                int index = monitor_door_first_valid_get(true);
+                if (index == -1)
                 {
                         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 }
                 else
                 {
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(door_ch_png[index]),
+                                                    LV_PART_MAIN);
                 }
         }
         else
         {
-                if (monitor_valid_channel_check(ch - 8) == false)
+                int index = monitor_door_first_valid_get(false);
+                if (index == -1)
                 {
                         lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 }
                 else
                 {
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(cctv_ch_png[index - 8]),
+                                                    LV_PART_MAIN);
                 }
         }
 }
@@ -1748,35 +1745,23 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
         {
                 return;
         }
-
-        lv_obj_t *obj = lv_event_get_current_target(ev);
         int ch = monitor_channel_get();
         if (is_channel_ipc_camera(ch))
         {
-                // if((network_data_get()->door_device_count >= 0))
+                int index = monitor_door_first_valid_get(true);
+                if (index != -1)
                 {
-                        monitor_channel_set(ch - 8);
-                        if (monitor_valid_channel_check(ch - 8) == false)
-                        {
-
-                                return;
-                        }
-                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_call_cctv1.png"), LV_PART_MAIN);
+                        monitor_channel_set(index);
+                        monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
                 }
         }
         else
         {
-
-                //   if((network_data_get()->cctv_device_count >= 0))
+                int index = monitor_door_first_valid_get(false);
+                if (index != -1)
                 {
-
-                        if (monitor_valid_channel_check(ch + 8) == false)
-                        {
-
-                                return;
-                        }
                         monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-                        monitor_channel_set(ch + 8);
+                        monitor_channel_set(index);
                 }
         }
         layout_monitor_channel_type_switch_btn_display();

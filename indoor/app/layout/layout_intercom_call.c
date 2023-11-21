@@ -184,12 +184,11 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
-        SAT_DEBUG("====arg is %s======", arg);
         intercom_call_username_setting(arg);
         intercom_call_status_setting(1);
         if (user_data_get()->audio.ring_mute == false)
         {
-                ring_intercom_play(user_data_get()->audio.extenion_tone, 0xfffff);
+                send_call_play(1, 0xfffff);
         }
         sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
