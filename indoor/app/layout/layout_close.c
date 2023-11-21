@@ -260,7 +260,7 @@ static bool layout_close_motion_dectection_callback(void)
     {
         record_video_start(true, REC_MODE_MOTION);
         record_jpeg_start(REC_MODE_TUYA_MOTION);
-        }
+    }
     else
     {
         record_jpeg_start(REC_MODE_MOTION | REC_MODE_TUYA_MOTION);

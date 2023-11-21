@@ -240,7 +240,7 @@ static void home_slave_sync_time_request_timer(lv_timer_t *ptimer)
 {
         struct tm tm;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed);
-        if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 1000) == false)
+        if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 2000) == false)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -924,7 +924,6 @@ static void layout_home_security_away_btn_display(void)
         }
         else
         {
-                SAT_DEBUG("=====================");
                 lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(away, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);

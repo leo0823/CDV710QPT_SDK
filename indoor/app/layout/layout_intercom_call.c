@@ -113,6 +113,7 @@ static void layout_intercom_call_guard_station_call(lv_event_t *e)
         char number[128] = {0};
 
         sprintf(number, "sip:%s@%s:5066", network_data_get()->guard_number, user_data_get()->mastar_wallpad_ip);
+        sat_linphone_handup(-1);
         sat_linphone_call(number, true, true, NULL);
 }
 
@@ -161,7 +162,7 @@ static void intercom_id_obj_click(lv_event_t *e)
         {
                 char number[128] = {0};
                 sprintf(number, "sip:%s@%s:5066", user_name, user_data_get()->mastar_wallpad_ip);
-
+                sat_linphone_handup(-1);
                 sat_linphone_call(number, false, false, NULL);
                 // sat_ipcamera_device_discover_search(0x02);
                 return;
@@ -170,7 +171,7 @@ static void intercom_id_obj_click(lv_event_t *e)
 
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
-        SAT_DEBUG("====arg is %s======", arg);
+        // SAT_DEBUG("====arg is %s======", arg);
         // intercom_call_username_setting(arg);
         // intercom_call_status_setting(1);
         // if (user_data_get()->audio.ring_mute == false)

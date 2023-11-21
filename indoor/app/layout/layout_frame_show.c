@@ -261,7 +261,6 @@ static void frame_show_media_thumb_display(const char *path)
 
 	memset(arry[0], 0, sizeof(arry[0]));
 	sprintf(arry[0], "%s 0 0 %d %d", path, THUMB_WIDTH, THUMB_HIGHT);
-
 	sat_linphone_media_thumb_display(arry, 1, frame2_show_thumb_media_display_callback);
 }
 static void frame_show_delay_close_monitor_timer(lv_timer_t *ptimer)
@@ -314,6 +313,7 @@ static void frame_show_animation_effect_timer(lv_timer_t *ptimer)
 
 static void frame_show_thumb_refresh_display_callback(void)
 {
+	SAT_DEBUG("=====================");
 	lv_obj_t *frame1 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame1_id);
 	lv_obj_t *frame2 = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), frame_show_frame2_id);
 	lv_obj_t *obj = frame_show_pbuffer == frame_buffer_cur_a ? frame2 : frame1;
@@ -635,11 +635,12 @@ static void frame_show_time_start(void)
 	{
 		if ((frame_show_frame_path == NULL) || (frame_path_index == 3))
 		{
-			frame_show_frame_path = frame_path[frame_path_index = 0];
+			frame_path_index = 0;
+			frame_show_frame_path = frame_path[frame_path_index++];
 		}
 		else
 		{
-			frame_show_frame_path = frame_path[++frame_path_index];
+			frame_show_frame_path = frame_path[frame_path_index++];
 		}
 		frame_show_media_thumb_display(frame_show_frame_path);
 	}
@@ -745,11 +746,11 @@ static void frame_show_calendar_start(void)
 		if ((frame_show_frame_path == NULL) || (frame_path_index == 3))
 		{
 			frame_path_index = 0;
-			frame_show_frame_path = frame_path[frame_path_index];
+			frame_show_frame_path = frame_path[frame_path_index++];
 		}
 		else
 		{
-			frame_show_frame_path = frame_path[++frame_path_index];
+			frame_show_frame_path = frame_path[frame_path_index++];
 		}
 		frame_show_media_thumb_display(frame_show_frame_path);
 	}

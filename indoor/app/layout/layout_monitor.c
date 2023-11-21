@@ -526,10 +526,6 @@ static void monitor_obj_display_click(lv_event_t *e)
                 device = &network_data_get()->cctv_device[channel - 8];
         }
 
-        // SAT_DEBUG("device->ipaddr is %s", device->ipaddr);
-        // SAT_DEBUG("device->port is %d", device->port);
-        // SAT_DEBUG("device->username is %s", device->username);
-        // SAT_DEBUG("device->password is %s", device->password);
         if (sat_ipcamera_image_get(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness, monitor_saturation, monitor_contrast, 500) == true)
         {
 

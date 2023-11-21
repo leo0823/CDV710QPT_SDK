@@ -291,7 +291,6 @@ static void playabck_media_new_obj_display(lv_obj_t *parent, bool new)
 
 static void playback_media_mode_obj_display(lv_obj_t *parent, char mode)
 {
-        SAT_DEBUG("mode is 0x%x", mode);
         lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
         if (obj == NULL)
         {

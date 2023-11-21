@@ -572,9 +572,6 @@ static bool layout_intercom_inside_call(const char *arg)
                 return false;
         }
         sscanf(str + 4, "%ld", &call_id);
-        SAT_DEBUG("arg is %s\n", arg);
-        SAT_DEBUG("call_id is %ld\n", call_id);
-        SAT_DEBUG("index is %d\n", index);
         linphone_incomming_info *node = linphone_incomming_unused_node_get(false);
         if (node != NULL)
         {
@@ -591,14 +588,11 @@ static bool layout_intercom_inside_call(const char *arg)
 }
 static bool intercom_talk_linphone_outgoing_callback(char *arg)
 {
-        SAT_DEBUG("=====================");
-
         return true;
 }
 
 static bool intercom_talk_linphone_outgoing_arly_media_register(char *arg)
 {
-        SAT_DEBUG("=====================");
         return true;
 }
 

@@ -248,7 +248,6 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         }
 
         lv_obj_t *textarea = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_password_input_obj_id_textarea);
-        SAT_DEBUG("====================");
         if (strcmp(ipc_camera_password_input_password_temp, lv_textarea_get_text(textarea)) == 0)
         {
                 // struct ipcamera_info *node = sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get());
@@ -279,7 +278,6 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
                 }
                 else
                 {
-                        SAT_DEBUG("====================");
                         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                                 lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_PASSWD_MODIFY_FAIL),
                                                                 ipc_camera_password_input_msgbox_confirm_click);
@@ -287,7 +285,6 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
         }
         else
         {
-                SAT_DEBUG("====================");
                 ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
                                                         lang_str_get(SETTING_PASSWORD_XLS_LANG_ID_PASSWORD_NOT_MATCH),
                                                         ipc_camera_password_input_msgbox_confirm_click);
@@ -325,7 +322,6 @@ static bool ipc_camera_input_new_name_processing(void)
         strncpy(input_name, lv_textarea_get_text(textarea), sizeof(input_name));
         if (sat_ipcamera_device_name_set(input_name, layout_ipc_camera_edit_index_get(), 1500) == true)
         {
-                SAT_DEBUG("====================");
                 if (layout_ipc_cmeara_is_doorcamera_get() == true)
                 {
                         char doorname[128] = {0};
@@ -349,7 +345,6 @@ static bool ipc_camera_input_new_name_processing(void)
 
                 return true;
         }
-        SAT_DEBUG("====================");
         ipc_camera_password_input_msgbox_create(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].door_name,
                                                 lang_str_get(DOOR_CAMERA_SEARCH_XLS_LANG_ID_NAME_MODIY_FAIL),
                                                 ipc_camera_password_input_msgbox_confirm_click);

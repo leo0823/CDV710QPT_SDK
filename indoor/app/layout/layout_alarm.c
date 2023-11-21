@@ -337,9 +337,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
                                         {
                                                 int ch = layout_alarm_alarm_channel_get();
-                                                float value = user_sensor_value_get(ch);
-                                                SAT_DEBUG("=====value is %f========", value);
-                                                SAT_DEBUG("=====ch is %d========", ch);
                                                 if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch) > ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
                                                 {
                                                         user_data_get()->alarm.alarm_trigger[ch] = false;
@@ -356,7 +353,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                 }
                                                 else
                                                 {
-                                                        SAT_DEBUG("=========================");
                                                         lv_obj_add_flag(parent, LV_OBJ_FLAG_HIDDEN); // 错误三次键盘隐藏
                                                         layout_alarm_passwd_input_txt_reset();
 
@@ -372,7 +368,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         }
                                         else
                                         {
-                                                SAT_DEBUG("=========================");
                                                 user_data_get()->alarm.alarm_trigger[7] = false;
                                                 user_data_save(true, true);
                                                 if ((user_data_get()->system_mode & 0x0f) != 0x01)
@@ -380,7 +375,6 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                                         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
                                                 }
                                         }
-                                        SAT_DEBUG("=========================");
                                         if (alarm_trigger_check() == false)
                                         {
                                                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
@@ -583,7 +577,6 @@ static void layout_alarm_auto_record_timer(lv_timer_t *t)
                 }
         }
         sat_linphone_calls_cmd_send();
-        SAT_DEBUG("rec_mode is %d\n", rec_mode);
         record_jpeg_start(rec_mode | REC_MODE_TUYA_ALARM);
 }
 
@@ -735,7 +728,7 @@ static void sat_layout_enter(alarm)
                                                                  resource_ui_src_get(layout_alarm_alarm_channel_get() == 7 ? "ic_emergency_bell.png" : "ic_emergency_occur.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                         // lv_common_style_set_boader(obj, 0, LV_OPA_TRANSP, 0, LV_BORDER_SIDE_NONE, 0xff5951, LV_PART_MAIN);
-                        lv_sat_timer_create(alarm_alarm_cont_display, 100000, obj);
+                        lv_sat_timer_create(alarm_alarm_cont_display, 1000, obj);
                 }
 
                 /************************************************************

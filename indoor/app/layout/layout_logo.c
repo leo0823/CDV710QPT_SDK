@@ -392,9 +392,6 @@ static void security_mode_sync_callback()
 ************************************************************/
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
-        // struct timeval tv1;
-        // gettimeofday(&tv1, NULL);
-        // SAT_DEBUG("timestamp is %lu\n", tv1.tv_sec * 1000 + tv1.tv_usec / 1000);
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -435,7 +432,8 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                         user_data_info *info = (user_data_info *)recv_data;
                         if (user_data_get()->sync_timestamp >= info->sync_timestamp)
                         {
-
+                                free(recv_data);
+                                recv_data = NULL;
                                 return;
                         }
                         user_data_get()->sync_timestamp = info->sync_timestamp;
