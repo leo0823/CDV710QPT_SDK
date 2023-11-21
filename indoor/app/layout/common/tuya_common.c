@@ -32,7 +32,6 @@ static bool tuya_event_cmd_video_start(void)
         }
         return true;
 }
-    
 
 static bool tuya_event_cmd_video_stop(void)
 {
@@ -41,7 +40,7 @@ static bool tuya_event_cmd_video_stop(void)
 
 bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 {
-        if(user_data_get()->is_device_init == false)
+        if (user_data_get()->is_device_init == false)
         {
                 return false;
         }
@@ -58,7 +57,7 @@ bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
                 // return truye_event_cmd_audio_start();
                 break;
         case TUYA_EVENT_CMD_ONLINE:
-                    return layout_monitor_report_vaild_channel();
+                return layout_monitor_report_vaild_channel();
                 break;
         case TUYA_EVENT_CMD_CH_CHANGE:
                 //     return tuya_event_cmd_ch_channge(arg);
@@ -80,16 +79,24 @@ bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 ** 函数说明: 上传有效通道
 ** 作者: xiaoxiao
 ** 日期: 2023-05-30 14:24:54
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
 bool layout_monitor_report_vaild_channel(void)
 {
-	int ch = monitor_channel_get();
-	ch = ch <= 7 ? ch + 1:ch - 6;
-	return tuya_api_channel_report(ch,
-				       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(MON_CH_DOOR1),
-				       monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(MON_CH_DOOR2),
-				       monitor_valid_channel_check(MON_CH_CCTV1), language_common_ch_string_get(MON_CH_CCTV1),
-				       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2));
+        int ch = monitor_channel_get();
+        ch = ch <= 7 ? ch + 1 : ch - 6;
+        return tuya_api_channel_report(ch,
+                                       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(MON_CH_DOOR1),
+                                       monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(MON_CH_DOOR2),
+                                       monitor_valid_channel_check(MON_CH_CCTV1), language_common_ch_string_get(MON_CH_CCTV1),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2));
 }
