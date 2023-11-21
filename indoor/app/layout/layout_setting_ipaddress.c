@@ -329,17 +329,35 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                         //         strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr));
                         //         network_data_save();
                         // }
+
                         if (layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER)
                         {
                                 if (layout_ipc_cmeara_is_doorcamera_get() && monitor_valid_channel_check(layout_ipc_camera_edit_index_get()))
                                 {
-                                        memset(&network_data_get()->door_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()]));
+                                        // memset(&network_data_get()->door_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()]));
+                                        char newurl[128] = {0};
+                                        for (int i = 0; i < network_data_get()->door_device[layout_ipc_camera_edit_index_get()].profile_token_num; i++)
+                                        {
+                                                memset(newurl, 0, sizeof(newurl));
+                                                modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                                                strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, newurl, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url));
+                                        }
+                                        strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr));
                                 }
                                 else if (monitor_valid_channel_check(layout_ipc_camera_edit_index_get() + 8))
                                 {
-                                        memset(&network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()]));
+                                        // memset(&network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()]));
+                                        char newurl[128] = {0};
+                                        for (int i = 0; i < network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].profile_token_num; i++)
+                                        {
+                                                memset(newurl, 0, sizeof(newurl));
+                                                modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
+                                                strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url, newurl, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[i].rtsp_url));
+                                        }
+                                        strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr));
                                 }
                         }
+                        network_data_save();
                         sat_layout_goto(ipc_camera_register, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
                 else
@@ -736,6 +754,14 @@ static void sat_layout_enter(setting_ipaddress)
         }
 
         layout_setting_ipaddress_item_init_display();
+        if (layout_ipc_cmeara_is_doorcamera_get() == true)
+        {
+                sat_ipcamera_initialization_parameters(network_data_get()->door_device, DEVICE_MAX);
+        }
+        else
+        {
+                sat_ipcamera_initialization_parameters(network_data_get()->cctv_device, DEVICE_MAX);
+        }
 }
 static void sat_layout_quit(setting_ipaddress)
 {

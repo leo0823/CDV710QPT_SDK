@@ -34,6 +34,7 @@ enum
         ipc_camera_password_input_obj_id_password_hidden,
         ipc_camera_password_input_obj_id_keyboard,
         ipc_camera_password_input_obj_id_msgbox,
+        ipc_camera_password_keyboard_space_hidden,
 };
 /*密码缓存buffer*/
 static char ipc_camera_password_input_password_old[64] = {0};
@@ -256,7 +257,7 @@ static bool ipc_camera_input_new_password_processing(const char *txt)
                 // printf("node username is %s\n", node->username);
                 // printf("node port is %d\n", node->port);
                 // printf("node auther_flag is %d\n", node->auther_flag);
-                if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1000) == true)
+                if (sat_ipcamera_device_password_set(ipc_camera_password_input_password_temp, layout_ipc_camera_edit_index_get(), 1200) == true)
                 {
 
                         ipc_camera_password_input_msgbox_create(lang_str_get(SETTING_GENERAL_XLS_LANG_ID_PASSWORD),
@@ -398,8 +399,8 @@ static void layout_ipc_camera_input_space_btn_ctrl(void)
                 //         lv_btnmatrix_set_btn_ctrl(obj, 42, LV_BTNMATRIX_CTRL_DISABLED);
                 //         lv_btnmatrix_clear_btn_ctrl(obj, 40, LV_BTNMATRIX_CTRL_DISABLED);
                 // }
-                lv_common_img_btn_create(sat_cur_layout_screen_get(), 111, 220, 527, 585, 65,
-                                         NULL, true, LV_OPA_TRANSP, 0x808080, LV_OPA_TRANSP, 0x808080,
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), ipc_camera_password_keyboard_space_hidden, 220, 525, 585, 69,
+                                         NULL, true, LV_OPA_60, 0, LV_OPA_60, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);

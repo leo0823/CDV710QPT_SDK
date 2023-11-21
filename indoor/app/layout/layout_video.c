@@ -367,8 +367,7 @@ static void video_obj_right_click(lv_event_t *e)
 
 static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
 {
-        SAT_DEBUG("cur is %d\n", cur);
-        SAT_DEBUG("total is %d\n", total);
+
         lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_buttom);
         if (parent == NULL)
         {
@@ -424,7 +423,6 @@ static void video_thumb_duration_callback(unsigned int cur, unsigned int total)
 }
 static void video_thumb_play_state_callback(unsigned int sate)
 {
-        SAT_DEBUG("===sate is :%d======", sate);
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), video_obj_id_play);
 
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(sate == 0x01 ? "btn_thumbnail_pause_l.png" : "btn_thumbnail_play_l.png"), LV_PART_MAIN);

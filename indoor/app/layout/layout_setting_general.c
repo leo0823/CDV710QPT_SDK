@@ -774,8 +774,8 @@ static lv_obj_t *setting_sub_list_create(void)
             {0, 72 * 8, 622, 72, setting_general_obj_id_sensor_usage_setting_cont, setting_general_obj_id_sensor_usage_setting_title, -1, SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_USAGE_SETTINGS, lang_str_get, -1, NULL, setting_general_sensor_usage_setting_obj_click},
             {0, 72 * 9, 622, 72, setting_general_obj_id_download_mobile_app_cont, setting_general_obj_id_doornload_mobile_app_title, -1, SETTING_GENERAL_XLS_LANG_ID_DOWNLOAD_MOBILE_APP, lang_str_get, -1, NULL, setting_general_download_mobile_obj_click},
             {0, 72 * 10, 622, 72, -1 /*setting_general_obj_id_app_integration_cont*/, setting_general_obj_id_app_integration_title, -1, SETTING_GENERAL_XLS_LANG_ID_APP_INTEGRATION, lang_str_get, -1, NULL, setting_general_app_integration_obj_click},
-            {0, 72 * 10, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_XLS_LANG_ID_INITIALIZATION_USER_DATA, lang_str_get, -1, NULL, setting_general_initialization_userdata_obj_click},
-            {0, 72 * 11, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_XLS_LANG_ID_VERSION_INFORMATION, lang_str_get, -1, NULL, setting_general_version_information_obj_click},
+            {0, 72 * 11, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_XLS_LANG_ID_INITIALIZATION_USER_DATA, lang_str_get, -1, NULL, setting_general_initialization_userdata_obj_click},
+            {0, 72 * 12, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_XLS_LANG_ID_VERSION_INFORMATION, lang_str_get, -1, NULL, setting_general_version_information_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
@@ -786,7 +786,7 @@ static lv_obj_t *setting_sub_list_create(void)
         {
 
                 // 此处请重新判断
-                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8))) || (i == 10))
+                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8) || (i == 10))))
                 {
                         continue;
                 }

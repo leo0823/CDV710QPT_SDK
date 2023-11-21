@@ -22,6 +22,29 @@ static void setting_app_integation_cancel_click(lv_event_t *ev)
   setting_msgdialog_msg_del(setting_app_integration_obj_id_msgbox_bg);
 }
 
+static void setting_app_connect_msgbox_item_click(lv_event_t *ev)
+{
+
+  lv_obj_t *parent = lv_obj_get_child_form_id(lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_app_integration_obj_id_msgbox_bg), 0);
+
+  lv_obj_t *check1 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, 3), 1);
+
+  lv_obj_t *check2 = lv_obj_get_child_form_id(lv_obj_get_child_form_id(parent, 4), 1);
+
+  if (strncmp(check1->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+  {
+    lv_obj_set_style_bg_img_src(check1, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+  }
+  if (strncmp(check2->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+  {
+    lv_obj_set_style_bg_img_src(check2, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
+  }
+
+  lv_obj_t *obj = lv_event_get_current_target(ev);
+  lv_obj_t *check = lv_obj_get_child_form_id(obj, 1);
+  lv_obj_set_style_bg_img_src(check, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
+}
+
 static void layout_app_integration_select_network_click(lv_event_t *ev)
 {
   lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_app_integration_obj_id_msgbox_bg, 0, 282, 143, 460, 343);
@@ -30,7 +53,7 @@ static void layout_app_integration_select_network_click(lv_event_t *ev)
   setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, 1, 2, setting_app_integation_cancel_click, setting_app_integation_cancel_click);
 
   lv_common_img_text_btn_create(masgbox, 3, 20, 100, 366, 55,
-                                NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                setting_app_connect_msgbox_item_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 46, 8, 366 - 16, 32, 0,
@@ -39,7 +62,7 @@ static void layout_app_integration_select_network_click(lv_event_t *ev)
                                 (const char *)resource_ui_src_get("btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
   lv_common_img_text_btn_create(masgbox, 4, 20, 160, 366, 55,
-                                NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
+                                setting_app_connect_msgbox_item_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                 46, 8, 366 - 16, 32, 0,

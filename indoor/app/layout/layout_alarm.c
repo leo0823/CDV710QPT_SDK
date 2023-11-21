@@ -553,7 +553,7 @@ static void layout_alarm_auto_record_timer(lv_timer_t *t)
                         if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
                         {
 
-                                record_video_start(false, REC_MODE_ALARM);
+                                record_video_start(true, REC_MODE_ALARM);
                         }
                         else
                         {
@@ -570,14 +570,14 @@ static void layout_alarm_auto_record_timer(lv_timer_t *t)
 
                                 record_video_start(false, REC_MODE_ALARM);
                         }
-                }
-                else
-                {
-                        rec_mode |= REC_MODE_ALARM;
+                        else
+                        {
+                                rec_mode |= REC_MODE_ALARM;
+                        }
                 }
         }
-        sat_linphone_calls_cmd_send();
         record_jpeg_start(rec_mode | REC_MODE_TUYA_ALARM);
+        lv_timer_del(t);
 }
 
 static bool layout_alarm_streams_running_register_callback(char *arg)
