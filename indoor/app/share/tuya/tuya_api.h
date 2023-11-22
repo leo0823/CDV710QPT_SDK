@@ -10,7 +10,7 @@
 **   函数作用：tuya api初始化
 **   参数说明:
 ***/
-bool tuya_api_init(const char *pid);
+bool tuya_api_init(const char *pid, const char *dev);
 /***
 **   日期:2022-06-07 15:52:37
 **   作者: leo.liu
