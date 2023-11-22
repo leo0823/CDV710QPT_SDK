@@ -22,6 +22,11 @@ static void setting_app_integation_cancel_click(lv_event_t *ev)
   setting_msgdialog_msg_del(setting_app_integration_obj_id_msgbox_bg);
 }
 
+static void setting_app_integation_confirm_click(lv_event_t *ev)
+{
+  setting_msgdialog_msg_del(setting_app_integration_obj_id_msgbox_bg);
+}
+
 static void setting_app_connect_msgbox_item_click(lv_event_t *ev)
 {
 
@@ -50,7 +55,7 @@ static void layout_app_integration_select_network_click(lv_event_t *ev)
   lv_obj_t *masgbox = setting_msgdialog_msg_bg_create(setting_app_integration_obj_id_msgbox_bg, 0, 282, 143, 460, 343);
 
   setting_msgdialog_msg_create(masgbox, 0, lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECTION_NETWORK), 30, 20, 400, 50, true);
-  setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, 1, 2, setting_app_integation_cancel_click, setting_app_integation_cancel_click);
+  setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, 1, 2, setting_app_integation_cancel_click, setting_app_integation_confirm_click);
 
   lv_common_img_text_btn_create(masgbox, 3, 20, 100, 366, 55,
                                 setting_app_connect_msgbox_item_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
@@ -73,11 +78,11 @@ static void layout_app_integration_select_network_click(lv_event_t *ev)
 
 static void layout_setting_app_integration_connect_status_display(void)
 {
-  lv_common_text_create(sat_cur_layout_screen_get(), setting_app_integration_obj_id_connect_status_title, 0, 173, 1024, 78,
+  lv_common_text_create(sat_cur_layout_screen_get(), setting_app_integration_obj_id_connect_status_title, 0, 173, 1024, 64,
                         NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                        lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECT_STATUS_TITLE), 0xb8b8b8, 0xb8b8b8, LV_TEXT_ALIGN_CENTER, lv_font_normal);
+                        lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECT_STATUS_TITLE), 0xffffff, 0xffffff, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
   lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_app_integration_obj_id_connect_status, 0, 260, 1024, 180,
                                 NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,

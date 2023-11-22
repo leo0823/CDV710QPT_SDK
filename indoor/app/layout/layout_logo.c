@@ -401,6 +401,7 @@ static void security_mode_sync_callback()
 ************************************************************/
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
+        SAT_DEBUG("========flag %d======", flag);
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -439,12 +440,12 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data;
-                        if (user_data_get()->sync_timestamp >= info->sync_timestamp)
-                        {
-                                free(recv_data);
-                                recv_data = NULL;
-                                return;
-                        }
+                        // if (user_data_get()->sync_timestamp >= info->sync_timestamp)
+                        // {
+                        //         free(recv_data);
+                        //         recv_data = NULL;
+                        //         return;
+                        // }
                         user_data_get()->sync_timestamp = info->sync_timestamp;
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
@@ -1104,8 +1105,30 @@ static void sat_layout_enter(logo)
                               SYSTEM_VERSION, 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_RIGHT, NULL);
 }
 
+void time_correction_timer(lv_timer_t *t)
+{
+        struct timeval tim;
+        gettimeofday(&tim, NULL);
+        if ((tim.tv_usec) > 10000)
+        {
+                tim.tv_usec -= 10000;
+        }
+        else
+        {
+                tim.tv_sec -= 1;
+                tim.tv_usec += 990000;
+        }
+        settimeofday(&tim, NULL);
+        system("hwclock -w");
+}
+
 static void sat_layout_quit(logo)
 {
+        /**
+         * 原因：时间比标准时间每天快了大约3秒
+         * 函数作用：每隔4.8分种让时间减少10豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：4.8/（24*60）*3 *1000 = 10)
+         **/
+        lv_timer_create(time_correction_timer, 60 * 48000 - 10, NULL);
 }
 
 sat_layout_create(logo);

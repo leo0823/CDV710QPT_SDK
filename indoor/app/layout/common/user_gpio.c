@@ -229,7 +229,9 @@ static void *user_gpio_detect_task(void *arg)
                 for (int i = 0; i < 8; i++)
                 {
                         gpio_level_read(gpio_group_pin[i], &alarm_gpio_value_group[i]);
+                        user_data_get()->alarm.alarm_gpio_value_group[channel_to_sensor[i]] = cd4051_value_group[channel_to_sensor[i]];
                 }
+                user_data_save(true, true);
                 GPIO_LEVEL level;
                 while (1)
                 {
@@ -259,8 +261,9 @@ static void *user_gpio_detect_task(void *arg)
                 for (int i = 0; i < 8; i++)
                 {
                         cd4051_value_group[channel_to_sensor[i]] = cd4051_drive_read(i);
+                        user_data_get()->alarm.alarm_gpio_value_group[channel_to_sensor[i]] = cd4051_value_group[channel_to_sensor[i]];
                 }
-
+                user_data_save(true, true);
                 while (1)
                 {
                         for (int i = 0; i < 8; i++)

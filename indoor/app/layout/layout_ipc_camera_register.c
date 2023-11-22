@@ -344,6 +344,7 @@ static void sat_layout_enter(ipc_camera_register)
                                 lv_common_img_btn_create(parent, 3, 808, 20, 48, 48,
                                                          ipc_camera_registered_register_edit_click, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+
                                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                          resource_ui_src_get("btn_list_edit.png"), LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
 
@@ -368,7 +369,8 @@ static void sat_layout_enter(ipc_camera_register)
         }
         static bool result[8] = {0};
         memset(result, false, sizeof(result));
-        lv_timer_ready(lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 3000, &result));
+        lv_timer_t *timer = lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 3000, &result);
+        lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(ipc_camera_register)
 {

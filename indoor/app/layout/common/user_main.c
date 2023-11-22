@@ -160,12 +160,12 @@ static void *asterisk_server_sync_task(void *arg)
         asterisk_register_info *p_register_info = asterisk_register_info_get();
 
         static int timeout = 0;
-        usleep(100 * 1000);
-        sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-        usleep(100 * 1000);
-        sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-        usleep(100 * 1000);
-        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+        // usleep(100 * 1000);
+        // sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
+        // usleep(100 * 1000);
+        // sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+        // usleep(100 * 1000);
+        // sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
         while (1)
         {
                 if (user_data_get()->is_device_init)
@@ -240,7 +240,7 @@ static void *asterisk_server_sync_task(void *arg)
 
 static void sigchld(int sign)
 {
-        wait(NULL);
+        // wait(NULL);
 }
 
 /*
@@ -251,8 +251,8 @@ static void sigchld(int sign)
  */
 int main(int argc, char *argv[])
 {
-        signal(SIGPIPE, SIG_IGN);
         signal(SIGCHLD, sigchld);
+        signal(SIGPIPE, SIG_IGN);
 
         /*先干掉asterik服务器*/
         remove("/tmp/.linphonerc");

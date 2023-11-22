@@ -102,6 +102,7 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
         char user[128] = {0};
         char ip[32] = {0};
         char version_buf[128] = {0};
+        bool *result = (bool *)ptimer->user_data;
 
         // if (network_data_get()->door_device_count > 0)
         {
@@ -119,8 +120,12 @@ static void setting_version_information_version_get_timer(lv_timer_t *ptimer)
                         lv_obj_t *list = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
                         lv_obj_t *item = lv_obj_get_child_form_id(list, i);
                         lv_obj_t *obj = lv_obj_get_child_form_id(item, 1);
-
-                        if (sat_ipcamera_device_version_get(version_buf, i, 500) == false)
+                        if (result[i] == true)
+                        {
+                                continue;
+                        }
+                        result[i] = sat_ipcamera_device_version_get(version_buf, i, 500);
+                        if (result[i] == false)
                         {
                                 lv_label_set_text(obj, "Version unknow");
                         }
@@ -276,8 +281,10 @@ static void sat_layout_enter(setting_version_information)
         }
 
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
-
-        lv_sat_timer_create(setting_version_information_version_get_timer, 3000, NULL);
+        static bool result[8] = {0};
+        memset(result, false, sizeof(result));
+        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 3000, &result);
+        lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(setting_version_information)
 {

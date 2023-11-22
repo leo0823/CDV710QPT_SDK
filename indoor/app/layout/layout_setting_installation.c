@@ -278,7 +278,7 @@ static lv_obj_t *setting_installation_sub_list_create(void)
 
         char system_mode = user_data_get()->system_mode;
 
-        for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t) - 1; i++)
+        for (int i = 0; i < sizeof(main_list_group) / sizeof(setting_list_info_t); i++)
         {
                 /*单系统*/
                 if ((system_mode & 0x0f) != 0x01)
