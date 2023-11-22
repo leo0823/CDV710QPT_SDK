@@ -2008,23 +2008,39 @@ static void layout_monitor_door_ch_btn_create(void)
 ************************************************************/
 static void layout_monitor_buzzer_alarm_call_callback(void)
 {
-        buzzer_call_timestamp_set(user_timestamp_get());
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_user_state_label);
-        if (obj == NULL)
+        if (user_data_get()->alarm.buzzer_alarm)
         {
-                return;
+                buzzer_call_timestamp_set(user_timestamp_get());
+                if (obj == NULL)
+                {
+                        return;
+                }
+                if ((strncmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
+                {
+                        return;
+                }
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
+                if (obj->user_data)
+                {
+                        lv_timer_del((lv_timer_t *)obj->user_data);
+                }
+                obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 6000, obj);
         }
-        if ((strncmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL), strlen(lv_label_get_text(obj))) == 0) && (lv_obj_has_flag(obj, LV_OBJ_FLAG_HIDDEN) == false)) // 蜂鸣器触发显示中不再接受新的触发
+        else
         {
-                return;
+                if (strcmp(lv_label_get_text(obj), lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL)) == 0)
+                {
+                        lv_timer_t *ptimer = (lv_timer_t *)obj->user_data;
+                        if (ptimer != NULL)
+                        {
+                                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+                                lv_timer_del(ptimer);
+                                obj->user_data = NULL;
+                        }
+                }
         }
-        lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-        lv_label_set_text(obj, lang_str_get(INTERCOM_XLS_LANG_ID_BUZZER_CALL));
-        if (obj->user_data)
-        {
-                lv_timer_del((lv_timer_t *)obj->user_data);
-        }
-        obj->user_data = lv_sat_timer_create(monitor_top_display_delay_close_task, 6000, obj);
 }
 
 static void layout_monitor_touch_callback(lv_event_t *e)

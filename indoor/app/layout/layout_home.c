@@ -240,7 +240,7 @@ static void home_slave_sync_time_request_timer(lv_timer_t *ptimer)
 {
         struct tm tm;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed);
-        if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 2000) == false)
+        if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 1500) == false)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }

@@ -520,23 +520,37 @@ static void *user_network_tcp_task(void *arg)
                 int client_fd = sat_socket_tcp_accept(server_fd, &client_addr, 500);
                 if (client_fd >= 0)
                 {
-                        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
-                        int read_len = 0;
-                        int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
-                        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 1000)) > 0)
+                        pid_t pid = fork();
+                        if (pid != -1)
                         {
-                                //  printf("%s\n", receive_data);la
-                                read_len += recv_len;
-                                remain_len -= recv_len;
+                                if (pid == 0)
+                                {
+                                        memset(receive_data, 0, DOOR_CAMERA_RECEIVE_BUFFER_MAX);
+                                        int read_len = 0;
+                                        int remain_len = DOOR_CAMERA_RECEIVE_BUFFER_MAX;
+                                        while ((recv_len = sat_socket_tcp_receive(client_fd, &receive_data[read_len], remain_len, 2000)) > 0)
+
+                                        {
+                                                //  printf("%s\n", receive_data);la
+                                                read_len += recv_len;
+                                                remain_len -= recv_len;
+                                        }
+                                        if (read_len > 0)
+
+                                        {
+                                                tcp_receive_data_parsing_processing(client_fd, receive_data, read_len);
+                                        }
+                                        sat_socket_close(client_fd);
+                                        exit(0);
+                                }
+                                else
+                                {
+                                        sat_socket_close(client_fd);
+                                }
                         }
-                        printf("%d\n", read_len);
-                        if (read_len > 0)
-                        {
-                                tcp_receive_data_parsing_processing(client_fd, receive_data, read_len);
-                        }
-                        sat_socket_close(client_fd);
                 }
         }
+
         return NULL;
 }
 

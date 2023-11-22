@@ -32,6 +32,8 @@
 
 #include <fcntl.h>
 #include <sys/ioctl.h>
+#include <signal.h>
+#include <sys/wait.h>
 
 // #include "dds/topic_table.h"
 #if 0
@@ -236,6 +238,11 @@ static void *asterisk_server_sync_task(void *arg)
         return NULL;
 }
 
+static void sigchld(int sign)
+{
+        wait(NULL);
+}
+
 /*
  * @日期: 2022-08-06
  * @作者: leo.liu
@@ -245,6 +252,8 @@ static void *asterisk_server_sync_task(void *arg)
 int main(int argc, char *argv[])
 {
         signal(SIGPIPE, SIG_IGN);
+        signal(SIGCHLD, sigchld);
+
         /*先干掉asterik服务器*/
         remove("/tmp/.linphonerc");
         sat_kill_task_process("{safe_asterisk} /bin/sh /app/asterisk/sbin/safe_asterisk");

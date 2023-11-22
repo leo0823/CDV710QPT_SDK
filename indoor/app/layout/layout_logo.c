@@ -176,11 +176,16 @@ static void buzzer_alarm_confirm_btn_click(lv_event_t *t)
 static void buzzer_call_trigger_ui_create(void)
 {
         {
-                lv_obj_t *parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_alarm_screen_id, 0, 0, 1024, 600,
-                                                            NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
-                                                            0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                            0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                            NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), buzzer_alarm_screen_id);
+                if (parent != NULL)
+                {
+                        lv_obj_del(parent);
+                }
+                parent = lv_common_img_btn_create(sat_cur_layout_screen_get(), buzzer_alarm_screen_id, 0, 0, 1024, 600,
+                                                  NULL, true, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                  NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                 parent = lv_common_img_btn_create(parent, buzzer_alarm_background_id, 0, 0, 1024, 600,
                                                   NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
@@ -235,6 +240,10 @@ static void default_buzzer_call_timer(lv_timer_t *timer)
                         }
                 }
         }
+        else
+        {
+                buzzer_alarm_confirm_btn_click(NULL);
+        }
 }
 
 static void sync_data_alarm_trigger_check()
@@ -254,16 +263,9 @@ void buzzer_call_callback_register(void (*callback)(void))
 
 bool buzzer_call_trigger_check(void)
 {
-        if (user_data_get()->alarm.buzzer_alarm)
+        if (buzzer_call_fun != NULL)
         {
-                if (buzzer_call_fun != NULL)
-                {
-                        buzzer_call_fun();
-                }
-        }
-        else
-        {
-                buzzer_alarm_confirm_btn_click(NULL);
+                buzzer_call_fun();
         }
         return true;
 }
@@ -293,11 +295,18 @@ void buzzer_alarm_trigger_default(void)
         {
                 return;
         }
-        buzzer_call_timestamp = user_timestamp_get();
-        buzzer_call_trigger_ui_create();
-        if (user_data_get()->audio.ring_mute == false)
+        if (user_data_get()->alarm.buzzer_alarm)
         {
-                ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                buzzer_call_timestamp = user_timestamp_get();
+                buzzer_call_trigger_ui_create();
+                if (user_data_get()->audio.ring_mute == false)
+                {
+                        ring_buzzer_play(user_data_get()->audio.buzzer_tone);
+                }
+        }
+        else
+        {
+                buzzer_alarm_confirm_btn_click(NULL);
         }
 }
 
