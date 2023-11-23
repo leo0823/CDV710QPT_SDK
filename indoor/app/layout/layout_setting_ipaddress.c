@@ -311,30 +311,13 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                         }
                 }
                 if (sat_ipcamera_network_setting(layout_setting_ipaddress_info_get()->pinfo.ipaddr, layout_setting_ipaddress_info_get()->pinfo.port, layout_setting_ipaddress_info_get()->pinfo.username,
-                                                 layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 1500) == true)
+                                                 layout_setting_ipaddress_info_get()->pinfo.password, layout_setting_ipaddress_info_get()->pinfo.auther_flag, &layout_setting_ipaddress_info_get()->network, 3000) == true)
                 {
-                        // char newurl[128] = {0};
-                        // if (layout_ipc_cmeara_is_doorcamera_get() && monitor_valid_channel_check(layout_ipc_camera_edit_index_get()))
-                        // {
-
-                        //         modify_rtsp_url(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
-                        //         strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, newurl, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url));
-                        //         strncpy(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()].ipaddr));
-                        //         network_data_save();
-                        // }
-                        // else if (monitor_valid_channel_check(layout_ipc_camera_edit_index_get() + 8))
-                        // {
-                        //         modify_rtsp_url(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, layout_setting_ipaddress_info_get()->network.ipaddr, newurl);
-                        //         strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url, newurl, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].rtsp[0].rtsp_url));
-                        //         strncpy(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr, layout_setting_ipaddress_info_get()->network.ipaddr, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].ipaddr));
-                        //         network_data_save();
-                        // }
 
                         if (layout_ipc_camera_input_flag_get() & IPC_CAMERA_FLAG_REGISTER)
                         {
                                 if (layout_ipc_cmeara_is_doorcamera_get() && monitor_valid_channel_check(layout_ipc_camera_edit_index_get()))
                                 {
-                                        // memset(&network_data_get()->door_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->door_device[layout_ipc_camera_edit_index_get()]));
                                         char newurl[128] = {0};
                                         for (int i = 0; i < network_data_get()->door_device[layout_ipc_camera_edit_index_get()].profile_token_num; i++)
                                         {
@@ -346,7 +329,6 @@ static void setting_ipaddress_obj_confirm_click(lv_event_t *e)
                                 }
                                 else if (monitor_valid_channel_check(layout_ipc_camera_edit_index_get() + 8))
                                 {
-                                        // memset(&network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()], 0, sizeof(network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()]));
                                         char newurl[128] = {0};
                                         for (int i = 0; i < network_data_get()->cctv_device[layout_ipc_camera_edit_index_get()].profile_token_num; i++)
                                         {

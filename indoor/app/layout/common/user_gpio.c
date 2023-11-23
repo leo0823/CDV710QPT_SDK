@@ -187,7 +187,7 @@ static float sarad_read_func(void)
         return sarad_read(1);
 }
 
-static int ALARM_TRIGGER_NEW = 1;
+static int ALARM_TRIGGER_NEW = 0;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -229,7 +229,7 @@ static void *user_gpio_detect_task(void *arg)
                 for (int i = 0; i < 8; i++)
                 {
                         gpio_level_read(gpio_group_pin[i], &alarm_gpio_value_group[i]);
-                        user_data_get()->alarm.alarm_gpio_value_group[channel_to_sensor[i]] = cd4051_value_group[channel_to_sensor[i]];
+                        user_data_get()->alarm.alarm_gpio_value_group[i] = alarm_gpio_value_group[i];
                 }
                 user_data_save(true, true);
                 GPIO_LEVEL level;

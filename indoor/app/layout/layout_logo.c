@@ -401,7 +401,6 @@ static void security_mode_sync_callback()
 ************************************************************/
 static void asterisk_server_sync_data_callback(char flag, char *data, int size, int pos, int max)
 {
-        SAT_DEBUG("========flag %d======", flag);
         if (user_data_get()->is_device_init == false)
         {
                 return;
@@ -440,12 +439,12 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                 if ((flag == 0x00) && (max == sizeof(user_data_info)))
                 {
                         user_data_info *info = (user_data_info *)recv_data;
-                        // if (user_data_get()->sync_timestamp >= info->sync_timestamp)
-                        // {
-                        //         free(recv_data);
-                        //         recv_data = NULL;
-                        //         return;
-                        // }
+                        if (user_data_get()->sync_timestamp >= info->sync_timestamp)
+                        {
+                                free(recv_data);
+                                recv_data = NULL;
+                                return;
+                        }
                         user_data_get()->sync_timestamp = info->sync_timestamp;
                         if ((user_data_get()->system_mode & 0x0F) != 0x01)
                         {
@@ -727,7 +726,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         if (id == 0x01)
         {
                 /*****  tuya api初始化 *****/
-                tuya_api_init(TUYA_PID,"wlan0");
+                tuya_api_init(TUYA_PID, "wlan0");
         }
 
         /***********************************************

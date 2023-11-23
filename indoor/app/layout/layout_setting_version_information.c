@@ -257,15 +257,6 @@ static void sat_layout_enter(setting_version_information)
                                                                                            NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                                            0, 0, 0, 0, -1,
                                                                                            NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
-                        lv_obj_t *obj = lv_obj_get_child_form_id(parent, 1);
-                        if (sat_ipcamera_device_version_get(version_buf, i, 200) == false)
-                        {
-                                lv_label_set_text(obj, "Version unknow");
-                        }
-                        else
-                        {
-                                lv_label_set_text_fmt(obj, "build time:%s", version_buf);
-                        }
 
                         if (upgrade == true)
                         {
@@ -283,7 +274,7 @@ static void sat_layout_enter(setting_version_information)
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
         static bool result[8] = {0};
         memset(result, false, sizeof(result));
-        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 3000, &result);
+        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 1000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(setting_version_information)

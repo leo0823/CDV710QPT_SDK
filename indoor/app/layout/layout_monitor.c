@@ -2691,10 +2691,13 @@ static bool monitor_doorcamera_call_process(const char *arg, bool is_extern_call
         sscanf(str + 4, "%ld", &call_id);
 
         char index = monitor_index_get_by_user(arg);
-        if ((monitor_valid_channel_check(index - 1)) == false)
+        if ((user_data_get()->system_mode & 0x1f) == 0x01) // 防止没注册的门口机呼叫
         {
-                sat_linphone_handup(-1);
-                return false;
+                if ((monitor_valid_channel_check(index - 1)) == false)
+                {
+                        sat_linphone_handup(call_id);
+                        return false;
+                }
         }
         if (index < 0)
         {

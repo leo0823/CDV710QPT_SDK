@@ -104,13 +104,27 @@ static void cctv_search_list_display(void)
                 bool registered = false;
                 for (int j = 0; j < 8; j++)
                 {
-                        if (network_data_get()->cctv_device[i].ipaddr[0] != 0)
+                        if (layout_ipc_cmeara_is_doorcamera_get())
                         {
+                                if (network_data_get()->door_device[j].ipaddr[0] != 0)
+                                {
+                                        if (strncmp(network_data_get()->door_device[j].ipaddr, sat_ipcamera_ipaddr_get(i), sizeof(network_data_get()->door_device[j].ipaddr)) == 0)
+                                        {
+                                                registered = true;
+                                                break;
+                                        }
+                                }
                         }
-                        if (strncmp(network_data_get()->cctv_device[i].ipaddr, sat_ipcamera_ipaddr_get(i), sizeof(network_data_get()->cctv_device[i].ipaddr)) == 0)
+                        else
                         {
-                                registered = true;
-                                continue;
+                                if (network_data_get()->cctv_device[j].ipaddr[0] != 0)
+                                {
+                                        if (strncmp(network_data_get()->cctv_device[j].ipaddr, sat_ipcamera_ipaddr_get(i), sizeof(network_data_get()->cctv_device[j].ipaddr)) == 0)
+                                        {
+                                                registered = true;
+                                                break;
+                                        }
+                                }
                         }
                 }
                 if (registered == true)

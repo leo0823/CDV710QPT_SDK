@@ -140,7 +140,7 @@ static void layout_ipc_edit_sensor_linkage_display(void)
                 }
                 else
                 {
-                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1 + user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get() - 1]));
+                        lv_label_set_text(sub, lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1 + user_data_get()->alarm.cctv_sensor[layout_ipc_camera_edit_index_get()] - 1));
                 }
         }
 }

@@ -330,7 +330,7 @@ static void sat_layout_enter(ipc_camera_display)
         }
 
         sat_ipcamera_rtsp_url_get(layout_ipc_camera_edit_index_get());
-        sat_cur_layout_screen_get()->user_data = lv_sat_timer_create(layout_ipc_display_register_display, 5000, NULL);
+        sat_cur_layout_screen_get()->user_data = lv_sat_timer_create(layout_ipc_display_register_display, 8000, NULL);
         ipcamera_state_callback_register(ipc_camera_display_ipcamera_state_func);
 }
 static void sat_layout_quit(ipc_camera_display)

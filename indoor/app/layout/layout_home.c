@@ -901,15 +901,15 @@ static void layout_home_security_away_btn_display(void)
         lv_obj_t *away = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_away_cont);
         lv_obj_t *security = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_burglar_cont);
         lv_obj_t *icon_away_ban = lv_obj_get_child_form_id(away, 0);
-        lv_obj_t *icon_security_ban = lv_obj_get_child_form_id(security, 0);
         lv_obj_t *icon_away_en = lv_obj_get_child_form_id(away, 1);
+        lv_obj_t *icon_security_ban = lv_obj_get_child_form_id(security, 0);
         lv_obj_t *icon_security_en = lv_obj_get_child_form_id(security, 1);
         if (user_data_get()->alarm.security_alarm_enable)
         {
                 lv_obj_clear_flag(away, LV_OBJ_FLAG_CLICKABLE);
                 lv_obj_add_flag(security, LV_OBJ_FLAG_CLICKABLE);
-                lv_obj_clear_flag(icon_security_en, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(icon_security_ban, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_clear_flag(icon_security_en, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_add_flag(icon_away_en, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_clear_flag(icon_away_ban, LV_OBJ_FLAG_HIDDEN);
         }
@@ -1233,12 +1233,12 @@ static void sat_layout_enter(home)
                                                  NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                 resource_ui_src_get("ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         lv_common_img_btn_create(away, 1, 55, 45, 48, 48,
                                                  NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get(user_data_get()->alarm.away_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                 resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
 
                         sec_x += unit_offset;
                 }
@@ -1256,12 +1256,12 @@ static void sat_layout_enter(home)
                                                  NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                 resource_ui_src_get("ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         lv_common_img_btn_create(security, 1, 55, 45, 48, 48,
                                                  NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                  0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                 resource_ui_src_get(user_data_get()->alarm.security_alarm_enable ? "ic_detect.png" : "ic_main_inactive.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                                 resource_ui_src_get("ic_detect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
                         sec_x += unit_offset;
                 }
 
