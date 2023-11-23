@@ -255,8 +255,13 @@ static void sat_layout_enter(ipc_camera_display)
                          ** 说明: 标题显示
                          ***********************************************/
                         {
-                                char buffer[32] = {0};
-                                sprintf(buffer, "%s", sat_ipcamera_door_name_get(layout_ipc_camera_edit_index_get()));
+                                char buffer[32] = {"unknow"};
+                                if (sat_ipcamera_door_name_get(layout_ipc_camera_edit_index_get()) != NULL)
+
+                                {
+                                        memset(buffer, 0, sizeof(buffer));
+                                        sprintf(buffer, "%s", sat_ipcamera_door_name_get(layout_ipc_camera_edit_index_get()));
+                                }
                                 lv_common_text_create(parent, ipc_camera_search_display_obj_id_title, 0, 20, 1024, 40,
                                                       NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

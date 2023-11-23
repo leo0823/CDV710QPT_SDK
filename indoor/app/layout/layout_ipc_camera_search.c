@@ -58,7 +58,7 @@ static void ipc_camera_serarch_list_click(lv_event_t *ev)
         if (1)
         {
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 1; i++)
                 {
                         if (sat_ipcamera_device_name_get(parent->id, 2000) == true)
                         {

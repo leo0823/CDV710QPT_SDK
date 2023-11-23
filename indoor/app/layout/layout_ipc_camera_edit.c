@@ -195,16 +195,20 @@ static void ipc_camera_edit_sensor_linkage_click(lv_event_t *e)
                                                                       lang_str_get(SETTING_SENSOR_USAGE_XLS_LANG_ID_SENSOR_CONTACT_1 + i - 1), 0xffffff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
                                                                       0, 8, 32, 32, 1,
                                                                       (const char *)resource_ui_src_get(user_data_get()->alarm.cctv_sensor[ipc_camera_edit_index] == i ? "btn_radio_s.png" : "btn_radio_n.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
-
-                        if (user_data_get()->alarm.cctv_sensor[i - 1] && (i - 1 != ipc_camera_edit_index)) // 传感器被选择了，且不是被当前CCTV选择的
+                        for (int h = 0; h < 7; h++)
                         {
+                                if ((user_data_get()->alarm.cctv_sensor[h] == i) && (h != ipc_camera_edit_index)) // 传感器被选择了，且不是被当前CCTV选择的
+                                {
 
-                                lv_common_img_btn_create(obj, 2, 0, 0, 365, 48,
-                                                         NULL, true, LV_OPA_60, 0x242526, LV_OPA_60, 0x242526,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                         NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                        lv_common_img_btn_create(obj, 2, 0, 0, 365, 48,
+                                                                 NULL, true, LV_OPA_60, 0x242526, LV_OPA_60, 0x242526,
+                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                 0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                                                 NULL, LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+                                        break;
+                                }
                         }
+
                         j++;
                 }
         }

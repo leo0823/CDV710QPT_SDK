@@ -90,6 +90,18 @@ static void ipc_camera_registered_register_list_click(lv_event_t *ev)
         {
                 return;
         }
+        int count = 0;
+        while (sat_ipcamera_device_status_get() == true)
+
+        {
+                usleep(1000);
+                if ((count++) > 500)
+
+                {
+                        printf("wait ipacamera status timeout \n");
+                        return;
+                }
+        }
 
         layout_ipc_camera_edit_index_set(obj->id);
         layout_ipc_camera_input_flag_set(IPC_CAMERA_FLAG_REGISTER);
@@ -199,6 +211,7 @@ static lv_obj_t *ipc_camera_registered_list_create(void)
         lv_common_style_set_common(list, ipc_camera_registered_obj_id_door_camera_list, 48, 194, 928, (600 - 194), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
         return list;
 }
+
 static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
 {
         struct ipcamera_info *ipc_device = layout_ipc_cmeara_is_doorcamera_get() == false ? network_data_get()->cctv_device : network_data_get()->door_device;
@@ -224,12 +237,6 @@ static void layout_ipc_cameara_register_online_check_timer(lv_timer_t *timer)
                 }
                 char name[64] = {0};
                 result[i] = ipc_camera_device_name_get(name, ipc_device[i].ipaddr, ipc_device[i].port, ipc_device[i].username, ipc_device[i].password, ipc_device[i].auther_flag, 1000);
-                // printf("=== ipc_device[index].ipaddr is %s===\n", ipc_device[i].ipaddr);
-                // printf("=== ipc_device[index].port is %d===\n", ipc_device[i].port);
-                // printf("=== ipc_device[index].username is %s===\n", ipc_device[i].username);
-                // printf("=== ipc_device[index].password is %s===\n", ipc_device[i].password);
-                // printf("=== ipc_device[index].auther_flag is %d===\n", ipc_device[i].auther_flag);
-                // result[i] = sat_ipcamera_device_name_get(i, 1000);
 
                 lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(result[i] ? "ic_detect.png" : "ic_error.png"), LV_PART_MAIN);
         }
@@ -369,7 +376,7 @@ static void sat_layout_enter(ipc_camera_register)
         }
         static bool result[8] = {0};
         memset(result, false, sizeof(result));
-        lv_timer_t *timer = lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 1000, &result);
+        lv_timer_t *timer = lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 3000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(ipc_camera_register)

@@ -274,7 +274,7 @@ static void sat_layout_enter(setting_version_information)
         sd_state_channge_callback_register(setting_version_information_sd_status_callback);
         static bool result[8] = {0};
         memset(result, false, sizeof(result));
-        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 1000, &result);
+        lv_timer_t *timer = lv_sat_timer_create(setting_version_information_version_get_timer, 3000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(setting_version_information)
