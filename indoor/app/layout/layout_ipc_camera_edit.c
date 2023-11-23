@@ -62,7 +62,7 @@ static void ipc_camera_edit_msgbox_item_click(lv_event_t *ev)
         {
                 return;
         }
-        if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+        if (strncmp(item_img_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
                 lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 for (int i = 0; i < 8; i++)
@@ -73,10 +73,8 @@ static void ipc_camera_edit_msgbox_item_click(lv_event_t *ev)
                                 continue;
                         }
                         item_img_obj = lv_obj_get_child_form_id(n_item, 1);
-                        if (strncmp(item_img_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
-                        {
-                                lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
-                        }
+
+                        lv_obj_set_style_bg_img_src(item_img_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
                 }
         }
 }

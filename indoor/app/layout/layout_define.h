@@ -29,7 +29,7 @@
 #include "common/user_standby.h"
 #include "common/user_alarm_list.h"
 #include "common/user_call_list.h"
-#define SYSTEM_VERSION "Ver:0.0.7.2"
+#define SYSTEM_VERSION "Ver:0.0.7.3-T"
 
 #define TUYA_PID "nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
 
@@ -46,7 +46,7 @@ void *resource_ui_src_get(const char *file);
 /*
  * @日期: 2022-08-11
  * @作者: leo.liu
- * @功能: 获取背景图片
+ * @功能: 获取背景图片P
  * @return:
  */
 void *resource_wallpaper_src_get(char *file, uint32_t w, uint32_t h);

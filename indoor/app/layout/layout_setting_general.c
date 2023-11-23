@@ -361,7 +361,7 @@ static void setting_general_msgbox_moethod_checkbox_click(lv_event_t *e)
                 return;
         }
 
-        if (strncmp((const char *)check_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+        if (strncmp(check_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
                 lv_obj_set_style_bg_img_src(check_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(discheck_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
@@ -572,7 +572,7 @@ static void setting_general_call_time_msgbox_item_click(lv_event_t *e)
                 return;
         }
 
-        if (strncmp((const char *)check_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+        if (strncmp(check_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
                 lv_obj_set_style_bg_img_src(check_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(discheck1_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
@@ -786,7 +786,7 @@ static lv_obj_t *setting_sub_list_create(void)
         {
 
                 // 此处请重新判断
-                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8))) || (i == 10))
+                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8) || (i == 10))))
                 {
                         continue;
                 }
