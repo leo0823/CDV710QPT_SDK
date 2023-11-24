@@ -184,8 +184,27 @@ static bool intercom_linphone_outgoing_callback(char *arg)
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
-        intercom_call_username_setting(arg);
-        intercom_call_status_setting(1);
+        if (extern_index_get_by_user(arg) == -1)
+        {
+                char *start = strstr(arg, "guard"); /*获取别名*/
+                if (start == NULL)
+                {
+                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                char *end = strchr(arg, '"');
+                if (end == NULL)
+                {
+                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+                *end = 0;
+                intercom_call_username_setting(start);
+        }
+        else
+        {
+                intercom_call_username_setting(arg);
+        }
         if (user_data_get()->audio.ring_mute == false)
         {
                 send_call_play(1, 0xfffff);
@@ -822,7 +841,7 @@ static void sat_layout_enter(intercom_call)
 static void sat_layout_quit(intercom_call)
 {
         user_linphone_call_outgoing_call_register(NULL);
-        user_linphone_call_outgoing_early_media_register(NULL);
+        user_linphone_call_outgoing_early_media_register(intercom_linphone_outgoing_arly_media_register);
         checkbox_s_num = 0;
 }
 sat_layout_create(intercom_call);

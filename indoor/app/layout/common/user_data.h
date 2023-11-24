@@ -139,9 +139,9 @@ typedef struct
 
         bool buzzer_alarm;
 
-        bool alarm_ring_play; // 是否需要播放警报铃声（警报同步需要用)
+        bool alarm_ring_play; // 是否需要播放警报铃声（警报同步需要用,目前已取消铃声同步的功能)
 
-        bool is_alarm_return; // 表示当前
+        bool is_alarm_return; // 表示在警报界面是属于return状态还是stop状态（目前已取消return状态，只保留stop)
 
         char cctv_sensor[8]; // 0:cctv 不与警报绑定 1-7代表cctv与对应的传感器绑定
 

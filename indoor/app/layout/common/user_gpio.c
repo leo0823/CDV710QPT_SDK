@@ -187,7 +187,7 @@ static float sarad_read_func(void)
         return sarad_read(1);
 }
 
-static int ALARM_TRIGGER_NEW = 0;
+static int ALARM_TRIGGER_NEW = 1;
 /***********************************************
 ** 作者: leo.liu
 ** 日期: 2022-11-9 10:15:48
@@ -297,6 +297,7 @@ static void *user_gpio_detect_task(void *arg)
 ************************************************************/
 static void alarm_detect_gpio_init(void)
 {
+
         gpio_direction_set(ALARM1_GPIO_PIN, GPIO_DIR_IN);
         gpio_direction_set(ALARM2_GPIO_PIN, GPIO_DIR_IN);
         gpio_direction_set(ALARM3_GPIO_PIN, GPIO_DIR_IN);

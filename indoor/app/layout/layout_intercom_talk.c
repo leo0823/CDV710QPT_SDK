@@ -252,7 +252,7 @@ static void intercom_talk_call_info_display(void)
         }
         else
         {
-                lv_label_set_text_fmt(obj, "Call: %s    %04d-%02d:%02d %02d:%02d", network_data_get()->guard_number, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "Call: %s    %04d-%02d:%02d %02d:%02d", intercom_call_user, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 
@@ -970,10 +970,7 @@ static void sat_layout_enter(intercom_talk)
         user_linphone_call_streams_connected_receive_register(intercom_talk_call_answer_callback);
         user_linphone_call_end_register(intercom_talk_call_end_callback);
         user_linphone_call_busy_register(intercom_talk_call_busy_callback);
-        if (sat_pre_layout_get() == sat_playout_get(monitor) && (intercom_call_state == 0x01))
-        {
-                sat_linphone_call(intercom_call_user, false, false, NULL);
-        }
+
         user_linphone_call_incoming_received_register(layout_intercom_talk_call_incoming_func);
         if (user_data_get()->alarm.buzzer_alarm)
         {
