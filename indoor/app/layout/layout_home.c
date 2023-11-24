@@ -238,7 +238,11 @@ static void home_slave_sync_time_obj_display()
 
 static void home_slave_sync_time_request_timer(lv_timer_t *ptimer)
 {
-        lv_timer_set_period(ptimer, 5000);
+        if (ptimer != NULL)
+        {
+                lv_timer_set_period(ptimer, 5000);
+        }
+
         struct tm tm;
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_failed);
         if (sat_ipcamera_system_time_get(user_data_get()->mastar_wallpad_ip, 80, "admin", "123456789", 0x00, &tm, 2000) == false)

@@ -224,7 +224,7 @@ static void monitior_obj_channel_info_obj_display(void)
         struct tm tm;
         user_time_read(&tm);
         int channel = monitor_channel_get();
-        if (strstr(call_obj_name, "guard"))
+        if (strstr(call_obj_name, "guard") || strstr(call_obj_name, network_data_get()->guard_number))
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
@@ -2470,6 +2470,11 @@ static void sat_layout_enter(monitor)
         tuya_event_cmd_register(layout_monitor_tuya_event_handle);
 
         lv_sat_timer_create(layout_monitor_timer_task, 1000, NULL);
+
+        if (monitor_enter_flag_get() == MON_ENTER_CALL_TALK_FLAG)
+        {
+                monitor_obj_talk_click(NULL);
+        }
 }
 static void sat_layout_quit(monitor)
 {
@@ -2913,7 +2918,7 @@ static bool monitor_talk_call_end_callback(char *arg)
 
                 layout_monitor_goto_layout_process();
         }
-        else if (strstr(arg, "guard") != NULL) /*guard代表*/
+        else if (strstr(arg, "guard") || strstr(arg, network_data_get()->guard_number)) /*guard代表*/
         {
 
                 layout_monitor_goto_layout_process();

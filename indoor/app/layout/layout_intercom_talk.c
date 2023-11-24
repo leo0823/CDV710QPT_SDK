@@ -401,6 +401,11 @@ static bool intercom_talk_call_end_callback(char *arg)
 
                 intercom_doorcamera_end_process(arg);
         }
+
+        if (strstr(arg, network_data_get()->guard_number))
+        {
+                intercom_doorcamera_end_process(arg);
+        }
         return true;
 }
 
@@ -464,22 +469,16 @@ static void intercom_talk_answer_obj_click(lv_event_t *e)
 
 static bool intercom_talk_call_answer_callback(char *arg)
 {
+        SAT_DEBUG("===========arg is %s=================", arg);
         if (intercom_call_state == 4)
         {
                 return false;
         }
-        if (strstr(arg, "guard") != NULL)
+        char *start = strstr(arg, network_data_get()->guard_number);
+        if (start != NULL)
         {
-                char *start = strstr(arg, "guard");
-                /*获取别名*/
-                char *end = strchr(arg, '"');
-                if (end == NULL)
-                {
-                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
-                        return false;
-                }
-                *end = 0;
-                layout_monitor_ch_name_set(start);
+
+                layout_monitor_ch_name_set(network_data_get()->guard_number);
                 monitor_enter_flag_set(MON_ENTER_CALL_TALK_FLAG);
                 sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
         }

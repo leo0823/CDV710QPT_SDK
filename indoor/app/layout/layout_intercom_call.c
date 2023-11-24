@@ -169,9 +169,18 @@ static void intercom_id_obj_click(lv_event_t *e)
         }
 }
 
+static void layout_intercom_call_delay_ringplay(lv_timer_t *t)
+{
+        SAT_DEBUG("========");
+        if (user_data_get()->audio.ring_mute == false)
+        {
+                send_call_play(1, 0xfffff);
+        }
+}
+
 static bool intercom_linphone_outgoing_callback(char *arg)
 {
-        // SAT_DEBUG("====arg is %s======", arg);
+        SAT_DEBUG("====arg is %s======", arg);
         // intercom_call_username_setting(arg);
         // intercom_call_status_setting(1);
         // if (user_data_get()->audio.ring_mute == false)
@@ -179,11 +188,30 @@ static bool intercom_linphone_outgoing_callback(char *arg)
         //         ring_intercom_play(user_data_get()->audio.extenion_tone, 0xffff);
         // }
         // sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
+        if (extern_index_get_by_user(arg) == -1)
+        {
+                char *start = strstr(arg, network_data_get()->guard_number); /*获取别名*/
+                if (start == NULL)
+                {
+                        printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
+                        return false;
+                }
+
+                intercom_call_username_setting(network_data_get()->guard_number);
+        }
+        else
+        {
+                return false;
+        }
+        lv_timer_set_repeat_count(lv_timer_create(layout_intercom_call_delay_ringplay, 200, NULL), 1);
+
+        sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, true);
         return true;
 }
 
 static bool intercom_linphone_outgoing_arly_media_register(char *arg)
 {
+        SAT_DEBUG("====arg is %s======", arg);
         if (extern_index_get_by_user(arg) == -1)
         {
                 char *start = strstr(arg, "guard"); /*获取别名*/

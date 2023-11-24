@@ -151,11 +151,13 @@ static void photo_thumb_refresh_display_callback(void)
                 return;
         }
         //    lv_obj_clear_flag(parent, LV_OBJ_FLAG_HIDDEN);
+
         lv_obj_set_style_bg_img_src(parent, photo_thumb_img_dsc, LV_PART_MAIN);
 
         /*每次加载完后显示总数*/
         photo_time_obj_display();
         photo_info_obj_display();
+        lv_img_cache_invalidate_src(parent->bg_img_src);
 }
 static void photo_sd_state_change_callback(void)
 {
@@ -190,7 +192,7 @@ static void photo_thumb_decode_all_display(void)
                 SAT_DEBUG("lv_obj_get_child_form_id(sat_cur_layout_screen_get(),photo_obj_id_thumb) failed");
                 return;
         }
-        lv_img_cache_invalidate_src(obj->bg_img_src);
+        // lv_img_cache_invalidate_src(obj->bg_img_src);
         sat_linphone_media_thumb_display(arry, 1, photo_thumb_media_display_callback);
 
         if (pinfo->is_new == true)
