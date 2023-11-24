@@ -239,7 +239,7 @@ static void layout_security_confirm_btn_obj_click(lv_event_t *ev)
             if (sensor_select_list & 0x01 << i)
             {
                 float value = user_sensor_value_get(i);
-                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[i] == 2 && value < ALM_LOW))
+                if ((user_data_get()->alarm.alarm_enable[i] == 1 && value < ALM_LOW) || (user_data_get()->alarm.alarm_enable[i] == 2 && value > ALM_HIGHT))
                 {
                     normal_select |= 0x01 << i;
                 }

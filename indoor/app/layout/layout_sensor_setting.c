@@ -204,7 +204,7 @@ static void sensor_setting_msgbox_click(lv_event_t *e)
         {
             lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
-        if (user_sensor_value_get(layout_sensor_setting_select_index_get()) < ALM_LOW)
+        if (user_sensor_value_get(layout_sensor_setting_select_index_get()) > ALM_HIGHT)
         {
             lv_obj_add_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
         }
@@ -230,7 +230,7 @@ static void sensor_setting_msgbox_click(lv_event_t *e)
             lv_obj_set_style_bg_img_src(alway_cb_obj, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
         }
 
-        if (user_sensor_value_get(layout_sensor_setting_select_index_get()) > ALM_HIGHT)
+        if (user_sensor_value_get(layout_sensor_setting_select_index_get()) < ALM_LOW)
         {
             lv_obj_add_flag(alway_cb_obj_bg, LV_OBJ_FLAG_HIDDEN);
         }
@@ -380,7 +380,7 @@ static void setting_sensor_settings_option_display(lv_obj_t *parent)
         else
         {
             lv_obj_set_style_bg_img_src(cb4_img, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-            if (user_sensor_value_get(ch) < ALM_LOW)
+            if (user_sensor_value_get(ch) > ALM_HIGHT)
             {
                 lv_obj_add_flag(checkbox4_bg, LV_OBJ_FLAG_HIDDEN);
             }
@@ -403,7 +403,7 @@ static void setting_sensor_settings_option_display(lv_obj_t *parent)
         else
         {
             lv_obj_set_style_bg_img_src(cb4_img, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
-            if (user_sensor_value_get(ch) > ALM_HIGHT)
+            if (user_sensor_value_get(ch) < ALM_LOW)
             {
                 lv_obj_add_flag(checkbox4_bg, LV_OBJ_FLAG_HIDDEN);
             }

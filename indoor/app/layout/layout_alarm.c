@@ -180,7 +180,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
-        if ((arg1 == 7) && (arg2 < ALM_LOW))
+        if ((arg1 == 7) && (arg2 > ALM_HIGHT))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save(true, true);
@@ -192,7 +192,7 @@ static void layout_alarm_trigger_func(int arg1, int arg2)
                 {
                         return;
                 }
-                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
+                if (((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT)) && (user_data_get()->alarm.alarm_trigger[arg1] == false))
                 {
 
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
@@ -337,7 +337,7 @@ static void layout_alarm_passwd_input_text_next_foucued(void)
                                         if (user_data_get()->alarm.emergency_mode == 1) // 判断是否为警报器触发的警报
                                         {
                                                 int ch = layout_alarm_alarm_channel_get();
-                                                if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch) > ALM_HIGHT)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) < ALM_LOW)))
+                                                if (((user_data_get()->alarm.alarm_enable[ch] == 2) && (user_sensor_value_get(ch) < ALM_LOW)) || ((user_data_get()->alarm.alarm_enable[ch] == 1) && (user_sensor_value_get(ch) > ALM_HIGHT)))
                                                 {
                                                         user_data_get()->alarm.alarm_trigger[ch] = false;
                                                         user_data_get()->alarm.alarm_trigger_enable[ch] = false;

@@ -266,7 +266,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
         {
                 return;
         }
-        if ((arg1 == 7) && (arg2 < ALM_LOW))
+        if ((arg1 == 7) && (arg2 > ALM_HIGHT))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save(true, true);
@@ -287,7 +287,7 @@ void layout_alarm_trigger_default(int arg1, int arg2)
                                 return;
                         }
                 }
-                if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 > ALM_HIGHT) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 < ALM_LOW))
+                if ((user_data_get()->alarm.alarm_enable[arg1] == 1 && arg2 < ALM_LOW) || (user_data_get()->alarm.alarm_enable[arg1] == 2 && arg2 > ALM_HIGHT))
                 {
                         layout_alarm_alarm_channel_set(arg1);
                         user_data_get()->alarm.alarm_trigger[arg1] = true;
