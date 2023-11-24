@@ -180,7 +180,7 @@ static void alarm_stop_obj_click(lv_event_t *ev)
 ************************************************************/
 static void layout_alarm_trigger_func(int arg1, int arg2)
 {
-        if ((arg1 == 7) && (arg2 > ALM_HIGHT))
+        if ((arg1 == 7) && (arg2 < ALM_LOW))
         {
                 user_data_get()->alarm.buzzer_alarm = true;
                 user_data_save(true, true);

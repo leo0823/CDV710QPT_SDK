@@ -297,7 +297,6 @@ static void *user_gpio_detect_task(void *arg)
 ************************************************************/
 static void alarm_detect_gpio_init(void)
 {
-
         gpio_direction_set(ALARM1_GPIO_PIN, GPIO_DIR_IN);
         gpio_direction_set(ALARM2_GPIO_PIN, GPIO_DIR_IN);
         gpio_direction_set(ALARM3_GPIO_PIN, GPIO_DIR_IN);
