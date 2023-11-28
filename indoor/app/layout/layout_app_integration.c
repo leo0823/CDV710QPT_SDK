@@ -1,6 +1,7 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
 #include "tuya/tuya_api.h"
+#include "layout_wifi_info.h"
 enum
 {
   setting_app_integration_obj_id_title,
@@ -36,6 +37,8 @@ static void setting_app_integation_confirm_click(lv_event_t *ev)
   {
     user_data_get()->etc.tuya_connect_mode = 0;
     user_data_save(false, false);
+    layout_setting_user_wifi_display_mode_set(2);
+    sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
   }
   else if (strncmp(check2->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))) == 0)
   {
@@ -179,7 +182,7 @@ static void sat_layout_enter(setting_app_integration)
                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                           lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECT_STATUS_WARN), 0xb8b8b8, 0xb8b8b8, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-    lv_timer_set_repeat_count(lv_sat_timer_create(layout_setting_app_integration_connect_status_timer, 5000, NULL), 1);
+    lv_timer_set_repeat_count(lv_sat_timer_create(layout_setting_app_integration_connect_status_timer, 500, NULL), 1);
   }
 }
 static void sat_layout_quit(setting_app_integration)

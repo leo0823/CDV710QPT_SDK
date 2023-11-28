@@ -86,7 +86,7 @@ static void setting_user_wifi_setting_click(lv_event_t *e)
         lv_obj_t *img = lv_obj_get_child_form_id(parent, 2);
 
         user_data_get()->wifi_enable = user_data_get()->wifi_enable ? false : true;
-        user_data_save(false,false);
+        user_data_save(false, false);
         wifi_setting_user_wifi_enable_display(img);
 
         if (user_data_get()->wifi_enable == false)
@@ -213,6 +213,12 @@ static void settign_wifi_add_click(lv_event_t *ev)
         wifi_input_mode_set(0x01);
         sat_layout_goto(wifi_input, LV_SCR_LOAD_ANIM_MOVE_TOP, SAT_VOID);
 }
+static char user_wifi_display_mode = 0;
+
+void layout_setting_user_wifi_display_mode_set(char mode)
+{
+        user_wifi_display_mode = mode;
+}
 
 /************************************************************
 ** 函数说明: 创建连接动画
@@ -223,7 +229,7 @@ static void settign_wifi_add_click(lv_event_t *ev)
 ************************************************************/
 static void wifi_input_animation_task_create(lv_obj_t *parent)
 {
-        parent = lv_common_img_btn_create(parent, setting_user_wifi_obj_id_preload, 0, 0, user_data_get()->is_device_init ? 622 : 927, 300,
+        parent = lv_common_img_btn_create(parent, setting_user_wifi_obj_id_preload, 0, 0, user_wifi_display_mode ? 927 : 622, 300,
                                           NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0x808080,
                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -284,7 +290,7 @@ static void setting_user_wifi_discovered_network_display(void)
                  ** 说明: 显示搜索的文本
                  ***********************************************/
                 {
-                        lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_add_cont, user_data_get()->is_device_init ? 306 : 0, 168, user_data_get()->is_device_init ? 718 : 1024, 48,
+                        lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_add_cont, user_wifi_display_mode ? 0 : 306, 168, user_wifi_display_mode ? 1024 : 718, 48,
                                                       NULL, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -293,7 +299,7 @@ static void setting_user_wifi_discovered_network_display(void)
                                                       590, 16, 80, 32, -1,
                                                       NULL, LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
                 }
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_connected_user_cont, user_data_get()->is_device_init ? 354 : 48, 216, 622, 72,
+                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_connected_user_cont, user_wifi_display_mode ? 48 : 354, 216, 622, 72,
                                               settign_wifi_connected_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                               0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                               0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -316,13 +322,13 @@ static void setting_user_wifi_discovered_network_display(void)
         ** 说明:添加wifi
         ***********************************************/
         {
-                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, user_data_get()->is_device_init ? 306 : 0, list_item_y, user_data_get()->is_device_init ? 718 : 1024, 48,
+                lv_common_img_text_btn_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_discovered_user_cont, user_wifi_display_mode ? 0 : 360, list_item_y, user_wifi_display_mode ? 1024 : 718, 48,
                                               settign_wifi_add_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                               16, 13, 300, 27, 0,
                                               lang_str_get(WIFI_SETTING_XLS_LANG_ID_DISCOVERED_NETWORKS), 0x00a8ff, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_small,
-                                              user_data_get()->is_device_init ? 590 : 896, 16, 80, 32, 2,
+                                              user_wifi_display_mode ? 896 : 590, 16, 80, 32, 2,
                                               (const char *)resource_ui_src_get("wifi_add.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
                 list_item_y += 58;
         }
@@ -333,7 +339,7 @@ static void setting_user_wifi_discovered_network_display(void)
          ***********************************************/
         {
                 lv_obj_t *list = setting_user_wifi_discovered_network_list_create();
-                lv_common_style_set_common(list, setting_user_wifi_obj_id_list, user_data_get()->is_device_init ? 354 : 48, list_item_y, user_data_get()->is_device_init ? 622 : 927, (600 - list_item_y), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+                lv_common_style_set_common(list, setting_user_wifi_obj_id_list, user_wifi_display_mode ? 48 : 354, list_item_y, user_wifi_display_mode ? 927 : 622, (600 - list_item_y), LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
                 if (total == 0)
                 {
                         wifi_input_animation_task_create(list);
@@ -342,7 +348,7 @@ static void setting_user_wifi_discovered_network_display(void)
                 {
                         for (int i = 0; i < total; i++)
                         {
-                                lv_common_img_text_btn_create(list, i, 0, list_item_y, user_data_get()->is_device_init ? 622 : 928, 72,
+                                lv_common_img_text_btn_create(list, i, 0, list_item_y, user_wifi_display_mode ? 928 : 622, 72,
                                                               setting_user_wifi_discover_click, LV_OPA_TRANSP, 0x00, LV_OPA_TRANSP, 0x101010,
                                                               0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                               0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -393,9 +399,9 @@ static void wifi_display_scan_timer(lv_timer_t *pt)
 
 static void setting_wifi_cancel_click(lv_event_t *e)
 {
-        if (0 /*(user_data_get()->system_mode & 0xF0) == 0x00*/)
+        if (user_wifi_display_mode == 2)
         {
-                sat_layout_goto(single_operation_network, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
+                sat_layout_goto(setting_app_integration, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else
         {
@@ -411,7 +417,7 @@ static void setting_wifi_next_click(lv_event_t *e)
 static void sat_layout_enter(setting_user_wifi)
 {
 
-        if (user_data_get()->is_device_init)
+        if (user_wifi_display_mode == 0)
         {
                 setting_main_list_create(1);
         }
@@ -457,17 +463,17 @@ static void sat_layout_enter(setting_user_wifi)
         ** 说明: 设置按钮创建
         ***********************************************/
         {
-                lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_cont, user_data_get()->is_device_init ? 354 : 48, 80, user_data_get()->is_device_init ? 622 : 928, 88,
+                lv_obj_t *parent = lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_user_wifi_obj_id_wifi_cont, user_wifi_display_mode ? 48 : 354, 80, user_wifi_display_mode ? 928 : 622, 88,
                                                                                    setting_user_wifi_setting_click, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                                    0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
-                                                                                   0, 8, user_data_get()->is_device_init ? 400 : 835, 50, 0,
+                                                                                   0, 8, user_wifi_display_mode ? 835 : 400, 50, 0,
                                                                                    lang_str_get(WIFI_SETTING_XLS_LANG_ID_WIFI), 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                   0, 45, user_data_get()->is_device_init ? 542 : 838, 50, 1,
+                                                                                   0, 45, user_wifi_display_mode ? 838 : 542, 50, 1,
                                                                                    "Wi-FI MAC: AA:00:00:BB:FF:88", 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
                                                                                    0, 0, 0, 0, -1,
                                                                                    NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
-                                                                                   user_data_get()->is_device_init ? 540 : 840, 20, 80, 48, 2,
+                                                                                   user_wifi_display_mode ? 840 : 540, 20, 80, 48, 2,
                                                                                    resource_ui_src_get("btn_switch_on.png"), LV_OPA_50, 0x00a8ff, LV_ALIGN_CENTER);
 
                 lv_obj_t *obj = lv_obj_get_child_form_id(parent, 2);

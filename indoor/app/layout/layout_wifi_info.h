@@ -7,5 +7,6 @@
  ** 说明: 设置连接wifi的信息
  ***********************************************/
 void connected_wifi_info_setting(const void *info);
-#endif
 
+void layout_setting_user_wifi_display_mode_set(char mode);
+#endif

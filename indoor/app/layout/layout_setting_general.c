@@ -2,6 +2,7 @@
 #include "layout_setting_general.h"
 #include "layout_setting_time.h"
 #include "common/language.h"
+#include "layout_wifi_info.h"
 enum
 {
 
@@ -199,6 +200,7 @@ static void setting_main_general_obj_click(lv_event_t *ev)
 }
 static void setting_main_wifi_obj_click(lv_event_t *ev)
 {
+        layout_setting_user_wifi_display_mode_set(0);
         sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
 static void setting_main_sound_obj_click(lv_event_t *ev)

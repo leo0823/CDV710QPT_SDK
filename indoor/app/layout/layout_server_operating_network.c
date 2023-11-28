@@ -1,4 +1,5 @@
 #include "layout_define.h"
+#include "layout_wifi_info.h"
 enum
 {
         server_operation_network_obj_id_title,
@@ -417,6 +418,7 @@ static void setting_server_operation_network_next_btn_click(lv_event_t *e)
         if (setting_server_operation_data_valid_check())
         {
                 setting_setver_operation_network_data_save();
+                layout_setting_user_wifi_display_mode_set(1);
                 sat_layout_goto(setting_user_wifi, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
         }
         else
