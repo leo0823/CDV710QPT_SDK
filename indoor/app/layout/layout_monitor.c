@@ -2583,7 +2583,7 @@ static bool guard_call_process(const char *arg, bool is_extern_call)
         char *start = strstr(arg, "guard");
 
         /*获取别名*/
-        char *end = strchr(arg, '"');
+        char *end = strchr(start, '"');
         if (end == NULL)
         {
                 printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
@@ -2639,7 +2639,7 @@ static bool lobby_call_process(const char *arg, bool is_extern_call)
         sscanf(str + 4, "%ld", &call_id);
         char *start = strstr(arg, "lobby");
         /*获取别名*/
-        char *end = strchr(arg, '"');
+        char *end = strchr(start, '"');
         if (end == NULL)
         {
                 printf("[%s:%d] get usernmae failed(%s)\n", __func__, __LINE__, arg);
