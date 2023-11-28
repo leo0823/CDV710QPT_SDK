@@ -330,9 +330,10 @@ bool alarm_trigger_check(void)
                         }
                         if ((user_data_get()->alarm.alarm_trigger[i]))
                         {
-                                if (user_data_get()->alarm.alarm_trigger_enable[i] || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[0] || user_data_get()->alarm.alarm_enable_always[1])
+                                if ((user_data_get()->alarm.alarm_trigger_enable[i] && user_data_get()->alarm.away_alarm_enable) || user_data_get()->alarm.security_alarm_enable || user_data_get()->alarm.alarm_enable_always[0][i] || user_data_get()->alarm.alarm_enable_always[1][i])
                                 {
                                         alarm_occur = true;
+                                        user_data_get()->alarm.alarm_trigger_enable[i] = false;
                                         user_data_get()->alarm.emergency_mode = 1;
                                 }
                         }

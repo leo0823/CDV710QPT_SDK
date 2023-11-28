@@ -152,7 +152,7 @@ void away_mode_alarm_trigger_callback(int arg1, int arg2)
             if (user_data_get()->alarm.alarm_trigger[arg1] == false)
             {
                 user_data_get()->alarm.alarm_trigger[arg1] = true;
-                if (user_data_get()->alarm.alarm_enable_always[0][arg1])
+                if (user_data_get()->alarm.alarm_enable_always[0][arg1] || user_data_get()->alarm.alarm_enable_always[1][arg1])
                 {
                     struct tm tm;
                     user_time_read(&tm);
@@ -262,7 +262,7 @@ static void layout_alarm_count_param_init(void)
     }
     if (layout_away_count_data_get()->away_count_sec == 0)
     {
-        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 60;
+        layout_away_count_data_get()->away_count_sec = user_data_get()->alarm.away_setting_time * 10;
     }
 }
 
