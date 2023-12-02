@@ -145,9 +145,9 @@ static void intercom_extension_obj_click(lv_event_t *e)
         }
 }
 
-static int intercom_call_id_index = 0;
 static void intercom_id_obj_click(lv_event_t *e)
 {
+        int intercom_call_id_index = 0;
         lv_obj_t *obj = lv_event_get_target(e);
         intercom_call_id_index = lv_btnmatrix_get_selected_btn(obj) + 1;
         char user_name[64] = {0};

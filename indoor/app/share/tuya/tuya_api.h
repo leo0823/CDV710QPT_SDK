@@ -10,7 +10,7 @@
 **   函数作用：tuya api初始化
 **   参数说明:
 ***/
-bool tuya_api_init(const char *pid, const char *dev);
+bool tuya_api_init(const char *pid);
 /***
 **   日期:2022-06-07 15:52:37
 **   作者: leo.liu
@@ -47,12 +47,6 @@ bool tuya_api_app_sync_utc_time(void);
 **   函数作用：上传有效通道
 **   参数说明:channe:当前监控的通道
 ***/
-/***
-**	 日期:2022-06-07 18:15:39
-**	 作者: leo.liu
-**	 函数作用：上传有效通道
-**	 参数说明:channe:当前监控的通道
-***/
 bool tuya_api_channel_report(int cur,
                              bool door1_valild, const char *door1_str,
                              bool door2_valild, const char *door2_str,
@@ -60,12 +54,15 @@ bool tuya_api_channel_report(int cur,
                              bool door4_valild, const char *door4_str,
                              bool door5_valild, const char *door5_str,
                              bool door6_valild, const char *door6_str,
+                             bool door7_valild, const char *door7_str,
                              bool cctv1_valid, const char *cctv1_str,
                              bool cctv2_valid, const char *cctv2_str,
                              bool cctv3_valid, const char *cctv3_str,
                              bool cctv4_valid, const char *cctv4_str,
                              bool cctv5_valid, const char *cctv5_str,
-                             bool cctv6_valid, const char *cctv6_str);
+                             bool cctv6_valid, const char *cctv6_str,
+                             bool cctv7_valid, const char *cctv7_str);
+
 /***
 **   日期:2022-06-07 19:30:28
 **   作者: leo.liu

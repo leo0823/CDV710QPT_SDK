@@ -2,7 +2,21 @@
 #define _LANGUAGE_kdfjlskd_H_
 
 #include <stdint.h>
-// #include "XLS_LANG_xls.h"
+#define TUYA_CH_DOOR1 0
+#define TUYA_CH_DOOR2 1
+#define TUYA_CH_DOOR3 2
+#define TUYA_CH_DOOR4 3
+#define TUYA_CH_DOOR5 4
+#define TUYA_CH_DOOR6 5
+
+#define TUYA_CH_CCTV1 6
+#define TUYA_CH_CCTV2 7
+#define TUYA_CH_CCTV3 8
+#define TUYA_CH_CCTV4 9
+#define TUYA_CH_CCTV5 10
+#define TUYA_CH_CCTV6 11
+#define TUYA_CH_LOBBY 12
+#define TUYA_CH_GUARD 13
 
 typedef enum
 {

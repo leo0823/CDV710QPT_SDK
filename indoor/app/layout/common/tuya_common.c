@@ -85,18 +85,31 @@ bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 bool layout_monitor_report_vaild_channel(void)
 {
         int ch = monitor_channel_get();
-        ch = ch <= 7 ? ch + 1 : ch - 6;
+        if ((ch >= 8) && ch <= 13)
+        {
+                ch = ch - 2;
+        }
+        else if ((ch >= 16) && (ch <= 17))
+        {
+                ch = ch - 4;
+        }
+        else if ((ch < 0) || (ch > 6))
+        {
+                return false;
+        }
         return tuya_api_channel_report(ch,
-                                       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(MON_CH_DOOR1),
-                                       monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(MON_CH_DOOR2),
-                                       monitor_valid_channel_check(MON_CH_CCTV1), language_common_ch_string_get(MON_CH_CCTV1),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2),
-                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(MON_CH_CCTV2));
+                                       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
+                                       monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(TUYA_CH_DOOR2),
+                                       monitor_valid_channel_check(MON_CH_DOOR3), language_common_ch_string_get(TUYA_CH_DOOR3),
+                                       monitor_valid_channel_check(MON_CH_DOOR4), language_common_ch_string_get(TUYA_CH_DOOR4),
+                                       monitor_valid_channel_check(MON_CH_DOOR5), language_common_ch_string_get(TUYA_CH_DOOR5),
+                                       monitor_valid_channel_check(MON_CH_DOOR6), language_common_ch_string_get(TUYA_CH_DOOR6),
+                                       monitor_valid_channel_check(MON_CH_CCTV1), language_common_ch_string_get(TUYA_CH_CCTV1),
+                                       monitor_valid_channel_check(MON_CH_CCTV2), language_common_ch_string_get(TUYA_CH_CCTV2),
+                                       monitor_valid_channel_check(MON_CH_CCTV3), language_common_ch_string_get(TUYA_CH_CCTV3),
+                                       monitor_valid_channel_check(MON_CH_CCTV4), language_common_ch_string_get(TUYA_CH_CCTV4),
+                                       monitor_valid_channel_check(MON_CH_CCTV5), language_common_ch_string_get(TUYA_CH_CCTV5),
+                                       monitor_valid_channel_check(MON_CH_CCTV6), language_common_ch_string_get(TUYA_CH_CCTV6),
+                                       monitor_valid_channel_check(MON_CH_LOBBY), language_common_ch_string_get(TUYA_CH_LOBBY),
+                                       monitor_valid_channel_check(MON_CH_GUARD), language_common_ch_string_get(TUYA_CH_GUARD));
 }

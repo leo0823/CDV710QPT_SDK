@@ -1,6 +1,7 @@
 #include "layout_define.h"
 #include "onvif.h"
 #include "tuya_api.h"
+#include "tuya/tuya_ipc_api.h"
 #include "tuya_uuid_and_key.h"
 #include "layout_monitor.h"
 #include <stdio.h>
@@ -78,6 +79,10 @@ static void logo_sip_server_register(void)
 
 static void sip_register_timer(lv_timer_t *t)
 {
+        // OPERATE_RET ret = tuya_ipc_get_mqtt_status();
+        // int num = tuya_api_client_num();
+        // SAT_DEBUG("======tuya status is %d\n", ret);
+        // SAT_DEBUG("======tuya num is %d\n", num);
         if (user_data_get()->is_device_init == false)
                 return;
 
@@ -310,35 +315,6 @@ void buzzer_alarm_trigger_default(void)
         }
 }
 
-static void (*alarm_ring_func)(void) = NULL;
-/************************************************************
-** 函数说明: 警报铃声状态变化回调
-** 作者: xiaoxiao
-** 日期：2023-10-19 09:19:12
-** 参数说明:
-** 注意事项：
-************************************************************/
-void alarm_ring_func_callback_register(void (*callback)(void))
-{
-        alarm_ring_func = callback;
-}
-
-/************************************************************
-** 函数说明: 警报页面stop/return状态转换同步
-** 作者: xiaoxiao
-** 日期：2023-09-12 08:00:07
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void alarm_stop_return_status_display_check(void)
-{
-        if (sat_cur_layout_get() == sat_playout_get(alarm))
-        {
-                extern bool layout_alarm_stop_btn_label_display();
-                layout_alarm_stop_btn_label_display();
-        }
-}
-
 /************************************************************
 ** 函数说明:
 ** 作者: xiaoxiao
@@ -392,6 +368,7 @@ static void security_mode_sync_callback()
                 sat_layout_goto(home, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
 }
+
 /************************************************************
 ** 函数说明: 文件同步事件回调
 ** 作者: xiaoxiao
@@ -489,12 +466,6 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 user_data_get()->alarm.buzzer_alarm = info->alarm.buzzer_alarm;
                                 buzzer_call_trigger_check();
                         }
-                        if (0 /*user_data_get()->alarm.is_alarm_return != info->alarm.is_alarm_return*/) // 警报页面内，stop/return状态同步(客户取消return状态)
-                        {
-                                user_data_get()->alarm.is_alarm_return = info->alarm.is_alarm_return;
-                                alarm_stop_return_status_display_check();
-                        }
-
                         if (user_data_get()->alarm.away_setting_countdown != info->alarm.away_setting_countdown) // 离家设防同步
                         {
                                 user_data_get()->alarm.away_setting_countdown = info->alarm.away_setting_countdown;
@@ -726,7 +697,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         if (id == 0x01)
         {
                 /*****  tuya api初始化 *****/
-                tuya_api_init(TUYA_PID, "eth0");
+                tuya_api_init(TUYA_PID);
         }
 
         /***********************************************
@@ -1108,14 +1079,14 @@ void time_correction_timer(lv_timer_t *t)
 {
         struct timeval tim;
         gettimeofday(&tim, NULL);
-        if ((tim.tv_usec) > 10000)
+        if ((tim.tv_usec) > 100000)
         {
-                tim.tv_usec -= 10000;
+                tim.tv_usec -= 100000;
         }
         else
         {
                 tim.tv_sec -= 1;
-                tim.tv_usec += 990000;
+                tim.tv_usec += 900000;
         }
         settimeofday(&tim, NULL);
         system("hwclock -w");
@@ -1125,9 +1096,9 @@ static void sat_layout_quit(logo)
 {
         /**
          * 原因：时间比标准时间每天快了大约3秒
-         * 函数作用：每隔4.8分种让时间减少10豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：4.8/（24*60）*3 *1000 = 10)
+         * 函数作用：每隔4.8分种让时间减少10豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 100)
          **/
-        lv_timer_create(time_correction_timer, 60 * 48000 - 10, NULL);
+        lv_timer_create(time_correction_timer, 60 * 480000 - 100, NULL);
 }
 
 sat_layout_create(logo);

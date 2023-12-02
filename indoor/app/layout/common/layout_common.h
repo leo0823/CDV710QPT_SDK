@@ -146,14 +146,6 @@ bool buzzer_call_timestamp_set(unsigned long long timestamp);
 void buzzer_alarm_trigger_default(void);
 
 /************************************************************
-** 函数说明: 警报铃声状态变化回调
-** 作者: xiaoxiao
-** 日期：2023-10-19 09:19:12
-** 参数说明:
-** 注意事项：
-************************************************************/
-void alarm_ring_func_callback_register(void (*callback)(void));
-/************************************************************
 ** 函数说明: 是否警备触发状态
 ** 作者: xiaoxiao
 ** 日期：2023-10-23 08:21:24

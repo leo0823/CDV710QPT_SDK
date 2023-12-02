@@ -1746,7 +1746,7 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
                 return;
         }
         int ch = monitor_channel_get();
-        if (is_channel_ipc_camera(ch))
+        if (is_channel_ipc_camera(ch) == true)
         {
                 int index = monitor_door_first_valid_get(true);
                 if (index != -1)
@@ -2478,6 +2478,7 @@ static void sat_layout_enter(monitor)
 }
 static void sat_layout_quit(monitor)
 {
+        standby_timer_restart(true);
         door1_lock1_power_pin_ctrl(false);
         sat_linphone_alarm_backgound_sound(false);
         if (unlock_timer != NULL)

@@ -23,7 +23,7 @@
 #define MON_CH_CCTV7 14
 #define MON_CH_CCTV8 15
 #define MON_CH_LOBBY 16
-#define MON_CH_GUARD 16
+#define MON_CH_GUARD 17
 typedef enum
 {
         MON_ENTER_CALL_FLAG,

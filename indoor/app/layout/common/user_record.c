@@ -14,13 +14,45 @@
 #include "common/sat_linphone_event.h"
 #include "tuya/tuya_api.h"
 #include "string.h"
-/***
-** 日期: 2022-05-19 10:37
-** 作者: leo.liu
-** 函数作用：接收编码后的流
-** 返回参数说明：
-***/
+#include "pthread.h"
+#include "common/sat_user_common.h"
 
+typedef struct user_record_info
+{
+        int record_mode;
+        char *data;
+        int size;
+} user_record_info;
+
+static void *tuya_event_report(void *arg)
+{
+        user_record_info *info = (user_record_info *)arg;
+        if (info->record_mode & REC_MODE_TUYA_CALL)
+        {
+                tuya_api_call_event(monitor_channel_get() + 1, (const char *)info->data, info->size);
+        }
+        if (info->record_mode & REC_MODE_TUYA_ALARM)
+        {
+                tuya_api_alarm_event(monitor_channel_get() + 1, (const char *)info->data, info->size);
+        }
+        if (info->record_mode & REC_MODE_TUYA_MOTION)
+        {
+                tuya_api_motion_event(monitor_channel_get() + 1, (const char *)info->data, info->size);
+        }
+        if (info->data != NULL)
+        {
+                free((char *)info->data);
+                info->data = NULL;
+        }
+        return NULL;
+}
+/***
+ *
+ ** 日期: 2022-05-19 10:37
+ ** 作者: leo.liu
+ ** 函数作用：接收编码后的流
+ ** 返回参数说明：
+ ***/
 static int jpeg_record_mode = REC_MODE_MANUAL;
 
 static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
@@ -58,20 +90,24 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 }
                 media_file_bad_check(file_path);
         }
-        if (mode & REC_MODE_TUYA_CALL)
+
+        static user_record_info info;
+        info.record_mode = mode;
+        if (info.data != NULL)
         {
-                printf("======tuya_api_call_event=====\n");
-                tuya_api_call_event(monitor_channel_get() + 1, (const char *)data, size);
+                free((char *)info.data);
+                info.data = NULL;
         }
-        if (mode & REC_MODE_TUYA_ALARM)
-        {
-                printf("======tuya_api_alarm_event=====\n");
-                tuya_api_alarm_event(monitor_channel_get() + 1, (const char *)data, size);
-        }
-        if (mode & REC_MODE_TUYA_MOTION)
-        {
-                tuya_api_motion_event(monitor_channel_get() + 1, (const char *)data, size);
-        }
+
+        info.data = (char *)malloc(size);
+
+        memcpy(info.data, data, size);
+        info.size = size;
+
+        pthread_t task_id;
+        pthread_create(&task_id, sat_pthread_attr_get(), tuya_event_report, (void *)&info);
+        pthread_detach(task_id);
+
         system("sync");
         return true;
 }

@@ -508,16 +508,14 @@ static const char *lang_common_language[16][LANGUAGE_ID_TOTAL] =
         {"Door4", "Door4", "门口机 4", "Door4", "Door4", "Door4", "Door4"},
         {"Door5", "Door5", "门口机 5", "Door5", "Door5", "Door5", "Door5"},
         {"Door6", "Door6", "门口机 6", "Door6", "Door6", "Door6", "Door6"},
-        {"Door7", "Door7", "门口机 7", "Door7", "Door7", "Door7", "Door7"},
-        {"Door8", "Door8", "门口机 8", "Door8", "Door8", "Door8", "Door8"},
         {"CCTV1", "CCTV1", "CCTV1", "CCTV1", "CCTV1", "CCTV1", "CCTV1"},
         {"CCTV2", "CCTV2", "CCTV2", "CCTV2", "CCTV2", "CCTV2", "CCTV2"},
         {"CCTV3", "CCTV3", "CCTV3", "CCTV3", "CCTV3", "CCTV3", "CCTV3"},
         {"CCTV4", "CCTV4", "CCTV4", "CCTV4", "CCTV4", "CCTV4", "CCTV4"},
         {"CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5", "CCTV5"},
         {"CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6", "CCTV6"},
-        {"CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7", "CCTV7"},
-        {"CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8", "CCTV8"},
+        {"Lobby", "Lobby", "Lobby", "Lobby", "Lobby", "Lobby", "Lobby"},
+        {"Guard", "Guard", "Guard", "Guard", "Guard", "Guard", "Guard"},
 
 };
 
@@ -530,16 +528,14 @@ typedef enum
     LANG_COMMON_ID_DOOR4,
     LANG_COMMON_ID_DOOR5,
     LANG_COMMON_ID_DOOR6,
-    LANG_COMMON_ID_DOOR7,
-    LANG_COMMON_ID_DOOR8,
     LANG_COMMON_ID_CCTV1,
     LANG_COMMON_ID_CCTV2,
     LANG_COMMON_ID_CCTV3,
     LANG_COMMON_ID_CCTV4,
     LANG_COMMON_ID_CCTV5,
     LANG_COMMON_ID_CCTV6,
-    LANG_COMMON_ID_CCTV7,
-    LANG_COMMON_ID_CCTV8,
+    LANG_COMMON_ID_LOBBY,
+    LANG_COMMON_ID_GUARD,
     LANG_COMMON_ID_TOTAL
 } LANG_COMMON_ID;
 /***
@@ -552,6 +548,7 @@ const char *language_common_string_get(int id)
 {
     return lang_common_language[id][language_cur_id];
 }
+
 /***
 **   日期:2022-05-24 10:04:38
 **   作者: leo.liu
@@ -560,12 +557,22 @@ const char *language_common_string_get(int id)
 ***/
 const char *language_common_ch_string_get(int ch)
 {
-    int group[4][2] =
+    int group[][2] =
         {
-            {MON_CH_DOOR1, LANG_COMMON_ID_DOOR1},
-            {MON_CH_DOOR2, LANG_COMMON_ID_DOOR2},
-            {MON_CH_CCTV1, LANG_COMMON_ID_CCTV1},
-            {MON_CH_CCTV2, LANG_COMMON_ID_CCTV2},
+            {TUYA_CH_DOOR1, LANG_COMMON_ID_DOOR1},
+            {TUYA_CH_DOOR2, LANG_COMMON_ID_DOOR2},
+            {TUYA_CH_DOOR3, LANG_COMMON_ID_DOOR3},
+            {TUYA_CH_DOOR4, LANG_COMMON_ID_DOOR4},
+            {TUYA_CH_DOOR5, LANG_COMMON_ID_DOOR5},
+            {TUYA_CH_DOOR6, LANG_COMMON_ID_DOOR6},
+            {TUYA_CH_CCTV1, LANG_COMMON_ID_CCTV1},
+            {TUYA_CH_CCTV2, LANG_COMMON_ID_CCTV2},
+            {TUYA_CH_CCTV3, LANG_COMMON_ID_CCTV3},
+            {TUYA_CH_CCTV4, LANG_COMMON_ID_CCTV4},
+            {TUYA_CH_CCTV5, LANG_COMMON_ID_CCTV5},
+            {TUYA_CH_CCTV6, LANG_COMMON_ID_CCTV6},
+            {TUYA_CH_LOBBY, LANG_COMMON_ID_LOBBY},
+            {TUYA_CH_GUARD, LANG_COMMON_ID_GUARD},
         };
     for (int i = 0; i < sizeof(group) / sizeof(int); i++)
     {

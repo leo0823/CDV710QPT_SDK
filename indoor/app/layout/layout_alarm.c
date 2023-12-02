@@ -261,25 +261,6 @@ static void passwd_incorrect_timer(lv_timer_t *ptimer)
         lv_timer_del(ptimer);
 }
 
-bool layout_alarm_stop_btn_label_display(void)
-{
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_alarm_obj_id_confirm_btn);
-        if (obj != NULL)
-        {
-                lv_obj_t *label = lv_obj_get_child_form_id(obj, layout_alarm_obj_id_confirm_label);
-                if (user_data_get()->alarm.is_alarm_return)
-                {
-                        lv_label_set_text(label, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_RETURN));
-                }
-                else
-                {
-                        lv_label_set_text(label, lang_str_get(LAYOUT_ALARM_XLS_LANG_ID_STOP));
-                }
-                return true;
-        }
-        return false;
-}
-
 /************************************************************
 ** 函数说明: 文本区域复位
 ** 作者: xiaoxiao
@@ -659,34 +640,6 @@ static void layout_alarm_buzzer_alarm_call_callback(void)
         }
 }
 
-/************************************************************
-** 函数说明: 警报页面铃声播放/暂停同步
-** 作者: xiaoxiao
-** 日期：2023-09-12 08:00:33
-** 参数说明:
-** 注意事项：
-************************************************************/
-static void alarm_ringtone_play_check(void)
-{
-        if (sat_cur_layout_get() == sat_playout_get(alarm))
-        {
-                if (user_data_get()->alarm.alarm_ring_play == false)
-                {
-                        sat_linphone_audio_play_stop();
-                }
-                else
-                {
-                        ring_alarm_play();
-                        if (alarm_ring_close_timer)
-                        {
-                                lv_timer_del(alarm_ring_close_timer);
-                                alarm_ring_close_timer = NULL;
-                        }
-                        alarm_ring_close_timer = lv_sat_timer_create(layout_alarm_ring_stop, 3 * 60 * 1000, NULL);
-                }
-        }
-}
-
 static void layout_alarm_touch_callback(lv_event_t *e)
 {
         standby_timer_restart(false);
@@ -713,7 +666,7 @@ static void sat_layout_enter(alarm)
         user_linphone_call_streams_running_receive_register(layout_alarm_streams_running_register_callback);
         ring_play_event_cmd_register(layout_alarm_ringplay_register_callback);
         layout_alarm_monitor_open();
-        alarm_ring_func_callback_register(alarm_ringtone_play_check);
+
         /************************************************************
         ** 函数说明: 背景创建
         ** 作者: xiaoxiao
@@ -926,7 +879,6 @@ static void sat_layout_enter(alarm)
                                                                   0, 4, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
                                                                   NULL, 0Xffffff, 0Xffffff, LV_TEXT_ALIGN_CENTER, lv_font_large, 1,
                                                                   20, 500, 0Xffffff);
-
                         lv_textarea_set_password_mode(obj, true);
                         lv_textarea_set_password_show_time(obj, 500);
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
@@ -952,9 +904,9 @@ static void sat_layout_enter(alarm)
         buzzer_call_callback_register(layout_alarm_buzzer_alarm_call_callback);
         lv_obj_pressed_func = layout_alarm_touch_callback;
 }
+
 static void sat_layout_quit(alarm)
 {
-
         buzzer_call_callback_register(buzzer_alarm_trigger_default);
         alarm_ring_idel_timer = NULL;
         alarm_power_out_ctrl(false);
@@ -969,7 +921,6 @@ static void sat_layout_quit(alarm)
         monitor_close(0x02);
         standby_timer_restart(true);
         lv_disp_set_bg_image(lv_disp_get_default(), NULL);
-        alarm_ring_func_callback_register(NULL);
 }
 
 sat_layout_create(alarm);

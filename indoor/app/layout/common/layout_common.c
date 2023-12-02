@@ -348,7 +348,7 @@ bool alarm_trigger_check(void)
                         alarm_occur = true;
                         user_data_get()->alarm.emergency_mode = 0;
                 }
-                if ((alarm_occur))
+                if ((alarm_occur) && (sat_cur_layout_get() != sat_playout_get(alarm) || (user_data_get()->alarm.alarm_trigger[layout_alarm_alarm_channel_get()] == false)))
                 {
                         user_data_save(true, true);
                         struct tm tm;

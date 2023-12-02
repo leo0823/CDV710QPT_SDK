@@ -187,8 +187,11 @@ static void *asterisk_server_sync_task(void *arg)
                                 /*上次设备不在线，这次在线，状态发生改变*/
                                 if (((is_registers_online[i] == false) || (is_asterisk_server_sync_user_data_force == true) || (is_asterisk_server_sync_network_data_force == true)) && (abs(timestamp - p_register_info[i].timestamp) < (10 * 1000)))
                                 {
-                                        is_registers_online[i] = true;
-                                        is_need_asterisk_update = true;
+                                        if (is_registers_online[i] == false)
+                                        {
+                                                is_asterisk_server_sync_user_data_force = true;
+                                                is_asterisk_server_sync_network_data_force = true;
+                                        }
                                         if (is_asterisk_server_sync_user_data_force)
                                         {
 
@@ -202,6 +205,8 @@ static void *asterisk_server_sync_task(void *arg)
                                                 sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
                                                 usleep(100 * 1000);
                                         }
+                                        is_registers_online[i] = true;
+                                        is_need_asterisk_update = true;
                                 }
                                 else if ((is_registers_online[i] == true) && (abs(timestamp - p_register_info[i].timestamp) > (10 * 1000)))
                                 {
@@ -219,19 +224,19 @@ static void *asterisk_server_sync_task(void *arg)
                                 is_need_asterisk_update = false;
                                 sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
                         }
-                }
-                if (timeout++ == 60)
-                {
-                        timeout = 0;
-                        is_asterisk_server_sync_network_data_force = false;
-                        is_asterisk_server_sync_user_data_force = false;
-                        is_need_asterisk_update = false;
-                        usleep(100 * 1000);
-                        sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
-                        usleep(100 * 1000);
-                        sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
-                        usleep(100 * 1000);
-                        sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                        if (timeout++ == 60)
+                        {
+                                timeout = 0;
+                                is_asterisk_server_sync_network_data_force = false;
+                                is_asterisk_server_sync_user_data_force = false;
+                                is_need_asterisk_update = false;
+                                usleep(100 * 1000);
+                                sat_ipcamera_data_sync(0x02, 0x03, (char *)asterisk_register_info_get(), sizeof(asterisk_register_info) * 20, 10, 1500, network_data_get()->door_device);
+                                usleep(100 * 1000);
+                                sat_ipcamera_data_sync(0x00, 0x01, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
+                                usleep(100 * 1000);
+                                sat_ipcamera_data_sync(0x01, 0x01, (char *)network_data_get(), sizeof(user_network_info), 10, 1500, NULL);
+                        }
                 }
                 usleep(500 * 1000);
         }
