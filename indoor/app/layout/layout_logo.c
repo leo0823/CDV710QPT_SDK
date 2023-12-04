@@ -697,7 +697,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         if (id == 0x01)
         {
                 /*****  tuya api初始化 *****/
-                tuya_api_init(TUYA_PID);
+                tuya_api_init(TUYA_PID, "eth0");
         }
 
         /***********************************************
@@ -1008,7 +1008,7 @@ static void logo_num_keyboard_event(lv_event_t *e)
 ************************************************************/
 static void layout_logo_input_keyboard_create(void)
 {
-        lv_obj_t *kb = lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), logo_obj_id_tuya_register_number_keyboard_btn, 389, 229, 230, 371,
+        lv_obj_t *kb = lv_common_number_input_keyboard_create(sat_cur_layout_screen_get(), logo_obj_id_tuya_register_number_keyboard_btn, 397, 229, 230, 371,
                                                               logo_num_keyboard_event, LV_OPA_COVER, 0x808080, LV_OPA_COVER, 0x00a8ff,
                                                               360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                               360, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,

@@ -179,5 +179,6 @@ sat_layout_define(factory_reset);
 
 sat_layout_define(indoor_register);
 sat_layout_define(setting_app_integration);
+sat_layout_define(outdoor_mac_register);
 
 #endif

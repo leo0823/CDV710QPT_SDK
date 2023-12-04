@@ -10,7 +10,7 @@
 **   函数作用：tuya api初始化
 **   参数说明:
 ***/
-bool tuya_api_init(const char *pid);
+bool tuya_api_init(const char *pid, const char *dev);
 /***
 **   日期:2022-06-07 15:52:37
 **   作者: leo.liu
@@ -169,4 +169,18 @@ char tuya_api_network_status(void);
 **   参数说明:
 ***/
 bool tuya_api_time_sync(void);
+/***
+**   日期:2022-06-18 08:05:12
+**   作者: leo.liu
+**   函数作用：获取网卡设备
+**   参数说明:
+***/
+char *tuya_network_dev_get(void);
+/***
+**   日期:2022-06-18 08:05:12
+**   作者: leo.liu
+**   函数作用：设置网卡设备
+**   参数说明:
+***/
+bool tuya_network_dev_set(char *dev);
 #endif

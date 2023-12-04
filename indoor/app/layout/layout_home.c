@@ -889,14 +889,12 @@ static void layout_home_cctv_icon_display()
         }
         if (cctv_register_num_get() <= 0)
         {
-                SAT_DEBUG("==========");
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_CLICKABLE);
 
                 lv_obj_clear_flag(offline, LV_OBJ_FLAG_HIDDEN);
         }
         else
         {
-                SAT_DEBUG("==========");
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_CLICKABLE);
 
                 lv_obj_add_flag(offline, LV_OBJ_FLAG_HIDDEN);

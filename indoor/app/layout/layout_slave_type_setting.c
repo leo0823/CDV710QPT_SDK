@@ -89,7 +89,7 @@ static void slave_type_setting_save_confirm(lv_event_t *e)
 
         user_data_get()->is_device_init = true;
         network_data_save();
-        user_data_save(false,false);
+        user_data_save(false, false);
         backlight_enable(false);
         usleep(100 * 1000);
         system("reboot");

@@ -72,6 +72,10 @@ enum
         setting_general_obj_id_version_information_title,
         setting_general_obj_id_version_information_sub,
 
+        setting_general_obj_id_outdoor_mac_register_cont,
+        setting_general_obj_id_outdoor_mac_register_title,
+        setting_general_obj_id_outdoor_mac_register_sub,
+
         setting_general_obj_id_msgbox_cont,
         setting_general_obj_id_msgbox_parent,
         setting_general_obj_id_msgbox_title,
@@ -684,6 +688,20 @@ static void setting_general_version_information_obj_click(lv_event_t *ev)
         sat_layout_goto(setting_version_information, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 
+static void setting_general_outdoor_mac_register_obj_click(lv_event_t *ev)
+{
+        sat_layout_goto(outdoor_mac_register, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+}
+static void setting_general_outdoor_mac_register_display(void)
+{
+        lv_obj_t *sub = setting_general_list_item_sub_get(setting_general_obj_id_outdoor_mac_register_cont, setting_general_obj_id_outdoor_mac_register_title);
+        if (sub == NULL)
+        {
+                return;
+        }
+
+        lv_label_set_text(sub, "outdoor register");
+}
 lv_obj_t *setting_list_create(lv_obj_t *parent, int id)
 {
         lv_obj_t *list = lv_obj_get_child_form_id(parent, id);
@@ -776,6 +794,7 @@ static lv_obj_t *setting_sub_list_create(void)
             {0, 72 * 10, 622, 72, -1 /*setting_general_obj_id_app_integration_cont*/, setting_general_obj_id_app_integration_title, -1, SETTING_GENERAL_XLS_LANG_ID_APP_INTEGRATION, lang_str_get, -1, NULL, setting_general_app_integration_obj_click},
             {0, 72 * 11, 622, 72, setting_general_obj_id_initialization_user_data_cont, setting_general_obj_id_initialization_user_data_title, -1, SETTING_GENERAL_XLS_LANG_ID_INITIALIZATION_USER_DATA, lang_str_get, -1, NULL, setting_general_initialization_userdata_obj_click},
             {0, 72 * 12, 622, 72, setting_general_obj_id_version_information_cont, setting_general_obj_id_version_information_title, setting_general_obj_id_version_information_sub, SETTING_GENERAL_XLS_LANG_ID_VERSION_INFORMATION, lang_str_get, -1, NULL, setting_general_version_information_obj_click},
+            {0, 72 * 13, 622, 72, setting_general_obj_id_outdoor_mac_register_cont, setting_general_obj_id_outdoor_mac_register_title, -1, SETTING_GENERAL_XLS_LANG_ID_VERSION_INFORMATION, lang_str_get, -1, NULL, setting_general_outdoor_mac_register_obj_click},
         };
 
         lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_general_obj_id_setting_list);
@@ -812,6 +831,7 @@ static lv_obj_t *setting_sub_list_create(void)
         door1_open_moudle_sub_display();
         door2_open_lock_num_sub_display();
         call_time_obj_sub_display();
+        setting_general_outdoor_mac_register_display();
         return list;
 }
 
