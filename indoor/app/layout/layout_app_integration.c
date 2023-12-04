@@ -107,6 +107,11 @@ static void layout_setting_app_integration_connect_status_display(void)
     lv_label_set_text(label, lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECTED));
     lv_obj_set_style_bg_img_src(img, resource_ui_src_get("ic_system_clood_connect.png"), LV_PART_MAIN);
   }
+  else if (tuya_api_network_status() == 0x02)
+  {
+    lv_label_set_text(label, lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECTABLE));
+    lv_obj_set_style_bg_img_src(img, resource_ui_src_get("ic_system_clood_connecting.png"), LV_PART_MAIN);
+  }
   else
   {
     lv_label_set_text(label, lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_DISCONNECTED));
@@ -182,7 +187,7 @@ static void sat_layout_enter(setting_app_integration)
                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                           lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECT_STATUS_WARN), 0xb8b8b8, 0xb8b8b8, LV_TEXT_ALIGN_CENTER, lv_font_normal);
 
-    lv_timer_set_repeat_count(lv_sat_timer_create(layout_setting_app_integration_connect_status_timer, 500, NULL), 1);
+    lv_timer_ready(lv_sat_timer_create(layout_setting_app_integration_connect_status_timer, 3000, NULL));
   }
 }
 static void sat_layout_quit(setting_app_integration)
