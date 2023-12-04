@@ -90,6 +90,7 @@ static const user_data_info user_data_default =
             .comm_ent_password = {"1234"},
             .time_automatically = 1,
             .call_time = 1,
+            .tuya_connect_mode = 1,
         },
         .alarm = {
             .away_alarm_enable_list = 0x00,     // 离家设防列表
@@ -334,6 +335,7 @@ static void user_data_check_valid(void)
         user_data_etc_check_range_out(password[3], '0', '9');
         user_data_etc_check_range_out(time_automatically, 0, 1);
         user_data_etc_check_range_out(call_time, 1, 3);
+        user_data_etc_check_range_out(tuya_connect_mode, 0, 1);
 
         /*****	alarm *****/
         user_data_alarm_check_range_out(away_save_photo, 0, 1);

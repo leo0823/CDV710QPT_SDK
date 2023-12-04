@@ -97,6 +97,8 @@ typedef struct
         /****** 通话时间 1:1分钟 2:2分钟 3:3分钟***/
         int call_time;
 
+        char tuya_connect_mode;
+
 } user_etc_info;
 
 typedef struct

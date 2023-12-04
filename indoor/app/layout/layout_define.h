@@ -46,7 +46,7 @@ void *resource_ui_src_get(const char *file);
 /*
  * @日期: 2022-08-11
  * @作者: leo.liu
- * @功能: 获取背景图片
+ * @功能: 获取背景图片P
  * @return:
  */
 void *resource_wallpaper_src_get(char *file, uint32_t w, uint32_t h);

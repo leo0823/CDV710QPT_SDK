@@ -78,7 +78,7 @@ static void setting_version_information_update_click(lv_event_t *e)
                 return;
         }
 
-        if (sat_ipcamera_device_name_get(parent->id, 500) == true)
+        // if (sat_ipcamera_device_name_get(parent->id, 1000) == true)
         {
                 char msg[128] = {0};
                 sprintf(msg, "%s %s", lv_label_get_text(label), lang_str_get(SETTING_VERSION_INFORMATION_XLS_LANG_ID_UPDATE_ING));
@@ -88,7 +88,6 @@ static void setting_version_information_update_click(lv_event_t *e)
                 lv_sat_timer_create(setting_version_information_timer, 1000, NULL);
         }
 
-        setting_version_infomration_msgbox_create("modiy this");
         lv_sat_timer_create(setting_version_information_timer, 1000, NULL);
 }
 

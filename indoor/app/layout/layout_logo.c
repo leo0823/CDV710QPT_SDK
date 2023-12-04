@@ -697,7 +697,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         if (id == 0x01)
         {
                 /*****  tuya api初始化 *****/
-                tuya_api_init(TUYA_PID, "eth0");
+                tuya_api_init(TUYA_PID, user_data_get()->etc.tuya_connect_mode == 0 ? "wlan0" : "eth0");
         }
 
         /***********************************************

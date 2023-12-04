@@ -403,7 +403,7 @@ static void home_monitoring_msgbox_checkbox_click(lv_event_t *ev)
                 return;
         }
 
-        if (strncmp((const char *)check_obj->bg_img_src, "btn_radio_s.png", strlen("btn_radio_s.png")))
+        if (strncmp(check_obj->bg_img_src, resource_ui_src_get("btn_radio_s.png"), strlen(resource_ui_src_get("btn_radio_s.png"))))
         {
                 lv_obj_set_style_bg_img_src(check_obj, resource_ui_src_get("btn_radio_s.png"), LV_PART_MAIN);
                 lv_obj_set_style_bg_img_src(discheck_obj, resource_ui_src_get("btn_radio_n.png"), LV_PART_MAIN);
