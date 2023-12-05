@@ -264,4 +264,10 @@ bool sat_ipcamera_device_channel_get(const char *ip, int port, const char *user,
 ** 1：子通道
 *****************************************************************/
 bool sat_ipcamera_device_channel_setting(const char *ip, int port, const char *user, const char *password, char auther_flag, int channel, int timeout);
+/****************************************************************
+**@日期: 2023-09-21
+**@作者: leo.liu
+**@功能: 更新门口机MAC
+*****************************************************************/
+bool sat_ipcamera_device_mac_update(const char *ip, int port, const char *user, const char *password, char auther_flag, char *mac, int timeout);
 #endif
