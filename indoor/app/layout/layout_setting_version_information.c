@@ -19,6 +19,10 @@ enum
 
         setting_version_information_obj_id_update_version_cont,
 
+        setting_version_information_obj_id_mac_cont,
+        setting_version_information_obj_id_mac_title,
+        setting_version_information_obj_id_mac_sub,
+
         ssetting_version_information_obj_id_msgbox_cont,
         ssetting_version_information_obj_id_msgbox_parent,
         ssetting_version_information_obj_id_msgbox_text,
@@ -208,9 +212,7 @@ static void sat_layout_enter(setting_version_information)
                 {
                         sprintf(uuid_info, "Serial number:    %s", serial_num);
                 }
-
-                int num = door_camera_register_num_get(); /*主要获取有效的门口机数量*/
-                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * num, 928, 72,
+                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_current_uuid_cont, 48, 160 + 72 * 0, 928, 72,
                                                                 NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
                                                                 0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
@@ -223,7 +225,31 @@ static void sat_layout_enter(setting_version_information)
                                                                 0, 0, 0, 0, -1,
                                                                 NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
         }
+        /************************************************************
+        ** 函数说明: 室内机eh0mac显示
+        ** 作者: xiaoxiao
+        ** 日期: 2023-06-09 17:11:35
+        ** 参数说明:
+        ** 注意事项:
+        ************************************************************/
+        {
 
+                char mac[64] = {0};
+                local_mac_address_get(mac);
+
+                lv_common_setting_btn_title_sub_info_img_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_mac_cont, 48, 160 + 72 * 1, 928, 72,
+                                                                NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x323237,
+                                                                0, 1, LV_BORDER_SIDE_BOTTOM, LV_OPA_COVER, 0x00a8ff,
+                                                                0, 17, 576, 43, setting_version_information_obj_id_mac_title,
+                                                                "MAC", 0xFFFFFF, 0x00a8ff, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 42, 576, 29, setting_version_information_obj_id_mac_sub,
+                                                                mac, 0x6d6d79, 0x00484f, LV_TEXT_ALIGN_LEFT, lv_font_small,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, 0xFFFFFF, 0x0078Cf, LV_TEXT_ALIGN_LEFT, lv_font_normal,
+                                                                0, 0, 0, 0, -1,
+                                                                NULL, LV_OPA_COVER, 0x00a8ff, LV_ALIGN_CENTER);
+        }
         /***********************************************
          ** 作者: leo.liu
          ** 日期: 2023-2-2 13:42:25
@@ -234,7 +260,7 @@ static void sat_layout_enter(setting_version_information)
         //   if (network_data_get()->door_device_count > 0)
         {
                 lv_obj_t *list = setting_list_create(sat_cur_layout_screen_get(), setting_version_information_obj_id_list);
-                lv_common_style_set_common(list, setting_version_information_obj_id_list, 48, 160, 928, 440, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
+                lv_common_style_set_common(list, setting_version_information_obj_id_list, 48, 304, 928, 440, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
 
                 for (int i = 0; i < DEVICE_MAX; i++)
                 {

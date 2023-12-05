@@ -85,20 +85,23 @@ bool tuya_event_defalut_handle(TUYA_CMD cmd, int arg)
 bool layout_monitor_report_vaild_channel(void)
 {
         int ch = monitor_channel_get();
+        int media_type = 0;
         if ((ch >= 8) && ch <= 13)
         {
                 ch = ch - 2;
+                media_type = 1;
         }
         else if ((ch >= 16) && (ch <= 17))
         {
                 ch = ch - 4;
+                media_type = 2;
         }
         else if ((ch < 0) || (ch > 6))
         {
                 return false;
         }
-        return tuya_api_channel_report(ch,
-                                       monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
+
+        return tuya_api_channel_report(ch, media_type, monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
                                        monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(TUYA_CH_DOOR2),
                                        monitor_valid_channel_check(MON_CH_DOOR3), language_common_ch_string_get(TUYA_CH_DOOR3),
                                        monitor_valid_channel_check(MON_CH_DOOR4), language_common_ch_string_get(TUYA_CH_DOOR4),

@@ -47,8 +47,7 @@ bool tuya_api_app_sync_utc_time(void);
 **   函数作用：上传有效通道
 **   参数说明:channe:当前监控的通道
 ***/
-bool tuya_api_channel_report(int cur,
-                             bool door1_valild, const char *door1_str,
+bool tuya_api_channel_report(int cur, int media_type, bool door1_valild, const char *door1_str,
                              bool door2_valild, const char *door2_str,
                              bool door3_valild, const char *door3_str,
                              bool door4_valild, const char *door4_str,
@@ -183,4 +182,5 @@ char *tuya_network_dev_get(void);
 **   参数说明:
 ***/
 bool tuya_network_dev_set(char *dev);
+
 #endif

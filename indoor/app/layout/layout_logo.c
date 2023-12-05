@@ -739,6 +739,8 @@ static void logo_enter_system_timer(lv_timer_t *t)
         ************************************************************/
         alarm_release_and_passwd_reset_check();
 
+        lv_obj_pressed_func = lv_layout_touch_callback;
+
         //  usleep(3000 * 1000);
         /*判断是否为master*/
 
@@ -944,6 +946,7 @@ static void layout_logo_ok_btn_up(lv_obj_t *obj)
                         sscanf(input_buffer, "%d", &index);
                         if (tuya_key_and_key_xls_register(index) == true)
                         {
+                                indoor_mac_init(index);
                                 // system("umount /mnt");
                                 lv_obj_clean(sat_cur_layout_screen_get());
                                 lv_common_img_btn_create(sat_cur_layout_screen_get(), logo_obj_id_logo_img, 0, 0, 1024, 600, // 273, 235, 486, 130,
@@ -1027,8 +1030,6 @@ static void sat_layout_enter(logo)
 {
         lv_common_video_mode_enable(false);
 
-        lv_obj_pressed_func = lv_layout_touch_callback;
-
         if (access("/tmp/tf", F_OK))
         {
                 system("mkdir /tmp/tf");
@@ -1036,6 +1037,7 @@ static void sat_layout_enter(logo)
         }
         if (access("/tmp/tf/tuya_key", F_OK) == 0)
         {
+                system("rm -rf /app/tuya/tuya_key_backup");
                 system("mv /app/tuya/tuya_key /app/tuya/tuya_key_backup");
         }
         else if (access("/app/tuya/tuya_key_backup", F_OK) == 0)
@@ -1094,6 +1096,7 @@ void time_correction_timer(lv_timer_t *t)
 
 static void sat_layout_quit(logo)
 {
+        outdoor_mac_txt_exist_check();
         /**
          * 原因：时间比标准时间每天快了大约3秒
          * 函数作用：每隔4.8分种让时间减少10豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 100)
