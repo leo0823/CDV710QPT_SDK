@@ -67,6 +67,7 @@ static void layout_outdoor_mac_register_ok_btn_up(lv_obj_t *obj)
       char mac[18] = {0};
       sscanf(input_buffer, "%d", &index);
       outdoor_mac_address_get(index, mac);
+      sat_ipcamera_device_mac_update(network_data_get()->door_device[0].ipaddr, network_data_get()->door_device[0].port, network_data_get()->door_device[0].username, network_data_get()->door_device[0].password, network_data_get()->door_device[0].auther_flag, mac, 1000);
       printf("=======mac is %s\n", mac);
     }
     else
