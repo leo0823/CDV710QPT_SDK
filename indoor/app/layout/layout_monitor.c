@@ -1132,6 +1132,12 @@ static void monitor_sd_state_change_callback(void)
 
         montior_obj_top_icon_display();
 }
+static void layout_monitor_snap_timeout_timer(lv_timer_t *time)
+{
+        is_monitor_snapshot_ing = false;
+        monitor_obj_record_photo_display();
+        lv_timer_del(time);
+}
 /***********************************************
  ** 作者: leo.liu
  ** 日期: 2023-2-2 13:42:25
@@ -1141,18 +1147,19 @@ static void monitor_snapshot_state_callback(bool snapshot_ing)
 {
         if (snapshot_ing == false)
         {
+                lv_sat_timer_create(layout_monitor_snap_timeout_timer, 500, NULL);
                 SAT_DEBUG("jpeg record finish\n");
         }
         else
         {
                 SAT_DEBUG("jpeg record start\n");
+                is_monitor_snapshot_ing = true;
+                if (record_jpeg_mode_get() == REC_MODE_TUYA_CALL) // 如果没设置自动记录，涂鸦抓拍不需要改变图标
+                {
+                        return;
+                }
+                monitor_obj_record_photo_display();
         }
-        is_monitor_snapshot_ing = snapshot_ing;
-        if (record_jpeg_mode_get() == REC_MODE_TUYA_CALL) // 如果没设置自动记录，涂鸦抓拍不需要改变图标
-        {
-                return;
-        }
-        monitor_obj_record_photo_display();
 }
 
 /************************************************************
