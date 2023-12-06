@@ -101,7 +101,7 @@ bool layout_monitor_report_vaild_channel(void)
                 return false;
         }
 
-        return tuya_api_channel_report(ch, media_type, monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
+        return tuya_api_channel_report(12, media_type, monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),
                                        monitor_valid_channel_check(MON_CH_DOOR2), language_common_ch_string_get(TUYA_CH_DOOR2),
                                        monitor_valid_channel_check(MON_CH_DOOR3), language_common_ch_string_get(TUYA_CH_DOOR3),
                                        monitor_valid_channel_check(MON_CH_DOOR4), language_common_ch_string_get(TUYA_CH_DOOR4),

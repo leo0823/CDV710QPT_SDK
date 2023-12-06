@@ -69,6 +69,7 @@ bool upgrade_outdoor_device(int multicast_socket, const char *upgrade_path)
         sprintf(cmd, "%d %d", NETWORK_CMD_DEVICE_UPGRADE, UPGRADE_TCP_PORT);
         if (sat_socket_udp_send(multicast_socket, (const char *)cmd, strlen((const char *)cmd), MULTICAST_IP, MULTICAST_PORT, 500) == true)
         {
+                SAT_DEBUG("find the device");
                 struct sockaddr_in client_addr;
                 int client_fd[DEVICE_MAX] = {0};
                 char client_ip[DEVICE_MAX][32] = {0};

@@ -69,12 +69,13 @@ bool standby_timer_restart(bool fouce_enable)
 ** 函数说明: 重置待机时间
 ** 作者: xiaoxiao
 ** 日期: 2023-06-07 14:52:47
-** 参数说明: 
-** 注意事项: 
+** 参数说明:
+** 注意事项:
 ************************************************************/
-bool standby_timer_reset(int  timeout)
+bool standby_timer_reset(int timeout)
 {
     standby_timeout = timeout;
+    standby_timeout_timestamp = user_timestamp_get() + standby_timeout;
     return true;
 }
 /***
@@ -111,7 +112,7 @@ bool standby_timeout_check_and_process(void)
     {
         if (standby_goto_playout != NULL)
         {
-            _sat_layout_goto(standby_goto_playout,LV_SCR_LOAD_ANIM_FADE_IN);
+            _sat_layout_goto(standby_goto_playout, LV_SCR_LOAD_ANIM_FADE_IN);
             return true;
         }
     }

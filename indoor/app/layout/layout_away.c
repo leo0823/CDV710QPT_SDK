@@ -322,6 +322,36 @@ static void layout_away_execution_obj_click(lv_event_t *ev)
 }
 
 /************************************************************
+** 函数说明:
+** 作者: xiaoxiao
+** 日期：2023-12-01 14:55:49
+** 参数说明:
+** 注意事项：
+************************************************************/
+static bool layout_away_sensor_cctv_binding_status_valid(void)
+{
+    bool cctv_linkage = false;
+    // 判断是否所选中的传感器有绑定CCTV
+    char sensor_select_list = layout_away_sensor_enable_flag();
+    SAT_DEBUG("=====sensor_select_list is 0x%x\n", sensor_select_list);
+    for (int i = 0; i < 7; i++)
+    {
+        if (sensor_select_list & 0x01 << i)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                if (user_data_get()->alarm.cctv_sensor[j] == i + 1)
+                {
+                    cctv_linkage = true;
+                    return cctv_linkage;
+                }
+            }
+        }
+    }
+    return cctv_linkage;
+}
+
+/************************************************************
 ** 函数说明: 传感求设防选择
 ** 作者: xiaoxiao
 ** 日期: 2023-04-27 21:11:48
@@ -360,10 +390,22 @@ static void layout_away_sensor_select_obj_click(lv_event_t *ev)
             {
 
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_s.png"), LV_PART_MAIN);
+                if (user_data_get()->alarm.away_auto_record == true && layout_away_sensor_cctv_binding_status_valid())
+                {
+                    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record);
+                    lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
+                    lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+                }
             }
             else
             {
                 lv_obj_set_style_bg_img_src(checkbox, resource_ui_src_get("btn_checkbox_n.png"), LV_PART_MAIN);
+                if (layout_away_sensor_cctv_binding_status_valid() == false)
+                {
+                    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record);
+                    lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
+                    lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+                }
             }
             break;
         }
@@ -958,11 +1000,19 @@ static void layout_away_cctv_auto_record_init_display(void)
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
     if (user_data_get()->alarm.away_auto_record == true)
     {
+        SAT_DEBUG("============++++++++++=====");
         if (user_data_get()->alarm.away_alarm_enable == false)
         {
-            lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
-            user_data_get()->alarm.away_auto_record = false;
-            user_data_save(true, true);
+            SAT_DEBUG("============++++++++++=====");
+            if (layout_away_sensor_cctv_binding_status_valid() == false)
+            {
+                SAT_DEBUG("============++++++++++=====");
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+            }
+            else
+            {
+                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+            }
         }
         else
         {
@@ -971,21 +1021,7 @@ static void layout_away_cctv_auto_record_init_display(void)
     }
     else
     {
-        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
-    }
-}
-
-static void layout_away_cctv_auto_record_display(void)
-{
-    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record);
-    lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
-
-    if (user_data_get()->alarm.away_auto_record == true)
-    {
-        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-    }
-    else
-    {
+        SAT_DEBUG("============++++++++++=====");
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
     }
 }
@@ -1047,42 +1083,32 @@ static void away_cctv_record_enable_btn_click(lv_event_t *ev)
     {
         return;
     }
-    if (user_data_get()->alarm.away_auto_record == false)
+    lv_obj_t *parent = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), layout_away_obj_id_audto_record);
+    lv_obj_t *obj = lv_obj_get_child_form_id(parent, layout_away_auto_record_img_id);
+    if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_switch_off.png"), strlen(resource_ui_src_get("btn_switch_off.png"))) == 0)
     {
-        bool cctv_linkage = false;
-        // 判断是否所选中的传感器有绑定CCTV
-        char sensor_select_list = layout_away_sensor_enable_flag();
-        for (int i = 0; i < 7; i++)
-        {
-            if (sensor_select_list & 0x01 << i)
-            {
-                for (int j = 0; j < 7; j++)
-                {
-                    if (user_data_get()->alarm.cctv_sensor[j] == i + 1)
-                    {
-                        cctv_linkage = true;
-                        break;
-                    }
-                }
-                if (cctv_linkage)
-                {
-                    break;
-                }
-            }
-        }
-        if (cctv_linkage == false)
+        if (layout_away_sensor_cctv_binding_status_valid() == false)
         {
             layout_away_cctv_record_enable_failed_display();
             return;
         }
     }
-    user_data_get()->alarm.away_auto_record = user_data_get()->alarm.away_auto_record ? false : true;
-    user_data_save(true, true);
     if ((user_data_get()->system_mode & 0x0f) != 0x01)
     {
         sat_ipcamera_data_sync(0x00, 0x04, (char *)user_data_get(), sizeof(user_data_info), 10, 1500, NULL);
     }
-    layout_away_cctv_auto_record_display();
+    if (strncmp(obj->bg_img_src, resource_ui_src_get("btn_switch_off.png"), strlen(resource_ui_src_get("btn_switch_off.png"))))
+    {
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
+        user_data_get()->alarm.away_auto_record = false;
+        user_data_save(true, true);
+    }
+    else
+    {
+        user_data_get()->alarm.away_auto_record = true;
+        user_data_save(true, true);
+        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
+    }
 }
 
 static void layout_away_func_setting_create()

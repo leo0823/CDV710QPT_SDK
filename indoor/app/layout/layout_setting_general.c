@@ -702,7 +702,7 @@ static void setting_general_outdoor_mac_register_display(void)
                 return;
         }
 
-        lv_label_set_text(sub, "outdoor register");
+        lv_label_set_text(sub, "Outdoor register");
 }
 lv_obj_t *setting_list_create(lv_obj_t *parent, int id)
 {
@@ -807,9 +807,16 @@ static lv_obj_t *setting_sub_list_create(void)
         {
 
                 // 此处请重新判断
-                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8) || (i == 10))))
+                if ((((user_data_get()->system_mode & 0x0f) != 0x01) && ((i == 0) || (i == 2) || (i == 4) || (i == 5) || (i == 6) || (i == 7) || (i == 8))) || (i == 10))
                 {
                         continue;
+                }
+                if (i == 13)
+                {
+                        if (outdoor_mac_txt_exist_check() == false)
+                        {
+                                continue;
+                        }
                 }
 
                 lv_common_setting_btn_title_sub_info_img_create(list, main_list_group[i].cont_id, main_list_group[j].x, main_list_group[j].y, main_list_group[j].w, main_list_group[j].h,

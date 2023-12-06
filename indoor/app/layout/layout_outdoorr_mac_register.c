@@ -21,6 +21,11 @@ enum
   ipc_camera_registered_obj_id_msgbox,
 
   ipc_camera_registered_obj_id_textarea,
+
+  ipc_camera_search_obj_id_msg_bg,
+
+  ipc_camera_search_msg_obj_id_msg,
+
 };
 
 static void ipc_camera_registered_cancel_click(lv_event_t *ev)
@@ -39,6 +44,27 @@ static lv_obj_t *ipc_camera_registered_list_create(void)
   list = lv_list_create(sat_cur_layout_screen_get());
   lv_common_style_set_common(list, ipc_camera_registered_obj_id_door_camera_list, 48, 96, 928, 176, LV_ALIGN_TOP_LEFT, LV_PART_MAIN);
   return list;
+}
+
+static void outdoor_mac_register_confirm(lv_event_t *ev)
+{
+  setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
+}
+static void outdoor_mac_register_concel(lv_event_t *ev)
+{
+  setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
+}
+
+static void outdoor_mac_register_check(bool result)
+{
+  lv_obj_t *masgbox = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), ipc_camera_search_obj_id_msg_bg);
+  if (masgbox != NULL)
+  {
+    setting_msgdialog_msg_del(ipc_camera_search_obj_id_msg_bg);
+  }
+  masgbox = setting_msgdialog_msg_bg_create(ipc_camera_search_obj_id_msg_bg, ipc_camera_search_msg_obj_id_msg, 282, 123, 460, 323);
+  setting_msgdialog_msg_create(masgbox, 0, result ? "Outdoor mac register success" : "Outdoor mac register failed", 20, 40, 420, 180, false);
+  setting_msgdialog_msg_confirm_and_cancel_btn_create(masgbox, 1, 2, outdoor_mac_register_confirm, outdoor_mac_register_concel);
 }
 
 static int input_index = 0;
@@ -67,8 +93,8 @@ static void layout_outdoor_mac_register_ok_btn_up(lv_obj_t *obj)
       char mac[18] = {0};
       sscanf(input_buffer, "%d", &index);
       outdoor_mac_address_get(index, mac);
-      sat_ipcamera_device_mac_update(network_data_get()->door_device[0].ipaddr, network_data_get()->door_device[0].port, network_data_get()->door_device[0].username, network_data_get()->door_device[0].password, network_data_get()->door_device[0].auther_flag, mac, 1000);
-      printf("=======mac is %s\n", mac);
+      int ret = sat_ipcamera_device_mac_update(network_data_get()->door_device[0].ipaddr, network_data_get()->door_device[0].port, network_data_get()->door_device[0].username, network_data_get()->door_device[0].password, network_data_get()->door_device[0].auther_flag, mac, 1000);
+      outdoor_mac_register_check(ret);
     }
     else
     {
@@ -150,7 +176,7 @@ static void sat_layout_enter(outdoor_mac_register)
                           NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                           0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                          "outdoor mac register",
+                          "Outdoor mac register",
                           0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_large);
   }
   /***********************************************
@@ -239,7 +265,7 @@ static void sat_layout_enter(outdoor_mac_register)
 }
 static void sat_layout_quit(outdoor_mac_register)
 {
-  standby_timer_reset(true);
+  standby_timer_restart(true);
 }
 
 sat_layout_create(outdoor_mac_register);
