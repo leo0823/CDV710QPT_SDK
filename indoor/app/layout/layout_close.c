@@ -284,9 +284,10 @@ static void monitior_obj_channel_info_obj_display(void)
     struct tm tm;
     user_time_read(&tm);
     int channel = user_data_get()->motion.select_camera;
+    lv_obj_set_x(obj, 37);
     if (is_channel_ipc_camera(channel) == true)
     {
-        lv_obj_set_x(obj, 96);
+        // lv_obj_set_x(obj, 96);
         channel -= 8;
         lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
     }

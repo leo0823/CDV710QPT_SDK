@@ -72,6 +72,14 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 {
                         name = network_data_get()->cctv_device[ch - 8].door_name;
                 }
+                else if (ch == MON_CH_LOBBY)
+                {
+                        sprintf(name, "%s", "Lobby");
+                }
+                else if (ch == MON_CH_GUARD)
+                {
+                        sprintf(name, "%s", "Guard");
+                }
                 else
                 {
                         name = network_data_get()->door_device[ch].door_name;
@@ -150,6 +158,14 @@ static bool record_video_callback(const char *path, int ch, int mode)
         if (is_channel_ipc_camera(ch) == true)
         {
                 name = network_data_get()->cctv_device[ch - 8].door_name;
+        }
+        else if (ch == MON_CH_LOBBY)
+        {
+                sprintf(name, "%s", "Lobby");
+        }
+        else if (ch == MON_CH_GUARD)
+        {
+                sprintf(name, "%s", "Guard");
         }
         else
         {
