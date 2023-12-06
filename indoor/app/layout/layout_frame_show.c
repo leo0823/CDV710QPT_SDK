@@ -785,7 +785,7 @@ static void frame_show_playback_name_display(const char *name)
 	obj = lv_obj_get_child_form_id(parent, frame_show_scr_act_obj_id_playback_name_label);
 	if (obj == NULL)
 	{
-		lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_name_label, 200, 35, 624, 80,
+		lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_name_label, 0, 35, 1024, 80,
 													NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 													0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -821,7 +821,7 @@ static void frame_show_monitor_channle_display(void)
 	int channel = monitor_channel_get();
 	if (obj == NULL)
 	{
-		obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_chann_label, 200, 35, 624, 80,
+		obj = lv_common_text_create(parent, frame_show_scr_act_obj_id_playback_chann_label, 0, 35, 1024, 80,
 																NULL, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
 																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
 																0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -834,7 +834,6 @@ static void frame_show_monitor_channle_display(void)
 
 	if (is_channel_ipc_camera(channel) == true)
 	{
-
 		channel -= 8;
 		lv_label_set_text_fmt(obj, "%s/%s", lang_str_get(HOME_XLS_LANG_ID_MONITORING), network_data_get()->cctv_device[channel].door_name);
 	}
