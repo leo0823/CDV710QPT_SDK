@@ -242,6 +242,7 @@ int monitor_channel_get(void)
 ***********************************************/
 void monitor_channel_set(int ch)
 {
+        SAT_DEBUG("ch is %d\n", ch);
         monitor_channel = ch;
 }
 

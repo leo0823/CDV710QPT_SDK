@@ -3,7 +3,8 @@
 #define _USER_MONITOR_H_
 #include "stdbool.h"
 #include "user_network.h"
-#define is_channel_ipc_camera(ch) (((ch >= 8 && ch <= 15)) ? true : false)
+#define is_channel_ipc_camera(ch) (((ch >= 8 && ch <= 15)) ? 1 : (ch >= 0 && ch <= 7) ? 0 \
+                                                                                      : 2)
 
 #define MON_CH_NONE -1
 #define MON_CH_DOOR1 0

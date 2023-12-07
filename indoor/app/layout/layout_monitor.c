@@ -108,7 +108,7 @@ static bool monitor_talk_call_end_callback(char *arg);
 
 void layout_monitor_goto_layout_process(void)
 {
-        monitor_close(is_channel_ipc_camera(monitor_channel_get()) ? 0x02 : 0x01);
+        monitor_close(is_channel_ipc_camera(monitor_channel_get()) == 0x01 ? 0x02 : 0x01);
         linphone_incomming_info *node = linphone_incomming_used_node_get(true);
         if (node == NULL)
         {
@@ -143,7 +143,7 @@ void layout_monitor_goto_layout_process(void)
                 linphone_incomming_node_release(node);
                 sat_layout_goto(intercom_talk, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
         }
-        if (is_channel_ipc_camera(monitor_channel_get()) == false)
+        if (is_channel_ipc_camera(monitor_channel_get()) != true)
         {
                 sat_linphone_incomming_refresh(node->call_id);
         }
@@ -200,7 +200,7 @@ static void monitor_obj_cctv_cancel_obj_display(void)
         {
                 return;
         }
-        if (is_channel_ipc_camera(monitor_channel_get()) == true)
+        if (is_channel_ipc_camera(monitor_channel_get()) == 0x01)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -224,7 +224,21 @@ static void monitior_obj_channel_info_obj_display(void)
         struct tm tm;
         user_time_read(&tm);
         int channel = monitor_channel_get();
-        if (strstr(call_obj_name, "guard") || strstr(call_obj_name, network_data_get()->guard_number))
+        if (is_channel_ipc_camera(channel) == 0x01)
+        {
+                lv_obj_set_x(obj, 60);
+                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+                channel -= 8;
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        }
+        else if (is_channel_ipc_camera(channel) == 0x00)
+        {
+                lv_obj_set_x(obj, 37);
+                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
+                // lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
+        }
+        else if (strstr(call_obj_name, "guard") || strstr(call_obj_name, network_data_get()->guard_number))
         {
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
@@ -235,20 +249,6 @@ static void monitior_obj_channel_info_obj_display(void)
                 lv_obj_set_x(obj, 37);
                 lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
                 lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", call_obj_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-        }
-        else if (is_channel_ipc_camera(channel) == true)
-        {
-                lv_obj_set_x(obj, 60);
-                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                channel -= 8;
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->cctv_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-        }
-        else
-        {
-                lv_obj_set_x(obj, 37);
-                lv_obj_set_style_text_align(obj, LV_TEXT_ALIGN_LEFT, LV_PART_MAIN);
-                // lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
-                lv_label_set_text_fmt(obj, "%s  %04d-%02d-%02d  %02d:%02d", network_data_get()->door_device[channel].door_name, tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min);
         }
 }
 /***********************************************
@@ -413,7 +413,7 @@ static void layout_monitor_channel_type_switch_btn_display(void)
         }
         int ch = monitor_channel_get();
 
-        if (is_channel_ipc_camera(ch))
+        if (is_channel_ipc_camera(ch) == 0x01)
         {
                 int index = monitor_door_first_valid_get(true);
                 if (index == -1)
@@ -427,7 +427,7 @@ static void layout_monitor_channel_type_switch_btn_display(void)
                                                     LV_PART_MAIN);
                 }
         }
-        else
+        else if (is_channel_ipc_camera(ch) == 0x00)
         {
                 int index = monitor_door_first_valid_get(false);
                 if (index == -1)
@@ -474,7 +474,7 @@ static void monitor_obj_volume_display(void)
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(is_monitor_door_camera_talk == true ? "btn_call_sound_voice.png" : "btn_call_sound.png"), LV_PART_MAIN);
         int ch = monitor_channel_get();
 
-        if (is_channel_ipc_camera(ch) == false)
+        if (is_channel_ipc_camera(ch) != 0x01)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
@@ -518,9 +518,13 @@ static void monitor_obj_display_click(lv_event_t *e)
         {
                 device = &network_data_get()->door_device[channel];
         }
-        else
+        else if (is_channel_ipc_camera(channel) == 0x01)
         {
                 device = &network_data_get()->cctv_device[channel - 8];
+        }
+        else
+        {
+                return;
         }
 
         if (sat_ipcamera_image_get(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness, monitor_saturation, monitor_contrast, 500) == true)
@@ -598,7 +602,7 @@ static void monitor_obj_talk_display(void)
         {
                 return;
         }
-        if ((is_channel_ipc_camera(monitor_channel_get()) == false) && (is_monitor_door_camera_talk == false))
+        if ((is_channel_ipc_camera(monitor_channel_get()) != 0x01) && (is_monitor_door_camera_talk == false))
         {
                 if (user_data_get()->etc.open_the_door == 0)
                 {
@@ -731,7 +735,7 @@ static void monitor_obj_handup_display(void)
         int ch = monitor_channel_get();
         int lock_num = user_data_get()->etc.door2_lock_num;
 
-        if (is_channel_ipc_camera(ch) == false)
+        if (is_channel_ipc_camera(ch) != 0x01)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 if (is_monitor_door_camera_talk == false)
@@ -902,7 +906,7 @@ static void monitor_obj_normal_lock_display(void)
         }
         int ch = monitor_channel_get();
 
-        if (is_channel_ipc_camera(ch) == false)
+        if (is_channel_ipc_camera(ch) != 0x01)
         {
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 if (user_data_get()->etc.open_the_door == 0)
@@ -975,7 +979,7 @@ static void monitor_obj_lock_1_display(void)
                 return;
         }
 
-        if (is_channel_ipc_camera(ch) == false)
+        if (is_channel_ipc_camera(ch) != 0x01)
         {
                 if (is_monitor_door_camera_talk == false)
                 {
@@ -1029,7 +1033,7 @@ static void monitor_obj_lock_2_display(void)
                 return;
         }
 
-        if (is_channel_ipc_camera(ch) == false)
+        if (is_channel_ipc_camera(ch) != 0x01)
         {
                 if (is_monitor_door_camera_talk == false)
                 {
@@ -1291,11 +1295,11 @@ static bool layout_monitor_other_call_list_display(void)
 
                 return false;
         }
-        if (is_channel_ipc_camera(monitor_channel_get()))
+        if (is_channel_ipc_camera(monitor_channel_get()) == 0x01)
         {
                 lv_obj_add_flag(list, LV_OBJ_FLAG_HIDDEN);
         }
-        else if (total_monitor + total_extension == 0)
+        else if (total_monitor + total_extension == 0x00)
         {
                 lv_obj_add_flag(list, LV_OBJ_FLAG_HIDDEN);
         }
@@ -1324,7 +1328,7 @@ static void layout_monitor_full_screen_display(lv_event_t *e)
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
                 lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         }
-        else if (is_channel_ipc_camera(monitor_channel_get()) == true)
+        else if (is_channel_ipc_camera(monitor_channel_get()) == 0x01)
         {
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), monitor_obj_id_buttom_cont);
@@ -1443,9 +1447,13 @@ static void layout_monitor_setting_brightness_slider_change_cb(lv_event_t *e)
         {
                 device = &network_data_get()->door_device[channel];
         }
-        else
+        else if (is_channel_ipc_camera(channel) == 0x01)
         {
                 device = &network_data_get()->cctv_device[channel - 8];
+        }
+        else
+        {
+                return;
         }
         monitor_brightness[2] = value;
         if (sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500) == false)
@@ -1531,9 +1539,13 @@ static void layout_monitor_setting_contrast_slider_change_cb(lv_event_t *e)
         {
                 device = &network_data_get()->door_device[channel];
         }
-        else
+        else if (is_channel_ipc_camera(channel) == 0x01)
         {
                 device = &network_data_get()->cctv_device[channel - 8];
+        }
+        else
+        {
+                return;
         }
         monitor_contrast[2] = value;
         if (sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500) == false)
@@ -1619,9 +1631,13 @@ static void layout_monitor_setting_color_slider_change_cb(lv_event_t *e)
         {
                 device = &network_data_get()->door_device[channel];
         }
-        else
+        else if (is_channel_ipc_camera(channel) == 0x01)
         {
                 device = &network_data_get()->cctv_device[channel - 8];
+        }
+        else
+        {
+                return;
         }
         monitor_saturation[2] = value;
         if (sat_ipcamera_image_setting(device->ipaddr, device->port, device->username, device->password, device->auther_flag, monitor_brightness[2], monitor_saturation[2], monitor_contrast[2], 500) == false)
@@ -1762,7 +1778,7 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
                         monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
                 }
         }
-        else
+        else if (is_channel_ipc_camera(ch) == 0x01)
         {
                 int index = monitor_door_first_valid_get(false);
                 if (index != -1)
@@ -1770,6 +1786,10 @@ static void layout_monitor_channel_type_switch_btn_click(lv_event_t *ev)
                         monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(index);
                 }
+        }
+        else
+        {
+                return;
         }
         layout_monitor_channel_type_switch_btn_display();
         monitor_obj_cctv_cancel_obj_display();
@@ -1864,7 +1884,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                 int ch = monitor_channel_prev_get();
                 if (ch >= 0)
                 {
-                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
+                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == 0x01 ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
@@ -1874,7 +1894,7 @@ static void monitor_obj_channel_switch_click(lv_event_t *e)
                 int ch = monitor_channel_next_get();
                 if (ch >= 0)
                 {
-                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == true ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
+                        monitor_enter_flag_set(is_channel_ipc_camera(ch) == 0x01 ? MON_ENTER_MANUAL_DOOR_FLAG : MON_ENTER_MANUAL_CCTV_FLAG);
                         monitor_channel_set(ch);
                         sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
                 }
