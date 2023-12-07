@@ -465,8 +465,8 @@ static void layout_motion_snapshot_state_callback(bool record_ing)
 static void motion_detection_start_timer(lv_timer_t *timer)
 {
     int level = user_data_get()->motion.sensivity;
-    sat_linphone_motion_detection_start(100, level == 0 ? 100 : level == 1 ? 250
-                                                                           : 400);
+    sat_linphone_motion_detection_start(50, level == 0 ? 100 : level == 1 ? 250
+                                                                          : 400);
     lv_timer_del(timer);
 }
 
