@@ -475,11 +475,11 @@ static void printf_register_device(void)
                 printf("sip_url:%s\n", network_data.door_device[i].sip_url);
                 printf("name:%s\n", network_data.door_device[i].door_name);
                 printf("door camera rtsp profile token num%d\n", network_data.door_device[i].profile_token_num);
-                for (int j = 0; j < network_data.door_device[i].profile_token_num; j++)
-                {
-                        printf("---profile token:%s\n", network_data.door_device[i].rtsp[j].profile_token);
-                        printf("---rtsp url:%s\n", network_data.door_device[i].rtsp[j].rtsp_url);
-                }
+                // for (int j = 0; j < network_data.door_device[i].profile_token_num; j++)//数据错乱，profile_token_num可能会变成一个很大的数，导致启动以后一直停留在打印阶段，导致无法正常进入系统
+                // {
+                //         printf("---profile token:%s\n", network_data.door_device[i].rtsp[j].profile_token);
+                //         printf("---rtsp url:%s\n", network_data.door_device[i].rtsp[j].rtsp_url);
+                // }
         }
         printf("\n");
         for (int i = 0; i < DEVICE_MAX; i++)
@@ -493,11 +493,11 @@ static void printf_register_device(void)
                 printf("sip_url:%s\n", network_data.cctv_device[i].sip_url);
                 printf("name:%s\n", network_data.cctv_device[i].door_name);
                 printf("door camera rtsp profile token num%d\n", network_data.cctv_device[i].profile_token_num);
-                for (int j = 0; j < network_data.cctv_device[i].profile_token_num; j++)
-                {
-                        printf("---profile token:%s\n", network_data.cctv_device[i].rtsp[j].profile_token);
-                        printf("---rtsp url:%s\n", network_data.cctv_device[i].rtsp[j].rtsp_url);
-                }
+                // for (int j = 0; j < network_data.cctv_device[i].profile_token_num; j++)//数据错乱，profile_token_num可能会变成一个很大的数，导致启动以后一直停留在打印阶段，导致无法正常进入系统
+                // {
+                //         printf("---profile token:%s\n", network_data.cctv_device[i].rtsp[j].profile_token);
+                //         printf("---rtsp url:%s\n", network_data.cctv_device[i].rtsp[j].rtsp_url);
+                // }
         }
         printf("#############################################\n\n");
 }

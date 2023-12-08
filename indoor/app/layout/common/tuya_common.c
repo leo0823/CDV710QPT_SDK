@@ -88,17 +88,21 @@ bool layout_monitor_report_vaild_channel(void)
         int media_type = 0;
         if ((ch >= 8) && ch <= 13)
         {
-                ch = ch - 2;
+                ch = ch - 1;
                 media_type = 1;
         }
         else if ((ch >= 16) && (ch <= 17))
         {
-                ch = ch - 4;
+                ch = ch - 3;
                 media_type = 2;
         }
         else if ((ch < 0) || (ch > 6))
         {
                 return false;
+        }
+        else
+        {
+                ch = ch + 1;
         }
 
         return tuya_api_channel_report(12, media_type, monitor_valid_channel_check(MON_CH_DOOR1), language_common_ch_string_get(TUYA_CH_DOOR1),

@@ -32,7 +32,11 @@
 #include "common/layout_mac_common.h"
 #define SYSTEM_VERSION "Ver:0.0.7.8"
 
+<<<<<<< HEAD
 #define TUYA_PID "veyd1kjvzmot7iks" // nhi8jlgj989p9l5b " // 7.0 " wrw4vog3vosbq4yd " // 10.1  " iet0idk0yw3fgren "
+=======
+#define TUYA_PID "veyd1kjvzmot7iks" //"nhi8jlgj989p9l5b" // 7.0 "wrw4vog3vosbq4yd" // 10.1  "iet0idk0yw3fgren"
+>>>>>>> iot-70qpt
 
 #define ALM_HIGHT 1.8
 #define ALM_LOW 1.1

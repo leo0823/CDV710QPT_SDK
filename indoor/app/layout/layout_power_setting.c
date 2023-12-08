@@ -44,7 +44,7 @@ static void power_setting_skip_btn_client(lv_event_t *ev)
 {
 	standby_timer_restart(true);
 	// system("rm -rf /app/data/user_data.cfg");
-	// system("rm -rf /app/data/network_data.cfg");
+	// system("rm -rf /app/data/network_data.cfg");P
 	// user_data_init();
 	// network_data_init();
 	user_data_get()->is_device_init = true;

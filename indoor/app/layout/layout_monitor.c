@@ -2978,8 +2978,20 @@ static bool tuya_event_cmd_door_open(int arg)
 ************************************************************/
 static bool tuya_event_cmd_ch_channge(int channel)
 {
-        int ch = channel - 1 > MON_CH_DOOR2 ? (MON_CH_CCTV1 + channel - 2 - MON_CH_DOOR2) : channel - 1;
-
+        // int ch = channel - 1 > MON_CH_DOOR2 ? (MON_CH_CCTV1 + channel - 2 - MON_CH_DOOR2) : channel - 1;
+        int ch = channel;
+        if ((ch >= 7) && ch <= 12)
+        {
+                ch = ch + 1;
+        }
+        else if ((ch >= 13) && (ch <= 14))
+        {
+                ch = ch + 3;
+        }
+        else if ((ch > 0) && (ch < 7))
+        {
+                ch = ch - 1;
+        }
         if (monitor_valid_channel_check(ch) == false)
         {
                 return false;
@@ -3162,6 +3174,7 @@ static bool layout_monitor_tuya_event_handle(TUYA_CMD cmd, int arg)
                 break;
         case TUYA_EVENT_CMD_CH_CHANGE:
                 SAT_DEBUG("receive tuya cmd is TUYA_EVENT_CMD_CH_CHANGE");
+                SAT_DEBUG("change tuya ch %d", arg);
                 return tuya_event_cmd_ch_channge(arg);
                 break;
         case TUYA_EVENT_CMD_MOTION_ENBALE:
