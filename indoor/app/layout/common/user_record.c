@@ -67,10 +67,10 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 }
                 char file_path[128] = {0};
 
-                char *name = NULL;
+                char name[24] = {0};
                 if (is_channel_ipc_camera(ch) == true)
                 {
-                        name = network_data_get()->cctv_device[ch - 8].door_name;
+                        sprintf(name, "%s", network_data_get()->cctv_device[ch - 8].door_name);
                 }
                 else if (ch == MON_CH_LOBBY)
                 {
@@ -82,7 +82,7 @@ static bool jpeg_write_callback(unsigned char *data, int size, int ch, int mode)
                 }
                 else
                 {
-                        name = network_data_get()->door_device[ch].door_name;
+                        sprintf(name, "%s", network_data_get()->door_device[ch].door_name);
                 }
                 media_file_create(type, name, mode & 0x3F, file_path);
                 int fd = open(file_path, O_CREAT | O_WRONLY);
@@ -154,10 +154,10 @@ static bool record_video_callback(const char *path, int ch, int mode)
                 return false;
         }
         char file_path[64] = {0};
-        char *name = NULL;
+        char name[24] = {0};
         if (is_channel_ipc_camera(ch) == true)
         {
-                name = network_data_get()->cctv_device[ch - 8].door_name;
+                sprintf(name, "%s", network_data_get()->cctv_device[ch - 8].door_name);
         }
         else if (ch == MON_CH_LOBBY)
         {
@@ -169,7 +169,7 @@ static bool record_video_callback(const char *path, int ch, int mode)
         }
         else
         {
-                name = network_data_get()->door_device[ch].door_name;
+                sprintf(name, "%s", network_data_get()->door_device[ch].door_name);
         }
         media_file_create(FILE_TYPE_VIDEO, name, mode, file_path);
 

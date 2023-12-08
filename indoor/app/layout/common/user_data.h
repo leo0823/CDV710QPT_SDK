@@ -216,5 +216,7 @@ bool network_data_init(void);
 user_network_info *network_data_get(void);
 void network_data_reset(void);
 bool network_device_sort(void);
+user_network_info const *network_defauld_data_get(void);
 
+user_data_info const *user_default_data_get(void);
 #endif

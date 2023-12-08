@@ -11,7 +11,7 @@
 
 static int monitor_channel = -1;
 static MON_ENTER_FLAG monitor_enter_flag = MON_ENTER_MANUAL_DOOR_FLAG;
-
+int i = 0;
 const char *monitor_channel_get_url(int index, bool rtsp)
 {
         static char rtsp_uri[128] = {0};
@@ -29,7 +29,14 @@ const char *monitor_channel_get_url(int index, bool rtsp)
         }
         else
         {
-                sprintf(rtsp_uri, "%s %s %s", network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, network_data_get()->cctv_device[index - 8].username, network_data_get()->cctv_device[index - 8].password);
+                if (i++ % 2 == 0)
+                {
+                        sprintf(rtsp_uri, "%s %s %s", network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, network_data_get()->cctv_device[index - 8].username, network_data_get()->cctv_device[index - 8].password);
+                }
+                else
+                {
+                        sprintf(rtsp_uri, "%s %s %s", network_data_get()->cctv_device[index - 8].rtsp[0].rtsp_url, "network_data_get()->cctv_device[index - 8].username", network_data_get()->cctv_device[index - 8].password);
+                }
         }
         return rtsp_uri;
 }

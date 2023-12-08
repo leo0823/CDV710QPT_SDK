@@ -160,6 +160,12 @@ static bool ipc_camera_search_display_register_func(void)
                         if (network_data_get()->cctv_device[i].rtsp[0].rtsp_url[0] == 0)
                         {
                                 memcpy(&network_data_get()->cctv_device[i], sat_ipcamera_node_data_get(layout_ipc_camera_edit_index_get()), sizeof(struct ipcamera_info));
+                                if (network_data_get()->cctv_device[i].rtsp[0].rtsp_url[0] == 0)
+                                {
+                                        SAT_DEBUG("========================");
+                                        memset(&network_data_get()->cctv_device[i], 0, sizeof(network_data_get()->cctv_device[i]));
+                                        return false;
+                                }
                                 // CCTV重命名，不会重置设备的名字，只是方便室内机端查看
                                 char fullname[128] = {0};
                                 char doorname[17] = {0};

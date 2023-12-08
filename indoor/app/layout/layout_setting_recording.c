@@ -498,10 +498,10 @@ static void ssetting_recording_always_msgbox_confirm_click(lv_event_t *e)
         user_data_get()->always_monitoring = mode;
 
         user_data_save(true, true);
-        if (mode > 0)
-        {
-                sat_layout_goto(always_record, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
-        }
+        // if (mode > 0)
+        // {
+        //         sat_layout_goto(always_record, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
+        // }
         sat_layout_goto(setting_recording, LV_SCR_LOAD_ANIM_MOVE_LEFT, SAT_VOID);
 }
 static void setting_recording_always_obj_click(lv_event_t *ev)

@@ -632,3 +632,13 @@ void network_data_reset(void)
         network_data_save();
         system("sync");
 }
+
+user_network_info const *network_defauld_data_get(void)
+{
+        return &network_data_default;
+}
+
+user_data_info const *user_default_data_get(void)
+{
+        return &user_data_default;
+}
