@@ -197,6 +197,7 @@ static void playback_thumb_total_display(void)
 
 static void playback_thumb_refresh_display_callback(void)
 {
+        SAT_DEBUG("===================+++++++++++++++++++============");
         for (int i = 0; i < 6; i++)
         {
                 if (media_thumb_refresh_gorup[i] == false)
