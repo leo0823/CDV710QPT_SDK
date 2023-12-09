@@ -534,7 +534,7 @@ static void layout_alarm_auto_record_timer(lv_timer_t *t)
                         if (((media_sdcard_insert_check() == SD_STATE_INSERT) || (media_sdcard_insert_check() == SD_STATE_FULL)))
                         {
 
-                                record_video_start(true, REC_MODE_ALARM);
+                                record_video_start(false, REC_MODE_ALARM);
                         }
                         else
                         {

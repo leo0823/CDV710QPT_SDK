@@ -73,7 +73,7 @@ static void logo_sip_server_register(void)
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
-        // printf("%s register to :%s\n",sip_user_id,sip_sever);
+        printf("%s register to :%s\n", sip_user_id, sip_sever);
         sat_linphone_register(sip_user_id, sip_user_id, NULL, sip_sever);
 }
 

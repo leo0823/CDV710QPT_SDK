@@ -1207,7 +1207,7 @@ static void layout_monitor_streams_running_register_callback(int arg1, int arg2)
 
         if (monitor_enter_flag_get() == MON_ENTER_CALL_FLAG)
         {
-                lv_sat_timer_create(monitor_call_record_delay_task, 500, NULL);
+                lv_sat_timer_create(monitor_call_record_delay_task, 1500, NULL);
         }
 }
 

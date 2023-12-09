@@ -376,7 +376,7 @@ static void sat_layout_enter(ipc_camera_register)
         }
         static bool result[8] = {0};
         memset(result, false, sizeof(result));
-        lv_timer_t *timer = lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 3000, &result);
+        lv_timer_t *timer = lv_sat_timer_create(layout_ipc_cameara_register_online_check_timer, 1000, &result);
         lv_timer_set_repeat_count(timer, 3);
 }
 static void sat_layout_quit(ipc_camera_register)

@@ -446,23 +446,16 @@ static void layout_security_cctv_record_enable_init_display(void)
     lv_obj_t *obj = lv_obj_get_child_form_id(parent, auto_record_switch_id);
     if (user_data_get()->alarm.security_auto_record == true)
     {
-        if (user_data_get()->alarm.security_alarm_enable == false)
-        {
 
-            if (layout_security_sensor_cctv_binding_status_valid() == false)
-            {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
-            }
-            else
-            {
-                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
-            }
+        if (layout_security_sensor_cctv_binding_status_valid() == false)
+        {
+            lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);
         }
         else
         {
             lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_on.png"), LV_PART_MAIN);
         }
-    }
+        }
     else
     {
         lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("btn_switch_off.png"), LV_PART_MAIN);

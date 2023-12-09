@@ -106,7 +106,7 @@ static void cctv_search_list_display(void)
                 {
                         if (layout_ipc_cmeara_is_doorcamera_get())
                         {
-                                if (network_data_get()->door_device[j].ipaddr[0] != 0)
+                                if (network_data_get()->door_device[j].rtsp[0].rtsp_url[0] != 0)
                                 {
                                         if (strncmp(network_data_get()->door_device[j].ipaddr, sat_ipcamera_ipaddr_get(i), sizeof(network_data_get()->door_device[j].ipaddr)) == 0)
                                         {
@@ -117,7 +117,7 @@ static void cctv_search_list_display(void)
                         }
                         else
                         {
-                                if (network_data_get()->cctv_device[j].ipaddr[0] != 0)
+                                if (network_data_get()->cctv_device[j].rtsp[0].rtsp_url[0] != 0)
                                 {
                                         if (strncmp(network_data_get()->cctv_device[j].ipaddr, sat_ipcamera_ipaddr_get(i), sizeof(network_data_get()->cctv_device[j].ipaddr)) == 0)
                                         {
