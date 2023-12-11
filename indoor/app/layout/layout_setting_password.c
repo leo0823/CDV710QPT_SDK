@@ -1,5 +1,6 @@
 #include "layout_define.h"
 #include "layout_setting_general.h"
+#include "common/commax_websocket.h"
 enum
 {
         setting_password_obj_id_reset_cont,
@@ -140,9 +141,14 @@ static void setting_password_modiy_confirm_click(lv_event_t *ev)
                 }
                 else
                 {
-
                         strncpy(reset_unit ? user_data_get()->etc.password : user_data_get()->etc.comm_ent_password, buffer, 4);
                         user_data_save(true, true);
+                        if (!reset_unit)
+                        {
+                                char msg[1024] = {0};
+                                commax_https_server_lobbyphone_change_password(network_data_get()->local_server, "443", "1234", "5678", buffer, msg, 0, 500);
+                                printf("msg is %s\n", msg);
+                        }
                         sat_layout_goto(setting_general, LV_SCR_LOAD_ANIM_MOVE_RIGHT, SAT_VOID);
                 }
         }
