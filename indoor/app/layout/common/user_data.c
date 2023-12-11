@@ -90,7 +90,7 @@ static const user_data_info user_data_default =
             .comm_ent_password = {"1234"},
             .time_automatically = 1,
             .call_time = 1,
-            .tuya_connect_mode = 1,
+            .tuya_connect_mode = 0,
         },
         .alarm = {
             .away_alarm_enable_list = 0x00,     // 离家设防列表

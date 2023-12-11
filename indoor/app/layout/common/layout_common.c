@@ -739,3 +739,39 @@ bool is_alarm_trigger(void)
         }
         return false;
 }
+
+/************************************************************
+** 函数说明: 获取eth0网卡是否正常插入
+** 作者: xiaoxiao
+** 日期：2023-12-09 15:54:43
+** 参数说明:
+** 注意事项：
+************************************************************/
+bool is_eth0_inserted(void)
+{
+        FILE *fp;
+        char buffer[1024];
+
+        // 执行ifconfig eth0命令
+        fp = popen("ifconfig eth0", "r");
+        if (fp == NULL)
+        {
+                perror("打开管道时出错");
+                exit(EXIT_FAILURE);
+        }
+
+        // 读取命令的输出
+        while (fgets(buffer, sizeof(buffer), fp) != NULL)
+        {
+                // 检查输出中是否包含"eth0"
+                if (strstr(buffer, "eth0") != NULL)
+                {
+                        pclose(fp);
+                        return 1; // eth0存在
+                }
+        }
+
+        // 关闭管道，如果未找到"eth0"，则返回0
+        pclose(fp);
+        return 0;
+}

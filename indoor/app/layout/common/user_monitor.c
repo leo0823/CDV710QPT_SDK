@@ -232,7 +232,6 @@ bool monitor_door_registered_status_get(void)
 ***/
 int monitor_channel_get(void)
 {
-        SAT_DEBUG("monitor_channel is %d\n", monitor_channel);
         return monitor_channel;
 }
 
@@ -243,6 +242,7 @@ int monitor_channel_get(void)
 ***********************************************/
 void monitor_channel_set(int ch)
 {
+        SAT_DEBUG("ch is %d\n", ch);
         monitor_channel = ch;
 }
 

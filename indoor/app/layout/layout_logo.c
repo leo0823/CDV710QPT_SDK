@@ -73,7 +73,6 @@ static void logo_sip_server_register(void)
         char sip_sever[32] = {0};
         sprintf(sip_user_id, "50%d", user_data_get()->system_mode & 0x0F);
         sprintf(sip_sever, "%s:5066", user_data_get()->mastar_wallpad_ip);
-        printf("%s register to :%s\n", sip_user_id, sip_sever);
         sat_linphone_register(sip_user_id, sip_user_id, NULL, sip_sever);
 }
 
@@ -370,6 +369,20 @@ static void security_mode_sync_callback()
 }
 
 /************************************************************
+** 函数说明: 移动侦测数据更改回调
+** 作者: xiaoxiao
+** 日期：2023-12-11 09:12:27
+** 参数说明:
+** 注意事项：
+************************************************************/
+static void motion_detection_sync_callback()
+{
+        if (sat_cur_layout_get() == sat_playout_get(close) && (sat_cur_layout_get() == sat_playout_get(frame_show)))
+        {
+                sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+}
+/************************************************************
 ** 函数说明: 文件同步事件回调
 ** 作者: xiaoxiao
 ** 日期：2023-09-12 07:59:42
@@ -437,8 +450,13 @@ static void asterisk_server_sync_data_callback(char flag, char *data, int size, 
                                 memcpy(&user_data_get()->alarm.alarm_enable, &info->alarm.alarm_enable, sizeof(user_data_get()->alarm.alarm_enable));
                                 memcpy(&user_data_get()->alarm.alarm_gpio_value_group, &info->alarm.alarm_gpio_value_group, sizeof(user_data_get()->alarm.alarm_gpio_value_group));
                                 memcpy(&user_data_get()->alarm.alarm_enable_always, &info->alarm.alarm_enable_always, sizeof(user_data_get()->alarm.alarm_enable_always));
-                                user_data_get()->auto_record_mode = info->auto_record_mode;
-                                memcpy(&user_data_get()->motion, &info->motion, sizeof(user_data_get()->motion));
+
+                                printf("info->motion.enable is %d\n", info->motion.enable);
+                                if (memcmp(&user_data_get()->motion, &info->motion, sizeof(user_data_get()->motion)))
+                                {
+                                        memcpy(&user_data_get()->motion, &info->motion, sizeof(user_data_get()->motion));
+                                        motion_detection_sync_callback();
+                                }
                         }
 
                         user_data_get()->alarm.away_alarm_enable = info->alarm.away_alarm_enable;
@@ -697,7 +715,7 @@ static void logo_enter_system_timer(lv_timer_t *t)
         if (id == 0x01)
         {
                 /*****  tuya api初始化 *****/
-                tuya_api_init(TUYA_PID, "wlan0" /*user_data_get()->etc.tuya_connect_mode == 0 ? "wlan0" : "eth0"*/);
+                tuya_api_init(TUYA_PID, user_data_get()->etc.tuya_connect_mode == 0 ? "wlan0" : "eth0");
         }
 
         /***********************************************
@@ -1096,7 +1114,6 @@ void time_correction_timer(lv_timer_t *t)
 
 static void sat_layout_quit(logo)
 {
-        outdoor_mac_txt_exist_check();
         /**
          * 原因：时间比标准时间每天快了大约3秒
          * 函数作用：每隔4.8分种让时间减少10豪秒(定时器时间也依赖系统时间，所以得减去相应的时间误差；公式：48/（24*60）*3 *1000 = 100)

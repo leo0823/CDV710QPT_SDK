@@ -96,7 +96,7 @@ static int frame_show_refresh_cont = 0;
 ** 参数说明:
 ** 注意事项:
 ************************************************************/
-static int always_record_channel_get(void)
+static int frame_show_channel_get(void)
 {
 
 	if (monitor_door_first_valid_get(true) < 0 && monitor_door_first_valid_get(false) < 0)
@@ -900,7 +900,7 @@ static void frame_show_door_display(void)
 static void frame_show_door1_start(void)
 {
 	monitor_enter_flag_set(MON_ENTER_MANUAL_DOOR_FLAG);
-	int ch = always_record_channel_get();
+	int ch = frame_show_channel_get();
 
 	monitor_channel_set(ch);
 	frame_show_door_display();
@@ -911,7 +911,7 @@ static void frame_show_door1_start(void)
 static void frame_show_cctv_start(void)
 {
 	monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
-	monitor_channel_set(always_record_channel_get());
+	monitor_channel_set(frame_show_channel_get());
 	frame_show_door_display();
 	frame_show_thumb_refresh_display_callback();
 	lv_sat_timer_create(frame_show_refresh_wait_task, 1000, NULL);
@@ -1035,6 +1035,15 @@ static void frame_show_layer_init(void)
 	thumb_display_refresh_register(frame_show_thumb_refresh_display_callback);
 }
 
+extern bool layout_frame_show_ch_vaile_check(void);
+
+static void frame_show_param_checktimer(lv_timer_t *ptimer)
+{
+	if (layout_frame_show_ch_vaile_check() == false)
+	{
+		sat_layout_goto(close, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+	}
+}
 static void sat_layout_enter(frame_show)
 {
 	monitor_channel_set(MON_CH_NONE);
@@ -1067,8 +1076,11 @@ static void sat_layout_enter(frame_show)
 	standby_timer_close();
 
 	frame_show_restart();
+	if ((user_data_get()->system_mode & 0x0f) != 0x01)
+	{
+		lv_timer_reset(lv_sat_timer_create(frame_show_param_checktimer, 1000, NULL));
+	}
 }
-
 static void sat_layout_quit(frame_show)
 {
 	standby_timer_restart(true);

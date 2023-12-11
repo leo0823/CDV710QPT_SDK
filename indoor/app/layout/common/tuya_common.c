@@ -23,8 +23,21 @@ static bool tuya_event_cmd_video_start(void)
                 {
                         monitor_enter_flag_set(MON_ENTER_MANUAL_CCTV_FLAG);
                 }
-                monitor_channel_set(tuya_monitor_channel);
-                sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
+                if (monitor_valid_channel_check(tuya_monitor_channel))
+                {
+                        monitor_channel_set(tuya_monitor_channel);
+                        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
+                }
+                else if (monitor_door_first_valid_get(true) != -1)
+                {
+                        monitor_channel_set(monitor_door_first_valid_get(true));
+                        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
+                }
+                else if (monitor_door_first_valid_get(false) != -1)
+                {
+                        monitor_channel_set(monitor_door_first_valid_get(false));
+                        sat_layout_goto(monitor, LV_SCR_LOAD_ANIM_FADE_IN, true);
+                }
         }
         else
         {

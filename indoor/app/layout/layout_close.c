@@ -189,7 +189,7 @@ static void layout_motion_monitor_open(void)
 ***/
 static void layout_motion_restart_motion_detection(void)
 {
-    backlight_enable(false);
+    // backlight_enable(false);
     monitor_close(0x02);
     lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 3000, NULL));
 }
@@ -484,12 +484,42 @@ static void layout_close_buzzer_alarm_trigger_default(void)
     buzzer_alarm_trigger_default();
 }
 
+bool layout_frame_show_ch_vaile_check(void)
+{
+    if (user_data_get()->display.frame_list & 0x07)
+    {
+        return true;
+    }
+    if (user_data_get()->display.frame_list & 0x08)
+    {
+        if (monitor_door_first_valid_get(true) != -1)
+        {
+            return true;
+        }
+    }
+    if (user_data_get()->display.frame_list & 0x10)
+    {
+        if (monitor_door_first_valid_get(false) != -1)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+static void frame_show_param_checktimer(lv_timer_t *ptimer)
+{
+    if (layout_frame_show_ch_vaile_check())
+    {
+        sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+    }
+}
+
 static void sat_layout_enter(close)
 {
-    SAT_DEBUG("=======rnter the close");
     standby_timer_close();
     backlight_enable(true);
-    backlight_enable(false);
+    // backlight_enable(false);
     close_cancel_btn_create();
     buzzer_call_callback_register(layout_close_buzzer_alarm_trigger_default);
     if (user_data_get()->motion.enable && ((user_data_get()->system_mode & 0x0f) == 0x01) && (monitor_valid_channel_check(user_data_get()->motion.select_camera)))
@@ -518,11 +548,20 @@ static void sat_layout_enter(close)
             lv_timer_reset(lv_sat_timer_create(motion_timer_check_task, 1000, NULL));
         }
     }
-    else if ((user_data_get()->display.standby_mode == 1) && (user_data_get()->display.frame_list & 0x1F) && (frame_display_timeout_check() == false))
+    else if ((user_data_get()->display.standby_mode == 1) && (frame_display_timeout_check() == false))
     {
-        sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        if (layout_frame_show_ch_vaile_check())
+        {
+            sat_layout_goto(frame_show, LV_SCR_LOAD_ANIM_FADE_IN, SAT_VOID);
+        }
+        else if ((user_data_get()->system_mode & 0x0f) != 0x01)
+        {
+
+            lv_timer_reset(lv_sat_timer_create(frame_show_param_checktimer, 1000, NULL));
+        }
     }
 }
+
 static void layout_close_backlight_open_timer(lv_timer_t *t)
 {
     backlight_enable(true);

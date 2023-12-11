@@ -97,7 +97,7 @@ typedef struct
         /****** 通话时间 1:1分钟 2:2分钟 3:3分钟***/
         int call_time;
 
-        char tuya_connect_mode;
+        char tuya_connect_mode; /****** 涂鸦联网模式 0 ：wifi联网 1：有线联网***/
 
 } user_etc_info;
 

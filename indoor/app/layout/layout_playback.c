@@ -183,6 +183,7 @@ static bool playback_thumb_media_display_callback(const char *data, int x, int y
         // SAT_DEBUG("thumb display failed(%d,%d,%d,%d)\n", x, y, w, h);
         return false;
 }
+
 static void playback_thumb_total_display(void)
 {
         lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), playback_obj_id_total);
@@ -197,7 +198,6 @@ static void playback_thumb_total_display(void)
 
 static void playback_thumb_refresh_display_callback(void)
 {
-        SAT_DEBUG("===================+++++++++++++++++++============");
         for (int i = 0; i < 6; i++)
         {
                 if (media_thumb_refresh_gorup[i] == false)
@@ -218,6 +218,7 @@ static void playback_thumb_refresh_display_callback(void)
         /*每次加载完后显示总数*/
         playback_thumb_total_display();
 }
+
 static void playback_sd_state_change_callback(void)
 {
         if (((media_sdcard_insert_check() == SD_STATE_UNPLUG) || (media_sdcard_insert_check() == SD_STATE_ERROR)) && (playback_media_type != FILE_TYPE_FLASH_PHOTO))

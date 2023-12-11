@@ -14,9 +14,9 @@ enum
 
         home_obj_id_network_icon,
 
-        home_obj_id_user_app_label,
+        home_obj_id_tuya_connect_icon,
 
-        home_obj_id_slave_time_sync_label,
+        home_obj_id_top_label,
 
         home_obj_id_slave_time_sync_failed,
 
@@ -138,18 +138,46 @@ static void home_obj_top_icon_display(void)
                         char state = tuya_api_network_status();
                         pos_x -= 56;
                         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
-                        if ((state == 0x00) || (user_data_get()->wifi_enable == false))
+                        if ((state == 0x00) || (user_data_get()->etc.tuya_connect_mode == 0 && user_data_get()->wifi_enable == false))
                         {
-                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_off.png"), LV_PART_MAIN);
+                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(user_data_get()->etc.tuya_connect_mode == 0 ? "ic_system_network_off.png" : "ic_system_internet_NY.png"), LV_PART_MAIN);
                         }
                         else if (state == 0x01)
                         {
 
-                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_wifi.png"), LV_PART_MAIN);
+                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(user_data_get()->etc.tuya_connect_mode == 0 ? "ic_system_network_wifi.png" : "ic_system_internet_YN.png"), LV_PART_MAIN);
                         }
                         else
                         {
-                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_system_network_on.png"), LV_PART_MAIN);
+                                lv_obj_set_style_bg_img_src(obj, resource_ui_src_get(user_data_get()->etc.tuya_connect_mode == 0 ? "ic_system_network_on.png" : "ic_system_internet_YY.png"), LV_PART_MAIN);
+                        }
+                }
+        }
+
+        /***********************************************
+         ** 作者: leo.liu
+         ** 日期: 2023-2-2 13:42:25
+         ** 说明: tuya连接状态
+         ***********************************************/
+        {
+                obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_tuya_connect_icon);
+                {
+                        if (obj != NULL)
+                        {
+                                lv_obj_set_x(obj, pos_x);
+                                pos_x -= 56;
+                                if (tuya_api_online_check())
+                                {
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_connect.png"), LV_PART_MAIN);
+                                }
+                                else if (tuya_api_network_status() == 0x02)
+                                {
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_connectable.png"), LV_PART_MAIN);
+                                }
+                                else
+                                {
+                                        lv_obj_set_style_bg_img_src(obj, resource_ui_src_get("ic_home_clood_disconnect.png"), LV_PART_MAIN);
+                                }
                         }
                 }
         }
@@ -206,9 +234,22 @@ static void home_obj_top_icon_display(void)
  ** 日期: 2023-2-2 13:42:25
  ** 说明: app状态显示
  ***********************************************/
-static void home_use_mobile_app_obj_display(lv_obj_t *obj)
+static void home_use_mobile_app_obj_display()
 {
-        lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_top_label);
+        if (obj->user_data != NULL)
+        {
+                return;
+        }
+        if (tuya_api_client_num() > 0)
+        {
+                lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_ID_USE_MOBILE_APP));
+                lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
+        else
+        {
+                lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
+        }
 }
 
 static void home_slave_sync_time_obj_display_timer(lv_timer_t *ptimer)
@@ -228,7 +269,8 @@ static void home_slave_sync_time_obj_display_timer(lv_timer_t *ptimer)
 ************************************************************/
 static void home_slave_sync_time_obj_display()
 {
-        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_label);
+        lv_obj_t *obj = lv_obj_get_child_form_id(sat_cur_layout_screen_get(), home_obj_id_top_label);
+        lv_label_set_text(obj, lang_str_get(HOME_XLS_LANG_TIME_SET_BY_MASTER));
         lv_obj_clear_flag(obj, LV_OBJ_FLAG_HIDDEN);
         if (obj->user_data == NULL)
         {
@@ -349,6 +391,7 @@ static void home_date_timer(lv_timer_t *ptimer)
 {
         home_time_obj_display();
         home_date_obj_display();
+        home_use_mobile_app_obj_display();
 }
 /***********************************************
  ** 作者: leo.liu
@@ -538,23 +581,10 @@ static void home_call_obj_click(lv_event_t *ev)
         enter_intercomm_call_mode_set(0);
         sat_layout_goto(intercom_call, LV_SCR_LOAD_ANIM_NONE, SAT_VOID);
 }
+
 static void home_cctv_obj_click(lv_event_t *ev)
 {
-        // if (network_data_get()->cctv_device_count > 0)
         {
-
-                //       int loop, smallest;
-
-                //   smallest = network_data_get()->cctv_ch_index[0];
-
-                //    for (loop = 0; loop < network_data_get()->cctv_device_count; loop++)
-                //     {
-                //  if (smallest > network_data_get()->cctv_ch_index[loop])
-
-                //    smallest = network_data_get()->cctv_ch_index[loop];
-                // }
-
-                //   monitor_channel_set(smallest + 8);
                 int channel = monitor_door_first_valid_get(false);
                 if (channel < 0)
                 {
@@ -1010,7 +1040,7 @@ static void sat_layout_enter(home)
          ** 说明: app use
          ***********************************************/
         {
-                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_user_app_label, 327, 66, 370, 60,
+                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_top_label, 277, 66, 470, 50,
                                                       NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                                       16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
@@ -1019,26 +1049,9 @@ static void sat_layout_enter(home)
                 {
                         return;
                 }
-                lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
-                home_use_mobile_app_obj_display(obj);
-        }
-
-        /************************************************************
-        ** 函数说明:分机时间同步显示
-        ** 作者: xiaoxiao
-        ** 日期：2023-10-05 17:30:22
-        ** 参数说明:
-        ** 注意事项：
-        ************************************************************/
-        {
-                lv_obj_t *obj = lv_common_text_create(sat_cur_layout_screen_get(), home_obj_id_slave_time_sync_label, 277, 66, 480, 60,
-                                                      NULL, LV_OPA_COVER, 0X303030, LV_OPA_TRANSP, 0,
-                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      16, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
-                                                      lang_str_get(HOME_XLS_LANG_TIME_SET_BY_MASTER), 0XFFFFFFFF, 0xFFFFFF, LV_TEXT_ALIGN_CENTER, lv_font_normal);
-
                 lv_obj_add_flag(obj, LV_OBJ_FLAG_HIDDEN);
                 lv_obj_set_style_pad_top(obj, 10, LV_PART_MAIN);
+                home_use_mobile_app_obj_display();
         }
 
         /***********************************************
@@ -1350,6 +1363,20 @@ static void sat_layout_enter(home)
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
                                          resource_ui_src_get("ic_system_sdcard.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
+        }
+        /************************************************************
+        ** 函数说明:
+        ** 作者: xiaoxiao
+        ** 日期：2023-12-09 15:26:35
+        ** 参数说明:
+        ** 注意事项：
+        ************************************************************/
+        {
+                lv_common_img_btn_create(sat_cur_layout_screen_get(), home_obj_id_tuya_connect_icon, 895, 5, 48, 48,
+                                         NULL, false, LV_OPA_TRANSP, 0, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         0, 0, LV_BORDER_SIDE_NONE, LV_OPA_TRANSP, 0,
+                                         resource_ui_src_get("ic_hime_clood_connect.png"), LV_OPA_TRANSP, 0x00a8ff, LV_ALIGN_CENTER);
         }
         lv_timer_ready(lv_sat_timer_create(home_obj_top_icon_display_timer, 1000, NULL));
 

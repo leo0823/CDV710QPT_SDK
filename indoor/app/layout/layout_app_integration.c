@@ -112,7 +112,7 @@ static void layout_setting_app_integration_connect_status_display(void)
   else if (tuya_api_network_status() == 0x02)
   {
     lv_label_set_text(label, lang_str_get(SETTING_APP_INTEGRATION_XLS_LANG_IS_CONNECTABLE));
-    lv_obj_set_style_bg_img_src(img, resource_ui_src_get("ic_system_clood_connecting.png"), LV_PART_MAIN);
+    lv_obj_set_style_bg_img_src(img, resource_ui_src_get("ic_system_clood_connectable.png"), LV_PART_MAIN);
   }
   else
   {
